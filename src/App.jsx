@@ -832,7 +832,20 @@ const lon = L
   if (!hasBirthTime) delete result["Rising"];
   return result;
   }
-  const US_STATES = ["Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Carolina","North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming","District of Columbia","Outside the US"];
+  const US_STATES = ["Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Carolina","North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming","District of Columbia","Outside the US"]; const celebrities = [
+  { name: "Lady Gaga", sign: "Aries", born: "Mar 28", sun: "Aries", moon: "Scorpio", rising: "Gemini", emoji: "🎤", fact: "A fearless performer who reinvents herself completely with every era." },
+  { name: "Adele", sign: "Taurus", born: "May 5", sun: "Taurus", moon: "Sagittarius", rising: "Sagittarius", emoji: "🎵", fact: "Her voice carries the full emotional weight of a Taurus — rich, powerful, and unforgettable." },
+  { name: "Kanye West", sign: "Gemini", born: "Jun 8", sun: "Gemini", moon: "Pisces", rising: "Unknown", emoji: "🎧", fact: "The ultimate Gemini — visionary genius and provocateur, often in the same sentence." },
+  { name: "Ariana Grande", sign: "Cancer", born: "Jun 26", sun: "Cancer", moon: "Libra", rising: "Capricorn", emoji: "🌙", fact: "Her music is deeply personal and emotionally raw — pure Cancer energy." },
+  { name: "Barack Obama", sign: "Leo", born: "Aug 4", sun: "Leo", moon: "Gemini", rising: "Aquarius", emoji: "🦁", fact: "Charismatic, warm, and commanding — the textbook Leo leader." },
+  { name: "Beyoncé", sign: "Virgo", born: "Sep 4", sun: "Virgo", moon: "Scorpio", rising: "Libra", emoji: "👑", fact: "No detail escapes her — Virgo perfection expressed at the highest level." },
+  { name: "Kim Kardashian", sign: "Libra", born: "Oct 21", sun: "Libra", moon: "Pisces", rising: "Sagittarius", emoji: "⚖️", fact: "Built an empire on aesthetics, image, and the art of balance." },
+  { name: "Drake", sign: "Scorpio", born: "Oct 24", sun: "Scorpio", moon: "Scorpio", rising: "Unknown", emoji: "🦂", fact: "Emotionally intense, fiercely loyal, and never forgets a thing." },
+  { name: "Taylor Swift", sign: "Sagittarius", born: "Dec 13", sun: "Sagittarius", moon: "Cancer", rising: "Unknown", emoji: "🏹", fact: "She turns every life experience into a philosophical exploration — pure Sagittarius." },
+  { name: "Michelle Obama", sign: "Capricorn", born: "Jan 17", sun: "Capricorn", moon: "Aquarius", rising: "Unknown", emoji: "🌟", fact: "Disciplined, dignified, and built for legacy — the Capricorn archetype elevated." },
+  { name: "Oprah Winfrey", sign: "Aquarius", born: "Jan 29", sun: "Aquarius", moon: "Sagittarius", rising: "Sagittarius", emoji: "🌊", fact: "She built a platform not for herself, but to elevate humanity — true Aquarius mission." },
+  { name: "Rihanna", sign: "Pisces", born: "Feb 20", sun: "Pisces", moon: "Aries", rising: "Aries", emoji: "🐟", fact: "Fluid, creative, and impossibly cool — she moves between worlds effortlessly." },
+];
   const celebBySign = {};
   celebrities.forEach(c => {
   if (!celebBySign[c.sign]) celebBySign[c.sign] = [];
