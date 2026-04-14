@@ -668,7 +668,7 @@ ctx.fillStyle = "rgba(201,169,110,0.5)"; ctx.font = "20px Georgia";
 ctx.fillText("celestialinsights.app", W/2, H-32);
 }
 function jdn(year, month, day) {
-if (month <= 2) { year–; month += 12; }
+if (month <= 2) { year; month += 12; }
 const A = Math.floor(year / 100);
 const B = 2 - A + Math.floor(A / 4);
 return Math.floor(365.25 * (year + 4716)) + Math.floor(30.6001 * (month + 1)) + day + B - 1524.5;
