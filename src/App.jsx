@@ -26,8 +26,6 @@ const facts = {
 “You fall in love with potential. You see who someone could be, not just who they are, which can make you stay in situations longer than you should.”,
 “You need a partner who is your intellectual equal. Stimulating conversation is genuinely part of your love language.”,
 “Indecision in relationships is real for you - not because you don’t know what you want, but because you want everything to be perfectly fair before you choose.”,
-“Your charm is completely natural and almost impossible to resist. You rarely have to try to make people like you - they just do.”,
-],
 “Taurus-Venus”: [
 “Venus in Taurus is exalted - this is one of the most powerful placements for love and beauty in the entire zodiac.”,
 “You love through your senses. Physical touch, good food, beautiful surroundings, and comfort are not luxuries for you - they are how you express and receive love.”,
