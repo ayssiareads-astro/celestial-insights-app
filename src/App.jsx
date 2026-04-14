@@ -1,11 +1,11 @@
-import { useState, useRef } from “react”;
-const signs = [“Aries”,“Taurus”,“Gemini”,“Cancer”,“Leo”,“Virgo”,“Libra”,“Scorpio”,“Sagittarius”,“Capricorn”,“Aquarius”,“Pisces”];
-const planets = [“Sun”,“Moon”,“Mercury”,“Venus”,“Mars”,“Jupiter”,“Saturn”,“Uranus”,“Neptune”,“Pluto”,“Rising”];
-const OUTER = [“Uranus”,“Neptune”,“Pluto”];
+import { useState, useRef } from "react";
+const signs = ["Aries","Taurus","Gemini","Cancer","Leo","Virgo","Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"];
+const planets = ["Sun","Moon","Mercury","Venus","Mars","Jupiter","Saturn","Uranus","Neptune","Pluto","Rising"];
+const OUTER = ["Uranus","Neptune","Pluto"];
 const generationDates = {
-Uranus: { Aries:“2010-2018”,Taurus:“2018-2026”,Gemini:“1941-1949”,Cancer:“1948-1956”,Leo:“1955-1962”,Virgo:“1961-1969”,Libra:“1968-1975”,Scorpio:“1974-1981”,Sagittarius:“1981-1988”,Capricorn:“1988-1996”,Aquarius:“1995-2003”,Pisces:“2003-2011” },
-Neptune: { Aries:“2025-2039”,Taurus:“1874-1889”,Gemini:“1888-1902”,Cancer:“1901-1916”,Leo:“1914-1929”,Virgo:“1928-1943”,Libra:“1942-1957”,Scorpio:“1955-1970”,Sagittarius:“1970-1984”,Capricorn:“1984-1998”,Aquarius:“1998-2012”,Pisces:“2011-2026” },
-Pluto: { Aries:“2068-2097”,Taurus:“1851-1884”,Gemini:“1882-1914”,Cancer:“1912-1939”,Leo:“1937-1958”,Virgo:“1956-1972”,Libra:“1971-1984”,Scorpio:“1983-1995”,Sagittarius:“1995-2008”,Capricorn:“2008-2024”,Aquarius:“2023-2043”,Pisces:“2043-2068” },
+Uranus: { Aries:"2010-2018",Taurus:"2018-2026",Gemini:"1941-1949",Cancer:"1948-1956",Leo:"1955-1962",Virgo:"1961-1969",Libra:"1968-1975",Scorpio:"1974-1981",Sagittarius:"1981-1988",Capricorn:"1988-1996",Aquarius:"1995-2003",Pisces:"2003-2011" },
+Neptune: { Aries:"2025-2039",Taurus:"1874-1889",Gemini:"1888-1902",Cancer:"1901-1916",Leo:"1914-1929",Virgo:"1928-1943",Libra:"1942-1957",Scorpio:"1955-1970",Sagittarius:"1970-1984",Capricorn:"1984-1998",Aquarius:"1998-2012",Pisces:"2011-2026" },
+Pluto: { Aries:"2068-2097",Taurus:"1851-1884",Gemini:"1882-1914",Cancer:"1912-1939",Leo:"1937-1958",Virgo:"1956-1972",Libra:"1971-1984",Scorpio:"1983-1995",Sagittarius:"1995-2008",Capricorn:"2008-2024",Aquarius:"2023-2043",Pisces:"2043-2068" },
 };
 const facts = {
 “Scorpio-Venus”: [
