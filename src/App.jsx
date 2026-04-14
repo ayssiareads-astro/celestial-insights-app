@@ -1,4 +1,4 @@
-mport { useState, useRef } from “react”;
+import { useState, useRef } from “react”;
 
 const signs = [“Aries”,“Taurus”,“Gemini”,“Cancer”,“Leo”,“Virgo”,“Libra”,“Scorpio”,“Sagittarius”,“Capricorn”,“Aquarius”,“Pisces”];
 const planets = [“Sun”,“Moon”,“Mercury”,“Venus”,“Mars”,“Jupiter”,“Saturn”,“Uranus”,“Neptune”,“Pluto”,“Rising”];
