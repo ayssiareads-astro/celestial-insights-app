@@ -779,7 +779,7 @@ const lon = L
   const [year, month, day] = birthDate.split("-").map(Number);
   const [hour, min] = birthTime ? birthTime.split(":").map(Number) : [12, 0];
   function jd(y, m, d, h) {
-  if (m <= 2) { y–; m += 12; }
+  if (m <= 2) { y; m += 12; }
   const A = Math.floor(y/100), B = 2 - A + Math.floor(A/4);
   return Math.floor(365.25*(y+4716)) + Math.floor(30.6001*(m+1)) + d + B - 1524.5 + h/24;
   }
