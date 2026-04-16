@@ -905,7 +905,7 @@ function CreditsContent() {
       <DocP>Where specific astrologers are quoted or referenced within app content, these references are made in the spirit of educational acknowledgment and do not imply endorsement by those individuals or their estates. All referenced works remain the intellectual property of their respective authors and publishers.</DocP>
     </DocSection>
     <DocSection title="Contact">
-      <DocP>If you are a rights holder with a concern about attribution: arewewoke@gmail.com</DocP>
+      <DocP>If you are a rights holder with a concern about attribution: celestial.insights.app@gmail.com</DocP>
     </DocSection>
   </>;
 }
