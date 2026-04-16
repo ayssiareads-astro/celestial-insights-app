@@ -370,7 +370,7 @@ function DailyHoroscope() {
         {subscribed && (
           <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:10}}>
             <div style={{display:"inline-block",background:"rgba(168,224,96,0.08)",border:"1px solid rgba(168,224,96,0.3)",borderRadius:100,padding:"5px 16px"}}>
-              <span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#a8e060",letterSpacing:".1em"}}>✦ CELESTIAL INSIGHTS MEMBER ✦</span>
+              <span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#a8e060",letterSpacing:".1em"}}>✦ AREWEWOKE MEMBER ✦</span>
             </div>
             <button
               onClick={handleManage}
@@ -450,7 +450,7 @@ function DailyHoroscope() {
               </div>
             )}
 
-            <div style={{textAlign:"center",marginTop:16}}><span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,letterSpacing:".18em",color:accent,opacity:.6}}>✦ CELESTIAL INSIGHTS ✦</span></div>
+            <div style={{textAlign:"center",marginTop:16}}><span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,letterSpacing:".18em",color:accent,opacity:.6}}>✦ AREWEWOKE ✦</span></div>
           </div>
         </div>
       )}
@@ -556,7 +556,7 @@ return (
 
     {topTab==="facts" && <>
       <div style={{textAlign:"center",marginBottom:24}}>
-        <div style={{fontSize:11,fontFamily:"'Cinzel',serif",fontWeight:700,letterSpacing:".3em",color:"#a8e060",marginBottom:12}}>✦ CELESTIAL INSIGHTS ✦</div>
+        <div style={{fontSize:11,fontFamily:"'Cinzel',serif",fontWeight:700,letterSpacing:".3em",color:"#a8e060",marginBottom:12}}>✦ AREWEWOKE ✦</div>
         <h1 style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:"clamp(28px,6vw,52px)",lineHeight:1.05,margin:"0 0 10px",background:"linear-gradient(135deg,#f5c842,#e8a800,#f5c842)",backgroundSize:"200% auto",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",backgroundClip:"text",animation:"sh 4s linear infinite"}}>
           Your Cosmic Fun Facts
         </h1>
@@ -653,15 +653,15 @@ return (
 
       {/* Disclaimer blurb */}
       <p style={{fontFamily:"Georgia,serif",fontSize:10,color:"#3a3228",textAlign:"center",lineHeight:1.7,margin:"0 0 16px",padding:"0 12px"}}>
-        Celestial Insights is for entertainment purposes only. Astrological content does not constitute professional advice of any kind. Ayssia Mason does not claim to be the original author of the astrological frameworks referenced in this app. See Credits &amp; Sources for full attribution.
+        Arewewoke is for entertainment purposes only. Astrological content does not constitute professional advice of any kind. Ayssia Mason does not claim to be the original author of the astrological frameworks referenced in this app. See Credits &amp; Sources for full attribution.
       </p>
 
       {/* Contact */}
       <div style={{textAlign:"center",marginBottom:18}}>
-        <a href="mailto:Celestial.insights.app@gmail.com" style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#4a4440",letterSpacing:".1em",textDecoration:"none"}}
+        <a href="mailto:arewewoke@gmail.com" style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#4a4440",letterSpacing:".1em",textDecoration:"none"}}
           onMouseEnter={e=>e.target.style.color="#a8e060"}
           onMouseLeave={e=>e.target.style.color="#4a4440"}>
-          Celestial.insights.app@gmail.com
+          arewewoke@gmail.com
         </a>
       </div>
 
@@ -691,7 +691,7 @@ return (
         >✕ CLOSE</button>
         <div style={{textAlign:"center",marginBottom:28}}>
           <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:20,color:"#f5c842",marginBottom:6}}>{activeDoc}</div>
-          <div style={{fontFamily:"Georgia,serif",fontSize:11,color:"#5a5048"}}>Celestial Insights -- Last Updated: April 15, 2025</div>
+          <div style={{fontFamily:"Georgia,serif",fontSize:11,color:"#5a5048"}}>Arewewoke -- Last Updated: April 15, 2025</div>
         </div>
         <div style={{fontFamily:"Georgia,serif",fontSize:14,color:"#c8c0b0",lineHeight:1.85}}>
           {activeDoc==="Terms of Service" && <TermsContent/>}
@@ -736,41 +736,41 @@ function DocBullet({items}) {
 
 function TermsContent() {
   return <>
-    <DocP>Please read these Terms of Service carefully before using Celestial Insights. By accessing or using the app, you agree to be bound by these terms.</DocP>
-    <DocSection title="1. About Celestial Insights">
-      <DocP>Celestial Insights is an astrology-based entertainment application operated by Ayssia Mason, a sole proprietor based in the United States. The app provides astrological content including fun facts, daily horoscopes, and related features for entertainment purposes only.</DocP>
+    <DocP>Please read these Terms of Service carefully before using Arewewoke. By accessing or using the app, you agree to be bound by these terms.</DocP>
+    <DocSection title="1. About Arewewoke">
+      <DocP>Arewewoke is an astrology-based entertainment application operated by Ayssia Mason, a sole proprietor based in the United States. The app provides astrological content including fun facts, daily horoscopes, and related features for entertainment purposes only.</DocP>
     </DocSection>
     <DocSection title="2. Entertainment Disclaimer">
-      <DocP>All content provided by Celestial Insights is intended solely for entertainment and informational purposes. Nothing on Celestial Insights constitutes professional advice of any kind, including but not limited to:</DocP>
+      <DocP>All content provided by Arewewoke is intended solely for entertainment and informational purposes. Nothing on Arewewoke constitutes professional advice of any kind, including but not limited to:</DocP>
       <DocBullet items={["Medical or mental health advice","Financial or legal advice","Psychological or therapeutic guidance","Predictive or guaranteed life outcomes"]}/>
     </DocSection>
     <DocSection title="3. Eligibility">
-      <DocP>You must be at least 18 years of age to subscribe to paid features of Celestial Insights. By subscribing, you confirm that you meet this requirement.</DocP>
+      <DocP>You must be at least 18 years of age to subscribe to paid features of Arewewoke. By subscribing, you confirm that you meet this requirement.</DocP>
     </DocSection>
     <DocSection title="4. User Responsibilities">
       <DocP>You are responsible for maintaining the confidentiality of any account credentials and for all activity that occurs under your account. You agree not to use the app for any unlawful purpose, attempt to reverse-engineer content, impersonate any person, or transmit harmful content.</DocP>
     </DocSection>
     <DocSection title="5. Subscription and Billing">
-      <DocP>Celestial Insights offers a monthly subscription for access to Daily Horoscope features at a rate of $8.80 per month. By subscribing, you authorize recurring charges to your chosen payment method through Stripe. Billing occurs on the same date each month following your initial subscription date.</DocP>
+      <DocP>Arewewoke offers a monthly subscription for access to Daily Horoscope features at a rate of $8.80 per month. By subscribing, you authorize recurring charges to your chosen payment method through Stripe. Billing occurs on the same date each month following your initial subscription date.</DocP>
     </DocSection>
     <DocSection title="6. Cancellation and Refund Policy">
       <DocP>You may cancel your subscription at any time. Cancellations take effect at the end of the current billing period. No refunds are issued for partial subscription periods or for any charges already processed. See our full Cancellation Policy for complete details.</DocP>
     </DocSection>
     <DocSection title="7. Intellectual Property">
-      <DocP>All content within Celestial Insights, including written horoscopes, astrological interpretations, design elements, and branding, is the intellectual property of Ayssia Mason and is protected under applicable copyright law.</DocP>
+      <DocP>All content within Arewewoke, including written horoscopes, astrological interpretations, design elements, and branding, is the intellectual property of Ayssia Mason and is protected under applicable copyright law.</DocP>
     </DocSection>
     <DocSection title="8. Limitation of Liability">
-      <DocP>Ayssia Mason and Celestial Insights shall not be liable for any indirect, incidental, special, or consequential damages arising from your use of the app. Our total liability shall not exceed the amount you paid in the 30 days preceding the claim.</DocP>
+      <DocP>Ayssia Mason and Arewewoke shall not be liable for any indirect, incidental, special, or consequential damages arising from your use of the app. Our total liability shall not exceed the amount you paid in the 30 days preceding the claim.</DocP>
     </DocSection>
     <DocSection title="9. Contact">
-      <DocP>For questions regarding these Terms, please contact: Celestial.insights.app@gmail.com</DocP>
+      <DocP>For questions regarding these Terms, please contact: arewewoke@gmail.com</DocP>
     </DocSection>
   </>;
 }
 
 function PrivacyContent() {
   return <>
-    <DocP>Your privacy matters to Celestial Insights. This Privacy Policy explains what information we collect, how we use it, and how we protect it.</DocP>
+    <DocP>Your privacy matters to Arewewoke. This Privacy Policy explains what information we collect, how we use it, and how we protect it.</DocP>
     <DocSection title="1. Information We Collect">
       <DocBullet items={["Email address and name (when you subscribe or contact us)","Payment information (processed securely by Stripe -- we do not store your full card details)","Usage data such as which features you interact with","Device and browser information for app performance purposes"]}/>
     </DocSection>
@@ -779,29 +779,29 @@ function PrivacyContent() {
       <DocP>We do not sell, rent, or trade your personal information to third parties for marketing purposes.</DocP>
     </DocSection>
     <DocSection title="3. Stripe Payment Processing">
-      <DocP>All payment transactions are processed through Stripe, Inc. Celestial Insights receives only a payment confirmation token and does not have access to your full card number, CVV, or bank account information.</DocP>
+      <DocP>All payment transactions are processed through Stripe, Inc. Arewewoke receives only a payment confirmation token and does not have access to your full card number, CVV, or bank account information.</DocP>
     </DocSection>
     <DocSection title="4. Data Retention">
       <DocP>We retain your personal information for as long as your account is active. If you cancel and request deletion of your data, we will remove your personal information within 30 days, except where retention is required by law.</DocP>
     </DocSection>
     <DocSection title="5. Your Rights">
       <DocBullet items={["Access the personal information we hold about you","Request correction of inaccurate information","Request deletion of your personal data","Opt out of marketing communications at any time"]}/>
-      <DocP>To exercise any of these rights, contact: Celestial.insights.app@gmail.com</DocP>
+      <DocP>To exercise any of these rights, contact: arewewoke@gmail.com</DocP>
     </DocSection>
     <DocSection title="6. Security">
       <DocP>We take reasonable and appropriate measures to protect your personal information from unauthorized access, disclosure, or destruction. However, no method of transmission over the internet is 100% secure.</DocP>
     </DocSection>
     <DocSection title="7. Contact">
-      <DocP>For privacy-related questions: Celestial.insights.app@gmail.com</DocP>
+      <DocP>For privacy-related questions: arewewoke@gmail.com</DocP>
     </DocSection>
   </>;
 }
 
 function CancellationContent() {
   return <>
-    <DocP>This Cancellation and Refund Policy applies to all paid subscriptions to Celestial Insights. By subscribing, you agree to the terms below.</DocP>
+    <DocP>This Cancellation and Refund Policy applies to all paid subscriptions to Arewewoke. By subscribing, you agree to the terms below.</DocP>
     <DocSection title="1. Subscription Overview">
-      <DocP>Celestial Insights offers a monthly subscription to the Daily Horoscope feature at a rate of $8.80 per month. Subscriptions are billed on a recurring monthly basis through Stripe, beginning on the date of your initial purchase.</DocP>
+      <DocP>Arewewoke offers a monthly subscription to the Daily Horoscope feature at a rate of $8.80 per month. Subscriptions are billed on a recurring monthly basis through Stripe, beginning on the date of your initial purchase.</DocP>
     </DocSection>
     <DocSection title="2. How to Cancel -- Self-Serve (Easiest)">
       <DocP>The fastest way to cancel is directly inside the app. If you are a subscribed member, tap the <strong style={{color:"#f5c842"}}>Manage Subscription</strong> button under the Daily Horoscope tab. This opens your personal Stripe billing portal where you can:</DocP>
@@ -809,7 +809,7 @@ function CancellationContent() {
       <DocP>No emailing required. Stripe will automatically send a cancellation confirmation email to the address on file as soon as your cancellation is processed.</DocP>
     </DocSection>
     <DocSection title="3. How to Cancel -- By Email">
-      <DocP>You may also email Celestial.insights.app@gmail.com with the subject line Cancel My Subscription and the email address associated with your account. Email cancellations are processed within 2 business days and a written confirmation will be sent upon completion.</DocP>
+      <DocP>You may also email arewewoke@gmail.com with the subject line Cancel My Subscription and the email address associated with your account. Email cancellations are processed within 2 business days and a written confirmation will be sent upon completion.</DocP>
     </DocSection>
     <DocSection title="4. When Cancellation Takes Effect">
       <DocBullet items={["Your cancellation takes effect at the end of your current billing period","You retain full access to paid features through the last day of your paid period","No additional charges will be made after your cancellation is confirmed"]}/>
@@ -820,46 +820,46 @@ function CancellationContent() {
       <DocP>We strongly encourage you to cancel at least 24 hours before your next scheduled renewal date if you do not wish to be charged for the following month.</DocP>
     </DocSection>
     <DocSection title="6. Exceptions">
-      <DocP>Refunds may be considered only if: you were charged twice for the same billing period due to a technical error, or a charge occurred after a confirmed cancellation was processed. Contact us within 7 days of the charge at Celestial.insights.app@gmail.com.</DocP>
+      <DocP>Refunds may be considered only if: you were charged twice for the same billing period due to a technical error, or a charge occurred after a confirmed cancellation was processed. Contact us within 7 days of the charge at arewewoke@gmail.com.</DocP>
     </DocSection>
     <DocSection title="7. Changes to Pricing">
-      <DocP>If Celestial Insights changes the monthly subscription price, you will be notified at least 14 days in advance via email. You may cancel before the change takes effect without penalty.</DocP>
+      <DocP>If Arewewoke changes the monthly subscription price, you will be notified at least 14 days in advance via email. You may cancel before the change takes effect without penalty.</DocP>
     </DocSection>
     <DocSection title="8. Contact">
-      <DocP>For all cancellation and billing inquiries: Celestial.insights.app@gmail.com</DocP>
+      <DocP>For all cancellation and billing inquiries: arewewoke@gmail.com</DocP>
     </DocSection>
   </>;
 }
 
 function DisclaimerContent() {
   return <>
-    <DocP>The following Disclaimer applies to all content provided through Celestial Insights, including daily horoscopes, astrological readings, planetary placement interpretations, and all related written material.</DocP>
+    <DocP>The following Disclaimer applies to all content provided through Arewewoke, including daily horoscopes, astrological readings, planetary placement interpretations, and all related written material.</DocP>
     <DocSection title="1. For Entertainment Purposes Only">
-      <DocP>All astrological content published by Celestial Insights is provided strictly for entertainment and personal reflection purposes. Astrology is a belief system and a creative tradition, not an empirical science. Celestial Insights makes no claim that astrological interpretations are scientifically accurate, factually predictive, or guaranteed to reflect any individual's actual life circumstances.</DocP>
+      <DocP>All astrological content published by Arewewoke is provided strictly for entertainment and personal reflection purposes. Astrology is a belief system and a creative tradition, not an empirical science. Arewewoke makes no claim that astrological interpretations are scientifically accurate, factually predictive, or guaranteed to reflect any individual's actual life circumstances.</DocP>
     </DocSection>
     <DocSection title="2. Not Professional Advice">
-      <DocP>Nothing in Celestial Insights constitutes or should be construed as:</DocP>
+      <DocP>Nothing in Arewewoke constitutes or should be construed as:</DocP>
       <DocBullet items={["Medical, psychiatric, or mental health advice or diagnosis","Financial, investment, or legal advice","Relationship or therapeutic counseling","Professional guidance of any kind"]}/>
       <DocP>If you are experiencing a personal, medical, financial, legal, or emotional difficulty, please consult a qualified professional in the relevant field.</DocP>
     </DocSection>
     <DocSection title="3. No Guarantee of Accuracy">
-      <DocP>Astrological content in Celestial Insights is written with care and rooted in established astrological tradition. However, Ayssia Mason and Celestial Insights make no representations or warranties regarding the accuracy, completeness, reliability, or applicability of any content to your personal situation.</DocP>
+      <DocP>Astrological content in Arewewoke is written with care and rooted in established astrological tradition. However, Ayssia Mason and Arewewoke make no representations or warranties regarding the accuracy, completeness, reliability, or applicability of any content to your personal situation.</DocP>
     </DocSection>
     <DocSection title="4. Personal Responsibility">
-      <DocP>You are solely responsible for how you interpret and apply any content you encounter in Celestial Insights. The app is designed to offer perspective, reflection, and entertainment -- not directives.</DocP>
+      <DocP>You are solely responsible for how you interpret and apply any content you encounter in Arewewoke. The app is designed to offer perspective, reflection, and entertainment -- not directives.</DocP>
     </DocSection>
     <DocSection title="5. Limitation of Liability">
-      <DocP>To the fullest extent permitted by applicable law, Ayssia Mason and Celestial Insights shall not be liable for any direct, indirect, incidental, consequential, or special damages arising from your use of or reliance on any content within the app.</DocP>
+      <DocP>To the fullest extent permitted by applicable law, Ayssia Mason and Arewewoke shall not be liable for any direct, indirect, incidental, consequential, or special damages arising from your use of or reliance on any content within the app.</DocP>
     </DocSection>
     <DocSection title="6. Contact">
-      <DocP>If you have questions about this Disclaimer: Celestial.insights.app@gmail.com</DocP>
+      <DocP>If you have questions about this Disclaimer: arewewoke@gmail.com</DocP>
     </DocSection>
   </>;
 }
 
 function CreditsContent() {
   return <>
-    <DocP>Celestial Insights is a curated astrology application created by Ayssia Mason. Ayssia Mason does not claim to be the original or sole author of the astrological frameworks, interpretations, or traditions referenced within this application. This app is a creative and educational synthesis of established astrological knowledge, reinterpreted and presented in an accessible format for a modern audience.</DocP>
+    <DocP>Arewewoke is a curated astrology application created by Ayssia Mason. Ayssia Mason does not claim to be the original or sole author of the astrological frameworks, interpretations, or traditions referenced within this application. This app is a creative and educational synthesis of established astrological knowledge, reinterpreted and presented in an accessible format for a modern audience.</DocP>
     <DocSection title="Astrological Authors & Scholars">
       <DocBullet items={[
         "Steven Forrest -- Author of The Inner Sky, The Book of the Moon, and numerous foundational works on evolutionary astrology.",
@@ -891,7 +891,7 @@ function CreditsContent() {
       <DocP>Where specific astrologers are quoted or referenced within app content, these references are made in the spirit of educational acknowledgment and do not imply endorsement by those individuals or their estates. All referenced works remain the intellectual property of their respective authors and publishers.</DocP>
     </DocSection>
     <DocSection title="Contact">
-      <DocP>If you are a rights holder with a concern about attribution: Celestial.insights.app@gmail.com</DocP>
+      <DocP>If you are a rights holder with a concern about attribution: arewewoke@gmail.com</DocP>
     </DocSection>
   </>;
 }
