@@ -167,8 +167,259 @@ Aquarius:["I have always felt slightly outside the group, even when I am in it."
 Pisces:["I absorb other people's moods without meaning to.","I have a rich inner world that is more real to me than most of reality.","Creative work is not just something I do -- it is how I survive.","I often know things without knowing how I know them.","I love without limits, which is both my gift and my wound."],
 };
 
+// ── DAILY HOROSCOPES (7 rotating per sign, index = dayOfWeek) ──
+const dailyHoroscopes = {
+Aries: [
+"The Sun's current position activates your first house of identity -- today is not the day to shrink. Say the thing you have been rehearsing. Lead with your instinct and clean up the details later. Your directness is not too much; it is exactly what is needed.",
+"Mars is stirring your sector of ambition and this energy wants an outlet. Channel it into the project that has been stalling. A short burst of focused effort today will move something further than a week of cautious planning ever could.",
+"The Moon in your opposing sign asks you to pause before firing. Your instinct is correct but your timing can be refined. What you have to say will land harder if you wait until the room is ready to receive it.",
+"Venus brushes your chart today with an invitation toward pleasure and ease. You have been pushing hard. The cosmos is giving you permission to stop. Rest is not retreat -- it is strategy.",
+"A trine between your ruling planet Mars and the outer planets opens a window of unusual clarity. You see exactly what needs to happen and exactly who is in the way. Move decisively but without cruelty.",
+"Your fire is at a peak today but it needs direction, not just ignition. Pick the one thing that matters most and give it everything. Scattered effort will leave you tired. Focused effort will leave you ahead.",
+"The lunar energy today softens your edges just enough to make you approachable to someone who has been waiting for the right moment. Let them in. Not everyone who wants access is a threat.",
+],
+Taurus: [
+"Venus, your ruling planet, is making a quiet but significant move today that touches your sector of values and self-worth. Something you have been underselling -- about yourself, your work, your time -- is ready to be reassessed at its true price.",
+"The Moon in an earth sign today deepens your already considerable capacity for patience. Use it. The situation that feels stalled is not dead -- it is composting. What grows from this will be more substantial than what you originally planted.",
+"A financial or material matter that has been vague is becoming clearer. The numbers are telling you something if you are willing to do the arithmetic honestly. Do not round down what you are owed.",
+"Your senses are particularly sharp today -- beauty, pleasure, and physical comfort are not distractions from your purpose. They are part of how you restore the energy you give so steadily to everything and everyone around you.",
+"Resistance you have been feeling toward a particular change is worth examining today. Is it genuine wisdom or familiar comfort? The answer to that question will tell you everything you need to know about what to do next.",
+"The Sun illuminates your sector of communication and asks you to say the thing you have been holding in careful, measured silence. You do not have to be dramatic. You just have to be honest.",
+"A creative or financial opportunity that seemed to have passed is circling back. This time, the terms are better and you are better prepared. Do not let familiarity breed dismissal -- look at it fresh.",
+],
+Gemini: [
+"Mercury, your ruling planet, is in a particularly agile position today, sharpening your already quick mind to an unusual degree. The idea that surfaces in conversation, almost as a throwaway, is not a throwaway. Write it down.",
+"The dual nature of your sign is an asset today, not a liability. You can see both sides with perfect clarity, which puts you in the rare position of being able to broker a genuine resolution rather than just a temporary peace.",
+"Your social sector is lit up and the connections you make today have longer roots than they appear. The casual introduction, the brief exchange -- these are seeds. The harvest is further out than you can see from here.",
+"Information that has been incomplete is filling in. Hold off on the conclusion you were about to reach until the full picture is available, which it will be by the end of the day if you stay curious rather than closing early.",
+"Restlessness is real today and fighting it will cost more than redirecting it. Give yourself permission to move between projects, conversations, and ideas. The synthesis you are unconsciously building will reveal itself soon.",
+"A communication from someone unexpected is worth more than face value. Read between the lines -- not with suspicion but with your natural gift for subtext. What they are not saying is the most important part of the message.",
+"The Moon activates your seventh house of partnership today. Someone in your orbit is more aligned with your vision than you have given them credit for. The collaboration you have been trying to build alone is available if you ask.",
+],
+Cancer: [
+"The Moon, your ruling planet, is in a powerful position today that amplifies your already extraordinary intuition. The feeling you have about a situation -- the one you keep talking yourself out of with logic -- is correct. Trust it.",
+"Your home and emotional life are under a gentle but clarifying light today. Something that has felt murky about a domestic situation or a family dynamic is becoming clear enough to address. The conversation you have been postponing is ready.",
+"A creative project that lives close to your heart is asking for more of your time and attention. The practical reasons to delay it are real but not as urgent as they feel. Give it one hour today. One hour will remind you why it matters.",
+"Your empathy is at its peak today and the people around you can feel it. Someone will seek you out for support. Give what you genuinely have -- not what you think you should have. Authentic presence is more valuable than performed strength.",
+"The Sun is activating your sector of values and asking you to identify what you are no longer willing to accept. You have been accommodating something -- a situation, a dynamic, a habit -- that has outlived its justification.",
+"A financial or security matter that has been causing low-level anxiety is ready to be looked at directly. The reality, once you see it clearly, is more manageable than the fear has been. Numbers first. Catastrophe later, only if warranted.",
+"Old feelings about a past relationship or unresolved situation are surfacing today -- not to destabilize you but to complete something. Let them move through rather than pushing them back down. What you feel today is asking to be finished.",
+],
+Leo: [
+"The Sun, your ruling planet, is in a position of particular strength today and its light is falling directly on you. This is not a day to be modest about what you want, what you have built, or what you are capable of. Step into the spotlight you were made for.",
+"Your creative sector is activated and the idea that feels too big, too bold, or too much is probably exactly the right size. The instinct to scale it back is fear dressed as practicality. Make it bigger.",
+"A recognition or acknowledgment you have been waiting for is closer than it appears. In the meantime, the most powerful move is to act as if it has already arrived -- not from ego but from genuine self-knowledge.",
+"Someone in your orbit needs your particular brand of warmth and confidence today. You have the ability to make people feel like the best version of themselves simply by believing in them fully. Use that gift deliberately.",
+"The Moon is moving through your sector of home and private life, asking you to tend to your inner world with the same generosity you bring to your public one. What you need to restore yourself is not a luxury -- it is maintenance.",
+"A leadership opportunity is presenting itself in a context where you least expected it. You do not need a title or a platform to lead. You just need to be willing to go first, which has always been your nature.",
+"A creative or romantic situation that stalled is being reanimated by today's planetary weather. Approach it with fresh eyes rather than the weight of what did not work before. The circumstances have shifted even if the situation looks the same.",
+],
+Virgo: [
+"Mercury, your ruling planet, is making precise and favorable contacts today that sharpen your analytical capacity to a fine edge. The problem that has resisted solution is ready to yield. Come at it from the angle you have not tried yet.",
+"Your sector of health and daily routine is illuminated today. The small adjustment you have been meaning to make -- the one that feels too minor to prioritize -- is more significant than it appears. Small pivots compound over time.",
+"A work situation is asking for your most characteristic gift: the ability to see exactly what is wrong and know precisely how to fix it. Do not undervalue this skill or give it away without appropriate acknowledgment.",
+"The perfectionism that drives your best work is working against you in one specific area today. Done is better than endlessly refined. The version you have is good enough to release, receive feedback on, and improve from there.",
+"Someone is underestimating you in a professional context. The most effective response is not to correct them verbally but to deliver work so precise and so excellent that the misperception corrects itself.",
+"Your body is communicating something today that your mind has been overriding. The fatigue, the tension, the persistent low-level signal -- these are data, not weakness. Listen to what they are telling you.",
+"A collaborative project benefits enormously from your attention to detail today. What others would let slide, you catch -- and what you catch matters more than anyone currently realizes. The work will prove it in time.",
+],
+Libra: [
+"Venus, your ruling planet, is in a harmonious position today that smooths the friction in a relationship or partnership that has felt slightly off-balance. The conversation you initiate today -- gently, with genuine fairness -- will do more good than weeks of careful avoidance.",
+"Your aesthetic sensibility is particularly sharp today. Trust it in creative decisions, in how you present yourself, and in the environment you curate around you. Beauty is not vanity for Libra -- it is intelligence.",
+"A decision you have been holding in suspension is ready to be made. You have enough information. The final 10% you are waiting for will not arrive before the window closes. Choose, knowing you can course correct.",
+"The scales are tipping in your favor in a professional context today. The fairness you have been advocating for -- perhaps quietly, perhaps for a long time -- is being recognized by someone with the ability to act on it.",
+"A one-on-one relationship of any kind -- romantic, professional, or friendship -- is ready for a deeper conversation than the ones you have been having. You know what needs to be said. So do they.",
+"Your natural diplomacy is an asset in a group situation today where tensions are running higher than the actual stakes warrant. You are the person in the room who can name what is really happening without making it worse.",
+"Something you created or contributed to is being seen more widely than you know. The reach is extending beyond the original audience. Trust that the work speaks for itself even when you are not in the room to advocate for it.",
+],
+Scorpio: [
+"Pluto, your co-ruler, is making a long and slow contact with a sensitive point in your chart that is asking you to release something you have been holding tightly -- a grievance, a version of the story, a person you have not fully let go of. The release will not diminish you. It will free you.",
+"Your instincts about a situation involving shared resources, finances, or power are accurate today. Do not second-guess what you already know. The information you are sensing beneath the surface is real even without the evidence to prove it yet.",
+"A transformation that has been underway beneath the surface of your life is becoming visible today. What felt like loss or dismantling in recent months is revealing its purpose. The new structure is beginning to show.",
+"Someone is not being fully honest with you in a situation that matters. You already know this. The question is not whether to address it but how -- directly enough to get the truth, carefully enough to preserve what is worth preserving.",
+"Your depth is your greatest asset and your most demanding companion. Today it wants to be expressed -- in art, in conversation, in work that requires you to go somewhere most people will not. Go there.",
+"A healing opportunity presents itself today in an unexpected form. It might look like a difficult conversation, an uncomfortable realization, or an invitation to revisit something you thought was finished. Accept it.",
+"The intimacy you crave -- genuine, total, nothing-held-back -- is available today if you are willing to go first. The vulnerability you are most afraid of is the exact thing that will create the connection you most want.",
+],
+Sagittarius: [
+"Jupiter, your ruling planet, is in a expansive and fortunate position today that opens a door you have been knocking on for a while. Walk through it before you talk yourself into waiting for a better moment. The moment is now.",
+"Your philosophical mind is particularly active today and the insight you are circling -- the one that keeps returning no matter how many times you redirect your attention -- is worth stopping to examine fully. It is trying to tell you something important.",
+"An opportunity involving travel, education, publishing, or the expansion of your reach in some direction is presenting itself. It may look smaller than what you imagined but it is the right shape. Scale is not always about size.",
+"Your honesty is your greatest gift and your most common social casualty. Today, before you say the true thing, ask yourself: is this the right moment, the right person, and the right way? The truth does not lose its power from a one-hour delay.",
+"The freedom you are seeking in a particular area of your life is closer than it appears. One practical step -- just one -- in the direction of what you actually want will shift the energy of the entire situation.",
+"A teacher, mentor, or guide appears today in a form you might not immediately recognize. Stay open to wisdom from unexpected sources. The most useful insight often arrives without credentials.",
+"Your faith -- in yourself, in the process, in whatever larger force you trust -- is being tested in a specific area right now. Hold it. Not because everything is fine but because your belief in what is possible is one of your most reliable navigation tools.",
+],
+Capricorn: [
+"Saturn, your ruling planet, is making a stabilizing contact today that rewards the discipline you have maintained through a period that has not been easy. Evidence of that is beginning to surface. Do not dismiss the small signs -- they are the leading edge of something substantial.",
+"A professional matter that has required patience beyond what felt reasonable is reaching a resolution point. The long game you have been playing is paying out. Stay steady for just a little longer.",
+"Your reputation and public standing are benefiting today from work you did quietly, without acknowledgment, some time ago. The credit is arriving on a delay -- as it often does for Capricorn -- but it is arriving.",
+"An authority figure or institutional structure that has been a source of friction is becoming more navigable. Your understanding of how power actually works -- not how it should work but how it does -- is your most undervalued asset.",
+"Your body is asking for rest and your ambition is refusing to grant it. Today the body wins. The work will be sharper, faster, and more effective after genuine recovery than it ever is after exhausted effort.",
+"A long-term goal that has felt impossibly distant is showing signs of becoming real. The gap between where you are and where you are going has narrowed significantly. You may not be able to see this yet from inside the climb, but it is true.",
+"Someone in your professional circle is watching your steadiness with more admiration than they have expressed. The influence you carry is larger than your visibility -- which is exactly how you prefer it.",
+],
+Aquarius: [
+"Uranus, your modern ruler, is activating your sector of innovation and originality today in a way that makes your most unconventional ideas not just acceptable but necessary. The room needs what only you can see from where you are standing.",
+"A community, group, or collective effort that you are part of is reaching a moment where your specific contribution -- your particular angle, your unusual perspective -- is exactly what is missing. Offer it without waiting to be asked.",
+"Your intellectual independence is being tested by a group consensus that does not feel right to you. Trust your read. History consistently shows that the Aquarian who holds their position -- thoughtfully, not stubbornly -- is often the one who turns out to be correct.",
+"A friendship or platonic connection is deepening in a way that surprises you. The person who felt like a peripheral figure in your life is becoming a genuine anchor. Let them.",
+"The cause or vision you carry -- the one that feels too large and too far away to be practical -- is receiving energy today. A small act in service of it will have disproportionate impact. Do not wait until conditions are ideal.",
+"Your need for space is particularly pronounced today and honoring it is not antisocial -- it is necessary. The ideas that will serve the collective best emerge when you have had genuine time alone to let them develop.",
+"A technology, system, or unconventional approach you have been exploring is closer to ready than you think. The resistance you are encountering is not evidence that it will not work. It is evidence that it is new.",
+],
+Pisces: [
+"Neptune, your ruling planet, is in a deeply creative and spiritually attuned position today that makes your intuition almost uncomfortably accurate. The sense you have about a situation -- the one that has no logical basis -- is worth following.",
+"Your creative work is receiving invisible but real support from the planetary weather today. The project that has been stalled is not stuck -- it is incubating. Return to it with fresh eyes and no agenda. Something will open.",
+"A boundary you have been struggling to maintain is being tested again today. The compassion that makes you want to give more than you have is real and beautiful -- and it needs a limit to remain sustainable. You can care without dissolving.",
+"The emotional weight you have been carrying for someone else -- their anxiety, their grief, their unresolved energy -- is not yours to hold indefinitely. Today is a good day to consciously return what is not yours and reclaim what is.",
+"A spiritual or creative insight is arriving today through an unexpected channel -- a conversation, a dream fragment, something you overhear, something you read. The message you receive in passing is not passing. It is for you.",
+"Your sensitivity to the emotional atmosphere around you is heightened today. Spend time in environments and with people that nourish rather than drain you. This is not avoidance -- it is discernment, which is one of your most important and least practiced skills.",
+"Something you released -- a relationship, a project, a version of yourself -- is showing you today why the release was necessary. The distance is giving you clarity that closeness never could. Trust the wisdom of what you let go.",
+],
+};
+
 const celebBySign = {};
 celebrities.forEach(c => { if (!celebBySign[c.sign]) celebBySign[c.sign]=[]; celebBySign[c.sign].push(c); });
+
+// ── REPLACE these two URLs when Stripe is connected ──
+const STRIPE_PAYMENT_LINK = "https://buy.stripe.com/YOUR_PAYMENT_LINK";
+const STRIPE_PORTAL_LINK  = "https://billing.stripe.com/p/login/YOUR_PORTAL_LINK";
+
+function DailyHoroscope() {
+  const [selectedSign, setSelectedSign] = useState(null);
+  const [hasUsedFree, setHasUsedFree] = useState(false);
+  const [showPaywall, setShowPaywall] = useState(false);
+  const [subscribed, setSubscribed] = useState(false);
+
+  const todayIndex = new Date().getDay();
+  const days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+  const today = days[todayIndex];
+
+  const accent = selectedSign ? colors[selectedSign] : "#e8a800";
+  const horoscope = selectedSign ? dailyHoroscopes[selectedSign][todayIndex] : null;
+
+  const handleSignSelect = (sign) => {
+    if (selectedSign === sign) { setSelectedSign(null); return; }
+    setSelectedSign(sign);
+    setShowPaywall(false);
+  };
+
+  const handleRead = () => {
+    if (!hasUsedFree) { setHasUsedFree(true); }
+    else if (!subscribed) { setShowPaywall(true); }
+  };
+
+  const handleSubscribe = () => { window.open(STRIPE_PAYMENT_LINK, "_blank"); };
+  const handleManage    = () => { window.open(STRIPE_PORTAL_LINK,  "_blank"); };
+
+  return (
+    <div style={{animation:"up .5s ease"}}>
+
+      {/* ── Header ── */}
+      <div style={{textAlign:"center",marginBottom:28}}>
+        <div style={{fontSize:36,marginBottom:10}}>🌠</div>
+        <h2 style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:24,color:"#f5c842",margin:"0 0 8px"}}>Daily Horoscope</h2>
+        <p style={{fontFamily:"Georgia,serif",color:"#a8e060",fontSize:14,margin:"0 0 10px"}}>Your cosmic forecast for {today}.</p>
+
+        {/* Member badge + Manage Subscription */}
+        {subscribed && (
+          <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:10}}>
+            <div style={{display:"inline-block",background:"rgba(168,224,96,0.08)",border:"1px solid rgba(168,224,96,0.3)",borderRadius:100,padding:"5px 16px"}}>
+              <span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#a8e060",letterSpacing:".1em"}}>✦ CELESTIAL INSIGHTS MEMBER ✦</span>
+            </div>
+            {/* Manage Subscription button -- opens Stripe Customer Portal */}
+            <button
+              onClick={handleManage}
+              style={{background:"none",border:"1px solid rgba(168,224,96,0.35)",color:"#a8e060",padding:"7px 20px",borderRadius:"100px",fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,letterSpacing:".1em",cursor:"pointer",transition:"all .2s"}}
+            >
+              ⚙ MANAGE SUBSCRIPTION
+            </button>
+            <p style={{fontFamily:"Georgia,serif",fontSize:11,color:"#4a4840",margin:0,lineHeight:1.5}}>
+              Cancel, update payment, or view billing history -- all in one place via Stripe. A confirmation email will be sent automatically when you cancel.
+            </p>
+          </div>
+        )}
+
+        {/* Non-member badge */}
+        {!subscribed && (
+          <div style={{display:"inline-block",background:"rgba(255,200,50,0.08)",border:"1px solid rgba(255,200,50,0.25)",borderRadius:100,padding:"5px 16px",marginTop:6}}>
+            <span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#f5c842",letterSpacing:".1em"}}>
+              {hasUsedFree ? "✦ SUBSCRIBE FOR $8.80/MO TO UNLOCK ALL SIGNS DAILY" : "✦ ONE FREE READING TODAY -- THEN $8.80/MONTH"}
+            </span>
+          </div>
+        )}
+      </div>
+
+      {/* ── Sign selector ── */}
+      <div style={{marginBottom:24}}>
+        <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,letterSpacing:".18em",color:"#f5c842",marginBottom:12,textAlign:"center"}}>SELECT YOUR SIGN</div>
+        <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:7}}>
+          {signs.map(s=>(
+            <button key={s} className={"sb"+(selectedSign===s?" sel":"")} style={{"--a":colors[s]}} onClick={()=>handleSignSelect(s)}>
+              <div style={{fontSize:16,marginBottom:3}}>{emojis[s]}</div>
+              <div style={{fontSize:9}}>{s}</div>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* ── Horoscope reveal (free or subscribed) ── */}
+      {selectedSign && !showPaywall && (
+        <div style={{animation:"up .4s ease"}}>
+          {!hasUsedFree && (
+            <div style={{textAlign:"center",marginBottom:20}}>
+              <button className="rb" style={{"--a":accent}} onClick={handleRead}>✦ REVEAL MY HOROSCOPE</button>
+            </div>
+          )}
+
+          {hasUsedFree && (
+            <div className="fc" style={{"--a":accent}}>
+              <div style={{position:"absolute",top:14,right:16,fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,letterSpacing:".12em",color:accent,opacity:.7}}>{today.toUpperCase()}</div>
+              <div style={{fontSize:28,marginBottom:14,textAlign:"center"}}>{emojis[selectedSign]}</div>
+              <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,letterSpacing:".18em",color:accent,textAlign:"center",marginBottom:14}}>{selectedSign.toUpperCase()} -- {today.toUpperCase()}</div>
+              <p style={{fontFamily:"Georgia,serif",fontWeight:700,fontSize:"clamp(14px,3vw,18px)",lineHeight:1.85,margin:"0 0 22px",color:"#f5f0e0",textAlign:"center"}}>{horoscope}</p>
+              <div style={{textAlign:"center"}}><span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,letterSpacing:".18em",color:accent,opacity:.6}}>✦ CELESTIAL INSIGHTS ✦</span></div>
+            </div>
+          )}
+
+          {/* Subscribe prompt shown after free read */}
+          {hasUsedFree && !subscribed && (
+            <div style={{textAlign:"center",marginTop:20,padding:"24px 20px",background:"rgba(255,200,50,0.04)",border:"1px solid rgba(255,200,50,0.15)",borderRadius:16,animation:"up .4s ease"}}>
+              <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:13,color:"#f5c842",marginBottom:8}}>Want your horoscope every day?</div>
+              <p style={{fontFamily:"Georgia,serif",color:"#a8c070",fontSize:13,marginBottom:16,lineHeight:1.6}}>Subscribe to Celestial Insights for $8.80/month and unlock daily horoscopes for all 12 signs, updated every morning.</p>
+              <button className="rb" style={{"--a":"#e8a800"}} onClick={handleSubscribe}>✦ SUBSCRIBE FOR $8.80/MONTH</button>
+              <p style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,color:"#4a4440",marginTop:12,letterSpacing:".08em"}}>CANCEL ANYTIME INSTANTLY VIA STRIPE -- NO EMAILING REQUIRED</p>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ── Paywall ── */}
+      {selectedSign && showPaywall && (
+        <div style={{animation:"up .4s ease",textAlign:"center"}}>
+          <div style={{background:"rgba(255,200,50,0.05)",border:"1px solid rgba(255,200,50,0.2)",borderRadius:20,padding:"36px 28px",marginBottom:20,position:"relative",overflow:"hidden"}}>
+            <div style={{position:"absolute",top:0,left:0,right:0,height:2,background:"linear-gradient(90deg,transparent,#e8a800,transparent)"}}/>
+            <div style={{fontSize:36,marginBottom:14}}>🔒</div>
+            <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:18,color:"#f5c842",marginBottom:10}}>Your Free Reading Is Complete</div>
+            <p style={{fontFamily:"Georgia,serif",color:"#a8c070",fontSize:14,lineHeight:1.7,marginBottom:24}}>Subscribe to Celestial Insights for $8.80/month to unlock daily horoscopes for all 12 signs -- fresh cosmic guidance every morning.</p>
+            <div style={{display:"flex",flexDirection:"column",gap:10,alignItems:"center",marginBottom:24}}>
+              {["Daily horoscopes for all 12 signs","New reading every morning","Rooted in real planetary positions","Cancel anytime instantly via Stripe -- no emailing required","Cancellation confirmation sent to your email automatically"].map(f=>(
+                <div key={f} style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,color:"#a8e060",letterSpacing:".04em"}}>✦ {f}</div>
+              ))}
+            </div>
+            <button className="rb" style={{"--a":"#e8a800"}} onClick={handleSubscribe}>✦ SUBSCRIBE FOR $8.80/MONTH</button>
+            <p style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,color:"#4a4440",marginTop:14,letterSpacing:".08em"}}>SECURE PAYMENT VIA STRIPE</p>
+          </div>
+        </div>
+      )}
+
+      {!selectedSign && (
+        <div style={{textAlign:"center",padding:"24px 0",fontFamily:"Georgia,serif",color:"#6a6058",fontSize:15}}>Select your sign above to receive today's horoscope ✨</div>
+      )}
+    </div>
+  );
+}
 
 function CelebrityAvatar({ celeb }) {
 return (
@@ -252,11 +503,12 @@ return (
 
   <div style={{position:"relative",zIndex:1,maxWidth:700,margin:"0 auto",padding:"20px 18px 80px"}}>
     <div style={{display:"flex",gap:8,justifyContent:"center",marginBottom:24,flexWrap:"wrap"}}>
-      {[{label:"✦ Fun Facts",key:"facts"},{label:"🌟 Celebrity",key:"celebrity"},{label:"🔮 Guess Your Sign",key:"guess"}].map(tab=>(
+      {[{label:"✦ Fun Facts",key:"facts"},{label:"🌠 Daily Horoscope",key:"horoscope"},{label:"🌟 Celebrity",key:"celebrity"},{label:"🔮 Guess Your Sign",key:"guess"}].map(tab=>(
         <button key={tab.key} onClick={()=>{setTopTab(tab.key);setMode("home");reset();}} style={{background:topTab===tab.key?"linear-gradient(135deg,#e8a800,#8a6000)":"rgba(255,200,50,0.08)",border:"2px solid "+(topTab===tab.key?"#e8a800":"rgba(255,200,50,0.3)"),color:topTab===tab.key?"#0d0a14":"#f5c842",padding:"11px 18px",borderRadius:"100px",fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:11,letterSpacing:".09em",cursor:"pointer",transition:"all 0.25s",boxShadow:topTab===tab.key?"0 0 16px 4px rgba(232,168,0,0.3)":"none"}}>{tab.label}</button>
       ))}
     </div>
 
+    {topTab==="horoscope" && <DailyHoroscope />}
     {topTab==="celebrity" && <CelebrityConnection />}
     {topTab==="guess" && <GuessYourSign />}
 
@@ -331,10 +583,56 @@ return (
       )}
     </>}
 
-    <div style={{textAlign:"center",marginTop:60,paddingTop:24,borderTop:"1px solid rgba(255,200,50,0.08)"}}>
-      <p style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:11,color:"#3a3430",margin:0,letterSpacing:".1em"}}>
-        powered by <span style={{color:"#a8e060"}}>Ayssia</span>
+    <div style={{marginTop:60,paddingTop:28,borderTop:"1px solid rgba(255,200,50,0.08)"}}>
+
+      {/* Legal links */}
+      <div style={{display:"flex",flexWrap:"wrap",justifyContent:"center",gap:"6px 18px",marginBottom:16}}>
+        {[
+          { label:"Terms of Service",    href:"mailto:Celestial.insights.app@gmail.com?subject=Terms of Service Request" },
+          { label:"Privacy Policy",      href:"mailto:Celestial.insights.app@gmail.com?subject=Privacy Policy Request" },
+          { label:"Cancellation Policy", href:"mailto:Celestial.insights.app@gmail.com?subject=Cancellation Policy Request" },
+          { label:"Disclaimer",          href:"mailto:Celestial.insights.app@gmail.com?subject=Disclaimer Request" },
+          { label:"Credits & Sources",   href:"mailto:Celestial.insights.app@gmail.com?subject=Credits and Sources Request" },
+        ].map(link=>(
+          <a
+            key={link.label}
+            href={link.href}
+            style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#4a4440",letterSpacing:".08em",textDecoration:"none",transition:"color .2s"}}
+            onMouseEnter={e=>e.target.style.color="#a8e060"}
+            onMouseLeave={e=>e.target.style.color="#4a4440"}
+          >
+            {link.label}
+          </a>
+        ))}
+      </div>
+
+      {/* Divider dots */}
+      <div style={{textAlign:"center",color:"#2a2420",fontFamily:"'Cinzel',serif",fontSize:9,marginBottom:14,letterSpacing:".2em"}}>✦ ✦ ✦</div>
+
+      {/* Disclaimer blurb */}
+      <p style={{fontFamily:"Georgia,serif",fontSize:10,color:"#3a3228",textAlign:"center",lineHeight:1.7,margin:"0 0 16px",padding:"0 12px"}}>
+        Celestial Insights is for entertainment purposes only. Astrological content does not constitute professional advice of any kind. Ayssia Mason does not claim to be the original author of the astrological frameworks referenced in this app. See Credits & Sources for full attribution.
       </p>
+
+      {/* Contact */}
+      <div style={{textAlign:"center",marginBottom:18}}>
+        <a
+          href="mailto:Celestial.insights.app@gmail.com"
+          style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#4a4440",letterSpacing:".1em",textDecoration:"none"}}
+          onMouseEnter={e=>e.target.style.color="#a8e060"}
+          onMouseLeave={e=>e.target.style.color="#4a4440"}
+        >
+          Celestial.insights.app@gmail.com
+        </a>
+      </div>
+
+      {/* Powered by */}
+      <div style={{textAlign:"center"}}>
+        <p style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,color:"#2a2420",margin:0,letterSpacing:".1em"}}>
+          powered by <span style={{color:"#a8e060"}}>Ayssia</span>
+        </p>
+      </div>
+
     </div>
   </div>
 </div>
