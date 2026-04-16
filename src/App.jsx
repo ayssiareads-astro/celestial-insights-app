@@ -283,8 +283,8 @@ const celebBySign = {};
 celebrities.forEach(c => { if (!celebBySign[c.sign]) celebBySign[c.sign]=[]; celebBySign[c.sign].push(c); });
 
 // ── REPLACE these two URLs when Stripe is connected ──
-const STRIPE_PAYMENT_LINK = "https://buy.stripe.com/YOUR_PAYMENT_LINK";
-const STRIPE_PORTAL_LINK  = "https://billing.stripe.com/p/login/YOUR_PORTAL_LINK";
+const STRIPE_PAYMENT_LINK = "https://buy.stripe.com/5kQ3co6dzeub70TfIx5sA00";
+const STRIPE_PORTAL_LINK  = "https://billing.stripe.com/p/login/5kQ3co6dzeub70TfIx5sA00";
 
 function DailyHoroscope() {
   const [selectedSign, setSelectedSign] = useState(null);
