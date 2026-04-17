@@ -21,19 +21,18 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: `Webhook error: ${err.message}` });
   }
 
-  const email = event.data.object.customer_email 
-    || event.data.object.customer_details?.email;
+  const obj = event.data.object;
+  const email = obj.customer_email || obj.customer_details?.email;
 
   switch (event.type) {
     case 'customer.subscription.created':
     case 'customer.subscription.updated':
     case 'invoice.payment_succeeded':
-      if (email) await kv.set(`sub:${email}`, 'active');
+      if (email) await kv.set(`sub:${email.toLowerCase()}`, 'active');
       break;
-
     case 'customer.subscription.deleted':
     case 'invoice.payment_failed':
-      if (email) await kv.set(`sub:${email}`, 'inactive');
+      if (email) await kv.set(`sub:${email.toLowerCase()}`, 'inactive');
       break;
   }
 
