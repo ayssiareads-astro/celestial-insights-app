@@ -362,8 +362,12 @@ function GuessYourSign() {
   const [guess, setGuess] = useState(null);
   const [feedback, setFeedback] = useState(null);
   const [score, setScore] = useState({correct:0,total:0});
-  const [awaitingStripe, setAwaitingStripe] = useState(false);
-
+ 
+  // Email verification state
+  const [emailInput, setEmailInput] = useState("");
+  const [verifying, setVerifying] = useState(false);
+  const [verifyError, setVerifyError] = useState(null);
+ 
   const pickQuestion = (prevUsed) => {
     const available = allGuessQuestions.map((_,i)=>i).filter(i=>!prevUsed.includes(i));
     if (available.length === 0) {
@@ -373,13 +377,19 @@ function GuessYourSign() {
     const idx = available[Math.floor(Math.random()*available.length)];
     return { q: allGuessQuestions[idx], newUsed: [...prevUsed, idx] };
   };
-
+ 
+  const goToNextQuestion = (currentUsed) => {
+    const { q, newUsed } = pickQuestion(currentUsed);
+    setCurrentQ(q); setUsedIndices(newUsed); setClueIndex(0);
+    setGuess(null); setFeedback(null); setStep("playing");
+  };
+ 
   const startGame = () => {
     const { q, newUsed } = pickQuestion([]);
     setCurrentQ(q); setUsedIndices(newUsed); setClueIndex(0);
     setGuess(null); setFeedback(null); setStep("playing");
   };
-
+ 
   const handleGuess = (g) => {
     const correct = g === currentQ.sign;
     setScore(s=>({correct:s.correct+(correct?1:0),total:s.total+1}));
@@ -387,31 +397,54 @@ function GuessYourSign() {
     setFeedback(correct?"Correct! "+currentQ.sign+" energy is undeniable.":"Not quite – this was "+currentQ.sign+" "+(emojis[currentQ.sign]||""));
     setStep("result");
   };
-
+ 
   const handleNext = () => {
     const nextAnswered = questionsAnswered + 1;
     setQuestionsAnswered(nextAnswered);
     if (nextAnswered >= FREE_QUESTIONS && !trialActivated) { setStep("paywall"); return; }
-    const { q, newUsed } = pickQuestion(usedIndices);
-    setCurrentQ(q); setUsedIndices(newUsed); setClueIndex(0);
-    setGuess(null); setFeedback(null); setStep("playing");
+    goToNextQuestion(usedIndices);
   };
-
-  const handleStartTrial = () => { setAwaitingStripe(true); window.open(STRIPE_TRIAL_LINK, "_blank"); };
-
-  const handleConfirmTrial = () => {
-    setTrialActivated(true); setAwaitingStripe(false);
-    const { q, newUsed } = pickQuestion(usedIndices);
-    setCurrentQ(q); setUsedIndices(newUsed); setClueIndex(0);
-    setGuess(null); setFeedback(null); setStep("playing");
+ 
+  const handleOpenStripe = () => {
+    window.open(STRIPE_TRIAL_LINK, "_blank");
+    setStep("verify");
+    setVerifyError(null);
+    setEmailInput("");
   };
-
+ 
+  const handleVerifyEmail = async () => {
+    const email = emailInput.trim().toLowerCase();
+    if (!email || !email.includes("@")) {
+      setVerifyError("Please enter a valid email address.");
+      return;
+    }
+    setVerifying(true);
+    setVerifyError(null);
+    try {
+      const res = await fetch(`/api/check-subscription?email=${encodeURIComponent(email)}`);
+      const data = await res.json();
+      if (data.active) {
+        setTrialActivated(true);
+        goToNextQuestion(usedIndices);
+      } else if (data.status === "trial_expired") {
+        setVerifyError("Your trial has expired. Please subscribe to keep playing.");
+      } else {
+        setVerifyError("We could not confirm your subscription yet. Stripe can take up to 30 seconds. Please wait a moment and try again.");
+      }
+    } catch (err) {
+      setVerifyError("Something went wrong. Please check your connection and try again.");
+    } finally {
+      setVerifying(false);
+    }
+  };
+ 
   const resetAll = () => {
     setQuestionsAnswered(0); setUsedIndices([]); setCurrentQ(null);
     setClueIndex(0); setStep("start"); setGuess(null); setFeedback(null);
-    setScore({correct:0,total:0}); setAwaitingStripe(false);
+    setScore({correct:0,total:0}); setEmailInput(""); setVerifyError(null); setVerifying(false);
   };
-
+ 
+  // START
   if (step === "start") return (
     <div style={{animation:"up .5s ease",textAlign:"center",paddingTop:20}}>
       <div style={{fontSize:48,marginBottom:16}}>🔮</div>
@@ -425,7 +458,8 @@ function GuessYourSign() {
       {score.total>0&&<p style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:11,color:"#f5c842",marginTop:20}}>Score: {score.correct}/{score.total}</p>}
     </div>
   );
-
+ 
+  // PAYWALL
   if (step === "paywall") return (
     <div style={{animation:"up .5s ease",textAlign:"center"}}>
       <div style={{background:"linear-gradient(135deg,rgba(232,168,0,0.1),rgba(0,0,0,0.3))",border:"1px solid rgba(255,200,50,0.35)",borderRadius:20,padding:"36px 28px",marginBottom:20,position:"relative",overflow:"hidden"}}>
@@ -443,17 +477,8 @@ function GuessYourSign() {
             <div key={i} style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,color:"#a8e060",letterSpacing:".06em"}}>{item}</div>
           ))}
         </div>
-        {!awaitingStripe ? (
-          <>
-            <button className="rb" style={{"--a":"#e8a800",marginBottom:14}} onClick={handleStartTrial}>✦ START MY FREE TRIAL</button>
-            <p style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,color:"#4a4440",margin:"0 0 18px",letterSpacing:".08em"}}>CARD AUTHORIZATION TODAY · $4.99/MONTH AFTER 7 DAYS · CANCEL ANYTIME</p>
-          </>
-        ) : (
-          <div style={{marginBottom:18}}>
-            <p style={{fontFamily:"Georgia,serif",color:"#a8e060",fontSize:14,marginBottom:14}}>Complete your sign-up in the Stripe window, then tap the button below to continue playing.</p>
-            <button className="rb" style={{"--a":"#a8e060",marginBottom:10}} onClick={handleConfirmTrial}>✦ I'VE SIGNED UP — LET ME PLAY</button>
-          </div>
-        )}
+        <button className="rb" style={{"--a":"#e8a800",marginBottom:14}} onClick={handleOpenStripe}>✦ START MY FREE TRIAL</button>
+        <p style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,color:"#4a4440",margin:"0 0 18px",letterSpacing:".08em"}}>CARD AUTHORIZATION TODAY · $4.99/MONTH AFTER 7 DAYS · CANCEL ANYTIME</p>
         <button onClick={resetAll} style={{background:"none",border:"1px solid rgba(255,200,50,0.2)",color:"#6a6058",padding:"8px 22px",borderRadius:"100px",fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,letterSpacing:".1em",cursor:"pointer"}}>← BACK TO START</button>
       </div>
       <p style={{fontFamily:"Georgia,serif",fontSize:11,color:"#3a3228",lineHeight:1.6,padding:"0 8px"}}>
@@ -461,7 +486,46 @@ function GuessYourSign() {
       </p>
     </div>
   );
-
+ 
+  // EMAIL VERIFICATION
+  if (step === "verify") return (
+    <div style={{animation:"up .5s ease",textAlign:"center"}}>
+      <div style={{background:"linear-gradient(135deg,rgba(232,168,0,0.08),rgba(0,0,0,0.3))",border:"1px solid rgba(255,200,50,0.3)",borderRadius:20,padding:"36px 28px",marginBottom:20,position:"relative",overflow:"hidden"}}>
+        <div style={{position:"absolute",top:0,left:0,right:0,height:2,background:"linear-gradient(90deg,transparent,#e8a800,transparent)"}}/>
+        <div style={{fontSize:36,marginBottom:14}}>✉️</div>
+        <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:18,color:"#f5c842",marginBottom:10}}>Confirm Your Access</div>
+        <p style={{fontFamily:"Georgia,serif",color:"#d8c890",fontSize:14,lineHeight:1.7,marginBottom:24}}>
+          Once you have completed sign-up in Stripe, enter the email address you used and we will verify your access instantly.
+        </p>
+        <div style={{marginBottom:16}}>
+          <input
+            type="email"
+            placeholder="Enter your email address"
+            value={emailInput}
+            onChange={(e)=>setEmailInput(e.target.value)}
+            onKeyDown={(e)=>e.key==="Enter"&&handleVerifyEmail()}
+            style={{width:"100%",maxWidth:320,padding:"12px 16px",borderRadius:10,border:"1px solid rgba(255,200,50,0.35)",background:"rgba(255,255,255,0.05)",color:"#f5f0e0",fontFamily:"Georgia,serif",fontSize:14,textAlign:"center",outline:"none",boxSizing:"border-box"}}
+          />
+        </div>
+        {verifyError && (
+          <p style={{fontFamily:"Georgia,serif",color:"#f5c842",fontSize:13,marginBottom:14,lineHeight:1.6}}>{verifyError}</p>
+        )}
+        <button className="rb" style={{"--a":"#e8a800",marginBottom:14,opacity:verifying?0.6:1}} onClick={handleVerifyEmail} disabled={verifying}>
+          {verifying?"CHECKING...":"✦ VERIFY & START PLAYING"}
+        </button>
+        <br/>
+        <button onClick={handleOpenStripe} style={{background:"none",border:"1px solid rgba(168,224,96,0.25)",color:"#a8e060",padding:"8px 20px",borderRadius:"100px",fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,letterSpacing:".1em",cursor:"pointer",marginBottom:14}}>
+          ↗ REOPEN STRIPE CHECKOUT
+        </button>
+        <br/>
+        <button onClick={resetAll} style={{background:"none",border:"none",color:"#4a4440",cursor:"pointer",fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,letterSpacing:".1em"}}>
+          ← BACK TO START
+        </button>
+      </div>
+    </div>
+  );
+ 
+  // PLAYING
   if (step === "playing" && currentQ) {
     const freeLeft = trialActivated ? null : Math.max(0, FREE_QUESTIONS - questionsAnswered);
     return (
@@ -492,7 +556,8 @@ function GuessYourSign() {
       </div>
     );
   }
-
+ 
+  // RESULT
   if (step === "result") return (
     <div style={{animation:"up .5s ease",textAlign:"center"}}>
       <div style={{background:guess===currentQ.sign?"rgba(168,224,96,0.08)":"rgba(255,80,80,0.08)",border:"1px solid "+(guess===currentQ.sign?"rgba(168,224,96,0.4)":"rgba(255,100,100,0.3)"),borderRadius:20,padding:"32px 24px",marginBottom:24}}>
@@ -505,10 +570,9 @@ function GuessYourSign() {
       </button>
     </div>
   );
-
+ 
   return null;
 }
-
 // ── LEGAL CONTENT ──
 function DocSection({title,children}){return(<div style={{marginBottom:24}}><div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:13,color:"#f5c842",marginBottom:8,paddingBottom:4,borderBottom:"1px solid rgba(255,200,50,0.1)"}}>{title}</div><div style={{color:"#c8c0b0",fontSize:14,lineHeight:1.85}}>{children}</div></div>);}
 function DocP({children}){return <p style={{margin:"0 0 10px"}}>{children}</p>;}
