@@ -584,6 +584,7 @@ export default function AstrologyApp() {
     {label:"🔮 Guess Your Sign",key:"guess"},
     {label:"🌟 Celebrity",key:"celebrity"},
     {label:"✦ Fun Facts",key:"facts"},
+    {label:"📲 Get The App",key:"install"},
   ];
 
   return (
@@ -604,6 +605,61 @@ export default function AstrologyApp() {
         {topTab==="horoscope" && <DailyHoroscope />}
         {topTab==="celebrity" && <CelebrityConnection />}
         {topTab==="guess" && <GuessYourSign />}
+        {topTab==="install" && (
+          <div style={{animation:"up .5s ease"}}>
+            <div style={{textAlign:"center",marginBottom:28}}>
+              <div style={{fontSize:48,marginBottom:12}}>📲</div>
+              <h2 style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:24,color:"#f5c842",margin:"0 0 8px"}}>Get The App</h2>
+              <p style={{fontFamily:"Georgia,serif",color:"#a8e060",fontSize:15,margin:0,lineHeight:1.7}}>Save Arewewoke to your home screen for instant access — it works just like an app.</p>
+            </div>
+
+            {/* iPhone Instructions */}
+            <div style={{background:"rgba(255,200,50,0.06)",border:"1px solid rgba(255,200,50,0.2)",borderRadius:16,padding:"24px 20px",marginBottom:16}}>
+              <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:12,color:"#f5c842",marginBottom:16,letterSpacing:".1em"}}>🍎 ON IPHONE (SAFARI)</div>
+              {[
+                {num:1, icon:"🌐", text:"Open arewewoke.com in Safari — this must be Safari, not Chrome or another browser."},
+                {num:2, icon:"⬆️", text:'Tap the Share button at the bottom of your screen — it looks like a box with an arrow pointing up.'},
+                {num:3, icon:"➕", text:'Scroll down in the share menu and tap "Add to Home Screen".'},
+                {num:4, icon:"✏️", text:'You can rename it to "AreWeWoke" or leave it as is — then tap "Add" in the top right corner.'},
+                {num:5, icon:"🔮", text:"Done! You will now see the Arewewoke icon on your home screen. Tap it any time to open the app instantly."},
+              ].map(step=>(
+                <div key={step.num} style={{display:"flex",gap:14,marginBottom:16,alignItems:"flex-start"}}>
+                  <div style={{width:28,height:28,borderRadius:"50%",background:"linear-gradient(135deg,#e8a800,#8a6000)",display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:11,color:"#0d0a14",flexShrink:0}}>{step.num}</div>
+                  <div>
+                    <div style={{fontSize:18,marginBottom:4}}>{step.icon}</div>
+                    <div style={{fontFamily:"Georgia,serif",fontSize:14,color:"#d8c890",lineHeight:1.65}}>{step.text}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Android Instructions */}
+            <div style={{background:"rgba(168,224,96,0.05)",border:"1px solid rgba(168,224,96,0.15)",borderRadius:16,padding:"24px 20px",marginBottom:16}}>
+              <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:12,color:"#a8e060",marginBottom:16,letterSpacing:".1em"}}>🤖 ON ANDROID (CHROME)</div>
+              {[
+                {num:1, icon:"🌐", text:"Open arewewoke.com in Chrome."},
+                {num:2, icon:"⋮", text:'Tap the three dots menu in the top right corner of Chrome.'},
+                {num:3, icon:"➕", text:'Tap "Add to Home screen" from the menu.'},
+                {num:4, icon:"✏️", text:'Name it "AreWeWoke" and tap "Add".'},
+                {num:5, icon:"🔮", text:"The Arewewoke icon will appear on your home screen — tap it any time for instant access."},
+              ].map(step=>(
+                <div key={step.num} style={{display:"flex",gap:14,marginBottom:16,alignItems:"flex-start"}}>
+                  <div style={{width:28,height:28,borderRadius:"50%",background:"linear-gradient(135deg,#a8e060,#4a8020)",display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:11,color:"#0d0a14",flexShrink:0}}>{step.num}</div>
+                  <div>
+                    <div style={{fontSize:18,marginBottom:4}}>{step.icon}</div>
+                    <div style={{fontFamily:"Georgia,serif",fontSize:14,color:"#d8c890",lineHeight:1.65}}>{step.text}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Why */}
+            <div style={{background:"rgba(255,200,50,0.04)",border:"1px solid rgba(255,200,50,0.1)",borderRadius:16,padding:"20px",textAlign:"center"}}>
+              <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:11,color:"#f5c842",marginBottom:10,letterSpacing:".1em"}}>✦ WHY ADD TO HOME SCREEN? ✦</div>
+              <div style={{fontFamily:"Georgia,serif",fontSize:14,color:"#7a6e62",lineHeight:1.7}}>No app store needed. Opens full screen like a real app. Your subscription and streak stay saved. One tap access every day.</div>
+            </div>
+          </div>
+        )}
 
         {topTab==="facts" && <>
           <div style={{textAlign:"center",marginBottom:24}}>
