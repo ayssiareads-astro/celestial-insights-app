@@ -1,62 +1,81 @@
 // api/check-subscription.js
-// Your app calls this to verify a user's subscription status
-//
-// Usage: GET /api/check-subscription?email=someone@example.com
-//
-// Returns:
-//   { active: true,  status: "trialing" }
-//   { active: true,  status: "active" }
-//   { active: false, status: "canceled" }
-//   { active: false, status: null }
+const https = require("https");
 
-async function kvGet(key) {
-  const url = process.env.KV_REST_API_URL;
-  const token = process.env.KV_REST_API_TOKEN;
-  const res = await fetch(`${url}/get/${encodeURIComponent(key)}`, {
-    headers: { Authorization: `Bearer ${token}` },
+function stripeRequest(path, secretKey) {
+  return new Promise((resolve, reject) => {
+    const options = {
+      hostname: "api.stripe.com",
+      path: path,
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${secretKey}`,
+      },
+    };
+    const req = https.request(options, (res) => {
+      let data = "";
+      res.on("data", (chunk) => { data += chunk; });
+      res.on("end", () => { resolve(JSON.parse(data)); });
+    });
+    req.on("error", reject);
+    req.end();
   });
-  const data = await res.json();
-  return data.result ? JSON.parse(data.result) : null;
 }
 
-export default async function handler(req, res) {
-  if (req.method !== "GET") {
-    return res.status(405).json({ error: "Method not allowed" });
+module.exports = async function handler(req, res) {
+  // CORS headers
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+  if (req.method === "OPTIONS") return res.status(200).end();
+  if (req.method !== "GET") return res.status(405).json({ error: "Method not allowed" });
+
+  const email = (req.query.email || "").toLowerCase().trim();
+  if (!email || !email.includes("@")) {
+    return res.status(400).json({ error: "Valid email required" });
   }
 
-  const email = req.query.email?.toLowerCase();
-
-  if (!email) {
-    return res.status(400).json({ error: "Email is required" });
+  const secretKey = process.env.STRIPE_SECRET_KEY;
+  if (!secretKey) {
+    return res.status(500).json({ error: "Stripe not configured" });
   }
 
   try {
-    const record = await kvGet(`sub:${email}`);
+    // Search for customer by email
+    const customers = await stripeRequest(
+      `/v1/customers?email=${encodeURIComponent(email)}&limit=5`,
+      secretKey
+    );
 
-    if (!record) {
+    if (!customers.data || customers.data.length === 0) {
       return res.status(200).json({ active: false, status: null });
     }
 
-    const activeStatuses = ["trialing", "active"];
-    const isActive = activeStatuses.includes(record.status);
+    // Check subscriptions for each customer
+    for (const customer of customers.data) {
+      const subs = await stripeRequest(
+        `/v1/subscriptions?customer=${customer.id}&status=all&limit=10`,
+        secretKey
+      );
 
-    // Extra check: if trialing, confirm the trial hasn't expired
-    if (record.status === "trialing" && record.trialEnd) {
-      const now = Math.floor(Date.now() / 1000);
-      if (now > record.trialEnd) {
-        return res.status(200).json({ active: false, status: "trial_expired" });
+      if (subs.data && subs.data.length > 0) {
+        for (const sub of subs.data) {
+          if (sub.status === "trialing" || sub.status === "active") {
+            return res.status(200).json({
+              active: true,
+              status: sub.status,
+              trialEnd: sub.trial_end || null,
+              currentPeriodEnd: sub.current_period_end || null,
+            });
+          }
+        }
       }
     }
 
-    return res.status(200).json({
-      active: isActive,
-      status: record.status,
-      trialEnd: record.trialEnd || null,
-      currentPeriodEnd: record.currentPeriodEnd || null,
-    });
+    return res.status(200).json({ active: false, status: null });
 
   } catch (err) {
     console.error("Error checking subscription:", err.message);
-    return res.status(500).json({ error: "Could not check subscription status" });
+    return res.status(500).json({ error: "Could not check subscription" });
   }
-}
+};
