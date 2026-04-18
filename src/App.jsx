@@ -217,6 +217,7 @@ const allGuessQuestions = [
 ];
 
 const STRIPE_TRIAL_LINK = "https://buy.stripe.com/bJefZa8lH4TBetl2VL5sA01";
+const STRIPE_PORTAL_LINK = "https://billing.stripe.com/p/login/5kQ3co6dzeub70TfIx5sA00";
 const FREE_QUESTIONS = 4;
 
 const dailyHoroscopes = {
@@ -464,6 +465,11 @@ function GuessYourSign() {
       )}
       <br/>
       <button className="rb" style={{"--a":"#e8a800"}} onClick={startGame}>✦ START GUESSING</button>
+      {trialActivated && (
+        <div style={{marginTop:20}}>
+          <button onClick={()=>window.open(STRIPE_PORTAL_LINK,"_blank")} style={{background:"none",border:"1px solid rgba(255,200,50,0.2)",color:"#4a4440",padding:"8px 22px",borderRadius:"100px",fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,letterSpacing:".1em",cursor:"pointer"}}>⚙ MANAGE SUBSCRIPTION</button>
+        </div>
+      )}
       {score.total>0&&<p style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:11,color:"#f5c842",marginTop:20}}>Score: {score.correct}/{score.total}</p>}
     </div>
   );
