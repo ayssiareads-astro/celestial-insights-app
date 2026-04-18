@@ -190,35 +190,32 @@ function getFact(sign, planet) {
 }
 
 const allGuessQuestions = [
-  { sign:"Aries", clues:["I act before I think – and somehow it usually works out.","I have been told I am a lot more times than I can count.","I get bored if nothing exciting is happening.","I would rather lead than follow, always.","My temper flares fast – but I forgive just as quickly."] },
-  { sign:"Taurus", clues:["People always say my home feels incredibly cozy.","I know exactly what I like – and I do not apologize for it.","I take my time with decisions, but once I decide, I am decided.","Good food is genuinely one of my love languages.","I am more stubborn than most people realize."] },
-  { sign:"Gemini", clues:["I can talk to literally anyone about anything.","I have been called two-faced – I prefer multidimensional.","My brain never shuts off. Ever.","I can see every side of an argument, which makes choosing hard.","I pick up new skills incredibly fast but rarely stick with them long."] },
-  { sign:"Cancer", clues:["I remember exactly how every important moment felt.","My home is my sanctuary – I take it very seriously.","I can sense someone's mood the moment I walk in the room.","I tend to nurture everyone around me without being asked.","I hold on to things – memories, people, feelings – for a long time."] },
-  { sign:"Leo", clues:["I light up in front of an audience, even if it is just two people.","I am incredibly loyal – but I expect the same in return.","I have been told I have a presence that is hard to ignore.","I genuinely love making people feel special and celebrated.","My pride is real – apologizing does not come naturally."] },
-  { sign:"Virgo", clues:["I notice the detail everyone else walked right past.","My inner critic is louder than anyone else's voice.","I show love by helping – practically, specifically, efficiently.","I research things obsessively before making a decision.","I feel physically calmer when my space is organized."] },
-  { sign:"Libra", clues:["I can see both sides of any argument so clearly it is hard to pick one.","I have a strong physical reaction to things that are ugly or discordant.","Conflict genuinely makes me uncomfortable in my body.","People always come to me to help them navigate their relationships.","I fall in love with the idea of partnership – deeply."] },
-  { sign:"Scorpio", clues:["I can tell when someone is lying almost immediately.","I do not do anything halfway – it is all or nothing.","I have completely reinvented myself at least once, maybe more.","I remember everything. Especially the things that hurt.","People find me magnetic but slightly hard to read – intentionally."] },
-  { sign:"Sagittarius", clues:["I genuinely believe things will work out – and they usually do.","I need freedom more than I need almost anything else.","I say exactly what I think, sometimes before I should.","Travel or learning something new resets me completely.","I have a philosophy for life that I have built entirely from scratch."] },
-  { sign:"Capricorn", clues:["I have always felt older than my actual age.","I set standards for myself that most people would find exhausting.","My dry humor surprises people who only know my serious side.","I take commitments – in work and love – very, very seriously.","Life genuinely gets better for me the older I get."] },
-  { sign:"Aquarius", clues:["I have always felt slightly outside the group, even when I am in it.","I care about humanity as a whole more than I care about fitting in.","I need space the way other people need air.","I was thinking about things years ago that people are only now discussing.","My emotional needs are genuinely different from most people's."] },
-  { sign:"Pisces", clues:["I absorb other people's moods without meaning to.","I have a rich inner world that is more real to me than most of reality.","Creative work is not just something I do – it is how I survive.","I often know things without knowing how I know them.","I love without limits, which is both my gift and my wound."] },
-  { sign:"Aries", clues:["People describe me as intense, direct, and occasionally a lot.","I am most alive when I am working toward something new.","I do not hold grudges – my anger burns fast and clean.","I need to feel like I am moving forward or I become restless.","Competition does not scare me – it energizes me."] },
-  { sign:"Taurus", clues:["I rarely change my mind once I have made a decision.","I need beauty in my environment to feel emotionally regulated.","I am deeply sensual – food, texture, music all hit me differently.","I am slow to trust but extraordinarily loyal once I do.","I am genuinely better at finishing things than starting them."] },
-  { sign:"Gemini", clues:["I have at least two very different social personalities.","I get bored in long-term situations faster than most people.","I text back immediately or three days later – no in between.","I can argue any side of a debate and kind of enjoy it.","My interests shift constantly but I remember everything I have ever learned."] },
-  { sign:"Cancer", clues:["I close off completely when I feel unsafe, without warning.","My feelings run so deep that I sometimes do not know what to do with them.","I create environments where people feel completely at home.","I know when something is wrong before anyone says a word.","I am fiercely protective of the people I love."] },
-  { sign:"Leo", clues:["I need to feel genuinely appreciated or I lose my motivation entirely.","When I commit to something, I give it everything.","I am generous to a fault – sometimes too generous.","I have been told my energy changes the room when I walk in.","Betrayal hits me harder than almost anything else."] },
-  { sign:"Virgo", clues:["I am my own harshest critic by a very wide margin.","I express care by fixing problems, not by talking about feelings.","I have a system for everything – and the system works.","I find vague plans genuinely stressful to be around.","I am more sensitive than I let on – I just do not show it easily."] },
-  { sign:"Scorpio", clues:["I do not give second chances easily once trust is broken.","I feel everything deeply but rarely show the full extent of it.","I am drawn to the hidden, the dark, and the complicated.","I have survived things that would have stopped other people.","My intuition about people is accurate to a degree that unsettles me."] },
-  { sign:"Aquarius", clues:["I form opinions based on my own research, not what I am told to think.","I care deeply about justice but process it intellectually rather than emotionally.","I am loyal to the people I choose – but I choose carefully.","I have always been a little ahead of my time.","I can be warm and deeply detached at the same time – it confuses people."] },
-  { sign:"Sagittarius", clues:["I have a hard time staying in situations that feel like they are shrinking me.","I get restless when life becomes too predictable – I need the feeling of something opening up.","I tend to be the most optimistic person in any room, even when things are hard.","I say what I believe, sometimes before I have calculated whether this is the right moment.","People either love how direct I am or find it a lot to handle."] },
-  { sign:"Libra", clues:["I find it genuinely difficult to make decisions – not because I do not care, but because I see everything too clearly.","I am deeply affected by ugliness – in spaces, in people, in interactions. It physically bothers me.","I tend to give people more chances than they probably deserve because I want to believe in the best version of them.","I am at my best when I am in a genuine partnership – I think better, work better, feel better.","People describe me as charming and I genuinely do not always understand what I am doing differently."] },
-  { sign:"Pisces", clues:["I have always felt like I exist slightly outside of ordinary reality – like I am picking up on something others are not.","My imagination is not an escape. It is where I actually live.","I can feel a shift in someone's mood before they have said a single word.","I tend to fall for people's potential rather than who they actually are right now.","The line between my feelings and other people's feelings has always been blurry."] },
-  { sign:"Capricorn", clues:["I have always been the responsible one – sometimes I wonder what it would feel like not to be.","I set goals the way other people make wishes – with a plan attached.","I take a long time to trust people, but once I do I am completely reliable to them.","I find genuine pleasure in work that most people would find tedious. The craft matters to me.","People underestimate me constantly. I have learned to find that useful."] },
+  { sign:"Aries", clues:["The moment someone tells me I cannot do something, I immediately want to prove them wrong.","I have started more things than I have finished – but the things I finish, I finish fast.","My energy is magnetic when I am excited and completely absent when I am bored.","People call me impulsive. I call it decisive.","I rarely hold a grudge – I blow up, say the thing, and then I am genuinely over it."] },
+  { sign:"Taurus", clues:["I have a specific way I like things done and I find it very hard to let that go.","I am the person everyone calls when they need to feel grounded.","Comfort is not laziness for me – it is how I recharge so I can give everything I have.","I make decisions slowly and almost never regret them.","My loyalty is one of the most powerful things about me – and also one of the most dangerous."] },
+  { sign:"Gemini", clues:["I have reinvented my personality at least twice and no one found it strange.","I can be completely absorbed in something for a week and then never think about it again.","I process by talking. If I go quiet, something is very wrong.","I have a different energy for different people and I do not consider that fake – I consider it social intelligence.","The most attractive thing to me is someone who can keep up with how fast my mind moves."] },
+  { sign:"Cancer", clues:["My home is not just a place to live – it is an extension of my emotional state.","I am incredibly perceptive about other people's moods but sometimes completely blind to my own.","I do not forgive easily, but I love deeply enough that I usually try anyway.","I have a memory like a trap – especially for emotional details.","When I am hurt I go quiet and inward. Most people do not even notice until I am already gone."] },
+  { sign:"Leo", clues:["I have a natural ability to make people feel seen and I use it generously.","I know I am a lot. I have made peace with it.","Recognition matters to me more than I usually admit out loud.","I am at my worst when I am being ignored and at my best when I am being celebrated.","My loyalty, once earned, is absolute. My disappointment, once triggered, is equally absolute."] },
+  { sign:"Virgo", clues:["I edit everything – texts, plans, other people's work, my own thoughts – before they leave me.","I have a system for things most people do not even think to have a system for.","I am genuinely more sensitive than I appear. I just do not show it until I trust you.","I love people by taking care of the practical things they never remember to take care of themselves.","My standards are high because I know what is possible when things are done correctly."] },
+  { sign:"Libra", clues:["I have rehearsed both sides of every difficult conversation before it happens.","I feel physical discomfort around conflict – not just emotional discomfort. Physical.","I am often the last person in a group to share my actual opinion, even when I have had it the longest.","My taste is not a personality trait – it is a deeply held value system.","I fall in love with the version of partnership I believe is possible, which sometimes takes me longer than it should to revise."] },
+  { sign:"Scorpio", clues:["I rarely show my full hand. Even to people I love.","I have a radar for authenticity that is almost never wrong.","The things I have survived would have stopped most people. I do not say this with pride – I say it as a fact.","I do not do casual. Not with friendship, not with love, not with anything that actually matters.","People sense something about me before I say a word. I have learned to use that."] },
+  { sign:"Sagittarius", clues:["I have left situations – jobs, relationships, cities – the moment they started to feel like a ceiling.","I will tell you the truth even when the timing is terrible because I cannot make myself say the comfortable lie.","My optimism is not naivety. It is a philosophical position I have arrived at through experience.","Freedom is not just something I want – it is something I require to function.","I am always working toward a belief system that is bigger and truer than the one I had last year."] },
+  { sign:"Capricorn", clues:["I have been the responsible one in every group I have ever been part of.","I measure progress over years, not weeks.","My sense of humor is dry enough that people sometimes are not sure if I am joking.","I take commitments more seriously than most people around me, which has been both a gift and a burden.","I tend to peak later than my peers and I have always quietly known this."] },
+  { sign:"Aquarius", clues:["I have held an unpopular opinion for years and then watched it become common sense.","I need more alone time than most people expect from someone who is also genuinely social.","I care about the collective more than about fitting into it.","My detachment is not coldness – it is the way I stay clear enough to think.","I am loyal to principles before I am loyal to people, which is something not everyone can handle."] },
+  { sign:"Pisces", clues:["I absorb other people's emotional states without meaning to and it takes me a while to realize what is mine.","I have a creative inner world that is as real to me as the external one – sometimes more.","I tend to see people's potential so clearly that I stay longer than I should waiting for it to arrive.","My intuition is my most reliable navigation system, even when I cannot explain it logically.","I need a creative or spiritual outlet the way other people need sleep."] },
+  { sign:"Aries", clues:["I have never been good at pretending I am fine when I am not – my face does not cooperate.","I get more done in a two-hour focused sprint than most people do in a full day.","I am attracted to difficulty. If something comes too easily I do not fully trust it.","The people I love know that my anger and my love come from exactly the same place.","I am already three steps ahead in my head while most people are still processing step one."] },
+  { sign:"Taurus", clues:["I notice quality – in food, in people, in work, in spaces – immediately and without trying.","Once I have made up my mind, additional arguments against my position mostly just annoy me.","I show love through acts of physical care – cooking, showing up, being present in the body.","I am slow to anger but once I reach that point it is a different kind of anger than most people are used to.","I have always known what I want. The work is learning to trust that knowing."] },
+  { sign:"Gemini", clues:["I have had at least three completely different life chapters and they all feel genuinely like me.","I fall in love with ideas the way other people fall in love with people – intensely and sometimes briefly.","I am the person in the group who always knows a little bit about everything.","My attention is a gift I give fully – and withdraw immediately when something stops being interesting.","I have been called flaky by people who do not understand that I am simply always responding to what is most alive right now."] },
+  { sign:"Cancer", clues:["I can create a sense of home anywhere – in a hotel room, in a new city, in a stranger's kitchen.","The people I let all the way in are very few. The care I give them is total.","I tend to take care of everyone's emotional needs before I even identify my own.","My moods shift with an internal weather system that I am not always in control of.","I have kept things – objects, letters, memories – that other people would have thrown away decades ago."] },
+  { sign:"Leo", clues:["I have a creativity that lives close to the surface – it comes out in how I dress, how I speak, how I enter a room.","I give everything I have to the people and projects I commit to. I expect the same level of seriousness in return.","I light up around people I love in a way that I cannot fake and cannot hide.","My ego and my generosity come from exactly the same source – a deep need to matter and to make others feel that they matter too.","Betrayal is the one thing I genuinely cannot move past easily. It touches something foundational."] },
+  { sign:"Virgo", clues:["I have a relationship with improvement that never fully switches off – I am always noticing what could be better.","I find it easier to show up for other people than to ask for help myself.","My anxiety often expresses itself as productivity – I clean, I organize, I plan when I am stressed.","I have been told I am too critical. I have also been the person who caught the mistake everyone else missed.","I am capable of a level of devotion and care that most people do not encounter very often in their lives."] },
+  { sign:"Scorpio", clues:["I have a long memory and a longer capacity for patience when something matters enough to wait for.","I am drawn to what is hidden, complicated, or beneath the surface – in art, in people, in situations.","My transformations are total. When I change, I change completely. There is no going back to the previous version.","I can sit with difficult emotions that would overwhelm most people. I have been doing it my whole life.","The intimacy I want is so complete that most people are not ready for it."] },
+  { sign:"Aquarius", clues:["I have always felt most like myself slightly outside the mainstream – not in opposition to it, just elsewhere.","I think in systems. Individual cases interest me mostly as evidence of something larger.","My friendships are the most important relationships in my life, often more than my romantic ones.","I can be warm and simultaneously completely unreachable. I am aware this confuses people.","The future has always felt more real to me than the present. I have been living there in my mind for years."] },
 ];
 
 const STRIPE_TRIAL_LINK = "https://buy.stripe.com/bJefZa8lH4TBetl2VL5sA01";
 const STRIPE_PORTAL_LINK = "https://billing.stripe.com/p/login/5kQ3co6dzeub70TfIx5sA00";
 const FREE_QUESTIONS = 4;
+const TOTAL_QUESTIONS = 20;
 
 const dailyHoroscopes = {
   Aries: ["The Sun's current position activates your first house of identity – today is not the day to shrink. Say the thing you have been rehearsing. Lead with your instinct and clean up the details later. Your directness is not too much; it is exactly what is needed.","Mars is stirring your sector of ambition and this energy wants an outlet. Channel it into the project that has been stalling. A short burst of focused effort today will move something further than a week of cautious planning ever could.","The Moon in your opposing sign asks you to pause before firing. Your instinct is correct but your timing can be refined. What you have to say will land harder if you wait until the room is ready to receive it.","Venus brushes your chart today with an invitation toward pleasure and ease. You have been pushing hard. The cosmos is giving you permission to stop. Rest is not retreat – it is strategy.","A trine between your ruling planet Mars and the outer planets opens a window of unusual clarity. You see exactly what needs to happen and exactly who is in the way. Move decisively but without cruelty.","Your fire is at a peak today but it needs direction, not just ignition. Pick the one thing that matters most and give it everything. Scattered effort will leave you tired. Focused effort will leave you ahead.","The lunar energy today softens your edges just enough to make you approachable to someone who has been waiting for the right moment. Let them in. Not everyone who wants access is a threat."],
@@ -393,6 +390,10 @@ function GuessYourSign() {
   const [streak, setStreak] = useState(0);
   const [bestStreak, setBestStreak] = useState(getPersonalBest());
   const [awaitingStripe, setAwaitingStripe] = useState(false);
+  const [showMemberVerify, setShowMemberVerify] = useState(false);
+  const [memberEmail, setMemberEmail] = useState("");
+  const [memberVerifying, setMemberVerifying] = useState(false);
+  const [memberError, setMemberError] = useState(null);
 
   const pickQuestion = (prevUsed) => {
     const available = allGuessQuestions.map((_,i)=>i).filter(i=>!prevUsed.includes(i));
@@ -428,12 +429,40 @@ function GuessYourSign() {
     const nextAnswered = questionsAnswered + 1;
     setQuestionsAnswered(nextAnswered);
     if (nextAnswered >= FREE_QUESTIONS && !trialActivated) { setStep("paywall"); return; }
+    if (nextAnswered >= TOTAL_QUESTIONS) { setStep("trophy"); return; }
     const { q, newUsed } = pickQuestion(usedIndices);
     setCurrentQ(q); setUsedIndices(newUsed); setClueIndex(0);
     setGuess(null); setFeedback(null); setStep("playing");
   };
 
   const handleStartTrial = () => { window.location.href = STRIPE_TRIAL_LINK; };
+
+  const handleVerifyMember = async () => {
+    const email = memberEmail.trim().toLowerCase();
+    if (!email || !email.includes("@")) {
+      setMemberError("Please enter a valid email address.");
+      return;
+    }
+    setMemberVerifying(true);
+    setMemberError(null);
+    try {
+      const res = await fetch(`/api/check-subscription?email=${encodeURIComponent(email)}`);
+      const data = await res.json();
+      if (data.active) {
+        saveSubscriberStatus();
+        setTrialActivated(true);
+        const { q, newUsed } = pickQuestion(usedIndices);
+        setCurrentQ(q); setUsedIndices(newUsed); setClueIndex(0);
+        setGuess(null); setFeedback(null); setStep("playing");
+      } else {
+        setMemberError("We could not find an active subscription for that email. Please check the email you used when signing up for your trial.");
+      }
+    } catch (err) {
+      setMemberError("Something went wrong. Please check your connection and try again.");
+    } finally {
+      setMemberVerifying(false);
+    }
+  };
 
   const handleConfirmTrial = () => {
     setTrialActivated(true); setAwaitingStripe(false);
@@ -446,6 +475,7 @@ function GuessYourSign() {
     setQuestionsAnswered(0); setUsedIndices([]); setCurrentQ(null);
     setClueIndex(0); setStep("start"); setGuess(null); setFeedback(null);
     setScore({correct:0,total:0}); setStreak(0); setAwaitingStripe(false);
+    setShowMemberVerify(false); setMemberEmail(""); setMemberError(null);
   };
 
   if (step === "start") return (
@@ -494,6 +524,31 @@ function GuessYourSign() {
         </div>
         <button className="rb" style={{"--a":"#e8a800",marginBottom:14}} onClick={handleStartTrial}>✦ START MY FREE TRIAL</button>
         <p style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,color:"#4a4440",margin:"0 0 18px",letterSpacing:".08em"}}>CARD AUTHORIZATION TODAY · $4.99/MONTH AFTER 7 DAYS · CANCEL ANYTIME</p>
+
+        {/* Already a member */}
+        {!showMemberVerify ? (
+          <button onClick={()=>setShowMemberVerify(true)} style={{background:"none",border:"1px solid rgba(168,224,96,0.3)",color:"#a8e060",padding:"10px 24px",borderRadius:"100px",fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,letterSpacing:".1em",cursor:"pointer",marginBottom:14}}>✦ ALREADY A MEMBER</button>
+        ) : (
+          <div style={{marginBottom:14,padding:"20px",background:"rgba(168,224,96,0.05)",border:"1px solid rgba(168,224,96,0.2)",borderRadius:16}}>
+            <p style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,color:"#a8e060",letterSpacing:".1em",marginBottom:12}}>✦ VERIFY YOUR MEMBERSHIP</p>
+            <p style={{fontFamily:"Georgia,serif",fontSize:13,color:"#d8c890",marginBottom:14,lineHeight:1.6}}>Enter the email you used when you signed up for your free trial.</p>
+            <input
+              type="email"
+              placeholder="your@email.com"
+              value={memberEmail}
+              onChange={(e)=>setMemberEmail(e.target.value)}
+              onKeyDown={(e)=>e.key==="Enter"&&handleVerifyMember()}
+              style={{width:"100%",padding:"11px 14px",borderRadius:10,border:"1px solid rgba(168,224,96,0.3)",background:"rgba(255,255,255,0.04)",color:"#f5f0e0",fontFamily:"Georgia,serif",fontSize:14,textAlign:"center",outline:"none",boxSizing:"border-box",marginBottom:10}}
+            />
+            {memberError && <p style={{fontFamily:"Georgia,serif",color:"#f5c842",fontSize:12,marginBottom:10,lineHeight:1.5}}>{memberError}</p>}
+            <button className="rb" style={{"--a":"#a8e060",marginBottom:8,opacity:memberVerifying?0.6:1}} onClick={handleVerifyMember} disabled={memberVerifying}>
+              {memberVerifying ? "CHECKING..." : "✦ VERIFY & PLAY"}
+            </button>
+            <br/>
+            <button onClick={()=>{setShowMemberVerify(false);setMemberError(null);setMemberEmail("");}} style={{background:"none",border:"none",color:"#4a4440",cursor:"pointer",fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,letterSpacing:".1em"}}>← BACK</button>
+          </div>
+        )}
+
         <button onClick={resetAll} style={{background:"none",border:"1px solid rgba(255,200,50,0.2)",color:"#6a6058",padding:"8px 22px",borderRadius:"100px",fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,letterSpacing:".1em",cursor:"pointer"}}>← BACK TO START</button>
       </div>
     </div>
@@ -504,7 +559,7 @@ function GuessYourSign() {
     return (
       <div style={{animation:"up .45s ease"}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
-          <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,letterSpacing:".15em",color:"#f5c842"}}>QUESTION {questionsAnswered+1}</div>
+          <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,letterSpacing:".15em",color:"#f5c842"}}>QUESTION {questionsAnswered+1} OF {TOTAL_QUESTIONS}</div>
           {!trialActivated && <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#a8e060",letterSpacing:".08em"}}>{freeLeft} free {freeLeft===1?"question":"questions"} left</div>}
           {trialActivated && <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#a8e060",letterSpacing:".08em"}}>✦ TRIAL ACTIVE</div>}
         </div>
@@ -541,10 +596,49 @@ function GuessYourSign() {
         {bestStreak > 0 && <p style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#4a4440",margin:"8px 0 0",letterSpacing:".08em"}}>🏆 Personal best: {bestStreak} in a row</p>}
       </div>
       <button className="rb" style={{"--a":"#e8a800"}} onClick={handleNext}>
-        {questionsAnswered+1 >= FREE_QUESTIONS && !trialActivated ? "✦ SEE WHAT'S NEXT →" : "✦ NEXT QUESTION"}
+        {questionsAnswered+1 >= FREE_QUESTIONS && !trialActivated ? "✦ SEE WHAT'S NEXT →" : questionsAnswered+1 >= TOTAL_QUESTIONS ? "✦ SEE MY RESULTS →" : "✦ NEXT QUESTION"}
       </button>
     </div>
   );
+
+  // TROPHY SCREEN
+  if (step === "trophy") {
+    const pct = Math.round((score.correct / TOTAL_QUESTIONS) * 100);
+    const getMessage = () => {
+      if (pct === 100) return { title:"Perfect Score!", sub:"You know the stars like they know you. Flawless.", color:"#f5c842" };
+      if (pct >= 80) return { title:"Cosmic Expert!", sub:"Your astrological instincts are sharp and deeply tuned.", color:"#f5c842" };
+      if (pct >= 60) return { title:"Star Seeker!", sub:"You read the signs well. The cosmos is impressed.", color:"#a8e060" };
+      if (pct >= 40) return { title:"Rising Apprentice!", sub:"You are learning the language of the stars. Keep going.", color:"#a8e060" };
+      return { title:"Cosmic Beginner!", sub:"Every master started somewhere. The stars are patient.", color:"#5bc8d8" };
+    };
+    const msg = getMessage();
+    return (
+      <div style={{animation:"up .6s ease",textAlign:"center",padding:"20px 0"}}>
+        <div style={{background:"linear-gradient(135deg,rgba(232,168,0,0.12),rgba(0,0,0,0.4))",border:"2px solid rgba(255,200,50,0.4)",borderRadius:24,padding:"40px 28px",marginBottom:20,position:"relative",overflow:"hidden"}}>
+          <div style={{position:"absolute",top:0,left:0,right:0,height:3,background:"linear-gradient(90deg,transparent,#e8a800,transparent)"}}/>
+          <div style={{fontSize:72,marginBottom:8}}>🏆</div>
+          <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:11,letterSpacing:".3em",color:"#a8e060",marginBottom:12}}>✦ GAME COMPLETE ✦</div>
+          <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:26,color:msg.color,marginBottom:8}}>{msg.title}</div>
+          <p style={{fontFamily:"Georgia,serif",fontSize:16,color:"#d8c890",lineHeight:1.7,marginBottom:24}}>{msg.sub}</p>
+
+          {/* Score circle */}
+          <div style={{width:120,height:120,borderRadius:"50%",background:"linear-gradient(135deg,rgba(232,168,0,0.2),rgba(0,0,0,0.3))",border:"3px solid #e8a800",margin:"0 auto 24px",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
+            <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:32,color:"#f5c842",lineHeight:1}}>{score.correct}</div>
+            <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,color:"#a8e060",letterSpacing:".1em"}}>OUT OF {TOTAL_QUESTIONS}</div>
+          </div>
+
+          <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:14,color:"#f5c842",marginBottom:6}}>{pct}% Accuracy</div>
+          {bestStreak > 0 && <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:11,color:"#4a4440",marginBottom:24,letterSpacing:".08em"}}>🔥 Best streak: {bestStreak} in a row</div>}
+
+          <div style={{fontFamily:"Georgia,serif",fontSize:13,color:"#5a5048",lineHeight:1.7,marginBottom:24,padding:"0 8px"}}>
+            You have completed the AreWeWoke astrology challenge. You now hold a trophy for understanding the signs — carry it with the stars as your witness.
+          </div>
+
+          <button className="rb" style={{"--a":"#e8a800",marginBottom:14}} onClick={resetAll}>✦ PLAY AGAIN</button>
+        </div>
+      </div>
+    );
+  }
 
   return null;
 }
