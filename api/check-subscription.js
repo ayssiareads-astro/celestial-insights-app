@@ -1,28 +1,16 @@
 // api/check-subscription.js
-const https = require("https");
 
-function stripeRequest(path, secretKey) {
-  return new Promise((resolve, reject) => {
-    const options = {
-      hostname: "api.stripe.com",
-      path: path,
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${secretKey}`,
-      },
-    };
-    const req = https.request(options, (res) => {
-      let data = "";
-      res.on("data", (chunk) => { data += chunk; });
-      res.on("end", () => { resolve(JSON.parse(data)); });
-    });
-    req.on("error", reject);
-    req.end();
+async function stripeRequest(path, secretKey) {
+  const response = await fetch(`https://api.stripe.com${path}`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${secretKey}`,
+    },
   });
+  return response.json();
 }
 
-module.exports = async function handler(req, res) {
-  // CORS headers
+export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -41,7 +29,7 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    // Search for customer by email
+    // Search Stripe for customers with this email
     const customers = await stripeRequest(
       `/v1/customers?email=${encodeURIComponent(email)}&limit=5`,
       secretKey
@@ -51,7 +39,7 @@ module.exports = async function handler(req, res) {
       return res.status(200).json({ active: false, status: null });
     }
 
-    // Check subscriptions for each customer
+    // Check each customer's subscriptions
     for (const customer of customers.data) {
       const subs = await stripeRequest(
         `/v1/subscriptions?customer=${customer.id}&status=all&limit=10`,
@@ -75,7 +63,7 @@ module.exports = async function handler(req, res) {
     return res.status(200).json({ active: false, status: null });
 
   } catch (err) {
-    console.error("Error checking subscription:", err.message);
+    console.error("Stripe check error:", err.message);
     return res.status(500).json({ error: "Could not check subscription" });
   }
-};
+}
