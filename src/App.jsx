@@ -748,18 +748,114 @@ celebrities.forEach(c => {
 });
 
 const dailyHoroscopes = {
-  Aries:["The Sun's current position activates your first house of identity – today is not the day to shrink. Say the thing you have been rehearsing. Lead with your instinct and clean up the details later.","Mars is stirring your sector of ambition and this energy wants an outlet. Channel it into the project that has been stalling. A short burst of focused effort today will move something further than a week of cautious planning.","The Moon in your opposing sign asks you to pause before firing. Your instinct is correct but your timing can be refined.","Venus brushes your chart today with an invitation toward pleasure and ease. You have been pushing hard. Rest is not retreat – it is strategy.","A trine between your ruling planet Mars and the outer planets opens a window of unusual clarity. You see exactly what needs to happen. Move decisively but without cruelty.","Your fire is at a peak today but it needs direction, not just ignition. Pick the one thing that matters most and give it everything.","The lunar energy today softens your edges just enough to make you approachable to someone who has been waiting for the right moment."],
-  Taurus:["Venus, your ruling planet, is making a quiet but significant move today that touches your sector of values and self-worth. Something you have been underselling is ready to be reassessed at its true price.","The Moon in an earth sign today deepens your already considerable capacity for patience. Use it. The situation that feels stalled is composting.","A financial or material matter that has been vague is becoming clearer. The numbers are telling you something if you are willing to do the arithmetic honestly.","Your senses are particularly sharp today – beauty, pleasure, and physical comfort are not distractions. They are part of how you restore.","Resistance you have been feeling toward a particular change is worth examining today. Is it genuine wisdom or familiar comfort?","The Sun illuminates your sector of communication and asks you to say the thing you have been holding in careful, measured silence.","A creative or financial opportunity that seemed to have passed is circling back. This time, the terms are better."],
-  Gemini:["Mercury, your ruling planet, is in a particularly agile position today, sharpening your already quick mind. The idea that surfaces in conversation, almost as a throwaway, is not a throwaway.","The dual nature of your sign is an asset today. You can see both sides with perfect clarity, which puts you in the rare position of brokering a genuine resolution.","Your social sector is lit up and the connections you make today have longer roots than they appear.","Information that has been incomplete is filling in. Hold off on the conclusion you were about to reach until the full picture is available.","Restlessness is real today and fighting it will cost more than redirecting it. Give yourself permission to move between projects and ideas.","A communication from someone unexpected is worth more than face value. Read between the lines.","The Moon activates your seventh house of partnership today. Someone in your orbit is more aligned with your vision than you have given them credit for."],
-  Cancer:["The Moon, your ruling planet, is in a powerful position today that amplifies your already extraordinary intuition. The feeling you have about a situation is correct. Trust it.","Your home and emotional life are under a gentle but clarifying light today. Something that has felt murky is becoming clear enough to address.","A creative project that lives close to your heart is asking for more of your time and attention. Give it one hour today.","Your empathy is at its peak today and the people around you can feel it. Someone will seek you out for support.","The Sun is activating your sector of values and asking you to identify what you are no longer willing to accept.","A financial or security matter that has been causing low-level anxiety is ready to be looked at directly.","Old feelings about a past situation are surfacing today – not to destabilize you but to complete something."],
-  Leo:["The Sun, your ruling planet, is in a position of particular strength today. This is not a day to be modest about what you want or what you are capable of.","Your creative sector is activated and the idea that feels too big or too bold is probably exactly the right size.","A recognition or acknowledgment you have been waiting for is closer than it appears. Act as if it has already arrived.","Someone in your orbit needs your particular brand of warmth and confidence today. Use that gift deliberately.","The Moon is moving through your sector of home and private life, asking you to tend to your inner world with the same generosity you bring to your public one.","A leadership opportunity is presenting itself in a context where you least expected it. You do not need a title to lead.","A creative or romantic situation that stalled is being reanimated by today's planetary weather."],
-  Virgo:["Mercury, your ruling planet, is making precise and favorable contacts today. The problem that has resisted solution is ready to yield. Come at it from the angle you have not tried yet.","Your sector of health and daily routine is illuminated today. The small adjustment you have been meaning to make is more significant than it appears.","A work situation is asking for your most characteristic gift: the ability to see exactly what is wrong and know precisely how to fix it.","The perfectionism that drives your best work is working against you in one specific area today. Done is better than endlessly refined.","Someone is underestimating you in a professional context. Deliver work so precise and excellent that the misperception corrects itself.","Your body is communicating something today that your mind has been overriding. Listen to what it is telling you.","A collaborative project benefits enormously from your attention to detail today."],
-  Libra:["Venus, your ruling planet, is in a harmonious position today that smooths the friction in a relationship that has felt slightly off-balance.","Your aesthetic sensibility is particularly sharp today. Trust it in creative decisions and in the environment you curate around you.","A decision you have been holding in suspension is ready to be made. You have enough information. Choose.","The scales are tipping in your favor in a professional context today. The fairness you have been advocating for is being recognized.","A one-on-one relationship of any kind is ready for a deeper conversation than the ones you have been having.","Your natural diplomacy is an asset in a group situation today where tensions are running higher than the actual stakes warrant.","Something you created or contributed to is being seen more widely than you know."],
-  Scorpio:["Pluto, your co-ruler, is making a long and slow contact with a sensitive point in your chart. The release will not diminish you. It will free you.","Your instincts about a situation involving shared resources or power are accurate today. Do not second-guess what you already know.","A transformation that has been underway beneath the surface of your life is becoming visible today.","Someone is not being fully honest with you in a situation that matters. You already know this.","Your depth is your greatest asset and your most demanding companion. Today it wants to be expressed.","A healing opportunity presents itself today in an unexpected form.","The intimacy you crave is available today if you are willing to go first."],
-  Sagittarius:["Jupiter, your ruling planet, is in an expansive and fortunate position today that opens a door you have been knocking on. Walk through it before you talk yourself into waiting for a better moment.","Your philosophical mind is particularly active today and the insight you are circling is worth stopping to examine fully.","An opportunity involving travel, education, or the expansion of your reach is presenting itself.","Your honesty is your greatest gift and your most common social casualty. Today, before you say the true thing, ask yourself: is this the right moment?","The freedom you are seeking is closer than it appears. One practical step in the direction of what you actually want will shift the energy of the entire situation.","A teacher, mentor, or guide appears today in a form you might not immediately recognize.","Your faith is being tested in a specific area right now. Hold it."],
-  Capricorn:["Saturn, your ruling planet, is making a stabilizing contact today that rewards the discipline you have maintained. Evidence of that is beginning to surface.","A professional matter that has required patience beyond what felt reasonable is reaching a resolution point.","Your reputation and public standing are benefiting today from work you did quietly, without acknowledgment, some time ago.","An authority figure or institutional structure that has been a source of friction is becoming more navigable.","Your body is asking for rest and your ambition is refusing to grant it. Today the body wins.","A long-term goal that has felt impossibly distant is showing signs of becoming real.","Someone in your professional circle is watching your steadiness with more admiration than they have expressed."],
-  Aquarius:["Uranus, your modern ruler, is activating your sector of innovation and originality today. The room needs what only you can see from where you are standing.","A community, group, or collective effort you are part of is reaching a moment where your specific contribution is exactly what is missing.","Your intellectual independence is being tested by a group consensus that does not feel right to you. Trust your read.","A friendship or platonic connection is deepening in a way that surprises you. Let them.","The cause or vision you carry is receiving energy today. A small act in service of it will have disproportionate impact.","Your need for space is particularly pronounced today and honoring it is necessary, not antisocial.","A technology, system, or unconventional approach you have been exploring is closer to ready than you think."],
-  Pisces:["Neptune, your ruling planet, is in a deeply creative and spiritually attuned position today that makes your intuition almost uncomfortably accurate.","Your creative work is receiving invisible but real support from the planetary weather today.","A boundary you have been struggling to maintain is being tested again today. The compassion that makes you want to give more is real – and it needs a limit to remain sustainable.","The emotional weight you have been carrying for someone else is not yours to hold indefinitely.","A spiritual or creative insight is arriving today through an unexpected channel.","Your sensitivity to the emotional atmosphere around you is heightened today. Spend time in environments that nourish rather than drain.","Something you released is showing you today why the release was necessary."],
+  Aries:[
+    "Today is your day to go for it! Stop waiting and just start. You are braver than you think, and good things happen when you take that first step.",
+    "You have so much energy today — use it! Pick one thing you really want and give it everything you have got. You will surprise yourself.",
+    "Slow down just a little before you speak today. You are right, but how you say it matters. Take a breath and let your words land softly.",
+    "It is okay to rest today. Taking a break is not giving up — it actually makes you stronger. Do something that feels good just for you.",
+    "You can see exactly what needs to happen today. Trust that feeling and move. You do not need anyone's permission to take action.",
+    "Focus is your superpower today. Pick one thing and put all your energy there. A little effort right now goes a really long way.",
+    "Someone has been wanting to talk to you. Let your guard down a little today — it is safe to let people in.",
+  ],
+  Taurus:[
+    "Something you have been working on for a long time is starting to pay off. Keep going — the good stuff is right around the corner.",
+    "Be patient today. Things are moving even when it does not feel like it. Trust that the waiting is actually part of the plan.",
+    "Your gut is telling you something today. Listen to it. You already know what you need to do — just be honest with yourself.",
+    "Today is a great day to enjoy the little things. Good food, a cozy space, something beautiful — you deserve it, so let yourself have it.",
+    "Something feels off and you are not sure why. Ask yourself if this is really what you want, or just what feels familiar.",
+    "Say the thing you have been keeping to yourself. You do not have to yell it — just say it calmly and clearly. People need to hear it.",
+    "A good opportunity came back around. Look at it with fresh eyes this time. It might be even better than you remember.",
+  ],
+  Gemini:[
+    "A great idea is going to pop into your head today, probably during a conversation. Write it down — it is more important than it seems.",
+    "You can see both sides of things right now, which makes you the perfect person to help others work things out. Use that gift today.",
+    "The people you talk to today are going to matter more than you expect. Stay open and curious — a good connection is waiting.",
+    "More information is coming your way soon. Hold off on making a big decision until you have the full picture.",
+    "Your brain wants to jump around today and that is totally fine. Follow what feels exciting — you are building something bigger than you realize.",
+    "Someone is trying to tell you more than what they are actually saying. Pay attention to how they say it, not just the words.",
+    "A friend or partner is more on your team than you thought. Open up a little today — you might be surprised by how much they get it.",
+  ],
+  Cancer:[
+    "Your feelings are spot on today. If something feels wrong, trust that. If something feels right, go toward it. You know more than you think.",
+    "Something in your home life or with family needs a little attention. The conversation you have been putting off — today is a good day for it.",
+    "A project you really care about is asking for your time. Even one hour today will remind you why you love it so much.",
+    "Someone needs you today and they can feel how much you care. Show up for them, but only give what you truly have — that is enough.",
+    "Something you have been putting up with for too long needs to change. You deserve better and it is okay to say so.",
+    "That money or security worry you have been avoiding — look at it today. It is not as scary as you have been making it in your head.",
+    "Old feelings are coming up, but not to hurt you. They are here so you can finish with them and finally move on.",
+  ],
+  Leo:[
+    "This is your moment to shine and you should not hold back. Show up fully today — people need your energy and your light.",
+    "You have a big bold idea and yes, it is the right size. Do not make it smaller. Make it bigger and go for it.",
+    "The recognition you have been waiting for is getting closer. In the meantime, act like you already have it — because you do.",
+    "Someone around you needs to feel seen and heard today. You are so good at making people feel special — do that today on purpose.",
+    "Give yourself some love today too, not just everyone else. Your inner world needs the same attention you give to your outer world.",
+    "You do not need a title or permission to lead. Just go first — that is all leadership really is, and you are made for it.",
+    "Something that felt stuck is starting to move again. Bring fresh energy to it and watch what opens up.",
+  ],
+  Virgo:[
+    "That problem that has been giving you trouble — try a completely different angle today. The answer is there, you just have not looked at it that way yet.",
+    "One small change in your daily routine will make a bigger difference than you expect. Do not underestimate it.",
+    "Your eye for detail is exactly what is needed today. What you notice that everyone else misses — that is your superpower right now.",
+    "You do not have to make it perfect before you share it. Good enough and done is better than perfect and still waiting.",
+    "Someone doubted you recently. The best response is not words — it is showing them work so good they cannot say anything.",
+    "Your body is trying to tell you something. Rest, eat well, slow down a little. You take care of everyone else — take care of you too.",
+    "A team effort is going really well today because of the little things you are catching. Keep going — it matters more than people say.",
+  ],
+  Libra:[
+    "A relationship that felt a little off is getting smoother today. The honest conversation you have been putting off — now is a really good time.",
+    "Your sense of beauty and style is extra strong today. Trust your eye in how you dress, how you decorate, what you choose. You have great taste.",
+    "You have been going back and forth on a decision long enough. Pick a direction today. You can always adjust later — but choose.",
+    "Something fair is finally happening for you at work or in a project. The effort you put in is getting noticed.",
+    "A close relationship is ready to go a little deeper. You know what needs to be said — just say it with kindness.",
+    "The group needs you to step in and smooth things out today. You are the only one who can do it without making it worse.",
+    "Something you put out into the world — a project, an idea, a kind act — is reaching more people than you know.",
+  ],
+  Scorpio:[
+    "Something you have been holding onto — a grudge, a worry, a story — is ready to be let go. Releasing it will not make you weaker. It will free you.",
+    "Your gut feeling about something involving money or trust is right. Do not ignore what you already know just because you cannot prove it yet.",
+    "Something that has been happening under the surface of your life is finally becoming clear. What felt confusing is starting to make sense.",
+    "Someone is not being totally honest with you. You already feel it. You do not have to call them out right now — just stay aware.",
+    "You are feeling deep things today and they want to come out. Write, create, talk to someone you trust. Do not keep it all inside.",
+    "Something hard is coming back up — but this time you can actually deal with it. Do not run from it. Go through it.",
+    "The real connection you are looking for is possible today — but you have to be the one to open up first. Take the risk.",
+  ],
+  Sagittarius:[
+    "A door you have been knocking on is finally opening. Do not talk yourself out of walking through it. The time is now — go.",
+    "Your mind is full of big ideas today and one of them is really important. Stop and think it through — it could change everything.",
+    "A chance to grow — a trip, a class, a new opportunity — is showing up. Even if it looks small, it is the right shape.",
+    "You want to tell someone the truth today and you should. Just make sure you are being kind about it — timing matters.",
+    "The freedom you have been wanting is closer than you think. One real step toward what you actually want will shift everything.",
+    "A teacher or guide is showing up today in an unexpected way. Stay open — wisdom does not always come with a name tag.",
+    "Something you believe in is being tested right now. Hold on to it. Your hope is one of your greatest strengths.",
+  ],
+  Capricorn:[
+    "All the hard work you have been doing is starting to show. Good things are coming in — even the small signs count.",
+    "Something at work that has needed patience is finally moving forward. Stay steady just a little longer — you are almost there.",
+    "People have been noticing your effort even when they did not say so. Your reputation is growing in a really good way.",
+    "Someone in charge has been frustrating you. Today it gets a little easier to deal with. You know how to handle it.",
+    "Your body needs rest and your drive is saying no. Let your body win today. You will do better work after a real break.",
+    "That goal that felt so far away is starting to look possible. You are getting closer than you realize.",
+    "Someone is watching how you handle things with real admiration. You are more of an inspiration than you know.",
+  ],
+  Aquarius:[
+    "You see something today that no one else is seeing. Say it out loud — the room needs your point of view right now.",
+    "A group or community you are part of needs exactly what you bring. Do not wait to be asked — just show up and contribute.",
+    "Everyone else agrees on something but you are not so sure. Trust your instinct. History is usually on the side of the one who questions.",
+    "A friendship is becoming more important than you expected. Let it grow — this person is going to matter.",
+    "That cause or dream you care about is picking up energy. One small thing you do today will have a bigger ripple than you expect.",
+    "You really need some alone time today and that is not antisocial — it is just how you recharge. Give yourself that space.",
+    "Something you have been building or working on quietly is more ready than you think. Do not wait much longer to share it.",
+  ],
+  Pisces:[
+    "Your intuition is incredibly strong today. That feeling you keep second-guessing — trust it. It is not just a feeling, it is a knowing.",
+    "Something creative you have been sitting on is asking for your attention. Come back to it without pressure. Something will open up.",
+    "Your heart wants to give more than you actually have right now. Give what is real, not what you think you should give. That is enough.",
+    "You have been carrying someone else's weight without realizing it. It is okay to put it down. What is theirs is not yours to hold.",
+    "A message or moment today is meant just for you. It might come from a song, a dream, or something someone says off the cuff. Pay attention.",
+    "You are picking up on so much energy around you right now. Protect yourself — spend time with people and places that actually fill you up.",
+    "Something you let go of a while back is showing you why that was the right call. You made a good choice, even if it hurt at the time.",
+  ],
 };
 
 function DailyHoroscope() {
@@ -868,7 +964,7 @@ function TermsContent(){return(<><DocP>Please read these Terms of Service carefu
 function PrivacyContent(){return(<><DocP>Your privacy matters to Arewewoke.</DocP><DocSection title="1. Information We Collect"><DocBullet items={["Email address and name when you subscribe","Payment information, processed securely by Stripe","Usage data to improve app performance","Subscription status to manage access to paid features"]}/></DocSection><DocSection title="2. How We Use Your Information"><DocBullet items={["To process and manage your subscription","To send receipts and billing communications","To improve app features","To respond to support requests"]}/><DocP>We do not sell, rent, share, or trade your personal information to third parties for marketing purposes.</DocP></DocSection><DocSection title="3. Your Rights"><DocP>You have the right to access, correct, or delete the personal data we hold about you. Contact us at arewewoke@gmail.com.</DocP></DocSection><DocSection title="4. Contact"><DocP>arewewoke@gmail.com</DocP></DocSection></>);}
 function CancellationContent(){return(<><DocSection title="Free Trial Period"><DocP>Your 7-day free trial begins the moment your payment method is verified. If you do not cancel before the trial ends, your $4.99/month subscription begins automatically on day 8.</DocP></DocSection><DocSection title="How to Cancel"><DocBullet items={["Via the Stripe customer portal — the fastest method, available 24/7.","By emailing arewewoke@gmail.com with the subject line: Cancel My Subscription."]}/></DocSection><DocSection title="Refund Policy"><DocP>All subscription fees are non-refundable once charged.</DocP></DocSection><DocSection title="Contact"><DocP>arewewoke@gmail.com</DocP></DocSection></>);}
 function DisclaimerContent(){return(<><DocP>All astrological content on Arewewoke is provided strictly for entertainment and personal reflection.</DocP><DocSection title="Not Professional Advice"><DocP>Nothing on Arewewoke constitutes medical, psychological, financial, legal, or any other form of professional advice.</DocP></DocSection><DocSection title="Contact"><DocP>arewewoke@gmail.com</DocP></DocSection></>);}
-function CreditsContent(){return(<><DocP>Arewewoke is created and operated by Ayssia Mason.</DocP><DocSection title="Astrological Authors Referenced"><DocBullet items={["Steven Forrest — The Inner Sky, evolutionary astrology","Liz Greene — Saturn: A New Look at an Old Devil, psychological astrology","Robert Hand — Planets in Transit","Howard Sasportas — The Twelve Houses","Donna Cunningham — Moon and Venus placements","Isabel Hickey — Astrology: A Cosmic Science","Dane Rudhyar — An Astrological Mandala"]}/></DocSection><DocSection title="Contact"><DocP>arewewoke@gmail.com</DocP></DocSection></>);}
+function CreditsContent(){return(<><DocP>Arewewoke is created and operated by Ayssia Mason.</DocP><DocSection title="Astrological Authors Referenced"><DocBullet items={["Steven Forrest — The Inner Sky, evolutionary astrology","Liz Greene — Saturn: A New Look at an Old Devil, psychological astrology","Robert Hand — Planets in Transit","Howard Sasportas — The Twelve Houses","Donna Cunningham — Moon and Venus placements","Isabel Hickey — Astrology: A Cosmic Science","Dane Rudhyar — An Astrological Mandala"]}/></DocSection><DocSection title="Contact"><DocP>celestia.insights.app@gmail.com</DocP></DocSection></>);}
 
 // ─── MAIN APP ───────────────────────────────────────────────────
 export default function AstrologyApp() {
@@ -891,7 +987,7 @@ export default function AstrologyApp() {
 
   const tabs = [
     {label:"🌠 Daily Horoscope",key:"horoscope"},
-    {label:"🔮 Zodiac Quiz",key:"guess"},
+    {label:"🔮 Game",key:"guess"},
     {label:"🌟 Celebrity",key:"celebrity"},
     {label:"✦ Fun Facts",key:"facts"},
     {label:"📲 Get The App",key:"install"},
