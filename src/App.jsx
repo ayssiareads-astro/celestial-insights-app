@@ -215,7 +215,7 @@ const allGuessQuestions = [
 const STRIPE_TRIAL_LINK = "https://buy.stripe.com/bJefZa8lH4TBetl2VL5sA01";
 const STRIPE_PORTAL_LINK = "https://billing.stripe.com/p/login/5kQ3co6dzeub70TfIx5sA00";
 const FREE_QUESTIONS = 4;
-const TOTAL_QUESTIONS = 20;
+const TOTAL_QUESTIONS = 12;
 
 const dailyHoroscopes = {
   Aries: ["The Sun's current position activates your first house of identity – today is not the day to shrink. Say the thing you have been rehearsing. Lead with your instinct and clean up the details later. Your directness is not too much; it is exactly what is needed.","Mars is stirring your sector of ambition and this energy wants an outlet. Channel it into the project that has been stalling. A short burst of focused effort today will move something further than a week of cautious planning ever could.","The Moon in your opposing sign asks you to pause before firing. Your instinct is correct but your timing can be refined. What you have to say will land harder if you wait until the room is ready to receive it.","Venus brushes your chart today with an invitation toward pleasure and ease. You have been pushing hard. The cosmos is giving you permission to stop. Rest is not retreat – it is strategy.","A trine between your ruling planet Mars and the outer planets opens a window of unusual clarity. You see exactly what needs to happen and exactly who is in the way. Move decisively but without cruelty.","Your fire is at a peak today but it needs direction, not just ignition. Pick the one thing that matters most and give it everything. Scattered effort will leave you tired. Focused effort will leave you ahead.","The lunar energy today softens your edges just enough to make you approachable to someone who has been waiting for the right moment. Let them in. Not everyone who wants access is a threat."],
@@ -587,6 +587,13 @@ function GuessYourSign() {
 
   if (step === "result") return (
     <div style={{animation:"up .5s ease",textAlign:"center"}}>
+      {score.correct === 5 && guess === currentQ.sign && (
+        <div style={{background:"linear-gradient(135deg,rgba(232,168,0,0.15),rgba(0,0,0,0.3))",border:"2px solid rgba(255,200,50,0.5)",borderRadius:16,padding:"18px 24px",marginBottom:16,animation:"up .4s ease"}}>
+          <div style={{fontSize:36,marginBottom:6}}>🔥⭐🔥</div>
+          <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:18,color:"#f5c842",letterSpacing:".05em"}}>You Are Killing It!</div>
+          <div style={{fontFamily:"Georgia,serif",fontSize:13,color:"#a8e060",marginTop:6}}>5 correct answers — the stars are aligned in your favor.</div>
+        </div>
+      )}
       <div style={{background:guess===currentQ.sign?"rgba(168,224,96,0.08)":"rgba(255,80,80,0.08)",border:"1px solid "+(guess===currentQ.sign?"rgba(168,224,96,0.4)":"rgba(255,100,100,0.3)"),borderRadius:20,padding:"32px 24px",marginBottom:24}}>
         <div style={{fontSize:40,marginBottom:12}}>{emojis[currentQ.sign]||"★"}</div>
         <p style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:18,color:guess===currentQ.sign?"#a8e060":"#f5c842",margin:"0 0 8px"}}>{feedback}</p>
