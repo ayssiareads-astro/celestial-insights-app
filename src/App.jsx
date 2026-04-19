@@ -350,16 +350,31 @@ function AvatarSVG({ avatar, size = 90 }) {
 
 // ─── ZODIAC QUIZ COMPONENT ──────────────────────────────────────
 function ZodiacQuiz() {
-  const [screen, setScreen] = useState("intro"); // intro | playing | paywall | avatarUnlock | levelComplete | trophy
-  const [level, setLevel] = useState(1);
-  const [questionIndex, setQuestionIndex] = useState(0); // 0-11 within current level
-  const [totalAnswered, setTotalAnswered] = useState(0); // across all levels
-  const [correctInLevel, setCorrectInLevel] = useState(0); // correct per level
-  const [score, setScore] = useState({ correct: 0, total: 0 });
+  // Load saved progress from localStorage on mount
+  const loadSaved = (key, fallback) => {
+    try {
+      const val = localStorage.getItem("aww_" + key);
+      return val !== null ? JSON.parse(val) : fallback;
+    } catch(e) { return fallback; }
+  };
+  const save = (key, val) => {
+    try { localStorage.setItem("aww_" + key, JSON.stringify(val)); } catch(e) {}
+  };
+
+  const [screen, setScreen] = useState(() => {
+    const s = loadSaved("screen", "intro");
+    // Never restore mid-answer screens — resume at playing
+    return (s === "playing" || s === "levelComplete" || s === "paywall") ? s : "intro";
+  });
+  const [level, setLevel] = useState(() => loadSaved("level", 1));
+  const [questionIndex, setQuestionIndex] = useState(() => loadSaved("questionIndex", 0));
+  const [totalAnswered, setTotalAnswered] = useState(() => loadSaved("totalAnswered", 0));
+  const [correctInLevel, setCorrectInLevel] = useState(() => loadSaved("correctInLevel", 0));
+  const [score, setScore] = useState(() => loadSaved("score", { correct: 0, total: 0 }));
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [isCorrect, setIsCorrect] = useState(null);
   const [newAvatar, setNewAvatar] = useState(null);
-  const [unlockedAvatars, setUnlockedAvatars] = useState([]);
+  const [unlockedAvatars, setUnlockedAvatars] = useState(() => loadSaved("unlockedAvatars", []));
   const [isSubscribed, setIsSubscribed] = useState(() => {
     try { return localStorage.getItem("aww_subscribed") === "true"; } catch(e) { return false; }
   });
@@ -367,6 +382,15 @@ function ZodiacQuiz() {
   const [memberEmail, setMemberEmail] = useState("");
   const [memberError, setMemberError] = useState(null);
   const [memberVerifying, setMemberVerifying] = useState(false);
+
+  // Save progress whenever key state changes
+  React.useEffect(() => { save("screen", screen); }, [screen]);
+  React.useEffect(() => { save("level", level); }, [level]);
+  React.useEffect(() => { save("questionIndex", questionIndex); }, [questionIndex]);
+  React.useEffect(() => { save("totalAnswered", totalAnswered); }, [totalAnswered]);
+  React.useEffect(() => { save("correctInLevel", correctInLevel); }, [correctInLevel]);
+  React.useEffect(() => { save("score", score); }, [score]);
+  React.useEffect(() => { save("unlockedAvatars", unlockedAvatars); }, [unlockedAvatars]);
 
   const levelData = quizLevels[level - 1];
   const currentQuestion = levelData.questions[questionIndex];
@@ -469,6 +493,10 @@ function ZodiacQuiz() {
   };
 
   const resetAll = () => {
+    // Clear all saved game progress
+    ["screen","level","questionIndex","totalAnswered","correctInLevel","score","unlockedAvatars"].forEach(k => {
+      try { localStorage.removeItem("aww_" + k); } catch(e) {}
+    });
     setScreen("intro"); setLevel(1); setQuestionIndex(0);
     setTotalAnswered(0); setCorrectInLevel(0);
     setScore({ correct:0, total:0 }); setSelectedAnswer(null);
@@ -481,6 +509,8 @@ function ZodiacQuiz() {
     if (screen === "intro") setScreen("playing");
   }, []);
   if (screen === "intro") return null;
+
+  // ── RETURNING USER BANNER — shown briefly when restoring progress ──
 
   // ── PAYWALL SCREEN ──
   if (screen === "paywall") return (
@@ -668,6 +698,12 @@ function ZodiacQuiz() {
 
   return (
     <div style={{animation:"up .45s ease"}}>
+      {/* Welcome back indicator for returning users */}
+      {totalAnswered > 0 && questionIndex === loadSaved("questionIndex", 0) && (
+        <div style={{background:"rgba(168,224,96,0.08)",border:"1px solid rgba(168,224,96,0.2)",borderRadius:10,padding:"8px 14px",marginBottom:14,textAlign:"center",animation:"up .4s ease"}}>
+          <span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#a8e060",letterSpacing:".1em"}}>✦ WELCOME BACK — PROGRESS RESTORED ✦</span>
+        </div>
+      )}
       {/* Header */}
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}}>
         <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,letterSpacing:".15em",color:levelColor}}>
