@@ -16,150 +16,160 @@ const celebrities = [
   { name:"Adele", sign:"Taurus", sun:"Taurus", moon:"Sagittarius", rising:"Sagittarius", born:"May 5, 1988", emoji:"🎵", fact:"Her Taurus Sun gives her that unmistakable groundedness – her voice feels like it comes from the earth itself." },
   { name:"Dwayne Johnson", sign:"Taurus", sun:"Taurus", moon:"Scorpio", rising:"Unknown", born:"May 2, 1972", emoji:"💪", fact:"His Taurus Sun is the foundation of his brand – reliable, physical, built over years of consistent, serious effort." },
   { name:"Kanye West", sign:"Gemini", sun:"Gemini", moon:"Pisces", rising:"Unknown", born:"Jun 8, 1977", emoji:"🎧", fact:"His Gemini Sun is the genius behind his ability to hold contradictions – visionary and chaotic, brilliant and volatile, all at once." },
-  { name:"Tupac Shakur", sign:"Gemini", sun:"Gemini", moon:"Sagittarius", rising:"Unknown", born:"Jun 16, 1971", emoji:"✊", fact:"His Gemini Sun gave him the ability to speak in two registers at once – the street poet and the political philosopher, equally real and equally him." },
-  { name:"Ariana Grande", sign:"Cancer", sun:"Cancer", moon:"Libra", rising:"Capricorn", born:"Jun 26, 1993", emoji:"🌙", fact:"Her Cancer Sun is the source of her otherworldly emotional depth – she channels genuine feeling into every note in a way that bypasses your defenses." },
-  { name:"Selena Gomez", sign:"Cancer", sun:"Cancer", moon:"Aries", rising:"Unknown", born:"Jul 22, 1992", emoji:"💜", fact:"Her Cancer Sun is the quiet engine behind her longevity – the emotional authenticity that makes her feel like a person, not a product, to everyone who follows her." },
-  { name:"Jennifer Lopez", sign:"Leo", sun:"Leo", moon:"Scorpio", rising:"Sagittarius", born:"Jul 24, 1969", emoji:"👑", fact:"Her Leo Sun is textbook – she was literally born to perform, and decades in, she is still the most magnetic person in any room she enters." },
+  { name:"Tupac Shakur", sign:"Gemini", sun:"Gemini", moon:"Sagittarius", rising:"Unknown", born:"Jun 16, 1971", emoji:"✊", fact:"His Gemini Sun gave him the ability to speak in two registers at once – the street poet and the political philosopher." },
+  { name:"Ariana Grande", sign:"Cancer", sun:"Cancer", moon:"Libra", rising:"Capricorn", born:"Jun 26, 1993", emoji:"🌙", fact:"Her Cancer Sun is the source of her otherworldly emotional depth – she channels genuine feeling into every note." },
+  { name:"Selena Gomez", sign:"Cancer", sun:"Cancer", moon:"Aries", rising:"Unknown", born:"Jul 22, 1992", emoji:"💜", fact:"Her Cancer Sun is the quiet engine behind her longevity – the emotional authenticity that makes her feel like a person, not a product." },
+  { name:"Jennifer Lopez", sign:"Leo", sun:"Leo", moon:"Scorpio", rising:"Sagittarius", born:"Jul 24, 1969", emoji:"👑", fact:"Her Leo Sun is textbook – she was literally born to perform, and decades in, she is still the most magnetic person in any room." },
   { name:"Kylie Jenner", sign:"Leo", sun:"Leo", moon:"Scorpio", rising:"Unknown", born:"Aug 10, 1997", emoji:"💄", fact:"Her Leo Sun built an empire on visibility and personal brand – she understood instinctively that in the attention economy, the self is the product." },
   { name:"Beyonce", sign:"Virgo", sun:"Virgo", moon:"Scorpio", rising:"Libra", born:"Sep 4, 1981", emoji:"⭐", fact:"Her Virgo Sun is the secret behind the flawless execution – she rehearses until excellence becomes effortless." },
-  { name:"Zendaya", sign:"Virgo", sun:"Virgo", moon:"Gemini", rising:"Unknown", born:"Sep 1, 1996", emoji:"🌟", fact:"Her Virgo Sun is behind the precision and intentionality of every career move – nothing she does is accidental, and it shows." },
+  { name:"Zendaya", sign:"Virgo", sun:"Virgo", moon:"Gemini", rising:"Unknown", born:"Sep 1, 1996", emoji:"🌟", fact:"Her Virgo Sun is behind the precision and intentionality of every career move – nothing she does is accidental." },
   { name:"Kim Kardashian", sign:"Libra", sun:"Libra", moon:"Pisces", rising:"Sagittarius", born:"Oct 21, 1980", emoji:"💋", fact:"Her Libra Sun explains the brand – beauty, aesthetics, and relatability weaponized into a billion-dollar empire." },
-  { name:"Cardi B", sign:"Libra", sun:"Libra", moon:"Aries", rising:"Unknown", born:"Oct 11, 1992", emoji:"💅", fact:"Her Libra Sun is behind the charm and the aesthetic intelligence – she knows exactly how to present herself and she does it with complete conviction." },
-  { name:"Drake", sign:"Scorpio", sun:"Scorpio", moon:"Scorpio", rising:"Unknown", born:"Oct 24, 1986", emoji:"🎤", fact:"Sun AND Moon in Scorpio – he literally cannot write a surface-level song. Everything comes from the wound, which is why it hits so hard." },
-  { name:"Katy Perry", sign:"Scorpio", sun:"Scorpio", moon:"Scorpio", rising:"Unknown", born:"Oct 25, 1984", emoji:"🌟", fact:"Her Scorpio Sun gives her the intensity that lives underneath the pop surface – she transforms her most painful experiences into her biggest anthems." },
-  { name:"Nicki Minaj", sign:"Sagittarius", sun:"Sagittarius", moon:"Virgo", rising:"Unknown", born:"Dec 8, 1982", emoji:"🏹", fact:"Her Sagittarius Sun is pure – she expanded rap's entire idea of what a female rapper could be, then kept pushing the boundaries further." },
-  { name:"Britney Spears", sign:"Sagittarius", sun:"Sagittarius", moon:"Aquarius", rising:"Libra", born:"Dec 2, 1981", emoji:"🎀", fact:"Her Sagittarius Sun is the freedom-seeker at the center of her story – the tension between that need and the control placed around her defined an era." },
-  { name:"LeBron James", sign:"Capricorn", sun:"Capricorn", moon:"Aries", rising:"Unknown", born:"Dec 30, 1984", emoji:"🏀", fact:"His Capricorn Sun built the empire. He did not just play basketball – he studied power, built an institution, and played the longest game imaginable." },
-  { name:"Michelle Obama", sign:"Capricorn", sun:"Capricorn", moon:"Aquarius", rising:"Unknown", born:"Jan 17, 1964", emoji:"🌿", fact:"Her Capricorn Sun is the structural integrity behind everything she does – the discipline, the precision, and the refusal to be anything less than fully prepared." },
-  { name:"Oprah Winfrey", sign:"Aquarius", sun:"Aquarius", moon:"Sagittarius", rising:"Sagittarius", born:"Jan 29, 1954", emoji:"📺", fact:"Her Aquarius Sun is the source of her revolutionary vision – she did not just do television, she transformed what television could mean for humanity." },
-  { name:"Harry Styles", sign:"Aquarius", sun:"Aquarius", moon:"Libra", rising:"Unknown", born:"Feb 1, 1994", emoji:"🌈", fact:"His Aquarius Sun is behind the genre-defying, norm-breaking, deeply individualistic persona – he belongs to no category and he built that freedom deliberately." },
-  { name:"Rihanna", sign:"Pisces", sun:"Pisces", moon:"Aries", rising:"Aries", born:"Feb 20, 1988", emoji:"💎", fact:"Her Pisces Sun gives her that effortless, otherworldly quality – she moves through the world like she is partly somewhere else, and it is utterly magnetic." },
-  { name:"Bad Bunny", sign:"Pisces", sun:"Pisces", moon:"Virgo", rising:"Unknown", born:"Mar 10, 1994", emoji:"🐰", fact:"His Pisces Sun is the source of the emotional fluidity in his music – he crosses genre, gender expectation, and cultural boundary the way Pisces crosses every border, without effort and without apology." },
+  { name:"Cardi B", sign:"Libra", sun:"Libra", moon:"Aries", rising:"Unknown", born:"Oct 11, 1992", emoji:"💅", fact:"Her Libra Sun is behind the charm and the aesthetic intelligence – she knows exactly how to present herself." },
+  { name:"Drake", sign:"Scorpio", sun:"Scorpio", moon:"Scorpio", rising:"Unknown", born:"Oct 24, 1986", emoji:"🎤", fact:"Sun AND Moon in Scorpio – he literally cannot write a surface-level song. Everything comes from the wound." },
+  { name:"Katy Perry", sign:"Scorpio", sun:"Scorpio", moon:"Scorpio", rising:"Unknown", born:"Oct 25, 1984", emoji:"🌟", fact:"Her Scorpio Sun gives her the intensity that lives underneath the pop surface – she transforms her most painful experiences into anthems." },
+  { name:"Nicki Minaj", sign:"Sagittarius", sun:"Sagittarius", moon:"Virgo", rising:"Unknown", born:"Dec 8, 1982", emoji:"🏹", fact:"Her Sagittarius Sun is pure – she expanded rap's entire idea of what a female rapper could be." },
+  { name:"Britney Spears", sign:"Sagittarius", sun:"Sagittarius", moon:"Aquarius", rising:"Libra", born:"Dec 2, 1981", emoji:"🎀", fact:"Her Sagittarius Sun is the freedom-seeker at the center of her story." },
+  { name:"LeBron James", sign:"Capricorn", sun:"Capricorn", moon:"Aries", rising:"Unknown", born:"Dec 30, 1984", emoji:"🏀", fact:"His Capricorn Sun built the empire. He did not just play basketball – he studied power and played the longest game imaginable." },
+  { name:"Michelle Obama", sign:"Capricorn", sun:"Capricorn", moon:"Aquarius", rising:"Unknown", born:"Jan 17, 1964", emoji:"🌿", fact:"Her Capricorn Sun is the structural integrity behind everything she does – the discipline and the refusal to be anything less than fully prepared." },
+  { name:"Oprah Winfrey", sign:"Aquarius", sun:"Aquarius", moon:"Sagittarius", rising:"Sagittarius", born:"Jan 29, 1954", emoji:"📺", fact:"Her Aquarius Sun is the source of her revolutionary vision – she transformed what television could mean for humanity." },
+  { name:"Harry Styles", sign:"Aquarius", sun:"Aquarius", moon:"Libra", rising:"Unknown", born:"Feb 1, 1994", emoji:"🌈", fact:"His Aquarius Sun is behind the genre-defying, norm-breaking persona – he belongs to no category and he built that freedom deliberately." },
+  { name:"Rihanna", sign:"Pisces", sun:"Pisces", moon:"Aries", rising:"Aries", born:"Feb 20, 1988", emoji:"💎", fact:"Her Pisces Sun gives her that effortless, otherworldly quality – she moves through the world like she is partly somewhere else." },
+  { name:"Bad Bunny", sign:"Pisces", sun:"Pisces", moon:"Virgo", rising:"Unknown", born:"Mar 10, 1994", emoji:"🐰", fact:"His Pisces Sun is the source of the emotional fluidity in his music – he crosses genre, gender expectation, and cultural boundary without effort." },
 ];
 
 const facts = {
-"Scorpio-Venus": ["Venus in Scorpio means love is never casual for you – you merge completely or not at all, and people can feel that intensity the moment you show interest.","You have an almost psychic ability to sense when someone is being dishonest with you in love. You may not say it immediately, but you never forget it.","Your love language is transformation. You do not just want a partner – you want someone who challenges you to evolve at the deepest level."],
-"Libra-Venus": ["Venus in Libra is the planet in its home sign – meaning love, beauty, and harmony come naturally to you in a way that feels almost effortless to others.","You have an extraordinary eye for aesthetics. Your home, your style, your environment – everything around you tends to be carefully curated and beautiful."],
-"Taurus-Venus": ["Venus in Taurus is exalted – this is one of the most powerful placements for love and beauty in the entire zodiac.","You love through your senses. Physical touch, good food, beautiful surroundings, and comfort are not luxuries for you – they are how you express and receive love."],
-"Aries-Venus": ["Venus in Aries means you fall fast, hard, and all at once – the chase is genuinely exciting for you, and you lose interest when the thrill fades.","You are bold in love. You will make the first move, say what you feel, and pursue what you want without apology."],
-"Gemini-Venus": ["Venus in Gemini means you fall in love with minds first. If someone cannot hold a real conversation with you, the attraction fades fast.","You need variety in love – not necessarily different partners, but variety in how you connect."],
-"Cancer-Venus": ["Venus in Cancer means home is where your heart lives. Creating a safe, warm, nurturing environment for your partner is how you say I love you most loudly.","You have an extraordinary emotional memory. You remember exactly how someone made you feel years ago – the good and the painful."],
-"Leo-Venus": ["Venus in Leo loves grandly and dramatically – you do not do anything halfway, and your partners know they are loved because you make it impossible to miss.","You need to feel celebrated in your relationships. A partner who takes you for granted will slowly break your heart."],
-"Virgo-Venus": ["Venus in Virgo expresses love through service and devotion – you show up, you fix things, you pay attention to details that most people miss.","You are attracted to intelligence and competence. Someone who is good at what they do is genuinely attractive to you."],
-"Sagittarius-Venus": ["Venus in Sagittarius loves freely and adventurously – you need a partner who is also your travel companion and your best friend.","Freedom in love is non-negotiable. A relationship that feels like a cage will eventually push you out the door."],
-"Capricorn-Venus": ["Venus in Capricorn takes love seriously. You do not date casually – you date with intention, assessing long-term compatibility from the very beginning.","You express love through acts of reliability – showing up on time, keeping your word, building a stable life alongside someone."],
-"Aquarius-Venus": ["Venus in Aquarius needs intellectual freedom in love above all else. A partner who tries to control your thinking will not last.","Friendship is the foundation of all your romantic relationships. If you cannot be genuine friends first, the romance does not have a real foundation."],
-"Pisces-Venus": ["Venus in Pisces is exalted – this is considered the highest expression of Venus energy, meaning your capacity for love, empathy, and devotion is almost limitless.","You love unconditionally and sometimes unwisely. Your capacity to see the best in people can lead you to stay in situations that do not serve you."],
+"Scorpio-Venus": ["Venus in Scorpio means love is never casual for you – you merge completely or not at all.","You have an almost psychic ability to sense when someone is being dishonest with you in love.","Your love language is transformation. You do not just want a partner – you want someone who challenges you to evolve."],
+"Libra-Venus": ["Venus in Libra is the planet in its home sign – meaning love, beauty, and harmony come naturally to you.","You have an extraordinary eye for aesthetics. Your home, your style – everything around you tends to be carefully curated."],
+"Taurus-Venus": ["Venus in Taurus is exalted – this is one of the most powerful placements for love and beauty in the entire zodiac.","You love through your senses. Physical touch, good food, beautiful surroundings are how you express and receive love."],
+"Aries-Venus": ["Venus in Aries means you fall fast, hard, and all at once – the chase is genuinely exciting for you.","You are bold in love. You will make the first move, say what you feel, and pursue what you want without apology."],
+"Gemini-Venus": ["Venus in Gemini means you fall in love with minds first. If someone cannot hold a real conversation, the attraction fades fast.","You need variety in love – not necessarily different partners, but variety in how you connect."],
+"Cancer-Venus": ["Venus in Cancer means home is where your heart lives. Creating a safe, warm, nurturing environment is how you say I love you.","You have an extraordinary emotional memory. You remember exactly how someone made you feel years ago."],
+"Leo-Venus": ["Venus in Leo loves grandly and dramatically – you do not do anything halfway.","You need to feel celebrated in your relationships. A partner who takes you for granted will slowly break your heart."],
+"Virgo-Venus": ["Venus in Virgo expresses love through service and devotion – you show up, you fix things, you pay attention to details.","You are attracted to intelligence and competence. Someone who is good at what they do is genuinely attractive to you."],
+"Sagittarius-Venus": ["Venus in Sagittarius loves freely and adventurously – you need a partner who is also your travel companion and best friend.","Freedom in love is non-negotiable. A relationship that feels like a cage will eventually push you out the door."],
+"Capricorn-Venus": ["Venus in Capricorn takes love seriously. You do not date casually – you date with intention.","You express love through acts of reliability – showing up on time, keeping your word, building a stable life alongside someone."],
+"Aquarius-Venus": ["Venus in Aquarius needs intellectual freedom in love above all else.","Friendship is the foundation of all your romantic relationships. If you cannot be genuine friends first, the romance has no foundation."],
+"Pisces-Venus": ["Venus in Pisces is exalted – your capacity for love, empathy, and devotion is almost limitless.","You love unconditionally and sometimes unwisely. Your capacity to see the best in people can lead you to stay too long."],
 "Aries-Moon": ["Your Moon in Aries means your emotional reactions are immediate and instinctive – you feel it, you express it, and often you are over it before others have even processed what happened.","You restore yourself through action, not reflection. When you are emotionally activated, you need to move."],
-"Cancer-Moon": ["Moon in Cancer is the Moon in its home sign – giving you one of the most emotionally intuitive, sensitive, and deeply feeling natures in the zodiac.","Your emotional memory is extraordinary. You carry the feeling of every significant moment with you indefinitely."],
+"Cancer-Moon": ["Moon in Cancer is the Moon in its home sign – giving you one of the most emotionally intuitive natures in the zodiac.","Your emotional memory is extraordinary. You carry the feeling of every significant moment with you indefinitely."],
 "Scorpio-Moon": ["Moon in Scorpio is one of the most emotionally intense placements in the zodiac. Your feelings do not visit – they take up residence.","You have an instinctive ability to see beneath the surface of people and situations."],
 "Leo-Moon": ["Moon in Leo means your emotional world is dramatic, generous, and deeply expressive. You feel things with your whole chest.","You restore through creativity, play, and being genuinely celebrated."],
-"Taurus-Moon": ["Moon in Taurus is the Moon in its exaltation – meaning emotional security, steadiness, and the capacity to be genuinely present are your greatest gifts.","You restore through physical comfort, good food, time in nature, and the simple pleasure of a beautiful, calm environment."],
-"Gemini-Moon": ["Moon in Gemini means you process emotions through language – you need to talk about what you feel before it becomes real and manageable.","Your emotional world is quick-moving and varied. You can cycle through several different feeling states in a single day."],
-"Virgo-Moon": ["Moon in Virgo means you process emotions analytically – when something upsets you, your first instinct is to understand it and figure out what needs to be fixed.","You restore through order, productive work, and the satisfaction of having done something useful."],
-"Libra-Moon": ["Moon in Libra means your emotional wellbeing is deeply tied to the quality of your relationships.","You restore through beauty, aesthetic pleasure, meaningful conversation, and time in environments that feel balanced."],
+"Taurus-Moon": ["Moon in Taurus is the Moon in its exaltation – emotional security, steadiness, and genuine presence are your greatest gifts.","You restore through physical comfort, good food, time in nature, and the simple pleasure of a beautiful, calm environment."],
+"Gemini-Moon": ["Moon in Gemini means you process emotions through language – you need to talk about what you feel before it becomes real.","Your emotional world is quick-moving and varied. You can cycle through several feeling states in a single day."],
+"Virgo-Moon": ["Moon in Virgo means you process emotions analytically – when something upsets you, your first instinct is to understand it.","You restore through order, productive work, and the satisfaction of having done something useful."],
+"Libra-Moon": ["Moon in Libra means your emotional wellbeing is deeply tied to the quality of your relationships.","You restore through beauty, aesthetic pleasure, meaningful conversation, and time in balanced environments."],
 "Sagittarius-Moon": ["Moon in Sagittarius means your emotional world is expansive, optimistic, and oriented toward freedom and meaning.","You restore through movement – travel, learning, outdoor space, or any experience that makes the world feel larger."],
-"Capricorn-Moon": ["Moon in Capricorn means your emotional world is private, disciplined, and deeply serious beneath a composed exterior.","You restore through solitary productive work, time in nature, and the quiet satisfaction of having handled something difficult with competence."],
+"Capricorn-Moon": ["Moon in Capricorn means your emotional world is private, disciplined, and deeply serious beneath a composed exterior.","You restore through solitary productive work, time in nature, and the quiet satisfaction of having handled something difficult."],
 "Aquarius-Moon": ["Moon in Aquarius means you process emotions intellectually – feelings arrive as ideas first.","You restore through solitude, intellectual stimulation, and connection to causes larger than yourself."],
-"Pisces-Moon": ["Moon in Pisces is one of the most psychically sensitive placements in astrology. You pick up on emotional undercurrents in a room before anyone has spoken a word.","You restore through creative expression, spiritual practice, time near water, and genuine solitude."],
-"Leo-Sun": ["Your Sun in Leo is ruled by the Sun itself – the only sign with this distinction – meaning your identity, your self-expression, and your vitality are inextricably linked.","You were born to shine. Not in a performative way – in a genuinely luminous way."],
-"Scorpio-Sun": ["Your Sun in Scorpio is co-ruled by Mars and Pluto – meaning your identity is built around depth, truth, and evolution.","You are one of the most psychologically complex signs in the zodiac. There are layers to you that most people never access."],
-"Capricorn-Sun": ["Your Sun in Capricorn is ruled by Saturn – meaning your identity is built around achievement, integrity, and the long game.","You have a relationship with time that sets you apart from most signs."],
-"Aries-Sun": ["Your Sun in Aries is ruled by Mars – meaning your identity is built around action, independence, and the courage to go first.","You were born to begin things. The spark of a new idea activates something in you that more cautious signs simply do not have access to."],
-"Taurus-Sun": ["Your Sun in Taurus is ruled by Venus – meaning your identity is built around what you love, what you create, and what you choose to call yours.","You have an instinctive relationship with quality. You know the difference between what is real and what is merely shiny."],
-"Gemini-Sun": ["Your Sun in Gemini is ruled by Mercury – meaning your identity is built around ideas, language, and the endlessly stimulating exchange of both.","You are one of the most intellectually alive signs in the zodiac."],
-"Cancer-Sun": ["Your Sun in Cancer is ruled by the Moon – meaning your identity is fluid, cyclical, and deeply tied to your emotional world and the people you love.","You have an emotional intelligence that operates almost like a sixth sense."],
-"Virgo-Sun": ["Your Sun in Virgo is ruled by Mercury – giving you a mind that is precise, analytical, and perpetually oriented toward improvement.","You notice what others miss. Details, patterns, inconsistencies – these register for you automatically."],
-"Libra-Sun": ["Your Sun in Libra is ruled by Venus – meaning your identity is built around relationship, aesthetic intelligence, and the pursuit of genuine fairness.","You have a natural gift for seeing all sides of any situation with clarity and evenhandedness."],
-"Sagittarius-Sun": ["Your Sun in Sagittarius is ruled by Jupiter – meaning your identity is built around belief, freedom, and the perpetual pursuit of what lies beyond the next horizon.","You have a relationship with optimism that is not naivety but a genuine philosophical position."],
-"Aquarius-Sun": ["Your Sun in Aquarius is ruled by Saturn and Uranus – meaning your identity is built around originality, independence, and a genuine vision of how things could be better.","You have always felt slightly outside the mainstream – not as an affectation but as a lived experience."],
-"Pisces-Sun": ["Your Sun in Pisces is ruled by Jupiter and Neptune – meaning your identity is fluid, imaginative, and fundamentally oriented toward the invisible dimensions of existence.","You have a permeability to experience that is both your greatest gift and your most demanding challenge."],
-"Aries-Mercury": ["Mercury in Aries means your mind moves faster than almost anyone else in the room. You have the answer before others have finished processing the question – and the impatience to match.","You communicate with directness that some people find refreshing and others find startling. You do not dress up what you mean with softening language. You say the thing.","Your thinking is original and instinctive rather than methodical. You trust the first idea that arrives because it is usually right – and the five minutes of second-guessing rarely improves it."],
-"Taurus-Mercury": ["Mercury in Taurus means you think slowly, thoroughly, and almost always correctly. You do not rush to conclusions and you do not change your mind without a genuinely good reason.","Your communication style is calm, measured, and deeply reliable. When you say something, people believe you – because you do not say things you have not already thought through completely.","You have an instinctive connection between ideas and the physical world. Abstract concepts make sense to you once you can connect them to something real, tangible, and felt."],
-"Gemini-Mercury": ["Mercury in Gemini is the planet in its home sign – giving you one of the most naturally agile, quick, and linguistically gifted minds in the entire zodiac.","You can hold two completely contradictory ideas at the same time without discomfort. Where others see a conflict, you see a spectrum – and you are genuinely comfortable living in the middle of it.","Your curiosity has no ceiling. The moment you feel like you fully understand something, your interest begins to migrate. This is not a flaw – it is the engine of your extraordinary range."],
-"Cancer-Mercury": ["Mercury in Cancer means your mind is deeply intuitive and emotionally intelligent. You pick up on what is not being said in a conversation as fluently as what is.","Your memory for feeling is extraordinary. You do not just remember events – you remember exactly how they felt, who said what, and the atmosphere in the room. This makes you a natural storyteller.","You think best when you feel safe. In environments of genuine trust, you become one of the most insightful people in the conversation."],
-"Leo-Mercury": ["Mercury in Leo gives you a natural gift for communication that commands attention. When you speak – in a room, in writing, in any medium – people orient toward you instinctively.","You think in narratives, not bullet points. Your mind naturally organizes information into stories with stakes, characters, and momentum – which is why you are so persuasive without even trying.","Your ideas come with conviction. You do not float suggestions – you make pronouncements. This is enormously effective when you are right, which is often."],
-"Virgo-Mercury": ["Mercury in Virgo is the planet in its home and exaltation – the most analytically precise placement in the zodiac. Your mind is a finely calibrated instrument.","You notice the error everyone else walked past. The misplaced word, the flawed assumption, the number that does not quite add up – these register for you automatically.","You express care through precision. When you edit someone's work or explain something, the extraordinary detail you bring is an act of respect – you are taking it seriously enough to get it exactly right."],
-"Libra-Mercury": ["Mercury in Libra gives you a mind that is naturally diplomatic, fair, and extraordinarily good at seeing every side of any situation with genuine clarity.","You think in relationships between ideas rather than isolated facts. The most interesting question for you is how things connect to, balance against, and affect everything around them.","Your communication is elegant by instinct. You have a gift for saying difficult things in ways that preserve the relationship."],
-"Scorpio-Mercury": ["Mercury in Scorpio gives you a mind that goes beneath the surface automatically. Surface-level explanations feel insufficient – you need to understand the root, the motive, the thing underneath the thing.","You are a natural lie detector. You read subtext, body language, and what is conspicuously absent from a conversation with an accuracy that unsettles people who are not being fully honest.","Your silence is as powerful as your words. You know exactly when to withhold information and when to ask the question that changes everything."],
-"Sagittarius-Mercury": ["Mercury in Sagittarius gives you a philosophical mind that is always reaching for the bigger picture. Individual facts interest you primarily as evidence for a larger theory about how things work.","You speak with a confidence and enthusiasm that is genuinely infectious. Your ideas arrive with energy – you are not reporting information, you are making a case.","Your honesty can arrive faster than your tact. You say the true thing before you have finished calculating whether this is the right moment."],
-"Capricorn-Mercury": ["Mercury in Capricorn gives you a mind that is strategic, disciplined, and oriented toward what is actually useful. You do not think in abstractions unless they have a practical application.","Your communication is economical and precise. You do not use ten words when four will do, and the four you choose are always exactly right.","You think in long timelines. Where others are planning for next week, you are mapping the next three years."],
-"Aquarius-Mercury": ["Mercury in Aquarius gives you a mind that operates outside the mainstream almost by default. Your best ideas arrive from a direction no one else was looking.","You think in systems, patterns, and structures rather than individual cases. What an instance reveals about the underlying pattern is what actually captures your attention.","Your intellectual independence is total. You form your own conclusions from your own research and hold them until genuinely better evidence arrives."],
-"Pisces-Mercury": ["Mercury in Pisces gives you a mind that thinks in images, feelings, and impressions rather than linear logic. You arrive at correct conclusions through routes you cannot always explain.","You communicate with a poetic quality that is not affectation – it is simply how your mind works. The metaphor, the story, the feeling-tone of an idea is as real to you as its literal content.","Your imagination is your most powerful cognitive tool. You can feel your way into a situation or problem with an empathy that more analytical minds cannot access."],
-"Aries-Mars": ["Mars in Aries is the planet in its home sign – the most direct, energized, and instinctively courageous placement Mars can occupy. You act first and assess later, and your instincts are usually correct.","Your anger is clean. It arrives fast, burns hot, and is gone before others have even processed that there was a conflict. You do not nurse grievances – you express the feeling and move on.","You are most alive when you are competing, initiating, or going first into something new. Waiting and following someone else's lead are genuinely uncomfortable for you."],
-"Taurus-Mars": ["Mars in Taurus moves slowly and builds unstoppably. You do not rush into action – but once you have decided to move, nothing redirects you. Your persistence is one of the most powerful forces in the zodiac.","Your drive is sensory and material. You work for things you can touch, own, inhabit, and enjoy. Physical security and genuine comfort are your most reliable motivators.","You have an extraordinary capacity for sustained effort. Where others sprint and burn out, you set a pace you can maintain for years."],
-"Gemini-Mars": ["Mars in Gemini means your energy is mental first. You are most activated by intellectual challenge, debate, and the fast exchange of ideas. Boredom is a genuine physical drain for you.","You can pursue multiple goals simultaneously without losing track of any of them. Your mind manages parallel tracks naturally.","Your arguments are fast, precise, and occasionally devastating. When you are in conflict, you reach for words – and your words are usually the sharpest weapon in the room."],
-"Cancer-Mars": ["Mars in Cancer means your drive is deeply protective. You are motivated by the safety and wellbeing of the people and places you love. That motivation is ferocious.","Your energy moves in tides rather than straight lines. Periods of intense effort followed by genuine withdrawal is your natural rhythm.","When someone threatens what you care about, a fierceness emerges that surprises people who only know your softer side."],
-"Leo-Mars": ["Mars in Leo drives you toward visibility, recognition, and the expression of your full creative power. You do not just want to succeed – you want to succeed in a way that people remember.","Your energy is theatrical and generous. You bring drama, warmth, and genuine commitment to everything you pursue.","Your pride is your fuel. The suggestion that you cannot do something activates a competitive fire that is extremely difficult to extinguish."],
-"Virgo-Mars": ["Mars in Virgo channels your drive into precision, improvement, and the relentless refinement of whatever you are working on. You are not satisfied with good enough – ever.","Your work ethic is extraordinary and occasionally punishing. You hold yourself to standards that most people would find exhausting.","You are most effective when you have a clear problem to solve. Specific targets with measurable progress activate your best and most focused energy."],
-"Libra-Mars": ["Mars in Libra is the planet in its most challenged placement – you are built for harmony in a planet that runs on conflict. Your drive is toward justice, fairness, and the resolution of imbalance.","You do not act unilaterally if you can help it. You consult, consider, and weigh before moving – making you slower to start but far more strategically effective once you do.","When you finally decide to fight for something, you fight with extraordinary skill and composure."],
-"Scorpio-Mars": ["Mars in Scorpio is one of the most intensely driven placements in the zodiac. Your energy is focused, strategic, and almost completely invisible until the moment it is needed – and then it is overwhelming.","You do not pursue surface-level goals. Everything you go after has a deeper significance – power, transformation, truth, or the resolution of something long unfinished.","Your capacity for sustained focus on a single target is unmatched. You do not get distracted, you do not get discouraged, and you do not give up."],
-"Sagittarius-Mars": ["Mars in Sagittarius drives you toward freedom, expansion, and the feeling that you are moving toward something larger than where you currently are. Confinement is intolerable.","Your energy is enthusiastic and contagious. When you are genuinely excited about a direction, you bring people with you through the sheer force of your belief.","You pursue goals in bursts of intense, inspired effort. Your best work happens when you are lit up – and it is extraordinary when you are."],
-"Capricorn-Mars": ["Mars in Capricorn is exalted – the planet of drive in the sign of mastery. Your ambition is patient, strategic, and oriented toward building something that lasts.","You do not waste energy on fights you cannot win or goals that do not serve your larger structure. Every action is evaluated against the long-term architecture you are building.","Your discipline is your superpower. You can delay gratification indefinitely in service of a goal that matters to you."],
-"Aquarius-Mars": ["Mars in Aquarius drives you toward collective impact, innovation, and the disruption of systems that are no longer working. Your ambition is not personal – it is structural.","You are most energized when working toward something that benefits more than just yourself. Individual achievement feels hollow compared to contributing to a genuine shift.","Your approach to conflict is detached and strategic rather than emotional. You do not get angry in a hot way – you get precise."],
-"Pisces-Mars": ["Mars in Pisces drives you through feeling rather than strategy. You move toward what you love and away from what deadens you – and your intuition about which is which is more reliable than any rational analysis.","Your energy is diffuse and creative rather than focused and direct. You work best when you have freedom to follow inspiration and trust the process.","When you are connected to a purpose that genuinely moves you – creative, spiritual, or service-oriented – you access a devotion and endurance that more practically-driven signs cannot match."],
-"Aries-Jupiter": ["Jupiter in Aries expands through courage, initiative, and the willingness to go first. Your greatest opportunities arrive when you trust your instinct and act before you feel fully ready.","You grow through competition, challenge, and the direct pursuit of what you want. Waiting for permission or consensus shrinks your world. Acting on your own authority expands it."],
-"Taurus-Jupiter": ["Jupiter in Taurus expands through patience, sensory pleasure, and the steady accumulation of real, tangible value. Your abundance grows when you build slowly and trust the process.","You have a natural gift for recognizing quality and genuine worth – in objects, in people, in opportunities. This discernment, trusted consistently, becomes one of your most reliable paths to prosperity."],
-"Gemini-Jupiter": ["Jupiter in Gemini expands through learning, communication, and the restless pursuit of new information. Your greatest growth comes from following your curiosity wherever it leads.","You grow through connection – meeting people, exchanging ideas, and being present in the flow of information. The conversation you almost skipped is frequently the one that changes everything."],
-"Cancer-Jupiter": ["Jupiter in Cancer is exalted – meaning your capacity for emotional generosity, nurturing, and creating safety for others is one of your most profound and expansive gifts.","Your abundance is directly connected to your emotional world. When you feel genuinely at home – in yourself, in your relationships, in your physical space – good things arrive with unusual ease."],
-"Leo-Jupiter": ["Jupiter in Leo expands through creative expression, generosity, and the courage to be fully, visibly yourself. Your greatest growth comes from stepping into the spotlight rather than dimming yourself for others' comfort.","You grow through joy. Play, creativity, romance, and genuine celebration are not indulgences for you – they are the fuel that powers your expansion."],
-"Virgo-Jupiter": ["Jupiter in Virgo grows through service, skill, and the mastery of craft. Your abundance is built through genuine usefulness – the kind of competence that makes you indispensable rather than merely impressive.","You expand through improvement. Each incremental refinement of your work, your health, your systems compounds over time into something extraordinary."],
-"Libra-Jupiter": ["Jupiter in Libra expands through partnership, collaboration, and the pursuit of genuine fairness. Your greatest opportunities frequently arrive through other people – specifically the right people, chosen with your natural discernment.","You grow through beauty and aesthetic refinement. Surrounding yourself with what is genuinely beautiful and harmonious is a direct portal to expansion for you."],
-"Scorpio-Jupiter": ["Jupiter in Scorpio expands through depth, transformation, and the willingness to go where others will not. Your greatest growth comes from the experiences that require total commitment and genuine risk.","You have a gift for finding resources, insight, and power that others overlook – buried in the complicated, the dark, or the hidden."],
-"Sagittarius-Jupiter": ["Jupiter in Sagittarius is the planet in its home sign – the most naturally abundant, optimistic, and philosophically expansive placement Jupiter can occupy. You were born with a relationship to luck that others find astonishing.","Your belief that things will work out is not naivety – it is a self-fulfilling orientation that genuinely shapes your reality. The world tends to confirm what you expect from it."],
-"Capricorn-Jupiter": ["Jupiter in Capricorn grows through structure, discipline, and the steady execution of a long-term plan. Your abundance does not arrive in windfalls – it builds through consistent, serious effort over years.","You expand through taking on greater responsibility and demonstrating mastery. Each time you prove capable of handling more, the universe hands you more to handle."],
-"Aquarius-Jupiter": ["Jupiter in Aquarius expands through community, innovation, and the contribution of original thinking to collective problems. Your greatest growth comes from being part of something larger than yourself.","You grow through intellectual freedom. The moment you stop thinking what you are supposed to think and start following your own genuinely unconventional ideas is frequently the moment your expansion begins."],
-"Pisces-Jupiter": ["Jupiter in Pisces is the planet in one of its home signs – giving you a natural abundance of spiritual sensitivity, creative imagination, and compassionate understanding that expands everything it touches.","Your faith is your fortune. Not necessarily religious faith – but a fundamental trust in something larger, a willingness to surrender to the current of your life rather than forcing it into a predetermined shape."],
-"Aries-Saturn": ["Saturn in Aries asks you to master patience, strategy, and the discipline of timing. Your instinct is to act immediately – and Saturn is teaching you that the most powerful action is often the one that waits for exactly the right moment.","You are building the capacity to lead with genuine authority rather than just energy. The impulsiveness that came naturally is being refined into something more deliberate – and far more effective."],
-"Taurus-Saturn": ["Saturn in Taurus is building your relationship with security, self-worth, and material stability from the inside out. The external security you seek is being constructed, brick by brick, through your own sustained effort.","You are learning that real stability is not given – it is built. And what you build yourself, slowly and with full attention, has a solidity that inherited security can never match."],
-"Gemini-Saturn": ["Saturn in Gemini asks you to master depth over breadth. The natural Gemini tendency to skim the surface of many things is being disciplined into the capacity for genuine, focused expertise.","You are building a relationship with your own mind that is rigorous rather than merely quick. The thinking you commit to developing slowly and seriously becomes one of your most powerful and lasting assets."],
-"Cancer-Saturn": ["Saturn in Cancer is one of the more demanding placements – the planet of discipline in the sign of emotional need. You are learning to build your own inner security rather than seeking it from others.","The emotional self-sufficiency you develop through this placement is extraordinary once it is built. You become someone who can genuinely provide stability for others because you have constructed it within yourself first."],
-"Leo-Saturn": ["Saturn in Leo asks you to earn rather than assume recognition. The deep need to be seen and celebrated meets Saturn's demand for genuine merit – and the result, over time, is an authority that is completely deserved.","You are building a creative and expressive life that is grounded in real skill and real craft. The recognition that eventually arrives is more satisfying than anything that comes easily could ever be."],
-"Virgo-Saturn": ["Saturn in Virgo intensifies your already considerable relationship with precision, standard-setting, and self-criticism. The work here is learning to apply your exacting nature to the world without turning it entirely on yourself.","You are building a mastery of craft and service that is genuinely rare. The standards you hold yourself to, refined over time into something sustainable rather than punishing, produce work of extraordinary quality."],
-"Libra-Saturn": ["Saturn in Libra is exalted – meaning the discipline, fairness, and commitment to genuine justice that Saturn demands are most fully expressed here. You are building relationships on a foundation of integrity rather than convenience.","You are learning what genuine partnership requires – not just harmony and beauty, but the harder work of honest negotiation, fair compromise, and staying present through difficulty."],
-"Scorpio-Saturn": ["Saturn in Scorpio asks you to build a relationship with power, depth, and transformation that is rooted in genuine integrity rather than control. You are learning the difference between the two.","The psychological work you do with this placement – understanding your own depths, your relationship to power, your fear of loss and change – becomes the foundation of an extraordinary and hard-won wisdom."],
-"Sagittarius-Saturn": ["Saturn in Sagittarius asks you to build a philosophy that can survive contact with reality. The beliefs you hold are being tested, refined, and strengthened through experience – emerging as genuine wisdom rather than inherited assumption.","You are learning the discipline of focused belief – the capacity to commit to a direction and hold it through difficulty, rather than perpetually searching for a freer or truer horizon."],
-"Capricorn-Saturn": ["Saturn in Capricorn is the planet in its home sign – amplifying your already considerable relationship with discipline, structure, and the long game. You feel the weight of responsibility as a fundamental feature of your identity.","You are building something that will outlast you – a body of work, a legacy, an institution, a family, a reputation. The seriousness with which you approach this is not burden; it is purpose."],
-"Aquarius-Saturn": ["Saturn in Aquarius asks you to build structures that serve the collective rather than just yourself. Your discipline is being directed toward systems, communities, and ideas that have lasting social value.","You are learning to balance your need for freedom with the responsibilities of genuine belonging. The community you build and commit to – on your own terms – becomes one of your most enduring sources of meaning."],
-"Pisces-Saturn": ["Saturn in Pisces asks you to build a relationship with the invisible, the spiritual, and the creative that is grounded and sustainable rather than escapist. You are learning to give your inner world a real and lasting form.","The discipline of bringing your imagination into material reality – through art, through spiritual practice, through consistent creative work – is your Saturn path. What you build from the inside out has a depth that purely practical creation cannot match."],
-"Aries-Uranus": ["Uranus in Aries (2010–2018) gave your generation a revolutionary relationship with identity and individuality. You arrived knowing that the self is not fixed – it is a technology to be upgraded.","Your generation breaks with the past not through argument but through action. You simply do things differently, without apology, as if the old way never occurred to you as an option."],
-"Taurus-Uranus": ["Uranus in Taurus (2018–2026) is rewiring your generation's relationship with money, value, and the material world at its roots. The financial and ecological systems inherited are being fundamentally reimagined.","You carry an instinctive sense that the old relationship between humans and resources is unsustainable – and a genuine, practical creativity about what could replace it."],
-"Gemini-Uranus": ["Uranus in Gemini (1941–1949) produced a generation with a revolutionary relationship to information and communication. This was the generation that would eventually produce the intellectual infrastructure of the modern world.","Your mind was wired for a kind of connectivity and information processing that was genuinely ahead of its time – and that shaped every field you entered."],
-"Cancer-Uranus": ["Uranus in Cancer (1948–1956) disrupted the very idea of home, family, and belonging. Your generation inherited a post-war world and proceeded to interrogate every assumption it had made about domestic life.","You carry a deep tension between the need for security and the compulsion to break free of it – and the resolution of that tension became one of the defining cultural questions of your era."],
-"Leo-Uranus": ["Uranus in Leo (1955–1962) produced a generation that would revolutionize self-expression, creativity, and the very idea of stardom. This is the generation that gave us rock and roll as a cultural force.","You carry a fierce, almost defiant individualism – the conviction that your creative expression is not a luxury but a right, and that the authentic self is worth any cost to express."],
-"Virgo-Uranus": ["Uranus in Virgo (1961–1969) rewired an entire generation's relationship to work, health, and service. This placement produced the thinkers and builders who would redesign the systems the world runs on.","Your generation brought a revolutionary precision to practical problems – an insistence that systems should actually work, that craft matters, and that the details are where reality lives."],
-"Libra-Uranus": ["Uranus in Libra (1968–1975) disrupted every inherited idea about partnership, marriage, and social justice. Your generation normalized relationship structures and rights movements that previous generations had considered impossible.","You carry an instinctive sense that fairness is not a given – it must be constructed, fought for, and redesigned in every generation."],
-"Scorpio-Uranus": ["Uranus in Scorpio (1974–1981) produced a generation with a revolutionary relationship to power, sexuality, and psychological truth. You were born into a world where the previously unspeakable was beginning to be said.","Your generation brought a fierce, unsentimental honesty to the darkest rooms in human experience – and refused to look away from what previous generations had agreed not to discuss."],
-"Sagittarius-Uranus": ["Uranus in Sagittarius (1981–1988) gave your generation a revolutionary relationship to belief, freedom, and global connection. You were the first generation to grow up genuinely expecting to move across the world.","You carry an instinctive rejection of any ideology that demands unquestioning allegiance. Your generation built its philosophy from scratch – synthesizing traditions, crossing borders, and refusing inherited absolutes."],
-"Capricorn-Uranus": ["Uranus in Capricorn (1988–1996) produced a generation that would fundamentally disrupt institutions, authority structures, and the very definition of career. You were born knowing that the old ladders lead somewhere you do not want to go.","Your generation's relationship to ambition is genuinely different from what came before. You are not less driven – you are driven toward different structures, built on different foundations, measured by different standards."],
-"Aquarius-Uranus": ["Uranus in Aquarius (1995–2003) is the planet in its home sign – producing a generation with a native fluency in collective intelligence, digital networks, and the idea that individuals are most powerful when genuinely connected.","Your generation does not experience community and individuality as opposites. You move between them instinctively, understanding at a cellular level that the network and the node are equally real."],
-"Pisces-Uranus": ["Uranus in Pisces (2003–2011) produced a generation with a revolutionary relationship to spirituality, creativity, and the boundary between real and imagined. You were born into a world where virtual and physical had already begun to blur.","Your generation carries an instinctive fluency with altered states – of consciousness, of reality, of identity. The question of what is real is not destabilizing for you. It is simply where you live."],
-"Scorpio-Neptune": ["Neptune in Scorpio (1955–1970) dissolved the boundary between conscious and unconscious in an entire generation. Yours was the cohort that brought depth psychology, sexuality, and the shadow self into mainstream conversation.","Your generation collectively dreamed of transformation – and produced the cultural upheaval of the 1960s and 70s, dismantling structures that had seemed permanent and replacing them with something rawer and more honest."],
-"Sagittarius-Neptune": ["Neptune in Sagittarius (1970–1984) dissolved the boundaries between spiritual traditions, producing a generation with a native hunger for meaning that crossed every religious and philosophical border.","Your generation dreamed of freedom as a spiritual state, not just a political one. The quest for authentic belief – built personally rather than inherited institutionally – is written into your generational soul."],
-"Capricorn-Neptune": ["Neptune in Capricorn (1984–1998) dissolved the boundaries between dream and ambition in an entire generation. You were born into a world where the imagination was being systematically monetized – and you internalized both the possibility and the cost.","Your generation carries a complex relationship to success – simultaneously drawn to achievement and aware of its hollowness when it is the only thing."],
-"Aquarius-Neptune": ["Neptune in Aquarius (1998–2012) dissolved the boundaries between individual and collective consciousness in a generation that grew up online. Your cohort experienced the dissolution of privacy, geography, and singular identity as a lived daily reality.","Your generation dreams of collective healing and systemic change with an idealism that is both Neptune's greatest gift and its most significant challenge."],
-"Pisces-Neptune": ["Neptune in Pisces (2011–2026) is the planet in its home sign – the most spiritually and creatively saturated placement possible. Your generation is arriving with a permeability to collective feeling that no previous cohort has carried in this form.","You were born at a moment when the membrane between self and other, real and imagined, human and digital, was thinner than it has ever been. What your generation does with that thinness will define the spiritual and creative landscape of the century."],
-"Leo-Pluto": ["Pluto in Leo (1937–1958) transformed an entire generation's relationship to power, creativity, and the individual will. This cohort arrived to reshape what leadership, stardom, and self-expression could mean.","Your generation carried a compulsive relationship to significance – the need to matter, to leave a mark, to be remembered. That drive, at its best, produced extraordinary creative and cultural transformation."],
-"Virgo-Pluto": ["Pluto in Virgo (1956–1972) transformed an entire generation's relationship to work, health, and the systems that sustain life. Your cohort arrived to dismantle and rebuild the infrastructure of daily existence.","You carry a deep compulsion toward improvement, analysis, and the correction of what is broken – in bodies, in systems, in processes."],
-"Libra-Pluto": ["Pluto in Libra (1971–1984) transformed an entire generation's relationship to partnership, justice, and the balance of power in relationships of every kind. Your cohort arrived to renegotiate every contract between individuals.","You carry a deep awareness of power dynamics in relationships that previous generations either did not see or chose not to name."],
-"Scorpio-Pluto": ["Pluto in Scorpio (1983–1995) is the planet in its home sign – producing the most intensely transformative generational placement possible. Your cohort arrived carrying a collective assignment to face what previous generations had buried.","You were born into a world where the shadow was erupting into visibility. Your generation's relationship to mortality, power, and truth is unlike any that came before it."],
-"Sagittarius-Pluto": ["Pluto in Sagittarius (1995–2008) transformed an entire generation's relationship to belief, globalization, and the clash of worldviews. Your cohort arrived at the exact moment when every absolute was being questioned simultaneously.","You carry a deep awareness that belief systems are constructed, that truth is contested, and that the map is not the territory."],
-"Capricorn-Pluto": ["Pluto in Capricorn (2008–2024) is transforming an entire generation's relationship to authority, institutions, and the structures of power. Your cohort is arriving into a world where every establishment is in the process of being dismantled and rebuilt.","You were born knowing at a cellular level that the old structures do not hold. What you build in their place is your generational assignment."],
-"Aquarius-Pluto": ["Pluto in Aquarius (2023–2043) is beginning to transform an entire generation's relationship to collective intelligence, technology, and the very definition of what it means to be human in community.","Your cohort is arriving at the moment when the boundary between human and artificial, individual and network, is being fundamentally renegotiated. The transformation Pluto brings here will not be gentle – and the generation born through it will carry its depth."],
-
-// ── RISING ──
-"Aries-Rising": ["Aries Rising means Mars rules your chart – giving you a direct, energetic, and instinctively forward-moving outer presence that people register immediately as someone who gets things done.","Your first impression is one of confidence, energy, and a certain restless aliveness. People sense that you are oriented toward action rather than deliberation – and they are right.","The challenge of this Ascendant is that your directness can land as aggression or impatience to people who are not expecting it. You are not trying to bulldoze – you simply operate without the softening layer that other Ascendants naturally provide.","Aries Rising people often find that their life is a series of new beginnings – fresh starts, new chapters, reinventions. Mars ruling your chart keeps the energy of initiation permanently available to you.","You are at your best when you have something to initiate – a new project, a new phase, a new challenge. Stagnation is not just uncomfortable for you; it is genuinely contrary to your nature."],
-"Taurus-Rising": ["Taurus Rising means Venus rules your chart – giving you a grounded, beautiful, and quietly magnetic outer presence that people find immediately comfortable and aesthetically appealing.","Your first impression is one of calm, reliability, and a certain sensory richness. People feel at ease around you quickly – there is something about your presence that says the ground is solid here.","You tend to have a physical quality that is naturally attractive – a strong ease in your body that reads as someone deeply comfortable in their own skin.","The challenge of this Ascendant is that your steadiness can be misread as slowness or resistance to change. You are not opposed to growth – you simply need it to be real, not performative.","You are at your best when you are building something – a home, a creative body of work, a relationship, a financial foundation. The act of patient, devoted construction is deeply native to your Rising sign."],
-"Gemini-Rising": ["Gemini Rising means Mercury rules your chart – giving you a quick, communicative, and intellectually alive outer presence that people find immediately engaging and endlessly interesting.","Your first impression is one of wit, curiosity, and adaptability. People sense that your mind is always running – always making connections, always finding the interesting angle in whatever is happening.","You tend to have a youthful quality that persists across decades – a lightness of expression, animated eyes, and a physical energy that reflects your mental aliveness.","The challenge of this Ascendant is that your versatility can read as inconsistency. You are not unreliable – you are responsive to context, which is a different thing entirely.","Gemini Rising people often find that their life involves multiple simultaneous threads – careers, relationships, interests – that more linear Ascendants would find overwhelming but that you navigate with genuine ease."],
-"Cancer-Rising": ["Cancer Rising means the Moon rules your chart – giving you a warm, receptive, and deeply empathic outer presence that people find immediately nurturing and emotionally safe.","Your first impression is one of gentleness, care, and a kind of soft attentiveness that makes people feel instinctively that you will not hurt them. You are a safe harbor to those you meet.","You tend to have an expressive face that reflects your emotional world – people often know what you are feeling before you say anything, because your inner life shows through your outer presence.","The challenge of this Ascendant is that your receptivity can absorb too much – you take in the emotional atmosphere around you at a level that can be genuinely depleting if you do not maintain strong boundaries.","You are at your best when you feel emotionally safe – when the people and environment around you are trustworthy and nourishing, your creativity, care, and genuine wisdom become fully available."],
-"Leo-Rising": ["Leo Rising means the Sun rules your chart – the only Ascendant with this distinction – giving you a radiant, warm, and magnetically confident outer presence that people notice immediately.","Your first impression is larger than life. There is something about you that people register the moment you enter a room – the way you carry yourself, the warmth you project, the presence you have.","You tend to have a physical quality that draws attention – strong hair, dramatic features, or simply an energy that takes up space in the best possible way.","The challenge of this Ascendant is that you are always being watched, which can create a pressure to perform rather than simply be. Learning the difference between performing confidence and embodying it is part of your journey.","Leo Rising people often find that their life becomes more public than they initially expected – career paths involving visibility, leadership, or some form of audience tend to find them regardless of whether they sought it."],
-"Virgo-Rising": ["Virgo Rising means Mercury rules your chart – giving you a precise, observant, and quietly capable outer presence that people find immediately competent and trustworthy.","Your first impression is one of intelligence, attentiveness, and a certain quiet discernment. People sense that you are noticing things – and that what you notice, you remember.","You tend to have a clean, refined physical quality – a careful attention to presentation that is never ostentatious but always considered. You look put-together because you genuinely are.","The challenge of this Ascendant is that your discernment can read as critical or reserved to people who do not know you well. You are not cold – you are careful, which is a different thing entirely.","You are at your best when you are working on something that genuinely matters and doing it to the standard your Mercury-ruled chart demands. Shoddy work in important domains is one of the things you find hardest to tolerate."],
-"Libra-Rising": ["Libra Rising means Venus rules your chart – giving you a gracious, aesthetically refined, and socially gifted outer presence that people find immediately charming and genuinely beautiful.","Your first impression is one of elegance, warmth, and a certain careful attentiveness to the people around you. You make people feel considered – like you actually noticed them and thought about how to make them comfortable.","You tend to have a naturally attractive physical quality – symmetrical features, a graceful bearing, or simply a way of presenting yourself that reflects your deeply developed aesthetic sensibility.","The challenge of this Ascendant is that your social grace can be mistaken for superficiality, or your desire for harmony can make your own preferences difficult to locate beneath all the accommodation.","Libra Rising people often find that relationships – personal, professional, and social – are the central arena of their life's development. How you relate is inseparable from who you are becoming."],
-"Scorpio-Rising": ["Scorpio Rising means Mars and Pluto rule your chart – giving you a magnetic, penetrating, and quietly powerful outer presence that people register immediately as someone not to be taken lightly.","Your first impression is one of intensity, depth, and a certain controlled stillness. People sense that there is more happening beneath your surface than you are showing – and they are right.","You tend to have a physically striking quality – intense eyes, a magnetic bearing, or simply an energy that seems to pull the room slightly toward you without any apparent effort on your part.","The challenge of this Ascendant is that your intensity can make people uncomfortable before they know you. Your gaze sees too much, and some people would rather not be seen that clearly.","Scorpio Rising people often find that themes of power, transformation, and depth run through their entire life – not just occasionally but as the fundamental texture of their ongoing experience."],
-"Sagittarius-Rising": ["Sagittarius Rising means Jupiter rules your chart – giving you an expansive, warm, and genuinely optimistic outer presence that people find immediately uplifting and energizing.","Your first impression is one of enthusiasm, openness, and a certain generous aliveness. People sense that you are oriented toward possibility rather than constraint, and they find it genuinely contagious.","You tend to have a physically open quality – a broad smile, expansive gestures, or a bearing that communicates welcome and genuine interest in the world and the people in it.","The challenge of this Ascendant is that your enthusiasm can run ahead of your discernment – you commit to things with your whole heart before you have fully understood what they will require of you.","Sagittarius Rising people often find that education, travel, philosophy, and the search for meaning are not just interests but genuine organizing principles of their entire life."],
-"Capricorn-Rising": ["Capricorn Rising means Saturn rules your chart – giving you a serious, authoritative, and quietly formidable outer presence that people register immediately as someone substantial and reliable.","Your first impression is one of competence, composure, and a certain restrained power. People sense that you are not performing capability – you have actually earned it, and the difference is palpable.","You tend to have a physically composed quality – a measured expression, or a way of taking up space that communicates authority without having to announce it.","The challenge of this Ascendant is that your composure can read as coldness, and your seriousness can make your warmth difficult to access for people who do not know you well.","You are at your best when you are building something that matters – when your Saturn-ruled chart has a genuine long-term project that justifies the discipline and patience your Ascendant demands and rewards."],
-"Aquarius-Rising": ["Aquarius Rising means Saturn and Uranus rule your chart – giving you an original, intellectually alive, and quietly magnetic outer presence that people find immediately unusual and fascinating.","Your first impression is one of intelligence, independence, and a certain friendly detachment. People sense that you are genuinely interested in them as individuals while simultaneously not needing their approval in any conventional way.","You tend to have a physically distinctive quality – something slightly unconventional about your appearance or bearing that sets you apart from the crowd in a way you may not even be fully aware of.","The challenge of this Ascendant is that your detachment can read as unavailability, and your originality can make it difficult for people to know how to approach you at first.","You are at your best when you are among people who share your genuine values – when your Aquarius Ascendant has a real community that challenges and inspires you rather than just tolerating your unusualness."],
-"Pisces-Rising": ["Pisces Rising means Jupiter and Neptune rule your chart – giving you a gentle, permeable, and otherworldly outer presence that people find immediately soothing, mysterious, and somehow difficult to fully define.","Your first impression is one of softness, depth, and a certain dreamy quality that makes people want to know what you are actually thinking – because they sense it is more interesting than what you are saying.","You tend to have a physically fluid quality – soft eyes, a gentle bearing, or a way of moving through the world that seems slightly unbound by the ordinary rules of solid matter.","The challenge of this Ascendant is that your permeability makes it easy for others' energies to enter your field uninvited. You absorb the world around you at a level that requires conscious protection and regular clearing.","You are at your best when you have a creative or spiritual practice that gives the depth and sensitivity of your Pisces Ascendant somewhere to go – art, music, healing, prayer, or any form that allows the invisible world to become visible through you."],
+"Pisces-Moon": ["Moon in Pisces is one of the most psychically sensitive placements in astrology. You pick up on emotional undercurrents before anyone has spoken.","You restore through creative expression, spiritual practice, time near water, and genuine solitude."],
+"Leo-Sun": ["Your Sun in Leo is ruled by the Sun itself – the only sign with this distinction – meaning your identity and self-expression are inextricably linked.","You were born to shine. Not in a performative way – in a genuinely luminous way."],
+"Scorpio-Sun": ["Your Sun in Scorpio means your identity is built around depth, truth, and evolution.","You are one of the most psychologically complex signs in the zodiac. There are layers to you that most people never access."],
+"Capricorn-Sun": ["Your Sun in Capricorn means your identity is built around achievement, integrity, and the long game.","You have a relationship with time that sets you apart from most signs."],
+"Aries-Sun": ["Your Sun in Aries means your identity is built around action, independence, and the courage to go first.","You were born to begin things. The spark of a new idea activates something in you that more cautious signs simply do not have access to."],
+"Taurus-Sun": ["Your Sun in Taurus means your identity is built around what you love, what you create, and what you choose to call yours.","You have an instinctive relationship with quality. You know the difference between what is real and what is merely shiny."],
+"Gemini-Sun": ["Your Sun in Gemini means your identity is built around ideas, language, and the endlessly stimulating exchange of both.","You are one of the most intellectually alive signs in the zodiac."],
+"Cancer-Sun": ["Your Sun in Cancer means your identity is fluid, cyclical, and deeply tied to your emotional world and the people you love.","You have an emotional intelligence that operates almost like a sixth sense."],
+"Virgo-Sun": ["Your Sun in Virgo gives you a mind that is precise, analytical, and perpetually oriented toward improvement.","You notice what others miss. Details, patterns, inconsistencies – these register for you automatically."],
+"Libra-Sun": ["Your Sun in Libra means your identity is built around relationship, aesthetic intelligence, and the pursuit of genuine fairness.","You have a natural gift for seeing all sides of any situation with clarity and evenhandedness."],
+"Sagittarius-Sun": ["Your Sun in Sagittarius means your identity is built around belief, freedom, and the perpetual pursuit of what lies beyond the next horizon.","You have a relationship with optimism that is not naivety but a genuine philosophical position."],
+"Aquarius-Sun": ["Your Sun in Aquarius means your identity is built around originality, independence, and a genuine vision of how things could be better.","You have always felt slightly outside the mainstream – not as an affectation but as a lived experience."],
+"Pisces-Sun": ["Your Sun in Pisces means your identity is fluid, imaginative, and fundamentally oriented toward the invisible dimensions of existence.","You have a permeability to experience that is both your greatest gift and your most demanding challenge."],
+"Aries-Mercury": ["Mercury in Aries means your mind moves faster than almost anyone else in the room.","You communicate with directness that some people find refreshing and others find startling.","Your thinking is original and instinctive rather than methodical. You trust the first idea that arrives."],
+"Taurus-Mercury": ["Mercury in Taurus means you think slowly, thoroughly, and almost always correctly.","Your communication style is calm, measured, and deeply reliable.","You have an instinctive connection between ideas and the physical world."],
+"Gemini-Mercury": ["Mercury in Gemini is the planet in its home sign – giving you one of the most naturally agile minds in the entire zodiac.","You can hold two completely contradictory ideas at the same time without discomfort.","Your curiosity has no ceiling. The moment you feel like you fully understand something, your interest begins to migrate."],
+"Cancer-Mercury": ["Mercury in Cancer means your mind is deeply intuitive and emotionally intelligent.","Your memory for feeling is extraordinary. You do not just remember events – you remember exactly how they felt.","You think best when you feel safe. In environments of genuine trust, you become one of the most insightful people in the conversation."],
+"Leo-Mercury": ["Mercury in Leo gives you a natural gift for communication that commands attention.","You think in narratives, not bullet points. Your mind naturally organizes information into stories with stakes.","Your ideas come with conviction. You do not float suggestions – you make pronouncements."],
+"Virgo-Mercury": ["Mercury in Virgo is the most analytically precise placement in the zodiac. Your mind is a finely calibrated instrument.","You notice the error everyone else walked past.","You express care through precision. When you edit someone's work, the extraordinary detail you bring is an act of respect."],
+"Libra-Mercury": ["Mercury in Libra gives you a mind that is naturally diplomatic, fair, and extraordinarily good at seeing every side.","You think in relationships between ideas rather than isolated facts.","Your communication is elegant by instinct. You have a gift for saying difficult things in ways that preserve the relationship."],
+"Scorpio-Mercury": ["Mercury in Scorpio gives you a mind that goes beneath the surface automatically.","You are a natural lie detector. You read subtext, body language, and what is conspicuously absent from a conversation.","Your silence is as powerful as your words. You know exactly when to withhold information."],
+"Sagittarius-Mercury": ["Mercury in Sagittarius gives you a philosophical mind that is always reaching for the bigger picture.","You speak with a confidence and enthusiasm that is genuinely infectious.","Your honesty can arrive faster than your tact. You say the true thing before you have finished calculating whether this is the right moment."],
+"Capricorn-Mercury": ["Mercury in Capricorn gives you a mind that is strategic, disciplined, and oriented toward what is actually useful.","Your communication is economical and precise. You do not use ten words when four will do.","You think in long timelines. Where others are planning for next week, you are mapping the next three years."],
+"Aquarius-Mercury": ["Mercury in Aquarius gives you a mind that operates outside the mainstream almost by default.","You think in systems, patterns, and structures rather than individual cases.","Your intellectual independence is total. You form your own conclusions from your own research."],
+"Pisces-Mercury": ["Mercury in Pisces gives you a mind that thinks in images, feelings, and impressions rather than linear logic.","You communicate with a poetic quality that is not affectation – it is simply how your mind works.","Your imagination is your most powerful cognitive tool."],
+"Aries-Mars": ["Mars in Aries is the planet in its home sign – the most direct, energized, and instinctively courageous placement.","Your anger is clean. It arrives fast, burns hot, and is gone before others have even processed the conflict.","You are most alive when you are competing, initiating, or going first into something new."],
+"Taurus-Mars": ["Mars in Taurus moves slowly and builds unstoppably. Once you have decided to move, nothing redirects you.","Your drive is sensory and material. You work for things you can touch, own, inhabit, and enjoy.","You have an extraordinary capacity for sustained effort. Where others sprint and burn out, you set a pace you can maintain for years."],
+"Gemini-Mars": ["Mars in Gemini means your energy is mental first. You are most activated by intellectual challenge and debate.","You can pursue multiple goals simultaneously without losing track of any of them.","Your arguments are fast, precise, and occasionally devastating. When you are in conflict, you reach for words."],
+"Cancer-Mars": ["Mars in Cancer means your drive is deeply protective. You are motivated by the safety of the people and places you love.","Your energy moves in tides rather than straight lines.","When someone threatens what you care about, a fierceness emerges that surprises people who only know your softer side."],
+"Leo-Mars": ["Mars in Leo drives you toward visibility, recognition, and the expression of your full creative power.","Your energy is theatrical and generous. You bring drama, warmth, and genuine commitment to everything you pursue.","Your pride is your fuel. The suggestion that you cannot do something activates a competitive fire that is extremely difficult to extinguish."],
+"Virgo-Mars": ["Mars in Virgo channels your drive into precision, improvement, and the relentless refinement of whatever you are working on.","Your work ethic is extraordinary and occasionally punishing.","You are most effective when you have a clear problem to solve."],
+"Libra-Mars": ["Mars in Libra is the planet in its most challenged placement – you are built for harmony in a planet that runs on conflict.","You do not act unilaterally if you can help it. You consult, consider, and weigh before moving.","When you finally decide to fight for something, you fight with extraordinary skill and composure."],
+"Scorpio-Mars": ["Mars in Scorpio is one of the most intensely driven placements in the zodiac. Your energy is focused, strategic, and almost completely invisible until the moment it is needed.","You do not pursue surface-level goals. Everything you go after has a deeper significance.","Your capacity for sustained focus on a single target is unmatched. You do not get distracted, you do not get discouraged."],
+"Sagittarius-Mars": ["Mars in Sagittarius drives you toward freedom, expansion, and the feeling that you are moving toward something larger.","Your energy is enthusiastic and contagious. When you are genuinely excited about a direction, you bring people with you.","You pursue goals in bursts of intense, inspired effort. Your best work happens when you are lit up."],
+"Capricorn-Mars": ["Mars in Capricorn is exalted – the planet of drive in the sign of mastery. Your ambition is patient, strategic, and oriented toward building something that lasts.","You do not waste energy on fights you cannot win or goals that do not serve your larger structure.","Your discipline is your superpower. You can delay gratification indefinitely in service of a goal that matters."],
+"Aquarius-Mars": ["Mars in Aquarius drives you toward collective impact, innovation, and the disruption of systems that are no longer working.","You are most energized when working toward something that benefits more than just yourself.","Your approach to conflict is detached and strategic rather than emotional."],
+"Pisces-Mars": ["Mars in Pisces drives you through feeling rather than strategy. You move toward what you love and away from what deadens you.","Your energy is diffuse and creative rather than focused and direct.","When you are connected to a purpose that genuinely moves you, you access a devotion and endurance that more practically-driven signs cannot match."],
+"Aries-Jupiter": ["Jupiter in Aries expands through courage, initiative, and the willingness to go first. Your greatest opportunities arrive when you trust your instinct and act before you feel fully ready.","You grow through competition, challenge, and the direct pursuit of what you want."],
+"Taurus-Jupiter": ["Jupiter in Taurus expands through patience, sensory pleasure, and the steady accumulation of real, tangible value.","You have a natural gift for recognizing quality and genuine worth – in objects, in people, in opportunities."],
+"Gemini-Jupiter": ["Jupiter in Gemini expands through learning, communication, and the restless pursuit of new information.","You grow through connection – meeting people, exchanging ideas, and being present in the flow of information."],
+"Cancer-Jupiter": ["Jupiter in Cancer is exalted – your capacity for emotional generosity, nurturing, and creating safety for others is one of your most profound gifts.","Your abundance is directly connected to your emotional world. When you feel genuinely at home, good things arrive with unusual ease."],
+"Leo-Jupiter": ["Jupiter in Leo expands through creative expression, generosity, and the courage to be fully, visibly yourself.","You grow through joy. Play, creativity, romance, and genuine celebration are not indulgences for you – they are fuel."],
+"Virgo-Jupiter": ["Jupiter in Virgo grows through service, skill, and the mastery of craft. Your abundance is built through genuine usefulness.","You expand through improvement. Each incremental refinement compounds over time into something extraordinary."],
+"Libra-Jupiter": ["Jupiter in Libra expands through partnership, collaboration, and the pursuit of genuine fairness.","You grow through beauty and aesthetic refinement. Surrounding yourself with what is genuinely beautiful is a direct portal to expansion."],
+"Scorpio-Jupiter": ["Jupiter in Scorpio expands through depth, transformation, and the willingness to go where others will not.","You have a gift for finding resources, insight, and power that others overlook – buried in the complicated or hidden."],
+"Sagittarius-Jupiter": ["Jupiter in Sagittarius is the planet in its home sign – the most naturally abundant, optimistic placement Jupiter can occupy.","Your belief that things will work out is not naivety – it is a self-fulfilling orientation that genuinely shapes your reality."],
+"Capricorn-Jupiter": ["Jupiter in Capricorn grows through structure, discipline, and the steady execution of a long-term plan.","You expand through taking on greater responsibility and demonstrating mastery."],
+"Aquarius-Jupiter": ["Jupiter in Aquarius expands through community, innovation, and the contribution of original thinking to collective problems.","You grow through intellectual freedom. The moment you stop thinking what you are supposed to think is frequently when your expansion begins."],
+"Pisces-Jupiter": ["Jupiter in Pisces is the planet in one of its home signs – giving you a natural abundance of spiritual sensitivity and creative imagination.","Your faith is your fortune. A fundamental trust in something larger, a willingness to surrender to the current of your life."],
+"Aries-Saturn": ["Saturn in Aries asks you to master patience, strategy, and the discipline of timing.","You are building the capacity to lead with genuine authority rather than just energy."],
+"Taurus-Saturn": ["Saturn in Taurus is building your relationship with security, self-worth, and material stability from the inside out.","You are learning that real stability is not given – it is built. And what you build yourself has a solidity that inherited security can never match."],
+"Gemini-Saturn": ["Saturn in Gemini asks you to master depth over breadth. The natural Gemini tendency to skim the surface is being disciplined into genuine expertise.","You are building a relationship with your own mind that is rigorous rather than merely quick."],
+"Cancer-Saturn": ["Saturn in Cancer is one of the more demanding placements – you are learning to build your own inner security rather than seeking it from others.","The emotional self-sufficiency you develop through this placement is extraordinary once it is built."],
+"Leo-Saturn": ["Saturn in Leo asks you to earn rather than assume recognition.","You are building a creative and expressive life that is grounded in real skill and real craft."],
+"Virgo-Saturn": ["Saturn in Virgo intensifies your already considerable relationship with precision and standard-setting.","You are building a mastery of craft and service that is genuinely rare."],
+"Libra-Saturn": ["Saturn in Libra is exalted – the discipline, fairness, and commitment to genuine justice are most fully expressed here.","You are learning what genuine partnership requires – not just harmony and beauty, but the harder work of honest negotiation."],
+"Scorpio-Saturn": ["Saturn in Scorpio asks you to build a relationship with power, depth, and transformation rooted in genuine integrity rather than control.","The psychological work you do with this placement becomes the foundation of an extraordinary and hard-won wisdom."],
+"Sagittarius-Saturn": ["Saturn in Sagittarius asks you to build a philosophy that can survive contact with reality.","You are learning the discipline of focused belief – the capacity to commit to a direction and hold it through difficulty."],
+"Capricorn-Saturn": ["Saturn in Capricorn is the planet in its home sign – amplifying your already considerable relationship with discipline and the long game.","You are building something that will outlast you – a body of work, a legacy, a reputation."],
+"Aquarius-Saturn": ["Saturn in Aquarius asks you to build structures that serve the collective rather than just yourself.","You are learning to balance your need for freedom with the responsibilities of genuine belonging."],
+"Pisces-Saturn": ["Saturn in Pisces asks you to build a relationship with the invisible, the spiritual, and the creative that is grounded and sustainable rather than escapist.","The discipline of bringing your imagination into material reality – through art, through spiritual practice – is your Saturn path."],
+"Aries-Uranus": ["Uranus in Aries (2010–2018) gave your generation a revolutionary relationship with identity and individuality.","Your generation breaks with the past not through argument but through action."],
+"Taurus-Uranus": ["Uranus in Taurus (2018–2026) is rewiring your generation's relationship with money, value, and the material world at its roots.","You carry an instinctive sense that the old relationship between humans and resources is unsustainable."],
+"Gemini-Uranus": ["Uranus in Gemini (1941–1949) produced a generation with a revolutionary relationship to information and communication.","Your mind was wired for a kind of connectivity and information processing that was genuinely ahead of its time."],
+"Cancer-Uranus": ["Uranus in Cancer (1948–1956) disrupted the very idea of home, family, and belonging.","You carry a deep tension between the need for security and the compulsion to break free of it."],
+"Leo-Uranus": ["Uranus in Leo (1955–1962) produced a generation that would revolutionize self-expression, creativity, and the very idea of stardom.","You carry a fierce, almost defiant individualism – the conviction that your creative expression is not a luxury but a right."],
+"Virgo-Uranus": ["Uranus in Virgo (1961–1969) rewired an entire generation's relationship to work, health, and service.","Your generation brought a revolutionary precision to practical problems."],
+"Libra-Uranus": ["Uranus in Libra (1968–1975) disrupted every inherited idea about partnership, marriage, and social justice.","You carry an instinctive sense that fairness is not a given – it must be constructed and fought for."],
+"Scorpio-Uranus": ["Uranus in Scorpio (1974–1981) produced a generation with a revolutionary relationship to power, sexuality, and psychological truth.","Your generation brought a fierce, unsentimental honesty to the darkest rooms in human experience."],
+"Sagittarius-Uranus": ["Uranus in Sagittarius (1981–1988) gave your generation a revolutionary relationship to belief, freedom, and global connection.","You carry an instinctive rejection of any ideology that demands unquestioning allegiance."],
+"Capricorn-Uranus": ["Uranus in Capricorn (1988–1996) produced a generation that would fundamentally disrupt institutions and authority structures.","Your generation's relationship to ambition is genuinely different from what came before."],
+"Aquarius-Uranus": ["Uranus in Aquarius (1995–2003) is the planet in its home sign – producing a generation with a native fluency in collective intelligence and digital networks.","Your generation does not experience community and individuality as opposites."],
+"Pisces-Uranus": ["Uranus in Pisces (2003–2011) produced a generation with a revolutionary relationship to spirituality, creativity, and the boundary between real and imagined.","Your generation carries an instinctive fluency with altered states of consciousness, reality, and identity."],
+"Aries-Neptune": ["Neptune in Aries (2025–2039) is beginning to dissolve the boundaries of individual identity itself – your generation will reimagine what the self means in an age of collective consciousness.","You carry an instinctive spiritual courage – a willingness to leap into the unknown and trust what cannot yet be seen."],
+"Taurus-Neptune": ["Neptune in Taurus (1874–1889) dissolved the boundaries between the material and the spiritual in an era of extraordinary artistic and economic transformation.","This generation carried a mystical relationship to the physical world – matter itself was seen as sacred, sensory, and infused with invisible meaning."],
+"Gemini-Neptune": ["Neptune in Gemini (1888–1902) dissolved the boundaries between information and imagination – producing a generation for whom language, story, and myth were genuinely indistinguishable from reality.","This cohort gave the world some of its most enduring literature and ideas, born from the place where fact and dream intersect."],
+"Cancer-Neptune": ["Neptune in Cancer (1901–1916) dissolved the boundaries of home, nation, and belonging – producing a generation whose spiritual longing was inseparable from their grief for what was lost.","This was the generation shaped by two world wars, whose deepest dreams were of safety, rootedness, and a home that could not be taken away."],
+"Leo-Neptune": ["Neptune in Leo (1914–1929) dissolved the boundaries between self and spectacle – producing a generation that dreamed through glamour, performance, and the golden age of cinema and jazz.","This cohort carried a collective fantasy of radiance – the dream that the individual self, fully expressed, could redeem a broken world."],
+"Virgo-Neptune": ["Neptune in Virgo (1928–1943) dissolved the boundaries between the ideal and the practical – producing a generation whose deepest spiritual longing was for a world that actually worked the way it was supposed to.","This cohort brought a quiet, service-oriented idealism to everything they touched – the dream expressed through craft, care, and disciplined devotion."],
+"Libra-Neptune": ["Neptune in Libra (1942–1957) dissolved the boundaries between love and ideal – producing a generation whose spiritual longing was inseparable from their search for perfect partnership and universal justice.","This cohort carried the dream of peace as a lived reality – not just a political hope but a genuine spiritual orientation toward harmony."],
+"Scorpio-Neptune": ["Neptune in Scorpio (1955–1970) dissolved the boundary between conscious and unconscious in an entire generation.","Your generation collectively dreamed of transformation – and produced the cultural upheaval of the 1960s and 70s."],
+"Sagittarius-Neptune": ["Neptune in Sagittarius (1970–1984) dissolved the boundaries between spiritual traditions, producing a generation with a native hunger for meaning.","Your generation dreamed of freedom as a spiritual state, not just a political one."],
+"Capricorn-Neptune": ["Neptune in Capricorn (1984–1998) dissolved the boundaries between dream and ambition in an entire generation.","Your generation carries a complex relationship to success – simultaneously drawn to achievement and aware of its hollowness."],
+"Aquarius-Neptune": ["Neptune in Aquarius (1998–2012) dissolved the boundaries between individual and collective consciousness in a generation that grew up online.","Your generation dreams of collective healing and systemic change with an idealism that is both Neptune's greatest gift and its most significant challenge."],
+"Pisces-Neptune": ["Neptune in Pisces (2011–2026) is the planet in its home sign – the most spiritually and creatively saturated placement possible.","Your generation is arriving with a permeability to collective feeling that no previous cohort has carried in this form."],
+"Aries-Pluto": ["Pluto in Aries (2068–2097) will transform an entire generation's relationship to identity, will, and the very nature of individual existence – this placement belongs to the future, carrying the seeds of a civilization not yet built.","Those born under this placement will arrive as pioneers of a kind humanity has not yet encountered."],
+"Taurus-Pluto": ["Pluto in Taurus (1851–1884) transformed an entire generation's relationship to land, wealth, and the physical foundations of power – this was the era of industrialization at its most raw and transformative.","This generation carried the deep compulsion to build, own, and control the material world – and in doing so, reshaped civilization permanently."],
+"Gemini-Pluto": ["Pluto in Gemini (1882–1914) transformed an entire generation's relationship to information, language, and the power of ideas – this was the era that gave the world psychoanalysis, modernism, and the electric age of communication.","This cohort carried a compulsive relationship to the mind itself – the conviction that ideas could transform everything, for better or for catastrophic worse."],
+"Cancer-Pluto": ["Pluto in Cancer (1912–1939) transformed an entire generation's relationship to home, family, and national belonging – this was the generation shaped by the Great Depression and two World Wars.","They carried a fierce, almost desperate need to protect what they loved, and a capacity for collective sacrifice that has rarely been seen since."],
+"Leo-Pluto": ["Pluto in Leo (1937–1958) transformed an entire generation's relationship to power, creativity, and the individual will.","Your generation carried a compulsive relationship to significance – the need to matter, to leave a mark, to be remembered."],
+"Virgo-Pluto": ["Pluto in Virgo (1956–1972) transformed an entire generation's relationship to work, health, and the systems that sustain life.","You carry a deep compulsion toward improvement, analysis, and the correction of what is broken."],
+"Libra-Pluto": ["Pluto in Libra (1971–1984) transformed an entire generation's relationship to partnership, justice, and the balance of power.","You carry a deep awareness of power dynamics in relationships that previous generations either did not see or chose not to name."],
+"Scorpio-Pluto": ["Pluto in Scorpio (1983–1995) is the planet in its home sign – the most intensely transformative generational placement possible.","You were born into a world where the shadow was erupting into visibility."],
+"Sagittarius-Pluto": ["Pluto in Sagittarius (1995–2008) transformed an entire generation's relationship to belief, globalization, and the clash of worldviews.","You carry a deep awareness that belief systems are constructed, that truth is contested, and that the map is not the territory."],
+"Capricorn-Pluto": ["Pluto in Capricorn (2008–2024) is transforming an entire generation's relationship to authority, institutions, and the structures of power.","You were born knowing at a cellular level that the old structures do not hold."],
+"Aquarius-Pluto": ["Pluto in Aquarius (2023–2043) is beginning to transform an entire generation's relationship to collective intelligence, technology, and the definition of what it means to be human.","Your cohort is arriving at the moment when the boundary between human and artificial, individual and network, is being fundamentally renegotiated."],
+"Pisces-Pluto": ["Pluto in Pisces (2043–2068) will transform an entire generation's relationship to consciousness, spirituality, and the invisible dimensions of existence – this placement belongs to the future, arriving at a moment when the boundary between worlds may be thinner than it has ever been.","Those born under this placement will carry a depth of spiritual perception and a relationship to dissolution and rebirth that represents the full completion of Pluto's journey through the zodiac."],
+"Aries-Rising": ["Aries Rising means Mars rules your chart – giving you a direct, energetic, and instinctively forward-moving outer presence.","Your first impression is one of confidence, energy, and a certain restless aliveness. People sense that you are oriented toward action.","The challenge of this Ascendant is that your directness can land as aggression or impatience to people who are not expecting it."],
+"Taurus-Rising": ["Taurus Rising means Venus rules your chart – giving you a grounded, beautiful, and quietly magnetic outer presence.","Your first impression is one of calm, reliability, and a certain sensory richness. People feel at ease around you quickly.","You tend to have a physical quality that is naturally attractive – a strong ease in your body that reads as someone deeply comfortable in their own skin."],
+"Gemini-Rising": ["Gemini Rising means Mercury rules your chart – giving you a quick, communicative, and intellectually alive outer presence.","Your first impression is one of wit, curiosity, and adaptability. People sense that your mind is always running.","You tend to have a youthful quality that persists across decades – a lightness of expression and animated eyes."],
+"Cancer-Rising": ["Cancer Rising means the Moon rules your chart – giving you a warm, receptive, and deeply empathic outer presence.","Your first impression is one of gentleness, care, and a kind of soft attentiveness that makes people feel instinctively safe.","The challenge of this Ascendant is that your receptivity can absorb too much – you take in the emotional atmosphere at a level that can be genuinely depleting."],
+"Leo-Rising": ["Leo Rising means the Sun rules your chart – the only Ascendant with this distinction – giving you a radiant, magnetically confident outer presence.","Your first impression is larger than life. There is something about you that people register the moment you enter a room.","You tend to have a physical quality that draws attention – strong hair, dramatic features, or simply an energy that takes up space in the best possible way."],
+"Virgo-Rising": ["Virgo Rising means Mercury rules your chart – giving you a precise, observant, and quietly capable outer presence.","Your first impression is one of intelligence, attentiveness, and a certain quiet discernment. People sense that you are noticing things.","You look put-together because you genuinely are."],
+"Libra-Rising": ["Libra Rising means Venus rules your chart – giving you a gracious, aesthetically refined, and socially gifted outer presence.","Your first impression is one of elegance, warmth, and a certain careful attentiveness to the people around you.","You tend to have a naturally attractive physical quality – symmetrical features, a graceful bearing."],
+"Scorpio-Rising": ["Scorpio Rising means Mars and Pluto rule your chart – giving you a magnetic, penetrating, and quietly powerful outer presence.","Your first impression is one of intensity, depth, and a certain controlled stillness. People sense there is more beneath your surface than you are showing.","You tend to have a physically striking quality – intense eyes, a magnetic bearing, or simply an energy that pulls the room slightly toward you."],
+"Sagittarius-Rising": ["Sagittarius Rising means Jupiter rules your chart – giving you an expansive, warm, and genuinely optimistic outer presence.","Your first impression is one of enthusiasm, openness, and a certain generous aliveness. People find it genuinely contagious.","The challenge of this Ascendant is that your enthusiasm can run ahead of your discernment."],
+"Capricorn-Rising": ["Capricorn Rising means Saturn rules your chart – giving you a serious, authoritative, and quietly formidable outer presence.","Your first impression is one of competence, composure, and a certain restrained power. People sense that you have actually earned it.","The challenge of this Ascendant is that your composure can read as coldness."],
+"Aquarius-Rising": ["Aquarius Rising means Saturn and Uranus rule your chart – giving you an original, intellectually alive, and quietly magnetic outer presence.","Your first impression is one of intelligence, independence, and a certain friendly detachment.","You tend to have a physically distinctive quality – something slightly unconventional about your appearance or bearing."],
+"Pisces-Rising": ["Pisces Rising means Jupiter and Neptune rule your chart – giving you a gentle, permeable, and otherworldly outer presence.","Your first impression is one of softness, depth, and a certain dreamy quality that makes people want to know what you are actually thinking.","The challenge of this Ascendant is that your permeability makes it easy for others' energies to enter your field uninvited."],
 };
 
 const emojis = {
@@ -181,64 +191,577 @@ function getFact(sign, planet) {
     const arr = facts[key];
     return arr[Math.floor(Math.random() * arr.length)];
   }
-  const generics = [
-    sign + " " + planet + " gives you a uniquely powerful energy that shapes how you experience this area of life.",
-    "With " + planet + " in " + sign + ", the qualities of " + sign + " are deeply woven into how you express this planetary energy.",
-    planet + " in " + sign + " is one of the most revealing placements in understanding your full astrological story.",
-  ];
-  return generics[Math.floor(Math.random() * generics.length)];
+  return sign + " " + planet + " gives you a uniquely powerful energy that shapes how you experience this area of life.";
 }
 
-const allGuessQuestions = [
-  { sign:"Aries", clues:["The moment someone tells me I cannot do something, I immediately want to prove them wrong.","I have started more things than I have finished – but the things I finish, I finish fast.","My energy is magnetic when I am excited and completely absent when I am bored.","People call me impulsive. I call it decisive.","I rarely hold a grudge – I blow up, say the thing, and then I am genuinely over it."] },
-  { sign:"Taurus", clues:["I have a specific way I like things done and I find it very hard to let that go.","I am the person everyone calls when they need to feel grounded.","Comfort is not laziness for me – it is how I recharge so I can give everything I have.","I make decisions slowly and almost never regret them.","My loyalty is one of the most powerful things about me – and also one of the most dangerous."] },
-  { sign:"Gemini", clues:["I have reinvented my personality at least twice and no one found it strange.","I can be completely absorbed in something for a week and then never think about it again.","I process by talking. If I go quiet, something is very wrong.","I have a different energy for different people and I do not consider that fake – I consider it social intelligence.","The most attractive thing to me is someone who can keep up with how fast my mind moves."] },
-  { sign:"Cancer", clues:["My home is not just a place to live – it is an extension of my emotional state.","I am incredibly perceptive about other people's moods but sometimes completely blind to my own.","I do not forgive easily, but I love deeply enough that I usually try anyway.","I have a memory like a trap – especially for emotional details.","When I am hurt I go quiet and inward. Most people do not even notice until I am already gone."] },
-  { sign:"Leo", clues:["I have a natural ability to make people feel seen and I use it generously.","I know I am a lot. I have made peace with it.","Recognition matters to me more than I usually admit out loud.","I am at my worst when I am being ignored and at my best when I am being celebrated.","My loyalty, once earned, is absolute. My disappointment, once triggered, is equally absolute."] },
-  { sign:"Virgo", clues:["I edit everything – texts, plans, other people's work, my own thoughts – before they leave me.","I have a system for things most people do not even think to have a system for.","I am genuinely more sensitive than I appear. I just do not show it until I trust you.","I love people by taking care of the practical things they never remember to take care of themselves.","My standards are high because I know what is possible when things are done correctly."] },
-  { sign:"Libra", clues:["I have rehearsed both sides of every difficult conversation before it happens.","I feel physical discomfort around conflict – not just emotional discomfort. Physical.","I am often the last person in a group to share my actual opinion, even when I have had it the longest.","My taste is not a personality trait – it is a deeply held value system.","I fall in love with the version of partnership I believe is possible, which sometimes takes me longer than it should to revise."] },
-  { sign:"Scorpio", clues:["I rarely show my full hand. Even to people I love.","I have a radar for authenticity that is almost never wrong.","The things I have survived would have stopped most people. I do not say this with pride – I say it as a fact.","I do not do casual. Not with friendship, not with love, not with anything that actually matters.","People sense something about me before I say a word. I have learned to use that."] },
-  { sign:"Sagittarius", clues:["I have left situations – jobs, relationships, cities – the moment they started to feel like a ceiling.","I will tell you the truth even when the timing is terrible because I cannot make myself say the comfortable lie.","My optimism is not naivety. It is a philosophical position I have arrived at through experience.","Freedom is not just something I want – it is something I require to function.","I am always working toward a belief system that is bigger and truer than the one I had last year."] },
-  { sign:"Capricorn", clues:["I have been the responsible one in every group I have ever been part of.","I measure progress over years, not weeks.","My sense of humor is dry enough that people sometimes are not sure if I am joking.","I take commitments more seriously than most people around me, which has been both a gift and a burden.","I tend to peak later than my peers and I have always quietly known this."] },
-  { sign:"Aquarius", clues:["I have held an unpopular opinion for years and then watched it become common sense.","I need more alone time than most people expect from someone who is also genuinely social.","I care about the collective more than about fitting into it.","My detachment is not coldness – it is the way I stay clear enough to think.","I am loyal to principles before I am loyal to people, which is something not everyone can handle."] },
-  { sign:"Pisces", clues:["I absorb other people's emotional states without meaning to and it takes me a while to realize what is mine.","I have a creative inner world that is as real to me as the external one – sometimes more.","I tend to see people's potential so clearly that I stay longer than I should waiting for it to arrive.","My intuition is my most reliable navigation system, even when I cannot explain it logically.","I need a creative or spiritual outlet the way other people need sleep."] },
-  { sign:"Aries", clues:["I have never been good at pretending I am fine when I am not – my face does not cooperate.","I get more done in a two-hour focused sprint than most people do in a full day.","I am attracted to difficulty. If something comes too easily I do not fully trust it.","The people I love know that my anger and my love come from exactly the same place.","I am already three steps ahead in my head while most people are still processing step one."] },
-  { sign:"Taurus", clues:["I notice quality – in food, in people, in work, in spaces – immediately and without trying.","Once I have made up my mind, additional arguments against my position mostly just annoy me.","I show love through acts of physical care – cooking, showing up, being present in the body.","I am slow to anger but once I reach that point it is a different kind of anger than most people are used to.","I have always known what I want. The work is learning to trust that knowing."] },
-  { sign:"Gemini", clues:["I have had at least three completely different life chapters and they all feel genuinely like me.","I fall in love with ideas the way other people fall in love with people – intensely and sometimes briefly.","I am the person in the group who always knows a little bit about everything.","My attention is a gift I give fully – and withdraw immediately when something stops being interesting.","I have been called flaky by people who do not understand that I am simply always responding to what is most alive right now."] },
-  { sign:"Cancer", clues:["I can create a sense of home anywhere – in a hotel room, in a new city, in a stranger's kitchen.","The people I let all the way in are very few. The care I give them is total.","I tend to take care of everyone's emotional needs before I even identify my own.","My moods shift with an internal weather system that I am not always in control of.","I have kept things – objects, letters, memories – that other people would have thrown away decades ago."] },
-  { sign:"Leo", clues:["I have a creativity that lives close to the surface – it comes out in how I dress, how I speak, how I enter a room.","I give everything I have to the people and projects I commit to. I expect the same level of seriousness in return.","I light up around people I love in a way that I cannot fake and cannot hide.","My ego and my generosity come from exactly the same source – a deep need to matter and to make others feel that they matter too.","Betrayal is the one thing I genuinely cannot move past easily. It touches something foundational."] },
-  { sign:"Virgo", clues:["I have a relationship with improvement that never fully switches off – I am always noticing what could be better.","I find it easier to show up for other people than to ask for help myself.","My anxiety often expresses itself as productivity – I clean, I organize, I plan when I am stressed.","I have been told I am too critical. I have also been the person who caught the mistake everyone else missed.","I am capable of a level of devotion and care that most people do not encounter very often in their lives."] },
-  { sign:"Scorpio", clues:["I have a long memory and a longer capacity for patience when something matters enough to wait for.","I am drawn to what is hidden, complicated, or beneath the surface – in art, in people, in situations.","My transformations are total. When I change, I change completely. There is no going back to the previous version.","I can sit with difficult emotions that would overwhelm most people. I have been doing it my whole life.","The intimacy I want is so complete that most people are not ready for it."] },
-  { sign:"Aquarius", clues:["I have always felt most like myself slightly outside the mainstream – not in opposition to it, just elsewhere.","I think in systems. Individual cases interest me mostly as evidence of something larger.","My friendships are the most important relationships in my life, often more than my romantic ones.","I can be warm and simultaneously completely unreachable. I am aware this confuses people.","The future has always felt more real to me than the present. I have been living there in my mind for years."] },
+// ─── ZODIAC QUIZ DATA ────────────────────────────────────────────
+
+// AVATARS for unlock display
+const avatarData = [
+  { sign:"Aries", symbol:"♈", color:"#FF3D00", glow:"#FF6D00", scifiClass:"Vanguard Striker", emoji:"🔥" },
+  { sign:"Taurus", symbol:"♉", color:"#2E7D32", glow:"#00C853", scifiClass:"Titan Guardian", emoji:"🌿" },
+  { sign:"Gemini", symbol:"♊", color:"#F9A825", glow:"#FFD600", scifiClass:"Dual-Core Phantom", emoji:"✨" },
+  { sign:"Cancer", symbol:"♋", color:"#1565C0", glow:"#2979FF", scifiClass:"Lunar Sentinel", emoji:"🌙" },
+  { sign:"Leo", symbol:"♌", color:"#E65100", glow:"#FF9100", scifiClass:"Solar Sovereign", emoji:"👑" },
+  { sign:"Virgo", symbol:"♍", color:"#00695C", glow:"#1DE9B6", scifiClass:"Nano Architect", emoji:"🌾" },
+  { sign:"Libra", symbol:"♎", color:"#6A1B9A", glow:"#D500F9", scifiClass:"Equilibrium Arbiter", emoji:"⚖️" },
+  { sign:"Scorpio", symbol:"♏", color:"#880E4F", glow:"#FF1744", scifiClass:"Shadow Infiltrator", emoji:"🖤" },
+  { sign:"Sagittarius", symbol:"♐", color:"#E64A19", glow:"#FF6D00", scifiClass:"Void Ranger", emoji:"🏹" },
+  { sign:"Capricorn", symbol:"♑", color:"#37474F", glow:"#78909C", scifiClass:"Iron Strategist", emoji:"⛰️" },
+  { sign:"Aquarius", symbol:"♒", color:"#0277BD", glow:"#00B0FF", scifiClass:"Quantum Visionary", emoji:"⚡" },
+  { sign:"Pisces", symbol:"♓", color:"#4527A0", glow:"#7C4DFF", scifiClass:"Astral Mystic", emoji:"💜" },
 ];
 
+// 48 QUESTIONS — 4 levels × 12 questions
+// Level 1: General Knowledge → unlocks Aries(Q1-4), Taurus(Q5-8), Gemini(Q9-12)
+// Level 2: Match Symbol → unlocks Cancer(Q1-4), Leo(Q5-8), Virgo(Q9-12)
+// Level 3: Planetary Definitions → unlocks Libra(Q1-4), Scorpio(Q5-8), Sagittarius(Q9-12)
+// Level 4: Animals & Mythology → unlocks Capricorn(Q1-4), Aquarius(Q5-8), Pisces(Q9-12)
+
+const quizLevels = [
+  {
+    level: 1,
+    title: "Guess the Sign",
+    subtitle: "Read the clues — which sign is it?",
+    icon: "🔮",
+    isClueFormat: true,
+    questions: [
+      { clue:"I get bored easily and I love being the first to try something new. People say I act before I think — and honestly? They are right.", options:["Taurus","Scorpio","Aries","Capricorn"], answer:"Aries" },
+      { clue:"I take my time with everything. I love good food, cozy spaces, and things that last. Once I make up my mind, nothing can change it.", options:["Aries","Taurus","Libra","Virgo"], answer:"Taurus" },
+      { clue:"I love talking, asking questions, and learning new things. I can be into something one week and completely different the next!", options:["Sagittarius","Aquarius","Gemini","Leo"], answer:"Gemini" },
+      { clue:"My home is my whole world. I feel everything really deeply and I never forget how someone made me feel.", options:["Pisces","Cancer","Scorpio","Taurus"], answer:"Cancer" },
+      { clue:"I love being the center of attention and making people feel special. I am generous, dramatic, and I give everything I have.", options:["Aries","Libra","Leo","Sagittarius"], answer:"Leo" },
+      { clue:"I notice details no one else sees. I like having a plan, keeping things organized, and doing everything the right way.", options:["Capricorn","Virgo","Cancer","Aquarius"], answer:"Virgo" },
+      { clue:"I hate conflict and I try to make everyone happy. I love beautiful things and I always want everything to be fair.", options:["Gemini","Libra","Pisces","Leo"], answer:"Libra" },
+      { clue:"I feel things more deeply than I ever show. I am loyal, intense, and I never forget. Do not cross me — I remember everything.", options:["Scorpio","Aries","Cancer","Virgo"], answer:"Scorpio" },
+      { clue:"I love adventures, telling it like it is, and believing that everything will work out. Freedom is everything to me.", options:["Aquarius","Leo","Aries","Sagittarius"], answer:"Sagittarius" },
+      { clue:"I work harder than anyone. I am patient, responsible, and I am always thinking about the future. I do not quit.", options:["Taurus","Virgo","Capricorn","Scorpio"], answer:"Capricorn" },
+      { clue:"I do things my own way and I do not care if it seems weird. I care more about ideas and helping the world than fitting in.", options:["Gemini","Aquarius","Libra","Sagittarius"], answer:"Aquarius" },
+      { clue:"I pick up on everyone's feelings without trying. I am dreamy, creative, and sometimes I live more in my imagination than real life.", options:["Cancer","Scorpio","Pisces","Libra"], answer:"Pisces" },
+    ]
+  },
+  {
+    level: 2,
+    title: "Match the Symbol",
+    subtitle: "Do you know your signs by sight?",
+    icon: "🔣",
+    questions: [
+      { q:"Which sign does the symbol ♈ represent?", options:["Taurus","Aries","Aquarius","Capricorn"], answer:"Aries" },
+      { q:"Which sign does the symbol ♉ represent?", options:["Gemini","Virgo","Taurus","Leo"], answer:"Taurus" },
+      { q:"Which sign does the symbol ♊ represent?", options:["Libra","Aquarius","Gemini","Cancer"], answer:"Gemini" },
+      { q:"Which sign does the symbol ♋ represent?", options:["Scorpio","Cancer","Capricorn","Pisces"], answer:"Cancer" },
+      { q:"Which sign does the symbol ♌ represent?", options:["Leo","Libra","Sagittarius","Aries"], answer:"Leo" },
+      { q:"Which sign does the symbol ♍ represent?", options:["Gemini","Taurus","Virgo","Scorpio"], answer:"Virgo" },
+      { q:"Which sign does the symbol ♎ represent?", options:["Aquarius","Libra","Leo","Virgo"], answer:"Libra" },
+      { q:"Which sign does the symbol ♏ represent?", options:["Capricorn","Aries","Pisces","Scorpio"], answer:"Scorpio" },
+      { q:"Which sign does the symbol ♐ represent?", options:["Sagittarius","Aquarius","Cancer","Libra"], answer:"Sagittarius" },
+      { q:"Which sign does the symbol ♑ represent?", options:["Pisces","Scorpio","Capricorn","Virgo"], answer:"Capricorn" },
+      { q:"Which sign does the symbol ♒ represent?", options:["Aquarius","Gemini","Aries","Cancer"], answer:"Aquarius" },
+      { q:"Which sign does the symbol ♓ represent?", options:["Libra","Taurus","Sagittarius","Pisces"], answer:"Pisces" },
+    ]
+  },
+  {
+    level: 3,
+    title: "Planetary Definitions",
+    subtitle: "What rules what?",
+    icon: "🪐",
+    questions: [
+      { q:"What is a Sun sign?", options:["The sign the Moon was in at your birth","The sign the Sun was in at your birth","Your Rising sign","The sign that rules your chart"], answer:"The sign the Sun was in at your birth" },
+      { q:"What is a Moon sign?", options:["The sign the Sun was in at your birth","The sign ruling your career","The sign the Moon was in at your birth","Your Ascendant sign"], answer:"The sign the Moon was in at your birth" },
+      { q:"What is a Mercury sign?", options:["The sign ruling love","The sign ruling communication and thinking style","The sign ruling your career","The sign ruling your home life"], answer:"The sign ruling communication and thinking style" },
+      { q:"What is a Venus sign?", options:["The sign ruling love, beauty, and values","The sign ruling ambition and drive","The sign ruling home and family","The sign ruling intellect"], answer:"The sign ruling love, beauty, and values" },
+      { q:"What is a Mars sign?", options:["The sign ruling beauty and romance","The sign ruling drive, ambition, and how you take action","The sign ruling communication","The sign ruling spirituality"], answer:"The sign ruling drive, ambition, and how you take action" },
+      { q:"What is a Jupiter sign?", options:["The sign ruling restriction and discipline","The sign ruling expansion, luck, and abundance","The sign ruling home and roots","The sign ruling deep transformation"], answer:"The sign ruling expansion, luck, and abundance" },
+      { q:"What is a Saturn sign?", options:["The sign ruling luck and joy","The sign ruling love and pleasure","The sign ruling discipline, structure, and life lessons","The sign ruling intuition"], answer:"The sign ruling discipline, structure, and life lessons" },
+      { q:"What is a Rising sign (Ascendant)?", options:["The sign the Sun was in at birth","The sign the Moon was in at birth","The sign rising on the eastern horizon at your exact birth time","The sign ruling your subconscious"], answer:"The sign rising on the eastern horizon at your exact birth time" },
+      { q:"What is a Uranus sign?", options:["The sign ruling daily routine and health","The sign ruling innovation, rebellion, and generational change","The sign ruling love and romance","The sign ruling creativity and self-expression"], answer:"The sign ruling innovation, rebellion, and generational change" },
+      { q:"What is a Neptune sign?", options:["The sign ruling ambition and status","The sign ruling dreams, spirituality, and illusions","The sign ruling communication and logic","The sign ruling the physical body"], answer:"The sign ruling dreams, spirituality, and illusions" },
+      { q:"What is a Pluto sign?", options:["The sign ruling day-to-day habits","The sign ruling beauty and romance","The sign ruling deep transformation, power, and rebirth","The sign ruling intellectual curiosity"], answer:"The sign ruling deep transformation, power, and rebirth" },
+      { q:"Which planet rules both Gemini and Virgo?", options:["Venus","Mars","Jupiter","Mercury"], answer:"Mercury" },
+    ]
+  },
+  {
+    level: 4,
+    title: "Animals & Mythology",
+    subtitle: "The creatures of the cosmos",
+    icon: "🐉",
+    questions: [
+      { q:"Which animal represents Aries?", options:["Bull","Ram","Lion","Crab"], answer:"Ram" },
+      { q:"Which animal represents Taurus?", options:["Ram","Horse","Bull","Fish"], answer:"Bull" },
+      { q:"Which mythological figures are associated with Gemini?", options:["Castor and Pollux","Apollo and Artemis","Romulus and Remus","Zeus and Hera"], answer:"Castor and Pollux" },
+      { q:"Which creature represents Cancer?", options:["Scorpion","Crab","Fish","Goat"], answer:"Crab" },
+      { q:"Which animal represents Leo?", options:["Eagle","Horse","Bull","Lion"], answer:"Lion" },
+      { q:"Which mythological figure is Virgo associated with?", options:["Aphrodite","Ares","Astraea, goddess of justice","Poseidon"], answer:"Astraea, goddess of justice" },
+      { q:"What symbol is Libra associated with?", options:["The scales of justice","The sword","The shield","The crown"], answer:"The scales of justice" },
+      { q:"Which creature represents Scorpio?", options:["Crab","Eagle","Scorpion","Serpent"], answer:"Scorpion" },
+      { q:"Which creature represents Sagittarius?", options:["Centaur — half human, half horse","Minotaur — half human, half bull","Mermaid — half human, half fish","Satyr — half human, half goat"], answer:"Centaur — half human, half horse" },
+      { q:"Which mythological creature is Capricorn associated with?", options:["Pegasus — a winged horse","Sea-goat — half goat, half fish","Phoenix — a fire bird","Chimera — a fire-breathing hybrid"], answer:"Sea-goat — half goat, half fish" },
+      { q:"What does the Aquarius symbol of water waves actually represent?", options:["The ocean","Waves of electricity and innovation","Waves of knowledge and wisdom poured from a water-bearer","Rain falling from the sky"], answer:"Waves of knowledge and wisdom poured from a water-bearer" },
+      { q:"Which creatures represent Pisces?", options:["One fish swimming alone","Two fish swimming in opposite directions","Two dolphins leaping together","Two whales diving deep"], answer:"Two fish swimming in opposite directions" },
+    ]
+  }
+];
+
+// Which avatar index (0-11) is unlocked at which question within a level
+// Every 4 correct = 1 avatar. Level 1 → avatars 0,1,2. Level 2 → 3,4,5. Etc.
+function getAvatarForMilestone(level, questionIndex) {
+  // questionIndex is 0-based within the level (0-11)
+  const milestone = Math.floor(questionIndex / 4); // 0, 1, or 2
+  const avatarIndex = (level - 1) * 3 + milestone;
+  return avatarData[avatarIndex];
+}
+
+// ─── STRIPE LINKS ───────────────────────────────────────────────
 const STRIPE_TRIAL_LINK = "https://buy.stripe.com/bJefZa8lH4TBetl2VL5sA01";
 const STRIPE_PORTAL_LINK = "https://billing.stripe.com/p/login/5kQ3co6dzeub70TfIx5sA00";
-const FREE_QUESTIONS = 4;
-const TOTAL_QUESTIONS = 12;
+const PAYWALL_AFTER = 5; // show paywall after this many questions answered
 
-const dailyHoroscopes = {
-  Aries: ["The Sun's current position activates your first house of identity – today is not the day to shrink. Say the thing you have been rehearsing. Lead with your instinct and clean up the details later. Your directness is not too much; it is exactly what is needed.","Mars is stirring your sector of ambition and this energy wants an outlet. Channel it into the project that has been stalling. A short burst of focused effort today will move something further than a week of cautious planning ever could.","The Moon in your opposing sign asks you to pause before firing. Your instinct is correct but your timing can be refined. What you have to say will land harder if you wait until the room is ready to receive it.","Venus brushes your chart today with an invitation toward pleasure and ease. You have been pushing hard. The cosmos is giving you permission to stop. Rest is not retreat – it is strategy.","A trine between your ruling planet Mars and the outer planets opens a window of unusual clarity. You see exactly what needs to happen and exactly who is in the way. Move decisively but without cruelty.","Your fire is at a peak today but it needs direction, not just ignition. Pick the one thing that matters most and give it everything. Scattered effort will leave you tired. Focused effort will leave you ahead.","The lunar energy today softens your edges just enough to make you approachable to someone who has been waiting for the right moment. Let them in. Not everyone who wants access is a threat."],
-  Taurus: ["Venus, your ruling planet, is making a quiet but significant move today that touches your sector of values and self-worth. Something you have been underselling – about yourself, your work, your time – is ready to be reassessed at its true price.","The Moon in an earth sign today deepens your already considerable capacity for patience. Use it. The situation that feels stalled is not dead – it is composting. What grows from this will be more substantial than what you originally planted.","A financial or material matter that has been vague is becoming clearer. The numbers are telling you something if you are willing to do the arithmetic honestly. Do not round down what you are owed.","Your senses are particularly sharp today – beauty, pleasure, and physical comfort are not distractions from your purpose. They are part of how you restore the energy you give so steadily to everything and everyone around you.","Resistance you have been feeling toward a particular change is worth examining today. Is it genuine wisdom or familiar comfort? The answer to that question will tell you everything you need to know about what to do next.","The Sun illuminates your sector of communication and asks you to say the thing you have been holding in careful, measured silence. You do not have to be dramatic. You just have to be honest.","A creative or financial opportunity that seemed to have passed is circling back. This time, the terms are better and you are better prepared. Do not let familiarity breed dismissal – look at it fresh."],
-  Gemini: ["Mercury, your ruling planet, is in a particularly agile position today, sharpening your already quick mind to an unusual degree. The idea that surfaces in conversation, almost as a throwaway, is not a throwaway. Write it down.","The dual nature of your sign is an asset today, not a liability. You can see both sides with perfect clarity, which puts you in the rare position of being able to broker a genuine resolution rather than just a temporary peace.","Your social sector is lit up and the connections you make today have longer roots than they appear. The casual introduction, the brief exchange – these are seeds. The harvest is further out than you can see from here.","Information that has been incomplete is filling in. Hold off on the conclusion you were about to reach until the full picture is available, which it will be by the end of the day if you stay curious rather than closing early.","Restlessness is real today and fighting it will cost more than redirecting it. Give yourself permission to move between projects, conversations, and ideas. The synthesis you are unconsciously building will reveal itself soon.","A communication from someone unexpected is worth more than face value. Read between the lines – not with suspicion but with your natural gift for subtext. What they are not saying is the most important part of the message.","The Moon activates your seventh house of partnership today. Someone in your orbit is more aligned with your vision than you have given them credit for. The collaboration you have been trying to build alone is available if you ask."],
-  Cancer: ["The Moon, your ruling planet, is in a powerful position today that amplifies your already extraordinary intuition. The feeling you have about a situation – the one you keep talking yourself out of with logic – is correct. Trust it.","Your home and emotional life are under a gentle but clarifying light today. Something that has felt murky about a domestic situation or a family dynamic is becoming clear enough to address. The conversation you have been postponing is ready.","A creative project that lives close to your heart is asking for more of your time and attention. Give it one hour today. One hour will remind you why it matters.","Your empathy is at its peak today and the people around you can feel it. Someone will seek you out for support. Give what you genuinely have – not what you think you should have. Authentic presence is more valuable than performed strength.","The Sun is activating your sector of values and asking you to identify what you are no longer willing to accept. You have been accommodating something that has outlived its justification.","A financial or security matter that has been causing low-level anxiety is ready to be looked at directly. The reality, once you see it clearly, is more manageable than the fear has been.","Old feelings about a past relationship or unresolved situation are surfacing today – not to destabilize you but to complete something. Let them move through rather than pushing them back down."],
-  Leo: ["The Sun, your ruling planet, is in a position of particular strength today and its light is falling directly on you. This is not a day to be modest about what you want, what you have built, or what you are capable of. Step into the spotlight you were made for.","Your creative sector is activated and the idea that feels too big, too bold, or too much is probably exactly the right size. The instinct to scale it back is fear dressed as practicality. Make it bigger.","A recognition or acknowledgment you have been waiting for is closer than it appears. In the meantime, the most powerful move is to act as if it has already arrived – not from ego but from genuine self-knowledge.","Someone in your orbit needs your particular brand of warmth and confidence today. You have the ability to make people feel like the best version of themselves simply by believing in them fully. Use that gift deliberately.","The Moon is moving through your sector of home and private life, asking you to tend to your inner world with the same generosity you bring to your public one. What you need to restore yourself is not a luxury – it is maintenance.","A leadership opportunity is presenting itself in a context where you least expected it. You do not need a title or a platform to lead. You just need to be willing to go first, which has always been your nature.","A creative or romantic situation that stalled is being reanimated by today's planetary weather. Approach it with fresh eyes rather than the weight of what did not work before."],
-  Virgo: ["Mercury, your ruling planet, is making precise and favorable contacts today that sharpen your analytical capacity to a fine edge. The problem that has resisted solution is ready to yield. Come at it from the angle you have not tried yet.","Your sector of health and daily routine is illuminated today. The small adjustment you have been meaning to make – the one that feels too minor to prioritize – is more significant than it appears. Small pivots compound over time.","A work situation is asking for your most characteristic gift: the ability to see exactly what is wrong and know precisely how to fix it. Do not undervalue this skill or give it away without appropriate acknowledgment.","The perfectionism that drives your best work is working against you in one specific area today. Done is better than endlessly refined. The version you have is good enough to release and improve from there.","Someone is underestimating you in a professional context. The most effective response is not to correct them verbally but to deliver work so precise and so excellent that the misperception corrects itself.","Your body is communicating something today that your mind has been overriding. The fatigue, the tension, the persistent low-level signal – these are data, not weakness. Listen to what they are telling you.","A collaborative project benefits enormously from your attention to detail today. What others would let slide, you catch – and what you catch matters more than anyone currently realizes."],
-  Libra: ["Venus, your ruling planet, is in a harmonious position today that smooths the friction in a relationship or partnership that has felt slightly off-balance. The conversation you initiate today – gently, with genuine fairness – will do more good than weeks of careful avoidance.","Your aesthetic sensibility is particularly sharp today. Trust it in creative decisions, in how you present yourself, and in the environment you curate around you. Beauty is not vanity for Libra – it is intelligence.","A decision you have been holding in suspension is ready to be made. You have enough information. Choose, knowing you can course correct.","The scales are tipping in your favor in a professional context today. The fairness you have been advocating for – perhaps quietly, perhaps for a long time – is being recognized by someone with the ability to act on it.","A one-on-one relationship of any kind – romantic, professional, or friendship – is ready for a deeper conversation than the ones you have been having. You know what needs to be said. So do they.","Your natural diplomacy is an asset in a group situation today where tensions are running higher than the actual stakes warrant. You are the person in the room who can name what is really happening without making it worse.","Something you created or contributed to is being seen more widely than you know. Trust that the work speaks for itself even when you are not in the room to advocate for it."],
-  Scorpio: ["Pluto, your co-ruler, is making a long and slow contact with a sensitive point in your chart that is asking you to release something you have been holding tightly – a grievance, a version of the story, a person you have not fully let go of. The release will not diminish you. It will free you.","Your instincts about a situation involving shared resources, finances, or power are accurate today. Do not second-guess what you already know. The information you are sensing beneath the surface is real even without evidence to prove it yet.","A transformation that has been underway beneath the surface of your life is becoming visible today. What felt like loss in recent months is revealing its purpose. The new structure is beginning to show.","Someone is not being fully honest with you in a situation that matters. You already know this. The question is not whether to address it but how – directly enough to get the truth, carefully enough to preserve what is worth preserving.","Your depth is your greatest asset and your most demanding companion. Today it wants to be expressed – in art, in conversation, in work that requires you to go somewhere most people will not. Go there.","A healing opportunity presents itself today in an unexpected form. It might look like a difficult conversation, an uncomfortable realization, or an invitation to revisit something you thought was finished. Accept it.","The intimacy you crave – genuine, total, nothing-held-back – is available today if you are willing to go first. The vulnerability you are most afraid of is the exact thing that will create the connection you most want."],
-  Sagittarius: ["Jupiter, your ruling planet, is in an expansive and fortunate position today that opens a door you have been knocking on for a while. Walk through it before you talk yourself into waiting for a better moment. The moment is now.","Your philosophical mind is particularly active today and the insight you are circling – the one that keeps returning no matter how many times you redirect your attention – is worth stopping to examine fully. It is trying to tell you something important.","An opportunity involving travel, education, publishing, or the expansion of your reach in some direction is presenting itself. It may look smaller than what you imagined but it is the right shape.","Your honesty is your greatest gift and your most common social casualty. Today, before you say the true thing, ask yourself: is this the right moment, the right person, and the right way?","The freedom you are seeking in a particular area of your life is closer than it appears. One practical step in the direction of what you actually want will shift the energy of the entire situation.","A teacher, mentor, or guide appears today in a form you might not immediately recognize. Stay open to wisdom from unexpected sources. The most useful insight often arrives without credentials.","Your faith – in yourself, in the process, in whatever larger force you trust – is being tested in a specific area right now. Hold it. Your belief in what is possible is one of your most reliable navigation tools."],
-  Capricorn: ["Saturn, your ruling planet, is making a stabilizing contact today that rewards the discipline you have maintained through a period that has not been easy. Evidence of that is beginning to surface. Do not dismiss the small signs – they are the leading edge of something substantial.","A professional matter that has required patience beyond what felt reasonable is reaching a resolution point. The long game you have been playing is paying out. Stay steady for just a little longer.","Your reputation and public standing are benefiting today from work you did quietly, without acknowledgment, some time ago. The credit is arriving on a delay – as it often does for Capricorn – but it is arriving.","An authority figure or institutional structure that has been a source of friction is becoming more navigable. Your understanding of how power actually works is your most undervalued asset.","Your body is asking for rest and your ambition is refusing to grant it. Today the body wins. The work will be sharper after genuine recovery than it ever is after exhausted effort.","A long-term goal that has felt impossibly distant is showing signs of becoming real. The gap between where you are and where you are going has narrowed significantly.","Someone in your professional circle is watching your steadiness with more admiration than they have expressed. The influence you carry is larger than your visibility – which is exactly how you prefer it."],
-  Aquarius: ["Uranus, your modern ruler, is activating your sector of innovation and originality today in a way that makes your most unconventional ideas not just acceptable but necessary. The room needs what only you can see from where you are standing.","A community, group, or collective effort that you are part of is reaching a moment where your specific contribution is exactly what is missing. Offer it without waiting to be asked.","Your intellectual independence is being tested by a group consensus that does not feel right to you. Trust your read. History consistently shows that the Aquarian who holds their position thoughtfully is often the one who turns out to be correct.","A friendship or platonic connection is deepening in a way that surprises you. The person who felt like a peripheral figure in your life is becoming a genuine anchor. Let them.","The cause or vision you carry – the one that feels too large and too far away to be practical – is receiving energy today. A small act in service of it will have disproportionate impact.","Your need for space is particularly pronounced today and honoring it is not antisocial – it is necessary. The ideas that will serve the collective best emerge when you have had genuine time alone to let them develop.","A technology, system, or unconventional approach you have been exploring is closer to ready than you think. The resistance you are encountering is not evidence that it will not work. It is evidence that it is new."],
-  Pisces: ["Neptune, your ruling planet, is in a deeply creative and spiritually attuned position today that makes your intuition almost uncomfortably accurate. The sense you have about a situation – the one that has no logical basis – is worth following.","Your creative work is receiving invisible but real support from the planetary weather today. The project that has been stalled is not stuck – it is incubating. Return to it with fresh eyes and no agenda. Something will open.","A boundary you have been struggling to maintain is being tested again today. The compassion that makes you want to give more than you have is real and beautiful – and it needs a limit to remain sustainable.","The emotional weight you have been carrying for someone else – their anxiety, their grief, their unresolved energy – is not yours to hold indefinitely. Today is a good day to consciously return what is not yours and reclaim what is.","A spiritual or creative insight is arriving today through an unexpected channel – a conversation, a dream fragment, something you overhear. The message you receive in passing is not passing. It is for you.","Your sensitivity to the emotional atmosphere around you is heightened today. Spend time in environments and with people that nourish rather than drain you. This is not avoidance – it is discernment.","Something you released – a relationship, a project, a version of yourself – is showing you today why the release was necessary. The distance is giving you clarity that closeness never could."],
-};
+// ─── AVATAR DISPLAY SVG ─────────────────────────────────────────
+function AvatarSVG({ avatar, size = 90 }) {
+  const c = avatar.color;
+  const g = avatar.glow;
+  return (
+    <svg width={size} height={size} viewBox="0 0 120 140" fill="none">
+      <defs>
+        <radialGradient id={`ag-${avatar.sign}`} cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor={g} stopOpacity="0.5" />
+          <stop offset="100%" stopColor={g} stopOpacity="0" />
+        </radialGradient>
+      </defs>
+      <ellipse cx="60" cy="70" rx="52" ry="58" fill={`url(#ag-${avatar.sign})`} />
+      <rect x="40" y="105" width="16" height="28" rx="6" fill={c} opacity="0.7" />
+      <rect x="64" y="105" width="16" height="28" rx="6" fill={c} opacity="0.7" />
+      <rect x="32" y="68" width="56" height="42" rx="10" fill={c} />
+      <rect x="42" y="74" width="36" height="26" rx="6" fill={g} opacity="0.4" />
+      <circle cx="60" cy="87" r="7" fill={g} opacity="0.9" />
+      <circle cx="60" cy="87" r="4" fill="white" opacity="0.8" />
+      <rect x="18" y="65" width="20" height="14" rx="6" fill={c} opacity="0.8" />
+      <rect x="82" y="65" width="20" height="14" rx="6" fill={c} opacity="0.8" />
+      <rect x="20" y="76" width="14" height="32" rx="6" fill={c} opacity="0.7" />
+      <rect x="86" y="76" width="14" height="32" rx="6" fill={c} opacity="0.7" />
+      <rect x="50" y="56" width="20" height="14" rx="4" fill={c} opacity="0.8" />
+      <ellipse cx="60" cy="45" rx="26" ry="28" fill={c} />
+      <polygon points="60,10 54,28 66,28" fill={c} opacity="0.6" />
+      <ellipse cx="60" cy="44" rx="18" ry="10" fill={g} opacity="0.9" />
+      <ellipse cx="54" cy="41" rx="5" ry="3" fill="white" opacity="0.25" />
+    </svg>
+  );
+}
 
+// ─── ZODIAC QUIZ COMPONENT ──────────────────────────────────────
+function ZodiacQuiz() {
+  const [screen, setScreen] = useState("intro"); // intro | playing | paywall | avatarUnlock | levelComplete | trophy
+  const [level, setLevel] = useState(1);
+  const [questionIndex, setQuestionIndex] = useState(0); // 0-11 within current level
+  const [totalAnswered, setTotalAnswered] = useState(0); // across all levels
+  const [correctInLevel, setCorrectInLevel] = useState(0); // correct per level
+  const [score, setScore] = useState({ correct: 0, total: 0 });
+  const [selectedAnswer, setSelectedAnswer] = useState(null);
+  const [isCorrect, setIsCorrect] = useState(null);
+  const [newAvatar, setNewAvatar] = useState(null);
+  const [unlockedAvatars, setUnlockedAvatars] = useState([]);
+  const [isSubscribed, setIsSubscribed] = useState(() => {
+    try { return localStorage.getItem("aww_subscribed") === "true"; } catch(e) { return false; }
+  });
+  const [showMemberVerify, setShowMemberVerify] = useState(false);
+  const [memberEmail, setMemberEmail] = useState("");
+  const [memberError, setMemberError] = useState(null);
+  const [memberVerifying, setMemberVerifying] = useState(false);
+
+  const levelData = quizLevels[level - 1];
+  const currentQuestion = levelData.questions[questionIndex];
+
+  // Check if paywall should show (after Q5, not subscribed)
+  const shouldShowPaywall = totalAnswered >= PAYWALL_AFTER && !isSubscribed;
+
+  const handleAnswer = (option) => {
+    if (selectedAnswer !== null) return;
+    setSelectedAnswer(option);
+    const correct = option === currentQuestion.answer;
+    setIsCorrect(correct);
+    const newScore = { correct: score.correct + (correct ? 1 : 0), total: score.total + 1 };
+    setScore(newScore);
+    const newCorrectInLevel = correctInLevel + (correct ? 1 : 0);
+    setCorrectInLevel(newCorrectInLevel);
+    const newTotal = totalAnswered + 1;
+    setTotalAnswered(newTotal);
+
+    setTimeout(() => {
+      const nextQIndex = questionIndex + 1;
+      // Check if this was a 4th correct answer milestone (avatarIndex: 4, 8, 12)
+      const prevMilestone = Math.floor(correctInLevel / 4);
+      const newMilestone = Math.floor(newCorrectInLevel / 4);
+      if (newMilestone > prevMilestone && correct) {
+        // Avatar unlocked!
+        const av = getAvatarForMilestone(level, questionIndex);
+        if (av) {
+          setNewAvatar(av);
+          setUnlockedAvatars(prev => [...prev, av.sign]);
+          setSelectedAnswer(null); setIsCorrect(null);
+          // If paywall should now show, show paywall after avatar
+          if (newTotal >= PAYWALL_AFTER && !isSubscribed && nextQIndex < 12) {
+            setScreen("avatarUnlock");
+            return;
+          }
+          setScreen("avatarUnlock");
+          return;
+        }
+      }
+      // No avatar — check paywall
+      if (newTotal >= PAYWALL_AFTER && !isSubscribed && nextQIndex < 12) {
+        setScreen("paywall");
+        return;
+      }
+      // Move to next question or level complete
+      if (nextQIndex >= 12) {
+        setScreen("levelComplete");
+      } else {
+        setQuestionIndex(nextQIndex);
+        setSelectedAnswer(null);
+        setIsCorrect(null);
+      }
+    }, 1400);
+  };
+
+  const handleNextAfterAvatar = () => {
+    const nextQIndex = questionIndex + 1;
+    setNewAvatar(null);
+    // Check paywall
+    if (totalAnswered >= PAYWALL_AFTER && !isSubscribed && nextQIndex < 12) {
+      setScreen("paywall");
+      return;
+    }
+    if (nextQIndex >= 12) {
+      setScreen("levelComplete");
+    } else {
+      setQuestionIndex(nextQIndex);
+      setScreen("playing");
+    }
+  };
+
+  const handleNextLevel = () => {
+    if (level >= 4) { setScreen("trophy"); return; }
+    setLevel(l => l + 1);
+    setQuestionIndex(0);
+    setCorrectInLevel(0);
+    setScreen("playing");
+  };
+
+  const handleSubscribe = () => { window.location.href = STRIPE_TRIAL_LINK; };
+
+  const handleVerifyMember = async () => {
+    const email = memberEmail.trim().toLowerCase();
+    if (!email || !email.includes("@")) { setMemberError("Please enter a valid email."); return; }
+    setMemberVerifying(true); setMemberError(null);
+    try {
+      const res = await fetch(`/api/check-subscription?email=${encodeURIComponent(email)}`);
+      const data = await res.json();
+      if (data.active) {
+        try { localStorage.setItem("aww_subscribed", "true"); } catch(e) {}
+        setIsSubscribed(true);
+        setScreen("playing");
+      } else {
+        setMemberError("No active subscription found for that email.");
+      }
+    } catch {
+      setMemberError("Something went wrong. Please check your connection and try again.");
+    } finally { setMemberVerifying(false); }
+  };
+
+  const resetAll = () => {
+    setScreen("intro"); setLevel(1); setQuestionIndex(0);
+    setTotalAnswered(0); setCorrectInLevel(0);
+    setScore({ correct:0, total:0 }); setSelectedAnswer(null);
+    setIsCorrect(null); setNewAvatar(null); setUnlockedAvatars([]);
+    setShowMemberVerify(false); setMemberEmail(""); setMemberError(null);
+  };
+
+  // ── INTRO SCREEN — jump straight to playing on mount ──
+  React.useEffect(() => {
+    if (screen === "intro") setScreen("playing");
+  }, []);
+  if (screen === "intro") return null;
+
+  // ── PAYWALL SCREEN ──
+  if (screen === "paywall") return (
+    <div style={{animation:"up .5s ease",textAlign:"center"}}>
+      <div style={{background:"linear-gradient(135deg,rgba(232,168,0,0.12),rgba(0,0,0,0.35))",border:"1px solid rgba(255,200,50,0.35)",borderRadius:20,padding:"32px 24px",marginBottom:16,position:"relative",overflow:"hidden"}}>
+        <div style={{position:"absolute",top:0,left:0,right:0,height:2,background:"linear-gradient(90deg,transparent,#e8a800,transparent)"}}/>
+        <div style={{fontSize:44,marginBottom:12}}>🔮</div>
+        <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:20,color:"#f5c842",marginBottom:10}}>Ready for More?</div>
+        <p style={{fontFamily:"Georgia,serif",color:"#d8c890",fontSize:15,lineHeight:1.75,marginBottom:16}}>
+          You have completed your free preview.<br/>
+          Unlock the full quiz — all 4 levels, all 12 avatars — with a <strong style={{color:"#f5c842"}}>7-day free trial</strong>.<br/>
+          Then just <strong style={{color:"#f5c842"}}>$4.99/month</strong>. Cancel anytime.
+        </p>
+        <div style={{display:"flex",flexDirection:"column",gap:6,alignItems:"center",marginBottom:20}}>
+          {["✦ All 48 questions across 4 levels","✦ All 12 Zodiac Operative avatars","✦ Cancel instantly via Stripe — no emails"].map((item,i)=>(
+            <div key={i} style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,color:"#a8e060",letterSpacing:".06em"}}>{item}</div>
+          ))}
+        </div>
+        {/* Show collected avatars so far */}
+        {unlockedAvatars.length > 0 && (
+          <div style={{marginBottom:20}}>
+            <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#f5c842",letterSpacing:".12em",marginBottom:10}}>AVATARS COLLECTED SO FAR</div>
+            <div style={{display:"flex",gap:8,justifyContent:"center",flexWrap:"wrap"}}>
+              {unlockedAvatars.map(s=>{const av=avatarData.find(a=>a.sign===s);return(
+                <div key={s} style={{textAlign:"center"}}>
+                  <AvatarSVG avatar={av} size={48}/>
+                  <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,color:av.color,marginTop:2}}>{s}</div>
+                </div>
+              );})}
+              {/* Locked placeholders */}
+              {Array.from({length: Math.max(0, 3 - unlockedAvatars.length)}).map((_,i)=>(
+                <div key={"lock"+i} style={{width:48,height:48,borderRadius:8,background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.07)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:18}}>🔒</div>
+              ))}
+            </div>
+          </div>
+        )}
+        <button className="rb" style={{"--a":"#e8a800",marginBottom:12}} onClick={handleSubscribe}>✦ START MY FREE TRIAL</button>
+        <p style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,color:"#4a4440",margin:"0 0 16px",letterSpacing:".08em"}}>7-DAY FREE TRIAL · $4.99/MONTH AFTER · CANCEL ANYTIME</p>
+        {/* Already a member */}
+        {!showMemberVerify ? (
+          <button onClick={()=>setShowMemberVerify(true)} style={{background:"none",border:"1px solid rgba(168,224,96,0.3)",color:"#a8e060",padding:"10px 24px",borderRadius:"100px",fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,letterSpacing:".1em",cursor:"pointer",marginBottom:14}}>✦ ALREADY A MEMBER</button>
+        ) : (
+          <div style={{marginBottom:14,padding:"18px",background:"rgba(168,224,96,0.05)",border:"1px solid rgba(168,224,96,0.2)",borderRadius:14}}>
+            <p style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,color:"#a8e060",letterSpacing:".1em",marginBottom:10}}>VERIFY YOUR MEMBERSHIP</p>
+            <input
+              type="email" placeholder="your@email.com" value={memberEmail}
+              onChange={e=>setMemberEmail(e.target.value)}
+              onKeyDown={e=>e.key==="Enter"&&handleVerifyMember()}
+              style={{width:"100%",padding:"11px 14px",borderRadius:10,border:"1px solid rgba(168,224,96,0.3)",background:"rgba(255,255,255,0.04)",color:"#f5f0e0",fontFamily:"Georgia,serif",fontSize:14,textAlign:"center",outline:"none",boxSizing:"border-box",marginBottom:10}}
+            />
+            {memberError && <p style={{fontFamily:"Georgia,serif",color:"#f5c842",fontSize:12,marginBottom:8,lineHeight:1.5}}>{memberError}</p>}
+            <button className="rb" style={{"--a":"#a8e060",marginBottom:8,opacity:memberVerifying?0.6:1}} onClick={handleVerifyMember} disabled={memberVerifying}>
+              {memberVerifying ? "CHECKING..." : "✦ VERIFY & CONTINUE"}
+            </button>
+            <br/>
+            <button onClick={()=>{setShowMemberVerify(false);setMemberError(null);setMemberEmail("");}} style={{background:"none",border:"none",color:"#4a4440",cursor:"pointer",fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,letterSpacing:".1em"}}>← BACK</button>
+          </div>
+        )}
+        <br/>
+        <button onClick={resetAll} style={{background:"none",border:"1px solid rgba(255,200,50,0.15)",color:"#6a6058",padding:"8px 22px",borderRadius:"100px",fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,letterSpacing:".1em",cursor:"pointer"}}>← BACK TO START</button>
+      </div>
+    </div>
+  );
+
+  // ── AVATAR UNLOCK SCREEN ──
+  if (screen === "avatarUnlock" && newAvatar) return (
+    <div style={{animation:"up .6s ease",textAlign:"center"}}>
+      <div style={{background:`linear-gradient(135deg,${newAvatar.color}22,rgba(0,0,0,0.4))`,border:`2px solid ${newAvatar.color}66`,borderRadius:24,padding:"36px 24px",position:"relative",overflow:"hidden"}}>
+        <div style={{position:"absolute",top:0,left:0,right:0,height:3,background:`linear-gradient(90deg,transparent,${newAvatar.glow},transparent)`}}/>
+        <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:11,letterSpacing:".3em",color:newAvatar.color,marginBottom:16}}>✦ AVATAR UNLOCKED ✦</div>
+        <div style={{display:"flex",justifyContent:"center",marginBottom:16}}>
+          <AvatarSVG avatar={newAvatar} size={130}/>
+        </div>
+        <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:28,color:newAvatar.color,marginBottom:6}}>{newAvatar.symbol} {newAvatar.sign}</div>
+        <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:12,color:"#a8e060",letterSpacing:".12em",marginBottom:20}}>{newAvatar.scifiClass}</div>
+        <p style={{fontFamily:"Georgia,serif",fontSize:15,color:"#d8c890",lineHeight:1.7,marginBottom:24}}>
+          You have earned the <strong style={{color:newAvatar.color}}>{newAvatar.sign} Operative</strong>.<br/>
+          This cosmic warrior now joins your collection.
+        </p>
+        <div style={{marginBottom:24}}>
+          <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#f5c842",letterSpacing:".15em",marginBottom:12}}>YOUR COLLECTION</div>
+          <div style={{display:"flex",gap:8,justifyContent:"center",flexWrap:"wrap"}}>
+            {[...unlockedAvatars, newAvatar.sign].filter((v,i,a)=>a.indexOf(v)===i).map(s=>{
+              const av=avatarData.find(a=>a.sign===s);
+              return(<div key={s} style={{textAlign:"center"}}><AvatarSVG avatar={av} size={52}/><div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,color:av.color,marginTop:2}}>{s}</div></div>);
+            })}
+          </div>
+        </div>
+        <button className="rb" style={{"--a":newAvatar.color}} onClick={handleNextAfterAvatar}>✦ CONTINUE THE QUEST</button>
+      </div>
+    </div>
+  );
+
+  // ── LEVEL COMPLETE SCREEN ──
+  if (screen === "levelComplete") return (
+    <div style={{animation:"up .5s ease",textAlign:"center"}}>
+      <div style={{background:"rgba(168,224,96,0.07)",border:"1px solid rgba(168,224,96,0.3)",borderRadius:20,padding:"32px 24px",marginBottom:16}}>
+        <div style={{fontSize:48,marginBottom:12}}>🏅</div>
+        <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:22,color:"#a8e060",marginBottom:8}}>Level {level} Complete!</div>
+        <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:14,color:"#f5c842",marginBottom:16}}>{levelData.title}</div>
+        <div style={{fontFamily:"Georgia,serif",fontSize:15,color:"#d8c890",lineHeight:1.7,marginBottom:20}}>
+          Score: <strong style={{color:"#f5c842"}}>{score.correct}/{score.total}</strong> correct overall.<br/>
+          Avatars collected: <strong style={{color:"#a8e060"}}>{unlockedAvatars.length} of 12</strong>
+        </div>
+        {unlockedAvatars.length > 0 && (
+          <div style={{marginBottom:20}}>
+            <div style={{display:"flex",gap:8,justifyContent:"center",flexWrap:"wrap"}}>
+              {unlockedAvatars.map(s=>{const av=avatarData.find(a=>a.sign===s);return(
+                <div key={s} style={{textAlign:"center"}}><AvatarSVG avatar={av} size={52}/><div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,color:av.color,marginTop:2}}>{s}</div></div>
+              );})}
+            </div>
+          </div>
+        )}
+        {level < 4 ? (
+          <div>
+            <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:11,color:"#f5c842",marginBottom:16,letterSpacing:".08em"}}>NEXT: Level {level+1} — {quizLevels[level].title}</div>
+            <button className="rb" style={{"--a":"#e8a800"}} onClick={handleNextLevel}>✦ START LEVEL {level+1}</button>
+          </div>
+        ) : (
+          <button className="rb" style={{"--a":"#e8a800"}} onClick={()=>setScreen("trophy")}>✦ SEE FINAL RESULTS</button>
+        )}
+      </div>
+      <button onClick={resetAll} style={{background:"none",border:"1px solid rgba(255,200,50,0.15)",color:"#5a5048",padding:"8px 22px",borderRadius:"100px",fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,letterSpacing:".1em",cursor:"pointer"}}>← START OVER</button>
+    </div>
+  );
+
+  // ── TROPHY SCREEN ──
+  if (screen === "trophy") {
+    const pct = Math.round((score.correct / score.total) * 100);
+    const msg = pct===100?{t:"Perfect Score!",s:"The cosmos bows to you. Absolute mastery.",c:"#f5c842"}
+      :pct>=80?{t:"Cosmic Expert!",s:"Your astrological knowledge is deeply tuned.",c:"#f5c842"}
+      :pct>=60?{t:"Star Seeker!",s:"You read the signs well. The cosmos is impressed.",c:"#a8e060"}
+      :pct>=40?{t:"Rising Apprentice!",s:"You are learning the language of the stars.",c:"#a8e060"}
+      :{t:"Cosmic Beginner!",s:"Every master started somewhere. The stars are patient.",c:"#5bc8d8"};
+    return (
+      <div style={{animation:"up .6s ease",textAlign:"center",padding:"12px 0"}}>
+        <div style={{background:"linear-gradient(135deg,rgba(232,168,0,0.12),rgba(0,0,0,0.4))",border:"2px solid rgba(255,200,50,0.4)",borderRadius:24,padding:"36px 24px",position:"relative",overflow:"hidden",marginBottom:16}}>
+          <div style={{position:"absolute",top:0,left:0,right:0,height:3,background:"linear-gradient(90deg,transparent,#e8a800,transparent)"}}/>
+          <div style={{fontSize:64,marginBottom:10}}>🏆</div>
+          <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:11,letterSpacing:".3em",color:"#a8e060",marginBottom:12}}>✦ QUEST COMPLETE ✦</div>
+          <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:24,color:msg.c,marginBottom:8}}>{msg.t}</div>
+          <p style={{fontFamily:"Georgia,serif",fontSize:15,color:"#d8c890",lineHeight:1.7,marginBottom:20}}>{msg.s}</p>
+          <div style={{width:110,height:110,borderRadius:"50%",background:"linear-gradient(135deg,rgba(232,168,0,0.2),rgba(0,0,0,0.3))",border:"3px solid #e8a800",margin:"0 auto 20px",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
+            <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:30,color:"#f5c842",lineHeight:1}}>{score.correct}</div>
+            <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#a8e060",letterSpacing:".1em"}}>OF {score.total}</div>
+          </div>
+          <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:13,color:"#f5c842",marginBottom:16}}>{pct}% Accuracy</div>
+          {unlockedAvatars.length > 0 && (
+            <div style={{marginBottom:20}}>
+              <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#a8e060",letterSpacing:".14em",marginBottom:12}}>✦ OPERATIVES COLLECTED: {unlockedAvatars.length}/12 ✦</div>
+              <div style={{display:"flex",gap:8,justifyContent:"center",flexWrap:"wrap"}}>
+                {unlockedAvatars.map(s=>{const av=avatarData.find(a=>a.sign===s);return(
+                  <div key={s} style={{textAlign:"center"}}><AvatarSVG avatar={av} size={52}/><div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,color:av.color,marginTop:2}}>{s}</div></div>
+                );})}
+              </div>
+            </div>
+          )}
+          <button className="rb" style={{"--a":"#e8a800"}} onClick={resetAll}>✦ PLAY AGAIN</button>
+        </div>
+      </div>
+    );
+  }
+
+  // ── PLAYING SCREEN ──
+  const progress = ((questionIndex) / 12) * 100;
+  const levelColor = ["#FF3D00","#2E7D32","#6A1B9A","#0277BD"][level-1];
+  const answerBg = (opt) => {
+    if (selectedAnswer === null) return "rgba(255,200,50,0.06)";
+    if (opt === currentQuestion.answer) return "rgba(168,224,96,0.18)";
+    if (opt === selectedAnswer && !isCorrect) return "rgba(255,80,80,0.18)";
+    return "rgba(255,200,50,0.03)";
+  };
+  const answerBorder = (opt) => {
+    if (selectedAnswer === null) return "rgba(255,200,50,0.2)";
+    if (opt === currentQuestion.answer) return "rgba(168,224,96,0.6)";
+    if (opt === selectedAnswer && !isCorrect) return "rgba(255,80,80,0.5)";
+    return "rgba(255,200,50,0.08)";
+  };
+  const answerColor = (opt) => {
+    if (selectedAnswer === null) return "#f0c030";
+    if (opt === currentQuestion.answer) return "#a8e060";
+    if (opt === selectedAnswer && !isCorrect) return "#ff7070";
+    return "#4a4440";
+  };
+
+  return (
+    <div style={{animation:"up .45s ease"}}>
+      {/* Header */}
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}}>
+        <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,letterSpacing:".15em",color:levelColor}}>
+          {levelData.icon} LEVEL {level} — {levelData.title.toUpperCase()}
+        </div>
+        <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#f5c842",letterSpacing:".08em"}}>
+          Q{questionIndex+1}/12 · {score.correct}/{score.total} ✓
+        </div>
+      </div>
+      {/* Progress bar */}
+      <div style={{height:3,background:"rgba(255,255,255,0.06)",borderRadius:2,marginBottom:16,overflow:"hidden"}}>
+        <div style={{height:"100%",width:progress+"%",background:`linear-gradient(90deg,${levelColor},#f5c842)`,borderRadius:2,transition:"width 0.4s ease"}}/>
+      </div>
+      {/* Avatar progress hint */}
+      <div style={{display:"flex",gap:6,marginBottom:18,justifyContent:"center"}}>
+        {[0,1,2].map(i=>{
+          const threshQ = i*4; // questions needed to unlock avatar i in this level
+          const avatarIndex = (level-1)*3+i;
+          const av = avatarData[avatarIndex];
+          const unlocked = unlockedAvatars.includes(av.sign);
+          const inProgress = questionIndex >= threshQ && !unlocked;
+          return (
+            <div key={i} style={{display:"flex",alignItems:"center",gap:5,background:unlocked?"rgba(168,224,96,0.1)":inProgress?"rgba(255,200,50,0.08)":"rgba(255,255,255,0.03)",border:`1px solid ${unlocked?av.color:inProgress?"rgba(255,200,50,0.2)":"rgba(255,255,255,0.05)"}`,borderRadius:8,padding:"6px 10px"}}>
+              <div style={{fontSize:unlocked?16:12,opacity:unlocked?1:0.4}}>{av.emoji}</div>
+              <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,color:unlocked?av.color:inProgress?"#f5c842":"#3a3428",letterSpacing:".06em"}}>{unlocked?"EARNED":inProgress?"Q"+(threshQ+1)+"-"+(threshQ+4):"LOCKED"}</div>
+            </div>
+          );
+        })}
+      </div>
+      {/* Question / Clue */}
+      <div style={{background:"rgba(255,200,50,0.05)",border:"1px solid rgba(255,200,50,0.2)",borderRadius:18,padding:"24px 20px",marginBottom:18,position:"relative",overflow:"hidden"}}>
+        <div style={{position:"absolute",top:0,left:0,right:0,height:2,background:`linear-gradient(90deg,transparent,${levelColor},transparent)`}}/>
+        {levelData.isClueFormat ? (
+          <>
+            <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,letterSpacing:".18em",color:"#a8e060",textAlign:"center",marginBottom:12}}>✦ WHICH SIGN IS THIS? ✦</div>
+            <p style={{fontFamily:"Georgia,serif",fontWeight:700,fontSize:"clamp(15px,3.5vw,19px)",color:"#ffffff",lineHeight:1.75,margin:0,textAlign:"center",fontStyle:"italic"}}>"{currentQuestion.clue}"</p>
+          </>
+        ) : (
+          <p style={{fontFamily:"Georgia,serif",fontWeight:700,fontSize:"clamp(15px,3.5vw,20px)",color:"#ffffff",lineHeight:1.65,margin:0,textAlign:"center"}}>{currentQuestion.q}</p>
+        )}
+      </div>
+      {/* Options */}
+      <div style={{display:"flex",flexDirection:"column",gap:10,marginBottom:18}}>
+        {currentQuestion.options.map((opt,i)=>(
+          <button key={i} onClick={()=>handleAnswer(opt)} disabled={selectedAnswer!==null}
+            style={{background:answerBg(opt),border:`1.5px solid ${answerBorder(opt)}`,borderRadius:12,padding:"14px 18px",textAlign:"left",cursor:selectedAnswer===null?"pointer":"default",fontFamily:"Georgia,serif",fontWeight:700,fontSize:15,color:answerColor(opt),transition:"all 0.25s",display:"flex",alignItems:"center",gap:12}}>
+            <span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,color:"inherit",opacity:0.6,flexShrink:0}}>{"ABCD"[i]}</span>
+            {opt}
+            {selectedAnswer !== null && opt === currentQuestion.answer && <span style={{marginLeft:"auto",fontSize:18}}>✓</span>}
+            {selectedAnswer === opt && !isCorrect && <span style={{marginLeft:"auto",fontSize:18}}>✗</span>}
+          </button>
+        ))}
+      </div>
+      {/* Feedback */}
+      {selectedAnswer !== null && (
+        <div style={{animation:"up .35s ease",textAlign:"center",padding:"12px",background:isCorrect?"rgba(168,224,96,0.08)":"rgba(255,80,80,0.08)",border:`1px solid ${isCorrect?"rgba(168,224,96,0.3)":"rgba(255,100,100,0.3)"}`,borderRadius:12}}>
+          <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:13,color:isCorrect?"#a8e060":"#ff7070"}}>
+            {isCorrect?"✦ Correct! The stars align.":"✗ Not quite — "+currentQuestion.answer}
+          </div>
+        </div>
+      )}
+      {!isSubscribed && (
+        <div style={{marginTop:16,textAlign:"center"}}>
+          <span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,color:"#4a4440",letterSpacing:".08em"}}>
+            {Math.max(0, PAYWALL_AFTER - totalAnswered) > 0 ? `${Math.max(0,PAYWALL_AFTER-totalAnswered)} free questions remaining` : "✦ TRIAL ACTIVE"}
+          </span>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── CELEBRITY & DAILY (unchanged from original) ─────────────────
 const celebBySign = {};
 celebrities.forEach(c => {
   if (!celebBySign[c.sign]) celebBySign[c.sign] = [];
   celebBySign[c.sign].push(c);
 });
 
-// ── DAILY HOROSCOPE ──
+const dailyHoroscopes = {
+  Aries:["The Sun's current position activates your first house of identity – today is not the day to shrink. Say the thing you have been rehearsing. Lead with your instinct and clean up the details later.","Mars is stirring your sector of ambition and this energy wants an outlet. Channel it into the project that has been stalling. A short burst of focused effort today will move something further than a week of cautious planning.","The Moon in your opposing sign asks you to pause before firing. Your instinct is correct but your timing can be refined.","Venus brushes your chart today with an invitation toward pleasure and ease. You have been pushing hard. Rest is not retreat – it is strategy.","A trine between your ruling planet Mars and the outer planets opens a window of unusual clarity. You see exactly what needs to happen. Move decisively but without cruelty.","Your fire is at a peak today but it needs direction, not just ignition. Pick the one thing that matters most and give it everything.","The lunar energy today softens your edges just enough to make you approachable to someone who has been waiting for the right moment."],
+  Taurus:["Venus, your ruling planet, is making a quiet but significant move today that touches your sector of values and self-worth. Something you have been underselling is ready to be reassessed at its true price.","The Moon in an earth sign today deepens your already considerable capacity for patience. Use it. The situation that feels stalled is composting.","A financial or material matter that has been vague is becoming clearer. The numbers are telling you something if you are willing to do the arithmetic honestly.","Your senses are particularly sharp today – beauty, pleasure, and physical comfort are not distractions. They are part of how you restore.","Resistance you have been feeling toward a particular change is worth examining today. Is it genuine wisdom or familiar comfort?","The Sun illuminates your sector of communication and asks you to say the thing you have been holding in careful, measured silence.","A creative or financial opportunity that seemed to have passed is circling back. This time, the terms are better."],
+  Gemini:["Mercury, your ruling planet, is in a particularly agile position today, sharpening your already quick mind. The idea that surfaces in conversation, almost as a throwaway, is not a throwaway.","The dual nature of your sign is an asset today. You can see both sides with perfect clarity, which puts you in the rare position of brokering a genuine resolution.","Your social sector is lit up and the connections you make today have longer roots than they appear.","Information that has been incomplete is filling in. Hold off on the conclusion you were about to reach until the full picture is available.","Restlessness is real today and fighting it will cost more than redirecting it. Give yourself permission to move between projects and ideas.","A communication from someone unexpected is worth more than face value. Read between the lines.","The Moon activates your seventh house of partnership today. Someone in your orbit is more aligned with your vision than you have given them credit for."],
+  Cancer:["The Moon, your ruling planet, is in a powerful position today that amplifies your already extraordinary intuition. The feeling you have about a situation is correct. Trust it.","Your home and emotional life are under a gentle but clarifying light today. Something that has felt murky is becoming clear enough to address.","A creative project that lives close to your heart is asking for more of your time and attention. Give it one hour today.","Your empathy is at its peak today and the people around you can feel it. Someone will seek you out for support.","The Sun is activating your sector of values and asking you to identify what you are no longer willing to accept.","A financial or security matter that has been causing low-level anxiety is ready to be looked at directly.","Old feelings about a past situation are surfacing today – not to destabilize you but to complete something."],
+  Leo:["The Sun, your ruling planet, is in a position of particular strength today. This is not a day to be modest about what you want or what you are capable of.","Your creative sector is activated and the idea that feels too big or too bold is probably exactly the right size.","A recognition or acknowledgment you have been waiting for is closer than it appears. Act as if it has already arrived.","Someone in your orbit needs your particular brand of warmth and confidence today. Use that gift deliberately.","The Moon is moving through your sector of home and private life, asking you to tend to your inner world with the same generosity you bring to your public one.","A leadership opportunity is presenting itself in a context where you least expected it. You do not need a title to lead.","A creative or romantic situation that stalled is being reanimated by today's planetary weather."],
+  Virgo:["Mercury, your ruling planet, is making precise and favorable contacts today. The problem that has resisted solution is ready to yield. Come at it from the angle you have not tried yet.","Your sector of health and daily routine is illuminated today. The small adjustment you have been meaning to make is more significant than it appears.","A work situation is asking for your most characteristic gift: the ability to see exactly what is wrong and know precisely how to fix it.","The perfectionism that drives your best work is working against you in one specific area today. Done is better than endlessly refined.","Someone is underestimating you in a professional context. Deliver work so precise and excellent that the misperception corrects itself.","Your body is communicating something today that your mind has been overriding. Listen to what it is telling you.","A collaborative project benefits enormously from your attention to detail today."],
+  Libra:["Venus, your ruling planet, is in a harmonious position today that smooths the friction in a relationship that has felt slightly off-balance.","Your aesthetic sensibility is particularly sharp today. Trust it in creative decisions and in the environment you curate around you.","A decision you have been holding in suspension is ready to be made. You have enough information. Choose.","The scales are tipping in your favor in a professional context today. The fairness you have been advocating for is being recognized.","A one-on-one relationship of any kind is ready for a deeper conversation than the ones you have been having.","Your natural diplomacy is an asset in a group situation today where tensions are running higher than the actual stakes warrant.","Something you created or contributed to is being seen more widely than you know."],
+  Scorpio:["Pluto, your co-ruler, is making a long and slow contact with a sensitive point in your chart. The release will not diminish you. It will free you.","Your instincts about a situation involving shared resources or power are accurate today. Do not second-guess what you already know.","A transformation that has been underway beneath the surface of your life is becoming visible today.","Someone is not being fully honest with you in a situation that matters. You already know this.","Your depth is your greatest asset and your most demanding companion. Today it wants to be expressed.","A healing opportunity presents itself today in an unexpected form.","The intimacy you crave is available today if you are willing to go first."],
+  Sagittarius:["Jupiter, your ruling planet, is in an expansive and fortunate position today that opens a door you have been knocking on. Walk through it before you talk yourself into waiting for a better moment.","Your philosophical mind is particularly active today and the insight you are circling is worth stopping to examine fully.","An opportunity involving travel, education, or the expansion of your reach is presenting itself.","Your honesty is your greatest gift and your most common social casualty. Today, before you say the true thing, ask yourself: is this the right moment?","The freedom you are seeking is closer than it appears. One practical step in the direction of what you actually want will shift the energy of the entire situation.","A teacher, mentor, or guide appears today in a form you might not immediately recognize.","Your faith is being tested in a specific area right now. Hold it."],
+  Capricorn:["Saturn, your ruling planet, is making a stabilizing contact today that rewards the discipline you have maintained. Evidence of that is beginning to surface.","A professional matter that has required patience beyond what felt reasonable is reaching a resolution point.","Your reputation and public standing are benefiting today from work you did quietly, without acknowledgment, some time ago.","An authority figure or institutional structure that has been a source of friction is becoming more navigable.","Your body is asking for rest and your ambition is refusing to grant it. Today the body wins.","A long-term goal that has felt impossibly distant is showing signs of becoming real.","Someone in your professional circle is watching your steadiness with more admiration than they have expressed."],
+  Aquarius:["Uranus, your modern ruler, is activating your sector of innovation and originality today. The room needs what only you can see from where you are standing.","A community, group, or collective effort you are part of is reaching a moment where your specific contribution is exactly what is missing.","Your intellectual independence is being tested by a group consensus that does not feel right to you. Trust your read.","A friendship or platonic connection is deepening in a way that surprises you. Let them.","The cause or vision you carry is receiving energy today. A small act in service of it will have disproportionate impact.","Your need for space is particularly pronounced today and honoring it is necessary, not antisocial.","A technology, system, or unconventional approach you have been exploring is closer to ready than you think."],
+  Pisces:["Neptune, your ruling planet, is in a deeply creative and spiritually attuned position today that makes your intuition almost uncomfortably accurate.","Your creative work is receiving invisible but real support from the planetary weather today.","A boundary you have been struggling to maintain is being tested again today. The compassion that makes you want to give more is real – and it needs a limit to remain sustainable.","The emotional weight you have been carrying for someone else is not yours to hold indefinitely.","A spiritual or creative insight is arriving today through an unexpected channel.","Your sensitivity to the emotional atmosphere around you is heightened today. Spend time in environments that nourish rather than drain.","Something you released is showing you today why the release was necessary."],
+};
+
 function DailyHoroscope() {
   const [selectedSign, setSelectedSign] = useState(null);
   const [revealed, setRevealed] = useState(false);
@@ -247,11 +770,6 @@ function DailyHoroscope() {
   const today = days[todayIndex];
   const accent = selectedSign ? colors[selectedSign] : "#e8a800";
   const horoscope = selectedSign ? dailyHoroscopes[selectedSign][todayIndex] : null;
-
-  const handleSignSelect = (sign) => {
-    if (selectedSign === sign) { setSelectedSign(null); setRevealed(false); return; }
-    setSelectedSign(sign); setRevealed(false);
-  };
 
   return (
     <div style={{animation:"up .5s ease"}}>
@@ -264,7 +782,7 @@ function DailyHoroscope() {
         <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,letterSpacing:".18em",color:"#f5c842",marginBottom:12,textAlign:"center"}}>SELECT YOUR SIGN</div>
         <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:7}}>
           {signs.map(s=>(
-            <button key={s} className={"sb"+(selectedSign===s?" sel":"")} style={{"--a":colors[s]}} onClick={()=>handleSignSelect(s)}>
+            <button key={s} className={"sb"+(selectedSign===s?" sel":"")} style={{"--a":colors[s]}} onClick={()=>{setSelectedSign(s);setRevealed(false);}}>
               <div style={{fontSize:16,marginBottom:3}}>{emojis[s]}</div>
               <div style={{fontSize:9}}>{s}</div>
             </button>
@@ -294,7 +812,6 @@ function DailyHoroscope() {
   );
 }
 
-// ── CELEBRITY CONNECTION ──
 function CelebrityAvatar({ celeb }) {
   return (
     <div style={{background:"rgba(255,200,50,0.04)",border:"1px solid rgba(255,200,50,0.2)",borderRadius:16,padding:"24px 20px",textAlign:"center",maxWidth:360,margin:"0 auto"}}>
@@ -302,9 +819,7 @@ function CelebrityAvatar({ celeb }) {
       <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:16,color:"#f5c842",marginBottom:4}}>{celeb.name}</div>
       <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:11,color:"#a8e060",marginBottom:14}}>Born {celeb.born}</div>
       <div style={{display:"flex",gap:6,justifyContent:"center",marginBottom:16,flexWrap:"wrap"}}>
-        {[["☀️",celeb.sun],["🌙",celeb.moon],["⬆️",celeb.rising]].map(([icon,val])=>(
-          val&&val!=="Unknown"?(<span key={icon} style={{background:"rgba(255,200,50,0.1)",border:"1px solid rgba(255,200,50,0.3)",borderRadius:6,padding:"3px 9px",fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#f5c842"}}>{icon} {val}</span>):null
-        ))}
+        {[["☀️",celeb.sun],["🌙",celeb.moon],["⬆️",celeb.rising]].map(([icon,val])=>val&&val!=="Unknown"?(<span key={icon} style={{background:"rgba(255,200,50,0.1)",border:"1px solid rgba(255,200,50,0.3)",borderRadius:6,padding:"3px 9px",fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#f5c842"}}>{icon} {val}</span>):null)}
       </div>
       <p style={{fontFamily:"Georgia,serif",fontWeight:700,fontSize:15,color:"#ffffff",lineHeight:1.65,margin:0}}>"{celeb.fact}"</p>
     </div>
@@ -314,15 +829,8 @@ function CelebrityAvatar({ celeb }) {
 function CelebrityConnection() {
   const [selectedSign, setSelectedSign] = useState(null);
   const [celebIndex, setCelebIndex] = useState(0);
-
-  const handleSignSelect = (sign) => {
-    if (selectedSign === sign) { setSelectedSign(null); setCelebIndex(0); return; }
-    setSelectedSign(sign); setCelebIndex(0);
-  };
-
-  const pool = selectedSign ? (celebBySign[selectedSign] || []) : [];
+  const pool = selectedSign ? (celebBySign[selectedSign]||[]) : [];
   const currentCeleb = pool[celebIndex];
-
   return (
     <div style={{animation:"up .5s ease"}}>
       <div style={{textAlign:"center",marginBottom:24}}>
@@ -332,336 +840,37 @@ function CelebrityConnection() {
       </div>
       <div style={{display:"flex",flexWrap:"wrap",gap:7,justifyContent:"center",marginBottom:28}}>
         {signs.map(s=>(
-          <button key={s} onClick={()=>handleSignSelect(s)} style={{background:selectedSign===s?("linear-gradient(135deg,"+colors[s]+","+colors[s]+"88)"):"rgba(255,200,50,0.06)",border:"2px solid "+(selectedSign===s?colors[s]:"rgba(255,200,50,0.25)"),color:selectedSign===s?"#0d0a14":"#f0c030",padding:"8px 14px",borderRadius:"100px",fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,letterSpacing:".07em",cursor:"pointer",transition:"all 0.22s"}}>{emojis[s]} {s}</button>
+          <button key={s} onClick={()=>{setSelectedSign(s===selectedSign?null:s);setCelebIndex(0);}} style={{background:selectedSign===s?("linear-gradient(135deg,"+colors[s]+","+colors[s]+"88)"):"rgba(255,200,50,0.06)",border:"2px solid "+(selectedSign===s?colors[s]:"rgba(255,200,50,0.25)"),color:selectedSign===s?"#0d0a14":"#f0c030",padding:"8px 14px",borderRadius:"100px",fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,letterSpacing:".07em",cursor:"pointer",transition:"all 0.22s"}}>{emojis[s]} {s}</button>
         ))}
       </div>
       {selectedSign && currentCeleb && (
         <div style={{animation:"up .4s ease"}}>
           <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,letterSpacing:".18em",color:"#a8e060",marginBottom:16,textAlign:"center"}}>✦ {selectedSign.toUpperCase()} SUN CELEBRITY ✦</div>
-          <CelebrityAvatar celeb={currentCeleb} />
-          {pool.length > 1 && (
+          <CelebrityAvatar celeb={currentCeleb}/>
+          {pool.length>1&&(
             <div style={{display:"flex",justifyContent:"center",alignItems:"center",gap:16,marginTop:20}}>
               <button onClick={()=>setCelebIndex(i=>(i-1+pool.length)%pool.length)} style={{background:"none",border:"1px solid rgba(255,200,50,0.3)",color:"#f5c842",padding:"8px 18px",borderRadius:"100px",fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,letterSpacing:".1em",cursor:"pointer"}}>← PREV</button>
-              <span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#4a4440",letterSpacing:".12em"}}>{celebIndex+1} / {pool.length}</span>
+              <span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#4a4440",letterSpacing:".12em"}}>{celebIndex+1}/{pool.length}</span>
               <button onClick={()=>setCelebIndex(i=>(i+1)%pool.length)} style={{background:"none",border:"1px solid rgba(255,200,50,0.3)",color:"#f5c842",padding:"8px 18px",borderRadius:"100px",fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,letterSpacing:".1em",cursor:"pointer"}}>NEXT →</button>
             </div>
           )}
         </div>
       )}
-      {!selectedSign && (<div style={{textAlign:"center",padding:"24px 0",fontFamily:"Georgia,serif",color:"#6a6058",fontSize:15}}>Select a sign above to reveal the stars ✨</div>)}
+      {!selectedSign&&<div style={{textAlign:"center",padding:"24px 0",fontFamily:"Georgia,serif",color:"#6a6058",fontSize:15}}>Select a sign above to reveal the stars ✨</div>}
     </div>
   );
 }
 
-// ── GUESS YOUR SIGN ──
-function isReturningSubscriber() {
-  try { return localStorage.getItem("arewewoke_subscribed") === "true"; } catch(e) { return false; }
-}
-function saveSubscriberStatus() {
-  try { localStorage.setItem("arewewoke_subscribed", "true"); } catch(e) {}
-}
-function getPersonalBest() {
-  try { return parseInt(localStorage.getItem("arewewoke_best") || "0"); } catch(e) { return 0; }
-}
-function savePersonalBest(streak) {
-  try {
-    const current = getPersonalBest();
-    if (streak > current) localStorage.setItem("arewewoke_best", String(streak));
-  } catch(e) {}
-}
-
-function GuessYourSign() {
-  const urlVerified = typeof window !== "undefined" && new URLSearchParams(window.location.search).get("verified") === "true";
-  const returning = isReturningSubscriber();
-  if (urlVerified) {
-    saveSubscriberStatus();
-    try { window.history.replaceState({}, "", window.location.pathname); } catch(e) {}
-  }
-
-  const [questionsAnswered, setQuestionsAnswered] = useState(0);
-  const [trialActivated, setTrialActivated] = useState(urlVerified || returning);
-  const [usedIndices, setUsedIndices] = useState([]);
-  const [currentQ, setCurrentQ] = useState(null);
-  const [clueIndex, setClueIndex] = useState(0);
-  const [step, setStep] = useState("start");
-  const [guess, setGuess] = useState(null);
-  const [feedback, setFeedback] = useState(null);
-  const [score, setScore] = useState({correct:0,total:0});
-  const [streak, setStreak] = useState(0);
-  const [bestStreak, setBestStreak] = useState(getPersonalBest());
-  const [awaitingStripe, setAwaitingStripe] = useState(false);
-  const [showMemberVerify, setShowMemberVerify] = useState(false);
-  const [memberEmail, setMemberEmail] = useState("");
-  const [memberVerifying, setMemberVerifying] = useState(false);
-  const [memberError, setMemberError] = useState(null);
-
-  const pickQuestion = (prevUsed) => {
-    const available = allGuessQuestions.map((_,i)=>i).filter(i=>!prevUsed.includes(i));
-    if (available.length === 0) {
-      const idx = Math.floor(Math.random()*allGuessQuestions.length);
-      return { q: allGuessQuestions[idx], newUsed: [idx] };
-    }
-    const idx = available[Math.floor(Math.random()*available.length)];
-    return { q: allGuessQuestions[idx], newUsed: [...prevUsed, idx] };
-  };
-
-  const startGame = () => {
-    const { q, newUsed } = pickQuestion([]);
-    setCurrentQ(q); setUsedIndices(newUsed); setClueIndex(0);
-    setGuess(null); setFeedback(null); setStep("playing");
-  };
-
-  const handleGuess = (g) => {
-    const correct = g === currentQ.sign;
-    const newStreak = correct ? streak + 1 : 0;
-    setScore(s=>({correct:s.correct+(correct?1:0),total:s.total+1}));
-    setStreak(newStreak);
-    if (newStreak > bestStreak) {
-      setBestStreak(newStreak);
-      savePersonalBest(newStreak);
-    }
-    setGuess(g);
-    setFeedback(correct?"Correct! "+currentQ.sign+" energy is undeniable.":"Not quite – this was "+currentQ.sign+" "+(emojis[currentQ.sign]||""));
-    setStep("result");
-  };
-
-  const handleNext = () => {
-    const nextAnswered = questionsAnswered + 1;
-    setQuestionsAnswered(nextAnswered);
-    if (nextAnswered >= FREE_QUESTIONS && !trialActivated) { setStep("paywall"); return; }
-    if (nextAnswered >= TOTAL_QUESTIONS) { setStep("trophy"); return; }
-    const { q, newUsed } = pickQuestion(usedIndices);
-    setCurrentQ(q); setUsedIndices(newUsed); setClueIndex(0);
-    setGuess(null); setFeedback(null); setStep("playing");
-  };
-
-  const handleStartTrial = () => { window.location.href = STRIPE_TRIAL_LINK; };
-
-  const handleVerifyMember = async () => {
-    const email = memberEmail.trim().toLowerCase();
-    if (!email || !email.includes("@")) {
-      setMemberError("Please enter a valid email address.");
-      return;
-    }
-    setMemberVerifying(true);
-    setMemberError(null);
-    try {
-      const res = await fetch(`/api/check-subscription?email=${encodeURIComponent(email)}`);
-      const data = await res.json();
-      if (data.active) {
-        saveSubscriberStatus();
-        setTrialActivated(true);
-        const { q, newUsed } = pickQuestion(usedIndices);
-        setCurrentQ(q); setUsedIndices(newUsed); setClueIndex(0);
-        setGuess(null); setFeedback(null); setStep("playing");
-      } else {
-        setMemberError("We could not find an active subscription for that email. Please check the email you used when signing up for your trial.");
-      }
-    } catch (err) {
-      setMemberError("Something went wrong. Please check your connection and try again.");
-    } finally {
-      setMemberVerifying(false);
-    }
-  };
-
-  const handleConfirmTrial = () => {
-    setTrialActivated(true); setAwaitingStripe(false);
-    const { q, newUsed } = pickQuestion(usedIndices);
-    setCurrentQ(q); setUsedIndices(newUsed); setClueIndex(0);
-    setGuess(null); setFeedback(null); setStep("playing");
-  };
-
-  const resetAll = () => {
-    setQuestionsAnswered(0); setUsedIndices([]); setCurrentQ(null);
-    setClueIndex(0); setStep("start"); setGuess(null); setFeedback(null);
-    setScore({correct:0,total:0}); setStreak(0); setAwaitingStripe(false);
-    setShowMemberVerify(false); setMemberEmail(""); setMemberError(null);
-  };
-
-  if (step === "start") return (
-    <div style={{animation:"up .5s ease",textAlign:"center",paddingTop:20}}>
-      <div style={{fontSize:48,marginBottom:16}}>🔮</div>
-      <h2 style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:26,color:"#f5c842",marginBottom:12}}>Guess Your Sign</h2>
-      <p style={{fontFamily:"Georgia,serif",color:"#a8e060",fontSize:16,marginBottom:12,lineHeight:1.7}}>Read the clues. Guess the zodiac sign.<br/>How well do you know the signs?</p>
-      {trialActivated && (
-        <div style={{display:"inline-block",background:"rgba(168,224,96,0.07)",border:"1px solid rgba(168,224,96,0.25)",borderRadius:12,padding:"10px 22px",marginBottom:16}}>
-          <span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,color:"#a8e060",letterSpacing:".1em"}}>✦ WELCOME BACK — TRIAL ACTIVE ✦</span>
-        </div>
-      )}
-      {bestStreak > 0 && (
-        <div style={{marginBottom:24}}>
-          <span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:11,color:"#f5c842",letterSpacing:".08em"}}>🏆 Personal Best: {bestStreak} in a row</span>
-        </div>
-      )}
-      <br/>
-      <button className="rb" style={{"--a":"#e8a800"}} onClick={startGame}>✦ START GUESSING</button>
-      {trialActivated && (
-        <div style={{marginTop:20}}>
-          <button onClick={()=>window.open(STRIPE_PORTAL_LINK,"_blank")} style={{background:"none",border:"1px solid rgba(255,200,50,0.2)",color:"#4a4440",padding:"8px 22px",borderRadius:"100px",fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,letterSpacing:".1em",cursor:"pointer"}}>⚙ MANAGE SUBSCRIPTION</button>
-        </div>
-      )}
-      {score.total>0&&<p style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:11,color:"#f5c842",marginTop:20}}>Score: {score.correct}/{score.total}</p>}
-    </div>
-  );
-
-  if (step === "paywall") return (
-    <div style={{animation:"up .5s ease",textAlign:"center"}}>
-      <div style={{background:"linear-gradient(135deg,rgba(232,168,0,0.1),rgba(0,0,0,0.3))",border:"1px solid rgba(255,200,50,0.35)",borderRadius:20,padding:"36px 28px",marginBottom:20,position:"relative",overflow:"hidden"}}>
-        <div style={{position:"absolute",top:0,left:0,right:0,height:2,background:"linear-gradient(90deg,transparent,#e8a800,transparent)"}}/>
-        <div style={{fontSize:44,marginBottom:14}}>🔮</div>
-        <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:20,color:"#f5c842",marginBottom:10}}>Hey Let Me Finish This!</div>
-        {streak > 0 && <p style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:14,color:"#a8e060",marginBottom:10}}>🔥 You had a {streak} question streak! Keep it going.</p>}
-        {bestStreak > 0 && <p style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:11,color:"#4a4440",marginBottom:14,letterSpacing:".06em"}}>🏆 Personal best: {bestStreak} in a row</p>}
-        <p style={{fontFamily:"Georgia,serif",color:"#d8c890",fontSize:15,lineHeight:1.75,marginBottom:20}}>
-          Unlock more questions and potential winnings –<br/>
-          sign up for a <strong style={{color:"#f5c842"}}>7-day free trial</strong>.<br/>
-          After 7 days, your subscription is <strong style={{color:"#f5c842"}}>$4.99/month</strong>. Cancel anytime.
-        </p>
-        <div style={{display:"flex",flexDirection:"column",gap:8,alignItems:"center",marginBottom:24}}>
-          {["✦ Unlock more questions and potential winnings","✦ Unlimited replays","✦ Cancel instantly via Stripe – no emailing required"].map((item,i)=>(
-            <div key={i} style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,color:"#a8e060",letterSpacing:".06em"}}>{item}</div>
-          ))}
-        </div>
-        <button className="rb" style={{"--a":"#e8a800",marginBottom:14}} onClick={handleStartTrial}>✦ START MY FREE TRIAL</button>
-        <p style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,color:"#4a4440",margin:"0 0 18px",letterSpacing:".08em"}}>CARD AUTHORIZATION TODAY · $4.99/MONTH AFTER 7 DAYS · CANCEL ANYTIME</p>
-
-        {/* Already a member */}
-        {!showMemberVerify ? (
-          <button onClick={()=>setShowMemberVerify(true)} style={{background:"none",border:"1px solid rgba(168,224,96,0.3)",color:"#a8e060",padding:"10px 24px",borderRadius:"100px",fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,letterSpacing:".1em",cursor:"pointer",marginBottom:14}}>✦ ALREADY A MEMBER</button>
-        ) : (
-          <div style={{marginBottom:14,padding:"20px",background:"rgba(168,224,96,0.05)",border:"1px solid rgba(168,224,96,0.2)",borderRadius:16}}>
-            <p style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,color:"#a8e060",letterSpacing:".1em",marginBottom:12}}>✦ VERIFY YOUR MEMBERSHIP</p>
-            <p style={{fontFamily:"Georgia,serif",fontSize:13,color:"#d8c890",marginBottom:14,lineHeight:1.6}}>Enter the email you used when you signed up for your free trial.</p>
-            <input
-              type="email"
-              placeholder="your@email.com"
-              value={memberEmail}
-              onChange={(e)=>setMemberEmail(e.target.value)}
-              onKeyDown={(e)=>e.key==="Enter"&&handleVerifyMember()}
-              style={{width:"100%",padding:"11px 14px",borderRadius:10,border:"1px solid rgba(168,224,96,0.3)",background:"rgba(255,255,255,0.04)",color:"#f5f0e0",fontFamily:"Georgia,serif",fontSize:14,textAlign:"center",outline:"none",boxSizing:"border-box",marginBottom:10}}
-            />
-            {memberError && <p style={{fontFamily:"Georgia,serif",color:"#f5c842",fontSize:12,marginBottom:10,lineHeight:1.5}}>{memberError}</p>}
-            <button className="rb" style={{"--a":"#a8e060",marginBottom:8,opacity:memberVerifying?0.6:1}} onClick={handleVerifyMember} disabled={memberVerifying}>
-              {memberVerifying ? "CHECKING..." : "✦ VERIFY & PLAY"}
-            </button>
-            <br/>
-            <button onClick={()=>{setShowMemberVerify(false);setMemberError(null);setMemberEmail("");}} style={{background:"none",border:"none",color:"#4a4440",cursor:"pointer",fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,letterSpacing:".1em"}}>← BACK</button>
-          </div>
-        )}
-
-        <button onClick={resetAll} style={{background:"none",border:"1px solid rgba(255,200,50,0.2)",color:"#6a6058",padding:"8px 22px",borderRadius:"100px",fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,letterSpacing:".1em",cursor:"pointer"}}>← BACK TO START</button>
-      </div>
-    </div>
-  );
-
-  if (step === "playing" && currentQ) {
-    const freeLeft = trialActivated ? null : Math.max(0, FREE_QUESTIONS - questionsAnswered);
-    return (
-      <div style={{animation:"up .45s ease"}}>
-        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
-          <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,letterSpacing:".15em",color:"#f5c842"}}>QUESTION {questionsAnswered+1} OF {TOTAL_QUESTIONS}</div>
-          {!trialActivated && <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#a8e060",letterSpacing:".08em"}}>{freeLeft} free {freeLeft===1?"question":"questions"} left</div>}
-          {trialActivated && <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#a8e060",letterSpacing:".08em"}}>✦ TRIAL ACTIVE</div>}
-        </div>
-        <div style={{background:"rgba(255,200,50,0.06)",border:"1px solid rgba(255,200,50,0.25)",borderRadius:20,padding:"28px 24px",marginBottom:20,position:"relative",overflow:"hidden"}}>
-          <div style={{position:"absolute",top:0,left:0,right:0,height:2,background:"linear-gradient(90deg,transparent,#e8a800,transparent)"}}/>
-          <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,letterSpacing:".2em",color:"#a8e060",marginBottom:16}}>CLUE {clueIndex+1} OF {currentQ.clues.length}</div>
-          <p style={{fontFamily:"Georgia,serif",fontWeight:700,fontSize:20,color:"#ffffff",lineHeight:1.6,margin:"0 0 20px"}}>"{currentQ.clues[clueIndex]}"</p>
-          {clueIndex < currentQ.clues.length-1 && (
-            <button onClick={()=>setClueIndex(i=>i+1)} style={{background:"none",border:"1px solid rgba(168,224,96,0.3)",color:"#a8e060",padding:"8px 20px",borderRadius:"100px",fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,cursor:"pointer",letterSpacing:".1em"}}>NEXT CLUE →</button>
-          )}
-        </div>
-        <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,letterSpacing:".15em",color:"#f5c842",marginBottom:12}}>YOUR GUESS:</div>
-        <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:8}}>
-          {signs.map(s=>(
-            <button key={s} className="sb" style={{"--a":colors[s]}} onClick={()=>handleGuess(s)}>
-              <div style={{fontSize:14,marginBottom:2}}>{emojis[s]||"★"}</div>
-              <div style={{fontSize:9,fontWeight:700}}>{s}</div>
-            </button>
-          ))}
-        </div>
-        {score.total>0&&<p style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,color:"#f5c842",marginTop:16,textAlign:"center"}}>Score: {score.correct}/{score.total} {streak >= 2 ? "🔥 "+streak+" in a row!" : ""}</p>}
-      </div>
-    );
-  }
-
-  if (step === "result") return (
-    <div style={{animation:"up .5s ease",textAlign:"center"}}>
-      {score.correct === 5 && guess === currentQ.sign && (
-        <div style={{background:"linear-gradient(135deg,rgba(232,168,0,0.15),rgba(0,0,0,0.3))",border:"2px solid rgba(255,200,50,0.5)",borderRadius:16,padding:"18px 24px",marginBottom:16,animation:"up .4s ease"}}>
-          <div style={{fontSize:36,marginBottom:6}}>🔥⭐🔥</div>
-          <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:18,color:"#f5c842",letterSpacing:".05em"}}>You Are Killing It!</div>
-          <div style={{fontFamily:"Georgia,serif",fontSize:13,color:"#a8e060",marginTop:6}}>5 correct answers — the stars are aligned in your favor.</div>
-        </div>
-      )}
-      <div style={{background:guess===currentQ.sign?"rgba(168,224,96,0.08)":"rgba(255,80,80,0.08)",border:"1px solid "+(guess===currentQ.sign?"rgba(168,224,96,0.4)":"rgba(255,100,100,0.3)"),borderRadius:20,padding:"32px 24px",marginBottom:24}}>
-        <div style={{fontSize:40,marginBottom:12}}>{emojis[currentQ.sign]||"★"}</div>
-        <p style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:18,color:guess===currentQ.sign?"#a8e060":"#f5c842",margin:"0 0 8px"}}>{feedback}</p>
-        {streak >= 2 && <p style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:13,color:"#f5c842",margin:"0 0 8px"}}>🔥 {streak} in a row!</p>}
-        {guess !== currentQ.sign && streak === 0 && score.correct > 0 && <p style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:11,color:"#a8e060",margin:"0 0 8px"}}>Streak reset — you had {score.correct} correct!</p>}
-        <p style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,letterSpacing:".15em",color:"#f5c842",margin:0}}>SCORE: {score.correct}/{score.total}</p>
-        {bestStreak > 0 && <p style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#4a4440",margin:"8px 0 0",letterSpacing:".08em"}}>🏆 Personal best: {bestStreak} in a row</p>}
-      </div>
-      <button className="rb" style={{"--a":"#e8a800"}} onClick={handleNext}>
-        {questionsAnswered+1 >= FREE_QUESTIONS && !trialActivated ? "✦ SEE WHAT'S NEXT →" : questionsAnswered+1 >= TOTAL_QUESTIONS ? "✦ SEE MY RESULTS →" : "✦ NEXT QUESTION"}
-      </button>
-    </div>
-  );
-
-  // TROPHY SCREEN
-  if (step === "trophy") {
-    const pct = Math.round((score.correct / TOTAL_QUESTIONS) * 100);
-    const getMessage = () => {
-      if (pct === 100) return { title:"Perfect Score!", sub:"You know the stars like they know you. Flawless.", color:"#f5c842" };
-      if (pct >= 80) return { title:"Cosmic Expert!", sub:"Your astrological instincts are sharp and deeply tuned.", color:"#f5c842" };
-      if (pct >= 60) return { title:"Star Seeker!", sub:"You read the signs well. The cosmos is impressed.", color:"#a8e060" };
-      if (pct >= 40) return { title:"Rising Apprentice!", sub:"You are learning the language of the stars. Keep going.", color:"#a8e060" };
-      return { title:"Cosmic Beginner!", sub:"Every master started somewhere. The stars are patient.", color:"#5bc8d8" };
-    };
-    const msg = getMessage();
-    return (
-      <div style={{animation:"up .6s ease",textAlign:"center",padding:"20px 0"}}>
-        <div style={{background:"linear-gradient(135deg,rgba(232,168,0,0.12),rgba(0,0,0,0.4))",border:"2px solid rgba(255,200,50,0.4)",borderRadius:24,padding:"40px 28px",marginBottom:20,position:"relative",overflow:"hidden"}}>
-          <div style={{position:"absolute",top:0,left:0,right:0,height:3,background:"linear-gradient(90deg,transparent,#e8a800,transparent)"}}/>
-          <div style={{fontSize:72,marginBottom:8}}>🏆</div>
-          <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:11,letterSpacing:".3em",color:"#a8e060",marginBottom:12}}>✦ GAME COMPLETE ✦</div>
-          <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:26,color:msg.color,marginBottom:8}}>{msg.title}</div>
-          <p style={{fontFamily:"Georgia,serif",fontSize:16,color:"#d8c890",lineHeight:1.7,marginBottom:24}}>{msg.sub}</p>
-
-          {/* Score circle */}
-          <div style={{width:120,height:120,borderRadius:"50%",background:"linear-gradient(135deg,rgba(232,168,0,0.2),rgba(0,0,0,0.3))",border:"3px solid #e8a800",margin:"0 auto 24px",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
-            <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:32,color:"#f5c842",lineHeight:1}}>{score.correct}</div>
-            <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,color:"#a8e060",letterSpacing:".1em"}}>OUT OF {TOTAL_QUESTIONS}</div>
-          </div>
-
-          <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:14,color:"#f5c842",marginBottom:6}}>{pct}% Accuracy</div>
-          {bestStreak > 0 && <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:11,color:"#4a4440",marginBottom:24,letterSpacing:".08em"}}>🔥 Best streak: {bestStreak} in a row</div>}
-
-          <div style={{fontFamily:"Georgia,serif",fontSize:13,color:"#5a5048",lineHeight:1.7,marginBottom:24,padding:"0 8px"}}>
-            You have completed the AreWeWoke astrology challenge. You now hold a trophy for understanding the signs — carry it with the stars as your witness.
-          </div>
-
-          <button className="rb" style={{"--a":"#e8a800",marginBottom:14}} onClick={resetAll}>✦ PLAY AGAIN</button>
-        </div>
-      </div>
-    );
-  }
-
-  return null;
-}
-
-// ── LEGAL CONTENT ──
 function DocSection({title,children}){return(<div style={{marginBottom:24}}><div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:13,color:"#f5c842",marginBottom:8,paddingBottom:4,borderBottom:"1px solid rgba(255,200,50,0.1)"}}>{title}</div><div style={{color:"#c8c0b0",fontSize:14,lineHeight:1.85}}>{children}</div></div>);}
 function DocP({children}){return <p style={{margin:"0 0 10px"}}>{children}</p>;}
 function DocBullet({items}){return(<ul style={{margin:"0 0 10px",paddingLeft:20}}>{items.map((item,i)=><li key={i} style={{marginBottom:6}}>{item}</li>)}</ul>);}
+function TermsContent(){return(<><DocP>Please read these Terms of Service carefully before using Arewewoke.</DocP><DocSection title="1. About Arewewoke"><DocP>Arewewoke is an astrology-based entertainment application operated by Ayssia Mason.</DocP></DocSection><DocSection title="2. Entertainment Disclaimer"><DocP>All content on Arewewoke is intended solely for entertainment and personal reflection.</DocP></DocSection><DocSection title="3. Eligibility"><DocP>You must be at least 18 years of age to subscribe to paid features of Arewewoke.</DocP></DocSection><DocSection title="4. Free Trial & Billing"><DocP>Arewewoke offers a 7-day free trial. After the trial, your subscription automatically renews at $4.99 per month unless you cancel before the trial ends.</DocP></DocSection><DocSection title="5. Cancellation"><DocP>You may cancel your subscription at any time via the Stripe customer portal — no emailing required.</DocP></DocSection><DocSection title="6. Intellectual Property"><DocP>All content, design, and features of Arewewoke are the property of Ayssia Mason unless otherwise credited.</DocP></DocSection><DocSection title="7. Contact"><DocP>arewewoke@gmail.com</DocP></DocSection></>);}
+function PrivacyContent(){return(<><DocP>Your privacy matters to Arewewoke.</DocP><DocSection title="1. Information We Collect"><DocBullet items={["Email address and name when you subscribe","Payment information, processed securely by Stripe","Usage data to improve app performance","Subscription status to manage access to paid features"]}/></DocSection><DocSection title="2. How We Use Your Information"><DocBullet items={["To process and manage your subscription","To send receipts and billing communications","To improve app features","To respond to support requests"]}/><DocP>We do not sell, rent, share, or trade your personal information to third parties for marketing purposes.</DocP></DocSection><DocSection title="3. Your Rights"><DocP>You have the right to access, correct, or delete the personal data we hold about you. Contact us at arewewoke@gmail.com.</DocP></DocSection><DocSection title="4. Contact"><DocP>arewewoke@gmail.com</DocP></DocSection></>);}
+function CancellationContent(){return(<><DocSection title="Free Trial Period"><DocP>Your 7-day free trial begins the moment your payment method is verified. If you do not cancel before the trial ends, your $4.99/month subscription begins automatically on day 8.</DocP></DocSection><DocSection title="How to Cancel"><DocBullet items={["Via the Stripe customer portal — the fastest method, available 24/7.","By emailing arewewoke@gmail.com with the subject line: Cancel My Subscription."]}/></DocSection><DocSection title="Refund Policy"><DocP>All subscription fees are non-refundable once charged.</DocP></DocSection><DocSection title="Contact"><DocP>arewewoke@gmail.com</DocP></DocSection></>);}
+function DisclaimerContent(){return(<><DocP>All astrological content on Arewewoke is provided strictly for entertainment and personal reflection.</DocP><DocSection title="Not Professional Advice"><DocP>Nothing on Arewewoke constitutes medical, psychological, financial, legal, or any other form of professional advice.</DocP></DocSection><DocSection title="Contact"><DocP>arewewoke@gmail.com</DocP></DocSection></>);}
+function CreditsContent(){return(<><DocP>Arewewoke is created and operated by Ayssia Mason.</DocP><DocSection title="Astrological Authors Referenced"><DocBullet items={["Steven Forrest — The Inner Sky, evolutionary astrology","Liz Greene — Saturn: A New Look at an Old Devil, psychological astrology","Robert Hand — Planets in Transit","Howard Sasportas — The Twelve Houses","Donna Cunningham — Moon and Venus placements","Isabel Hickey — Astrology: A Cosmic Science","Dane Rudhyar — An Astrological Mandala"]}/></DocSection><DocSection title="Contact"><DocP>arewewoke@gmail.com</DocP></DocSection></>);}
 
-function TermsContent(){return(<><DocP>Please read these Terms of Service carefully before using Arewewoke. By accessing or using the app, you agree to be bound by these terms.</DocP><DocSection title="1. About Arewewoke"><DocP>Arewewoke is an astrology-based entertainment application operated by Ayssia Mason. The app provides astrological content including cosmic fun facts, daily horoscopes, celebrity connections, and the Guess Your Sign game for entertainment purposes only.</DocP></DocSection><DocSection title="2. Entertainment Disclaimer"><DocP>All content on Arewewoke is intended solely for entertainment and personal reflection. Nothing on this platform constitutes professional advice of any kind.</DocP></DocSection><DocSection title="3. Eligibility"><DocP>You must be at least 18 years of age to subscribe to paid features of Arewewoke.</DocP></DocSection><DocSection title="4. Free Trial & Billing"><DocP>Arewewoke offers a 7-day free trial for the Guess Your Sign full feature. A small card authorization hold is placed on your payment method at sign-up to verify it is valid. This hold is not a charge and is released automatically within a few business days. After the 7-day trial, your subscription automatically renews at $4.99 per month unless you cancel before the trial ends.</DocP></DocSection><DocSection title="5. Cancellation"><DocP>You may cancel your subscription at any time via the Stripe customer portal — no emailing required. See our Cancellation Policy for full details.</DocP></DocSection><DocSection title="6. Intellectual Property"><DocP>All content, design, and features of Arewewoke are the property of Ayssia Mason unless otherwise credited. You may not reproduce, distribute, or create derivative works without express written permission.</DocP></DocSection><DocSection title="7. Limitation of Liability"><DocP>Arewewoke and Ayssia Mason shall not be liable for any indirect, incidental, or consequential damages arising from your use of the app. The app is provided on an as-is basis.</DocP></DocSection><DocSection title="8. Contact"><DocP>arewewoke@gmail.com</DocP></DocSection></>);}
-function PrivacyContent(){return(<><DocP>Your privacy matters to Arewewoke.</DocP><DocSection title="1. Information We Collect"><DocBullet items={["Email address and name when you subscribe or contact us","Payment information, processed securely by Stripe — we never store full card details","Usage data and device information to improve app performance","Subscription status, stored securely to manage access to paid features"]}/></DocSection><DocSection title="2. How We Use Your Information"><DocBullet items={["To process and manage your subscription","To send receipts and billing communications","To improve app features and user experience","To respond to support requests"]}/><DocP>We do not sell, rent, share, or trade your personal information to third parties for marketing purposes.</DocP></DocSection><DocSection title="3. Your Rights"><DocP>You have the right to access, correct, or delete the personal data we hold about you. Contact us at arewewoke@gmail.com.</DocP></DocSection><DocSection title="4. Contact"><DocP>arewewoke@gmail.com</DocP></DocSection></>);}
-function CancellationContent(){return(<><DocP>We want the cancellation process to be simple, transparent, and fully in your control.</DocP><DocSection title="Free Trial Period"><DocP>Your 7-day free trial begins the moment your payment method is verified via the authorization hold. You will not be charged during the trial. If you do not cancel before the trial ends, your $4.99/month subscription begins automatically on day 8.</DocP></DocSection><DocSection title="How to Cancel"><DocBullet items={["Via the Stripe customer portal — the fastest method, available 24/7, no emailing required. Stripe sends a confirmation email automatically.","By emailing arewewoke@gmail.com with the subject line: Cancel My Subscription. Allow up to 2 business days for processing."]}/><DocP>Cancellation takes effect at the end of your current billing period. You retain access to paid features until that date.</DocP></DocSection><DocSection title="Refund Policy"><DocP>All subscription fees are non-refundable once charged. We do not offer refunds for partial months or for subscriptions not cancelled before renewal. The authorization hold placed at sign-up is not a charge and is released automatically.</DocP></DocSection><DocSection title="Contact"><DocP>arewewoke@gmail.com</DocP></DocSection></>);}
-function DisclaimerContent(){return(<><DocP>All astrological content on Arewewoke is provided strictly for entertainment and personal reflection. Astrology is a belief system and symbolic framework, not an empirical science.</DocP><DocSection title="Not Professional Advice"><DocP>Nothing on Arewewoke constitutes medical, psychological, financial, legal, or any other form of professional advice. If you are experiencing concerns in any of these areas, please consult a qualified professional.</DocP></DocSection><DocSection title="Celebrity Information"><DocP>Birth data and astrological placements for public figures are sourced from publicly available records and astrological databases. Arewewoke does not claim insider knowledge of any individual's personal life or character.</DocP></DocSection><DocSection title="Contact"><DocP>arewewoke@gmail.com</DocP></DocSection></>);}
-function CreditsContent(){return(<><DocP>Arewewoke is created and operated by Ayssia Mason. The astrological interpretations in this app are original creative work by Ayssia Mason, informed by the following foundational astrological authors and traditions.</DocP><DocSection title="Astrological Authors & Works Referenced"><DocBullet items={["Steven Forrest — The Inner Sky, The Book of the Moon, evolutionary astrology","Liz Greene — Saturn: A New Look at an Old Devil, The Astrology of Fate, psychological astrology","Robert Hand — Planets in Transit, Horoscope Symbols","Howard Sasportas — The Twelve Houses","Donna Cunningham — humanistic interpretation of Moon and Venus placements","Isabel Hickey — Astrology: A Cosmic Science","Dane Rudhyar — An Astrological Mandala, humanistic and transpersonal astrology"]}/></DocSection><DocSection title="Technical"><DocP>Arewewoke is built with React and hosted on Vercel. Payment processing is handled by Stripe. Fonts by Google Fonts (Cinzel).</DocP></DocSection><DocSection title="Contact"><DocP>arewewoke@gmail.com</DocP></DocSection></>);}
-
-// ── MAIN APP ──
+// ─── MAIN APP ───────────────────────────────────────────────────
 export default function AstrologyApp() {
   const [topTab, setTopTab] = useState("horoscope");
   const [mode, setMode] = useState("home");
@@ -682,7 +891,7 @@ export default function AstrologyApp() {
 
   const tabs = [
     {label:"🌠 Daily Horoscope",key:"horoscope"},
-    {label:"🔮 Guess Your Sign",key:"guess"},
+    {label:"🔮 Zodiac Quiz",key:"guess"},
     {label:"🌟 Celebrity",key:"celebrity"},
     {label:"✦ Fun Facts",key:"facts"},
     {label:"📲 Get The App",key:"install"},
@@ -693,7 +902,6 @@ export default function AstrologyApp() {
       <div style={{position:"fixed",inset:0,pointerEvents:"none",zIndex:0}}>
         {[...Array(70)].map((_,i)=>(<div key={i} style={{position:"absolute",width:Math.random()*2.5+0.4+"px",height:Math.random()*2.5+0.4+"px",borderRadius:"50%",background:i%7===0?("rgba(168,224,96,"+(Math.random()*0.5+0.2)+")"):"rgba(255,200,50,"+(Math.random()*0.5+0.15)+")",left:Math.random()*100+"%",top:Math.random()*100+"%",animation:"tw "+(Math.random()*3+2)+"s ease-in-out infinite",animationDelay:Math.random()*4+"s"}}/>))}
       </div>
-
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&display=swap'); @keyframes tw{0%,100%{opacity:0.2}50%{opacity:1}} @keyframes up{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}} @keyframes sh{0%{background-position:200% center}100%{background-position:-200% center}} @keyframes gl{0%,100%{box-shadow:0 0 18px 3px rgba(232,168,0,0.3)}50%{box-shadow:0 0 40px 10px rgba(232,168,0,0.6)}} @keyframes pu{0%,100%{opacity:0.4}50%{opacity:1}} .sb{background:rgba(255,200,50,0.06);border:1px solid rgba(255,200,50,0.2);color:#f0c030;padding:9px 12px;border-radius:8px;cursor:pointer;font-family:'Cinzel',serif;font-size:10px;letter-spacing:.07em;font-weight:700;transition:all .22s;text-align:center} .sb:hover,.sb.sel{background:rgba(255,200,50,0.15);color:#f5c842;border-color:var(--a);transform:translateY(-2px)} .pb{background:rgba(255,200,50,0.05);border:1px solid rgba(255,200,50,0.18);color:#f0c030;padding:9px 18px;border-radius:100px;cursor:pointer;font-family:'Cinzel',serif;font-size:11px;letter-spacing:.09em;font-weight:700;transition:all .22s} .pb:hover,.pb.sel{background:rgba(255,200,50,0.15);color:#f5c842;border-color:var(--a)} .rb{background:linear-gradient(135deg,var(--a),#8a6000);color:#0d0a14;border:none;padding:14px 38px;border-radius:100px;font-family:'Cinzel',serif;font-size:13px;letter-spacing:.14em;font-weight:900;cursor:pointer;transition:all .3s;animation:gl 3s ease-in-out infinite} .rb:hover{transform:scale(1.04);filter:brightness(1.12)} .fc{animation:up .65s ease forwards;background:linear-gradient(135deg,rgba(255,200,50,0.08),rgba(0,0,0,0.3));border:1px solid rgba(255,200,50,0.3);border-radius:20px;padding:30px 34px;position:relative;overflow:hidden} .fc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--a),transparent)} .bk{background:none;border:none;color:#5a5048;cursor:pointer;font-family:'Cinzel',serif;font-size:10px;letter-spacing:.13em;font-weight:700;display:flex;align-items:center;gap:6px;margin-bottom:28px} .bk:hover{color:#a8e060}`}</style>
 
       <div style={{position:"relative",zIndex:1,maxWidth:700,margin:"0 auto",padding:"20px 18px 80px"}}>
@@ -705,7 +913,8 @@ export default function AstrologyApp() {
 
         {topTab==="horoscope" && <DailyHoroscope />}
         {topTab==="celebrity" && <CelebrityConnection />}
-        {topTab==="guess" && <GuessYourSign />}
+        {topTab==="guess" && <ZodiacQuiz />}
+
         {topTab==="install" && (
           <div style={{animation:"up .5s ease"}}>
             <div style={{textAlign:"center",marginBottom:28}}>
@@ -713,51 +922,23 @@ export default function AstrologyApp() {
               <h2 style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:24,color:"#f5c842",margin:"0 0 8px"}}>Get The App</h2>
               <p style={{fontFamily:"Georgia,serif",color:"#a8e060",fontSize:15,margin:0,lineHeight:1.7}}>Save Arewewoke to your home screen for instant access — it works just like an app.</p>
             </div>
-
-            {/* iPhone Instructions */}
             <div style={{background:"rgba(255,200,50,0.06)",border:"1px solid rgba(255,200,50,0.2)",borderRadius:16,padding:"24px 20px",marginBottom:16}}>
               <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:12,color:"#f5c842",marginBottom:16,letterSpacing:".1em"}}>🍎 ON IPHONE (SAFARI)</div>
-              {[
-                {num:1, icon:"🌐", text:"Open arewewoke.com in Safari — this must be Safari, not Chrome or another browser."},
-                {num:2, icon:"⬆️", text:'Tap the Share button at the bottom of your screen — it looks like a box with an arrow pointing up.'},
-                {num:3, icon:"➕", text:'Scroll down in the share menu and tap "Add to Home Screen".'},
-                {num:4, icon:"✏️", text:'You can rename it to "AreWeWoke" or leave it as is — then tap "Add" in the top right corner.'},
-                {num:5, icon:"🔮", text:"Done! You will now see the Arewewoke icon on your home screen. Tap it any time to open the app instantly."},
-              ].map(step=>(
+              {[{num:1,icon:"🌐",text:"Open arewewoke.com in Safari — this must be Safari, not Chrome or another browser."},{num:2,icon:"⬆️",text:'Tap the Share button at the bottom of your screen.'},{num:3,icon:"➕",text:'Scroll down and tap "Add to Home Screen".'},{num:4,icon:"✏️",text:'Name it "AreWeWoke" then tap "Add" in the top right corner.'},{num:5,icon:"🔮",text:"Done! Tap the icon on your home screen any time for instant access."}].map(step=>(
                 <div key={step.num} style={{display:"flex",gap:14,marginBottom:16,alignItems:"flex-start"}}>
                   <div style={{width:28,height:28,borderRadius:"50%",background:"linear-gradient(135deg,#e8a800,#8a6000)",display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:11,color:"#0d0a14",flexShrink:0}}>{step.num}</div>
-                  <div>
-                    <div style={{fontSize:18,marginBottom:4}}>{step.icon}</div>
-                    <div style={{fontFamily:"Georgia,serif",fontSize:14,color:"#d8c890",lineHeight:1.65}}>{step.text}</div>
-                  </div>
+                  <div><div style={{fontSize:18,marginBottom:4}}>{step.icon}</div><div style={{fontFamily:"Georgia,serif",fontSize:14,color:"#d8c890",lineHeight:1.65}}>{step.text}</div></div>
                 </div>
               ))}
             </div>
-
-            {/* Android Instructions */}
             <div style={{background:"rgba(168,224,96,0.05)",border:"1px solid rgba(168,224,96,0.15)",borderRadius:16,padding:"24px 20px",marginBottom:16}}>
               <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:12,color:"#a8e060",marginBottom:16,letterSpacing:".1em"}}>🤖 ON ANDROID (CHROME)</div>
-              {[
-                {num:1, icon:"🌐", text:"Open arewewoke.com in Chrome."},
-                {num:2, icon:"⋮", text:'Tap the three dots menu in the top right corner of Chrome.'},
-                {num:3, icon:"➕", text:'Tap "Add to Home screen" from the menu.'},
-                {num:4, icon:"✏️", text:'Name it "AreWeWoke" and tap "Add".'},
-                {num:5, icon:"🔮", text:"The Arewewoke icon will appear on your home screen — tap it any time for instant access."},
-              ].map(step=>(
+              {[{num:1,icon:"🌐",text:"Open arewewoke.com in Chrome."},{num:2,icon:"⋮",text:'Tap the three dots menu in the top right corner.'},{num:3,icon:"➕",text:'Tap "Add to Home screen" from the menu.'},{num:4,icon:"✏️",text:'Name it "AreWeWoke" and tap "Add".'},{num:5,icon:"🔮",text:"The icon will appear on your home screen for instant access."}].map(step=>(
                 <div key={step.num} style={{display:"flex",gap:14,marginBottom:16,alignItems:"flex-start"}}>
                   <div style={{width:28,height:28,borderRadius:"50%",background:"linear-gradient(135deg,#a8e060,#4a8020)",display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:11,color:"#0d0a14",flexShrink:0}}>{step.num}</div>
-                  <div>
-                    <div style={{fontSize:18,marginBottom:4}}>{step.icon}</div>
-                    <div style={{fontFamily:"Georgia,serif",fontSize:14,color:"#d8c890",lineHeight:1.65}}>{step.text}</div>
-                  </div>
+                  <div><div style={{fontSize:18,marginBottom:4}}>{step.icon}</div><div style={{fontFamily:"Georgia,serif",fontSize:14,color:"#d8c890",lineHeight:1.65}}>{step.text}</div></div>
                 </div>
               ))}
-            </div>
-
-            {/* Why */}
-            <div style={{background:"rgba(255,200,50,0.04)",border:"1px solid rgba(255,200,50,0.1)",borderRadius:16,padding:"20px",textAlign:"center"}}>
-              <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:11,color:"#f5c842",marginBottom:10,letterSpacing:".1em"}}>✦ WHY ADD TO HOME SCREEN? ✦</div>
-              <div style={{fontFamily:"Georgia,serif",fontSize:14,color:"#7a6e62",lineHeight:1.7}}>No app store needed. Opens full screen like a real app. Your subscription and streak stay saved. One tap access every day.</div>
             </div>
           </div>
         )}
@@ -801,7 +982,7 @@ export default function AstrologyApp() {
               {selectedSign && selectedPlanet && (
                 <div style={{textAlign:"center",marginBottom:28,animation:"up .4s ease"}}>
                   <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:17,color:"#f5c842",marginBottom:6}}>{emojis[selectedPlanet]} {selectedPlanet} in {selectedSign} {emojis[selectedSign]}</div>
-                  {OUTER.includes(selectedPlanet) && generationDates[selectedPlanet] && generationDates[selectedPlanet][selectedSign] && (
+                  {OUTER.includes(selectedPlanet) && generationDates[selectedPlanet]?.[selectedSign] && (
                     <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#a8e060",letterSpacing:".09em",marginBottom:18}}>Born approx. {generationDates[selectedPlanet][selectedSign]}</div>
                   )}
                   <button className="rb" style={{"--a":accent}} onClick={handleReveal}>{fact?"✦ REVEAL ANOTHER FACT":"✦ REVEAL MY COSMIC FACT"}</button>
