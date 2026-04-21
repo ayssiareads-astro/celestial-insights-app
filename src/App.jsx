@@ -194,9 +194,6 @@ function getFact(sign, planet) {
   return sign + " " + planet + " gives you a uniquely powerful energy that shapes how you experience this area of life.";
 }
 
-// ─── ZODIAC QUIZ DATA ────────────────────────────────────────────
-
-// AVATARS for unlock display
 const avatarData = [
   { sign:"Aries", symbol:"♈", color:"#FF3D00", glow:"#FF6D00", scifiClass:"Vanguard Striker", emoji:"🔥" },
   { sign:"Taurus", symbol:"♉", color:"#2E7D32", glow:"#00C853", scifiClass:"Titan Guardian", emoji:"🌿" },
@@ -211,12 +208,6 @@ const avatarData = [
   { sign:"Aquarius", symbol:"♒", color:"#0277BD", glow:"#00B0FF", scifiClass:"Quantum Visionary", emoji:"⚡" },
   { sign:"Pisces", symbol:"♓", color:"#4527A0", glow:"#7C4DFF", scifiClass:"Astral Mystic", emoji:"💜" },
 ];
-
-// 48 QUESTIONS — 4 levels × 12 questions
-// Level 1: General Knowledge → unlocks Aries(Q1-4), Taurus(Q5-8), Gemini(Q9-12)
-// Level 2: Match Symbol → unlocks Cancer(Q1-4), Leo(Q5-8), Virgo(Q9-12)
-// Level 3: Planetary Definitions → unlocks Libra(Q1-4), Scorpio(Q5-8), Sagittarius(Q9-12)
-// Level 4: Animals & Mythology → unlocks Capricorn(Q1-4), Aquarius(Q5-8), Pisces(Q9-12)
 
 const quizLevels = [
   {
@@ -302,21 +293,16 @@ const quizLevels = [
   }
 ];
 
-// Which avatar index (0-11) is unlocked at which question within a level
-// Every 4 correct = 1 avatar. Level 1 → avatars 0,1,2. Level 2 → 3,4,5. Etc.
 function getAvatarForMilestone(level, questionIndex) {
-  // questionIndex is 0-based within the level (0-11)
-  const milestone = Math.floor(questionIndex / 4); // 0, 1, or 2
+  const milestone = Math.floor(questionIndex / 4);
   const avatarIndex = (level - 1) * 3 + milestone;
   return avatarData[avatarIndex];
 }
 
-// ─── STRIPE LINKS ───────────────────────────────────────────────
 const STRIPE_TRIAL_LINK = "https://buy.stripe.com/bJefZa8lH4TBetl2VL5sA01";
 const STRIPE_PORTAL_LINK = "https://billing.stripe.com/p/login/5kQ3co6dzeub70TfIx5sA00";
-const PAYWALL_AFTER = 5; // show paywall after this many questions answered
+const PAYWALL_AFTER = 5;
 
-// ─── AVATAR DISPLAY SVG ─────────────────────────────────────────
 function AvatarSVG({ avatar, size = 90 }) {
   const c = avatar.color;
   const g = avatar.glow;
@@ -348,9 +334,7 @@ function AvatarSVG({ avatar, size = 90 }) {
   );
 }
 
-// ─── ZODIAC QUIZ COMPONENT ──────────────────────────────────────
 function ZodiacQuiz() {
-  // Load saved progress from localStorage on mount
   const loadSaved = (key, fallback) => {
     try {
       const val = localStorage.getItem("aww_" + key);
@@ -363,7 +347,6 @@ function ZodiacQuiz() {
 
   const [screen, setScreen] = useState(() => {
     const s = loadSaved("screen", "intro");
-    // Never restore mid-answer screens — resume at playing
     return (s === "playing" || s === "levelComplete" || s === "paywall") ? s : "intro";
   });
   const [level, setLevel] = useState(() => loadSaved("level", 1));
@@ -383,7 +366,6 @@ function ZodiacQuiz() {
   const [memberError, setMemberError] = useState(null);
   const [memberVerifying, setMemberVerifying] = useState(false);
 
-  // Save progress whenever key state changes
   React.useEffect(() => { save("screen", screen); }, [screen]);
   React.useEffect(() => { save("level", level); }, [level]);
   React.useEffect(() => { save("questionIndex", questionIndex); }, [questionIndex]);
@@ -394,9 +376,6 @@ function ZodiacQuiz() {
 
   const levelData = quizLevels[level - 1];
   const currentQuestion = levelData.questions[questionIndex];
-
-  // Check if paywall should show (after Q5, not subscribed)
-  const shouldShowPaywall = totalAnswered >= PAYWALL_AFTER && !isSubscribed;
 
   const handleAnswer = (option) => {
     if (selectedAnswer !== null) return;
@@ -412,17 +391,14 @@ function ZodiacQuiz() {
 
     setTimeout(() => {
       const nextQIndex = questionIndex + 1;
-      // Check if this was a 4th correct answer milestone (avatarIndex: 4, 8, 12)
       const prevMilestone = Math.floor(correctInLevel / 4);
       const newMilestone = Math.floor(newCorrectInLevel / 4);
       if (newMilestone > prevMilestone && correct) {
-        // Avatar unlocked!
         const av = getAvatarForMilestone(level, questionIndex);
         if (av) {
           setNewAvatar(av);
           setUnlockedAvatars(prev => [...prev, av.sign]);
           setSelectedAnswer(null); setIsCorrect(null);
-          // If paywall should now show, show paywall after avatar
           if (newTotal >= PAYWALL_AFTER && !isSubscribed && nextQIndex < 12) {
             setScreen("avatarUnlock");
             return;
@@ -431,12 +407,10 @@ function ZodiacQuiz() {
           return;
         }
       }
-      // No avatar — check paywall
       if (newTotal >= PAYWALL_AFTER && !isSubscribed && nextQIndex < 12) {
         setScreen("paywall");
         return;
       }
-      // Move to next question or level complete
       if (nextQIndex >= 12) {
         setScreen("levelComplete");
       } else {
@@ -450,7 +424,6 @@ function ZodiacQuiz() {
   const handleNextAfterAvatar = () => {
     const nextQIndex = questionIndex + 1;
     setNewAvatar(null);
-    // Check paywall
     if (totalAnswered >= PAYWALL_AFTER && !isSubscribed && nextQIndex < 12) {
       setScreen("paywall");
       return;
@@ -493,7 +466,6 @@ function ZodiacQuiz() {
   };
 
   const resetAll = () => {
-    // Clear all saved game progress
     ["screen","level","questionIndex","totalAnswered","correctInLevel","score","unlockedAvatars"].forEach(k => {
       try { localStorage.removeItem("aww_" + k); } catch(e) {}
     });
@@ -504,15 +476,11 @@ function ZodiacQuiz() {
     setShowMemberVerify(false); setMemberEmail(""); setMemberError(null);
   };
 
-  // ── INTRO SCREEN — jump straight to playing on mount ──
   React.useEffect(() => {
     if (screen === "intro") setScreen("playing");
   }, []);
   if (screen === "intro") return null;
 
-  // ── RETURNING USER BANNER — shown briefly when restoring progress ──
-
-  // ── PAYWALL SCREEN ──
   if (screen === "paywall") return (
     <div style={{animation:"up .5s ease",textAlign:"center"}}>
       <div style={{background:"linear-gradient(135deg,rgba(232,168,0,0.12),rgba(0,0,0,0.35))",border:"1px solid rgba(255,200,50,0.35)",borderRadius:20,padding:"32px 24px",marginBottom:16,position:"relative",overflow:"hidden"}}>
@@ -529,7 +497,6 @@ function ZodiacQuiz() {
             <div key={i} style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,color:"#a8e060",letterSpacing:".06em"}}>{item}</div>
           ))}
         </div>
-        {/* Show collected avatars so far */}
         {unlockedAvatars.length > 0 && (
           <div style={{marginBottom:20}}>
             <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#f5c842",letterSpacing:".12em",marginBottom:10}}>AVATARS COLLECTED SO FAR</div>
@@ -540,7 +507,6 @@ function ZodiacQuiz() {
                   <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,color:av.color,marginTop:2}}>{s}</div>
                 </div>
               );})}
-              {/* Locked placeholders */}
               {Array.from({length: Math.max(0, 3 - unlockedAvatars.length)}).map((_,i)=>(
                 <div key={"lock"+i} style={{width:48,height:48,borderRadius:8,background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.07)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:18}}>🔒</div>
               ))}
@@ -549,7 +515,6 @@ function ZodiacQuiz() {
         )}
         <button className="rb" style={{"--a":"#e8a800",marginBottom:12}} onClick={handleSubscribe}>✦ START MY FREE TRIAL</button>
         <p style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,color:"#4a4440",margin:"0 0 16px",letterSpacing:".08em"}}>7-DAY FREE TRIAL · $4.99/MONTH AFTER · CANCEL ANYTIME</p>
-        {/* Already a member */}
         {!showMemberVerify ? (
           <button onClick={()=>setShowMemberVerify(true)} style={{background:"none",border:"1px solid rgba(168,224,96,0.3)",color:"#a8e060",padding:"10px 24px",borderRadius:"100px",fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,letterSpacing:".1em",cursor:"pointer",marginBottom:14}}>✦ ALREADY A MEMBER</button>
         ) : (
@@ -575,7 +540,6 @@ function ZodiacQuiz() {
     </div>
   );
 
-  // ── AVATAR UNLOCK SCREEN ──
   if (screen === "avatarUnlock" && newAvatar) return (
     <div style={{animation:"up .6s ease",textAlign:"center"}}>
       <div style={{background:`linear-gradient(135deg,${newAvatar.color}22,rgba(0,0,0,0.4))`,border:`2px solid ${newAvatar.color}66`,borderRadius:24,padding:"36px 24px",position:"relative",overflow:"hidden"}}>
@@ -604,7 +568,6 @@ function ZodiacQuiz() {
     </div>
   );
 
-  // ── LEVEL COMPLETE SCREEN ──
   if (screen === "levelComplete") return (
     <div style={{animation:"up .5s ease",textAlign:"center"}}>
       <div style={{background:"rgba(168,224,96,0.07)",border:"1px solid rgba(168,224,96,0.3)",borderRadius:20,padding:"32px 24px",marginBottom:16}}>
@@ -637,7 +600,6 @@ function ZodiacQuiz() {
     </div>
   );
 
-  // ── TROPHY SCREEN ──
   if (screen === "trophy") {
     const pct = Math.round((score.correct / score.total) * 100);
     const msg = pct===100?{t:"Perfect Score!",s:"The cosmos bows to you. Absolute mastery.",c:"#f5c842"}
@@ -674,7 +636,6 @@ function ZodiacQuiz() {
     );
   }
 
-  // ── PLAYING SCREEN ──
   const progress = ((questionIndex) / 12) * 100;
   const levelColor = ["#FF3D00","#2E7D32","#6A1B9A","#0277BD"][level-1];
   const answerBg = (opt) => {
@@ -698,13 +659,11 @@ function ZodiacQuiz() {
 
   return (
     <div style={{animation:"up .45s ease"}}>
-      {/* Welcome back indicator for returning users */}
       {totalAnswered > 0 && questionIndex === loadSaved("questionIndex", 0) && (
         <div style={{background:"rgba(168,224,96,0.08)",border:"1px solid rgba(168,224,96,0.2)",borderRadius:10,padding:"8px 14px",marginBottom:14,textAlign:"center",animation:"up .4s ease"}}>
           <span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#a8e060",letterSpacing:".1em"}}>✦ WELCOME BACK — PROGRESS RESTORED ✦</span>
         </div>
       )}
-      {/* Header */}
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}}>
         <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,letterSpacing:".15em",color:levelColor}}>
           {levelData.icon} LEVEL {level} — {levelData.title.toUpperCase()}
@@ -713,14 +672,12 @@ function ZodiacQuiz() {
           Q{questionIndex+1}/12 · {score.correct}/{score.total} ✓
         </div>
       </div>
-      {/* Progress bar */}
       <div style={{height:3,background:"rgba(255,255,255,0.06)",borderRadius:2,marginBottom:16,overflow:"hidden"}}>
         <div style={{height:"100%",width:progress+"%",background:`linear-gradient(90deg,${levelColor},#f5c842)`,borderRadius:2,transition:"width 0.4s ease"}}/>
       </div>
-      {/* Avatar progress hint */}
       <div style={{display:"flex",gap:6,marginBottom:18,justifyContent:"center"}}>
         {[0,1,2].map(i=>{
-          const threshQ = i*4; // questions needed to unlock avatar i in this level
+          const threshQ = i*4;
           const avatarIndex = (level-1)*3+i;
           const av = avatarData[avatarIndex];
           const unlocked = unlockedAvatars.includes(av.sign);
@@ -733,19 +690,17 @@ function ZodiacQuiz() {
           );
         })}
       </div>
-      {/* Question / Clue */}
       <div style={{background:"rgba(255,200,50,0.05)",border:"1px solid rgba(255,200,50,0.2)",borderRadius:18,padding:"24px 20px",marginBottom:18,position:"relative",overflow:"hidden"}}>
         <div style={{position:"absolute",top:0,left:0,right:0,height:2,background:`linear-gradient(90deg,transparent,${levelColor},transparent)`}}/>
         {levelData.isClueFormat ? (
           <>
             <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,letterSpacing:".18em",color:"#a8e060",textAlign:"center",marginBottom:12}}>✦ WHICH SIGN IS THIS? ✦</div>
-            <p style={{fontFamily:"Georgia,serif",fontWeight:700,fontSize:"clamp(15px,3.5vw,19px)",color:"#ffffff",lineHeight:1.75,margin:0,textAlign:"center",fontStyle:"italic"}}>"{currentQuestion.clue}"</p>
+            <p style={{fontFamily:"Georgia,serif",fontWeight:700,fontSize:"clamp(15px,3.5vw,19px)",color:"#ffffff",lineHeight:1.75,margin:0,textAlign:"center"}}>"{currentQuestion.clue}"</p>
           </>
         ) : (
           <p style={{fontFamily:"Georgia,serif",fontWeight:700,fontSize:"clamp(15px,3.5vw,20px)",color:"#ffffff",lineHeight:1.65,margin:0,textAlign:"center"}}>{currentQuestion.q}</p>
         )}
       </div>
-      {/* Options */}
       <div style={{display:"flex",flexDirection:"column",gap:10,marginBottom:18}}>
         {currentQuestion.options.map((opt,i)=>(
           <button key={i} onClick={()=>handleAnswer(opt)} disabled={selectedAnswer!==null}
@@ -757,7 +712,6 @@ function ZodiacQuiz() {
           </button>
         ))}
       </div>
-      {/* Feedback */}
       {selectedAnswer !== null && (
         <div style={{animation:"up .35s ease",textAlign:"center",padding:"12px",background:isCorrect?"rgba(168,224,96,0.08)":"rgba(255,80,80,0.08)",border:`1px solid ${isCorrect?"rgba(168,224,96,0.3)":"rgba(255,100,100,0.3)"}`,borderRadius:12}}>
           <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:13,color:isCorrect?"#a8e060":"#ff7070"}}>
@@ -776,7 +730,6 @@ function ZodiacQuiz() {
   );
 }
 
-// ─── CELEBRITY & DAILY (unchanged from original) ─────────────────
 const celebBySign = {};
 celebrities.forEach(c => {
   if (!celebBySign[c.sign]) celebBySign[c.sign] = [];
@@ -784,114 +737,18 @@ celebrities.forEach(c => {
 });
 
 const dailyHoroscopes = {
-  Aries:[
-    "Today is your day to go for it! Stop waiting and just start. You are braver than you think, and good things happen when you take that first step.",
-    "You have so much energy today — use it! Pick one thing you really want and give it everything you have got. You will surprise yourself.",
-    "Slow down just a little before you speak today. You are right, but how you say it matters. Take a breath and let your words land softly.",
-    "It is okay to rest today. Taking a break is not giving up — it actually makes you stronger. Do something that feels good just for you.",
-    "You can see exactly what needs to happen today. Trust that feeling and move. You do not need anyone's permission to take action.",
-    "Focus is your superpower today. Pick one thing and put all your energy there. A little effort right now goes a really long way.",
-    "Someone has been wanting to talk to you. Let your guard down a little today — it is safe to let people in.",
-  ],
-  Taurus:[
-    "Something you have been working on for a long time is starting to pay off. Keep going — the good stuff is right around the corner.",
-    "Be patient today. Things are moving even when it does not feel like it. Trust that the waiting is actually part of the plan.",
-    "Your gut is telling you something today. Listen to it. You already know what you need to do — just be honest with yourself.",
-    "Today is a great day to enjoy the little things. Good food, a cozy space, something beautiful — you deserve it, so let yourself have it.",
-    "Something feels off and you are not sure why. Ask yourself if this is really what you want, or just what feels familiar.",
-    "Say the thing you have been keeping to yourself. You do not have to yell it — just say it calmly and clearly. People need to hear it.",
-    "A good opportunity came back around. Look at it with fresh eyes this time. It might be even better than you remember.",
-  ],
-  Gemini:[
-    "A great idea is going to pop into your head today, probably during a conversation. Write it down — it is more important than it seems.",
-    "You can see both sides of things right now, which makes you the perfect person to help others work things out. Use that gift today.",
-    "The people you talk to today are going to matter more than you expect. Stay open and curious — a good connection is waiting.",
-    "More information is coming your way soon. Hold off on making a big decision until you have the full picture.",
-    "Your brain wants to jump around today and that is totally fine. Follow what feels exciting — you are building something bigger than you realize.",
-    "Someone is trying to tell you more than what they are actually saying. Pay attention to how they say it, not just the words.",
-    "A friend or partner is more on your team than you thought. Open up a little today — you might be surprised by how much they get it.",
-  ],
-  Cancer:[
-    "Your feelings are spot on today. If something feels wrong, trust that. If something feels right, go toward it. You know more than you think.",
-    "Something in your home life or with family needs a little attention. The conversation you have been putting off — today is a good day for it.",
-    "A project you really care about is asking for your time. Even one hour today will remind you why you love it so much.",
-    "Someone needs you today and they can feel how much you care. Show up for them, but only give what you truly have — that is enough.",
-    "Something you have been putting up with for too long needs to change. You deserve better and it is okay to say so.",
-    "That money or security worry you have been avoiding — look at it today. It is not as scary as you have been making it in your head.",
-    "Old feelings are coming up, but not to hurt you. They are here so you can finish with them and finally move on.",
-  ],
-  Leo:[
-    "This is your moment to shine and you should not hold back. Show up fully today — people need your energy and your light.",
-    "You have a big bold idea and yes, it is the right size. Do not make it smaller. Make it bigger and go for it.",
-    "The recognition you have been waiting for is getting closer. In the meantime, act like you already have it — because you do.",
-    "Someone around you needs to feel seen and heard today. You are so good at making people feel special — do that today on purpose.",
-    "Give yourself some love today too, not just everyone else. Your inner world needs the same attention you give to your outer world.",
-    "You do not need a title or permission to lead. Just go first — that is all leadership really is, and you are made for it.",
-    "Something that felt stuck is starting to move again. Bring fresh energy to it and watch what opens up.",
-  ],
-  Virgo:[
-    "That problem that has been giving you trouble — try a completely different angle today. The answer is there, you just have not looked at it that way yet.",
-    "One small change in your daily routine will make a bigger difference than you expect. Do not underestimate it.",
-    "Your eye for detail is exactly what is needed today. What you notice that everyone else misses — that is your superpower right now.",
-    "You do not have to make it perfect before you share it. Good enough and done is better than perfect and still waiting.",
-    "Someone doubted you recently. The best response is not words — it is showing them work so good they cannot say anything.",
-    "Your body is trying to tell you something. Rest, eat well, slow down a little. You take care of everyone else — take care of you too.",
-    "A team effort is going really well today because of the little things you are catching. Keep going — it matters more than people say.",
-  ],
-  Libra:[
-    "A relationship that felt a little off is getting smoother today. The honest conversation you have been putting off — now is a really good time.",
-    "Your sense of beauty and style is extra strong today. Trust your eye in how you dress, how you decorate, what you choose. You have great taste.",
-    "You have been going back and forth on a decision long enough. Pick a direction today. You can always adjust later — but choose.",
-    "Something fair is finally happening for you at work or in a project. The effort you put in is getting noticed.",
-    "A close relationship is ready to go a little deeper. You know what needs to be said — just say it with kindness.",
-    "The group needs you to step in and smooth things out today. You are the only one who can do it without making it worse.",
-    "Something you put out into the world — a project, an idea, a kind act — is reaching more people than you know.",
-  ],
-  Scorpio:[
-    "Something you have been holding onto — a grudge, a worry, a story — is ready to be let go. Releasing it will not make you weaker. It will free you.",
-    "Your gut feeling about something involving money or trust is right. Do not ignore what you already know just because you cannot prove it yet.",
-    "Something that has been happening under the surface of your life is finally becoming clear. What felt confusing is starting to make sense.",
-    "Someone is not being totally honest with you. You already feel it. You do not have to call them out right now — just stay aware.",
-    "You are feeling deep things today and they want to come out. Write, create, talk to someone you trust. Do not keep it all inside.",
-    "Something hard is coming back up — but this time you can actually deal with it. Do not run from it. Go through it.",
-    "The real connection you are looking for is possible today — but you have to be the one to open up first. Take the risk.",
-  ],
-  Sagittarius:[
-    "A door you have been knocking on is finally opening. Do not talk yourself out of walking through it. The time is now — go.",
-    "Your mind is full of big ideas today and one of them is really important. Stop and think it through — it could change everything.",
-    "A chance to grow — a trip, a class, a new opportunity — is showing up. Even if it looks small, it is the right shape.",
-    "You want to tell someone the truth today and you should. Just make sure you are being kind about it — timing matters.",
-    "The freedom you have been wanting is closer than you think. One real step toward what you actually want will shift everything.",
-    "A teacher or guide is showing up today in an unexpected way. Stay open — wisdom does not always come with a name tag.",
-    "Something you believe in is being tested right now. Hold on to it. Your hope is one of your greatest strengths.",
-  ],
-  Capricorn:[
-    "All the hard work you have been doing is starting to show. Good things are coming in — even the small signs count.",
-    "Something at work that has needed patience is finally moving forward. Stay steady just a little longer — you are almost there.",
-    "People have been noticing your effort even when they did not say so. Your reputation is growing in a really good way.",
-    "Someone in charge has been frustrating you. Today it gets a little easier to deal with. You know how to handle it.",
-    "Your body needs rest and your drive is saying no. Let your body win today. You will do better work after a real break.",
-    "That goal that felt so far away is starting to look possible. You are getting closer than you realize.",
-    "Someone is watching how you handle things with real admiration. You are more of an inspiration than you know.",
-  ],
-  Aquarius:[
-    "You see something today that no one else is seeing. Say it out loud — the room needs your point of view right now.",
-    "A group or community you are part of needs exactly what you bring. Do not wait to be asked — just show up and contribute.",
-    "Everyone else agrees on something but you are not so sure. Trust your instinct. History is usually on the side of the one who questions.",
-    "A friendship is becoming more important than you expected. Let it grow — this person is going to matter.",
-    "That cause or dream you care about is picking up energy. One small thing you do today will have a bigger ripple than you expect.",
-    "You really need some alone time today and that is not antisocial — it is just how you recharge. Give yourself that space.",
-    "Something you have been building or working on quietly is more ready than you think. Do not wait much longer to share it.",
-  ],
-  Pisces:[
-    "Your intuition is incredibly strong today. That feeling you keep second-guessing — trust it. It is not just a feeling, it is a knowing.",
-    "Something creative you have been sitting on is asking for your attention. Come back to it without pressure. Something will open up.",
-    "Your heart wants to give more than you actually have right now. Give what is real, not what you think you should give. That is enough.",
-    "You have been carrying someone else's weight without realizing it. It is okay to put it down. What is theirs is not yours to hold.",
-    "A message or moment today is meant just for you. It might come from a song, a dream, or something someone says off the cuff. Pay attention.",
-    "You are picking up on so much energy around you right now. Protect yourself — spend time with people and places that actually fill you up.",
-    "Something you let go of a while back is showing you why that was the right call. You made a good choice, even if it hurt at the time.",
-  ],
+  Aries:["Today is your day to go for it! Stop waiting and just start. You are braver than you think, and good things happen when you take that first step.","You have so much energy today — use it! Pick one thing you really want and give it everything you have got. You will surprise yourself.","Slow down just a little before you speak today. You are right, but how you say it matters. Take a breath and let your words land softly.","It is okay to rest today. Taking a break is not giving up — it actually makes you stronger. Do something that feels good just for you.","You can see exactly what needs to happen today. Trust that feeling and move. You do not need anyone's permission to take action.","Focus is your superpower today. Pick one thing and put all your energy there. A little effort right now goes a really long way.","Someone has been wanting to talk to you. Let your guard down a little today — it is safe to let people in."],
+  Taurus:["Something you have been working on for a long time is starting to pay off. Keep going — the good stuff is right around the corner.","Be patient today. Things are moving even when it does not feel like it. Trust that the waiting is actually part of the plan.","Your gut is telling you something today. Listen to it. You already know what you need to do — just be honest with yourself.","Today is a great day to enjoy the little things. Good food, a cozy space, something beautiful — you deserve it, so let yourself have it.","Something feels off and you are not sure why. Ask yourself if this is really what you want, or just what feels familiar.","Say the thing you have been keeping to yourself. You do not have to yell it — just say it calmly and clearly. People need to hear it.","A good opportunity came back around. Look at it with fresh eyes this time. It might be even better than you remember."],
+  Gemini:["A great idea is going to pop into your head today, probably during a conversation. Write it down — it is more important than it seems.","You can see both sides of things right now, which makes you the perfect person to help others work things out. Use that gift today.","The people you talk to today are going to matter more than you expect. Stay open and curious — a good connection is waiting.","More information is coming your way soon. Hold off on making a big decision until you have the full picture.","Your brain wants to jump around today and that is totally fine. Follow what feels exciting — you are building something bigger than you realize.","Someone is trying to tell you more than what they are actually saying. Pay attention to how they say it, not just the words.","A friend or partner is more on your team than you thought. Open up a little today — you might be surprised by how much they get it."],
+  Cancer:["Your feelings are spot on today. If something feels wrong, trust that. If something feels right, go toward it. You know more than you think.","Something in your home life or with family needs a little attention. The conversation you have been putting off — today is a good day for it.","A project you really care about is asking for your time. Even one hour today will remind you why you love it so much.","Someone needs you today and they can feel how much you care. Show up for them, but only give what you truly have — that is enough.","Something you have been putting up with for too long needs to change. You deserve better and it is okay to say so.","That money or security worry you have been avoiding — look at it today. It is not as scary as you have been making it in your head.","Old feelings are coming up, but not to hurt you. They are here so you can finish with them and finally move on."],
+  Leo:["This is your moment to shine and you should not hold back. Show up fully today — people need your energy and your light.","You have a big bold idea and yes, it is the right size. Do not make it smaller. Make it bigger and go for it.","The recognition you have been waiting for is getting closer. In the meantime, act like you already have it — because you do.","Someone around you needs to feel seen and heard today. You are so good at making people feel special — do that today on purpose.","Give yourself some love today too, not just everyone else. Your inner world needs the same attention you give to your outer world.","You do not need a title or permission to lead. Just go first — that is all leadership really is, and you are made for it.","Something that felt stuck is starting to move again. Bring fresh energy to it and watch what opens up."],
+  Virgo:["That problem that has been giving you trouble — try a completely different angle today. The answer is there, you just have not looked at it that way yet.","One small change in your daily routine will make a bigger difference than you expect. Do not underestimate it.","Your eye for detail is exactly what is needed today. What you notice that everyone else misses — that is your superpower right now.","You do not have to make it perfect before you share it. Good enough and done is better than perfect and still waiting.","Someone doubted you recently. The best response is not words — it is showing them work so good they cannot say anything.","Your body is trying to tell you something. Rest, eat well, slow down a little. You take care of everyone else — take care of you too.","A team effort is going really well today because of the little things you are catching. Keep going — it matters more than people say."],
+  Libra:["A relationship that felt a little off is getting smoother today. The honest conversation you have been putting off — now is a really good time.","Your sense of beauty and style is extra strong today. Trust your eye in how you dress, how you decorate, what you choose. You have great taste.","You have been going back and forth on a decision long enough. Pick a direction today. You can always adjust later — but choose.","Something fair is finally happening for you at work or in a project. The effort you put in is getting noticed.","A close relationship is ready to go a little deeper. You know what needs to be said — just say it with kindness.","The group needs you to step in and smooth things out today. You are the only one who can do it without making it worse.","Something you put out into the world — a project, an idea, a kind act — is reaching more people than you know."],
+  Scorpio:["Something you have been holding onto — a grudge, a worry, a story — is ready to be let go. Releasing it will not make you weaker. It will free you.","Your gut feeling about something involving money or trust is right. Do not ignore what you already know just because you cannot prove it yet.","Something that has been happening under the surface of your life is finally becoming clear. What felt confusing is starting to make sense.","Someone is not being totally honest with you. You already feel it. You do not have to call them out right now — just stay aware.","You are feeling deep things today and they want to come out. Write, create, talk to someone you trust. Do not keep it all inside.","Something hard is coming back up — but this time you can actually deal with it. Do not run from it. Go through it.","The real connection you are looking for is possible today — but you have to be the one to open up first. Take the risk."],
+  Sagittarius:["A door you have been knocking on is finally opening. Do not talk yourself out of walking through it. The time is now — go.","Your mind is full of big ideas today and one of them is really important. Stop and think it through — it could change everything.","A chance to grow — a trip, a class, a new opportunity — is showing up. Even if it looks small, it is the right shape.","You want to tell someone the truth today and you should. Just make sure you are being kind about it — timing matters.","The freedom you have been wanting is closer than you think. One real step toward what you actually want will shift everything.","A teacher or guide is showing up today in an unexpected way. Stay open — wisdom does not always come with a name tag.","Something you believe in is being tested right now. Hold on to it. Your hope is one of your greatest strengths."],
+  Capricorn:["All the hard work you have been doing is starting to show. Good things are coming in — even the small signs count.","Something at work that has needed patience is finally moving forward. Stay steady just a little longer — you are almost there.","People have been noticing your effort even when they did not say so. Your reputation is growing in a really good way.","Someone in charge has been frustrating you. Today it gets a little easier to deal with. You know how to handle it.","Your body needs rest and your drive is saying no. Let your body win today. You will do better work after a real break.","That goal that felt so far away is starting to look possible. You are getting closer than you realize.","Someone is watching how you handle things with real admiration. You are more of an inspiration than you know."],
+  Aquarius:["You see something today that no one else is seeing. Say it out loud — the room needs your point of view right now.","A group or community you are part of needs exactly what you bring. Do not wait to be asked — just show up and contribute.","Everyone else agrees on something but you are not so sure. Trust your instinct. History is usually on the side of the one who questions.","A friendship is becoming more important than you expected. Let it grow — this person is going to matter.","That cause or dream you care about is picking up energy. One small thing you do today will have a bigger ripple than you expect.","You really need some alone time today and that is not antisocial — it is just how you recharge. Give yourself that space.","Something you have been building or working on quietly is more ready than you think. Do not wait much longer to share it."],
+  Pisces:["Your intuition is incredibly strong today. That feeling you keep second-guessing — trust it. It is not just a feeling, it is a knowing.","Something creative you have been sitting on is asking for your attention. Come back to it without pressure. Something will open up.","Your heart wants to give more than you actually have right now. Give what is real, not what you think you should give. That is enough.","You have been carrying someone else's weight without realizing it. It is okay to put it down. What is theirs is not yours to hold.","A message or moment today is meant just for you. It might come from a song, a dream, or something someone says off the cuff. Pay attention.","You are picking up on so much energy around you right now. Protect yourself — spend time with people and places that actually fill you up.","Something you let go of a while back is showing you why that was the right call. You made a good choice, even if it hurt at the time."],
 };
 
 function DailyHoroscope() {
@@ -1002,6 +859,28 @@ function CancellationContent(){return(<><DocSection title="Free Trial Period"><D
 function DisclaimerContent(){return(<><DocP>All astrological content on Arewewoke is provided strictly for entertainment and personal reflection.</DocP><DocSection title="Not Professional Advice"><DocP>Nothing on Arewewoke constitutes medical, psychological, financial, legal, or any other form of professional advice.</DocP></DocSection><DocSection title="Contact"><DocP>arewewoke@gmail.com</DocP></DocSection></>);}
 function CreditsContent(){return(<><DocP>Arewewoke is created and operated by Ayssia Mason.</DocP><DocSection title="Astrological Authors Referenced"><DocBullet items={["Steven Forrest — The Inner Sky, evolutionary astrology","Liz Greene — Saturn: A New Look at an Old Devil, psychological astrology","Robert Hand — Planets in Transit","Howard Sasportas — The Twelve Houses","Donna Cunningham — Moon and Venus placements","Isabel Hickey — Astrology: A Cosmic Science","Dane Rudhyar — An Astrological Mandala"]}/></DocSection><DocSection title="Contact"><DocP>celestia.insights.app@gmail.com</DocP></DocSection></>);}
 
+// ─── TAURUS SEASON HELPERS ──────────────────────────────────────
+const isTaurusSeason = () => {
+  const now = new Date();
+  const month = now.getMonth() + 1;
+  const day = now.getDate();
+  return (month === 4 && day >= 20) || (month === 5 && day <= 20);
+};
+
+// Stable confetti pieces generated once
+const CONFETTI_PIECES = [...Array(80)].map((_, i) => {
+  const taurusColors = ["#a8c97f","#f5c842","#d4a5c9","#ffffff","#8fbc8f","#e8a800","#c9f0a8"];
+  return {
+    color: taurusColors[i % taurusColors.length],
+    left: Math.random() * 100,
+    delay: Math.random() * 2,
+    duration: 2.5 + Math.random() * 2,
+    size: 6 + Math.random() * 8,
+    shape: i % 3 === 0 ? "50%" : i % 3 === 1 ? "0%" : "2px",
+    rotation: Math.random() * 360,
+  };
+});
+
 // ─── MAIN APP ───────────────────────────────────────────────────
 export default function AstrologyApp() {
   const [topTab, setTopTab] = useState("horoscope");
@@ -1012,6 +891,17 @@ export default function AstrologyApp() {
   const [animating, setAnimating] = useState(false);
   const [activeDoc, setActiveDoc] = useState(null);
   const accent = selectedSign ? colors[selectedSign] : "#e8a800";
+
+  // ─── TAURUS SEASON STATE ────────────────────────────────────
+  const [showTaurusBanner, setShowTaurusBanner] = useState(() => isTaurusSeason());
+  const [confettiActive, setConfettiActive] = useState(() => isTaurusSeason());
+
+  React.useEffect(() => {
+    if (confettiActive) {
+      const timer = setTimeout(() => setConfettiActive(false), 4000);
+      return () => clearTimeout(timer);
+    }
+  }, []);
 
   const reset = () => { setSelectedSign(null); setSelectedPlanet(null); setFact(null); };
 
@@ -1034,7 +924,23 @@ export default function AstrologyApp() {
       <div style={{position:"fixed",inset:0,pointerEvents:"none",zIndex:0}}>
         {[...Array(70)].map((_,i)=>(<div key={i} style={{position:"absolute",width:Math.random()*2.5+0.4+"px",height:Math.random()*2.5+0.4+"px",borderRadius:"50%",background:i%7===0?("rgba(168,224,96,"+(Math.random()*0.5+0.2)+")"):"rgba(255,200,50,"+(Math.random()*0.5+0.15)+")",left:Math.random()*100+"%",top:Math.random()*100+"%",animation:"tw "+(Math.random()*3+2)+"s ease-in-out infinite",animationDelay:Math.random()*4+"s"}}/>))}
       </div>
-      <style>{`@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&display=swap'); @keyframes tw{0%,100%{opacity:0.2}50%{opacity:1}} @keyframes up{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}} @keyframes sh{0%{background-position:200% center}100%{background-position:-200% center}} @keyframes gl{0%,100%{box-shadow:0 0 18px 3px rgba(232,168,0,0.3)}50%{box-shadow:0 0 40px 10px rgba(232,168,0,0.6)}} @keyframes pu{0%,100%{opacity:0.4}50%{opacity:1}} .sb{background:rgba(255,200,50,0.06);border:1px solid rgba(255,200,50,0.2);color:#f0c030;padding:9px 12px;border-radius:8px;cursor:pointer;font-family:'Cinzel',serif;font-size:10px;letter-spacing:.07em;font-weight:700;transition:all .22s;text-align:center} .sb:hover,.sb.sel{background:rgba(255,200,50,0.15);color:#f5c842;border-color:var(--a);transform:translateY(-2px)} .pb{background:rgba(255,200,50,0.05);border:1px solid rgba(255,200,50,0.18);color:#f0c030;padding:9px 18px;border-radius:100px;cursor:pointer;font-family:'Cinzel',serif;font-size:11px;letter-spacing:.09em;font-weight:700;transition:all .22s} .pb:hover,.pb.sel{background:rgba(255,200,50,0.15);color:#f5c842;border-color:var(--a)} .rb{background:linear-gradient(135deg,var(--a),#8a6000);color:#0d0a14;border:none;padding:14px 38px;border-radius:100px;font-family:'Cinzel',serif;font-size:13px;letter-spacing:.14em;font-weight:900;cursor:pointer;transition:all .3s;animation:gl 3s ease-in-out infinite} .rb:hover{transform:scale(1.04);filter:brightness(1.12)} .fc{animation:up .65s ease forwards;background:linear-gradient(135deg,rgba(255,200,50,0.08),rgba(0,0,0,0.3));border:1px solid rgba(255,200,50,0.3);border-radius:20px;padding:30px 34px;position:relative;overflow:hidden} .fc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--a),transparent)} .bk{background:none;border:none;color:#5a5048;cursor:pointer;font-family:'Cinzel',serif;font-size:10px;letter-spacing:.13em;font-weight:700;display:flex;align-items:center;gap:6px;margin-bottom:28px} .bk:hover{color:#a8e060}`}</style>
+
+      {/* ── TAURUS SEASON CONFETTI ── */}
+      {confettiActive && (
+        <div style={{position:"fixed",inset:0,pointerEvents:"none",zIndex:999,overflow:"hidden"}}>
+          {CONFETTI_PIECES.map((p, i) => (
+            <div key={i} style={{
+              position:"absolute", top:"-20px", left:`${p.left}%`,
+              width:`${p.size}px`, height:`${p.size}px`,
+              background:p.color, borderRadius:p.shape,
+              animation:`confettiFall ${p.duration}s ${p.delay}s ease-in forwards`,
+              transform:`rotate(${p.rotation}deg)`
+            }}/>
+          ))}
+        </div>
+      )}
+
+      <style>{`@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&display=swap'); @keyframes tw{0%,100%{opacity:0.2}50%{opacity:1}} @keyframes up{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}} @keyframes sh{0%{background-position:200% center}100%{background-position:-200% center}} @keyframes gl{0%,100%{box-shadow:0 0 18px 3px rgba(232,168,0,0.3)}50%{box-shadow:0 0 40px 10px rgba(232,168,0,0.6)}} @keyframes pu{0%,100%{opacity:0.4}50%{opacity:1}} @keyframes confettiFall{0%{transform:translateY(0) rotate(0deg);opacity:1}100%{transform:translateY(110vh) rotate(720deg);opacity:0}} .sb{background:rgba(255,200,50,0.06);border:1px solid rgba(255,200,50,0.2);color:#f0c030;padding:9px 12px;border-radius:8px;cursor:pointer;font-family:'Cinzel',serif;font-size:10px;letter-spacing:.07em;font-weight:700;transition:all .22s;text-align:center} .sb:hover,.sb.sel{background:rgba(255,200,50,0.15);color:#f5c842;border-color:var(--a);transform:translateY(-2px)} .pb{background:rgba(255,200,50,0.05);border:1px solid rgba(255,200,50,0.18);color:#f0c030;padding:9px 18px;border-radius:100px;cursor:pointer;font-family:'Cinzel',serif;font-size:11px;letter-spacing:.09em;font-weight:700;transition:all .22s} .pb:hover,.pb.sel{background:rgba(255,200,50,0.15);color:#f5c842;border-color:var(--a)} .rb{background:linear-gradient(135deg,var(--a),#8a6000);color:#0d0a14;border:none;padding:14px 38px;border-radius:100px;font-family:'Cinzel',serif;font-size:13px;letter-spacing:.14em;font-weight:900;cursor:pointer;transition:all .3s;animation:gl 3s ease-in-out infinite} .rb:hover{transform:scale(1.04);filter:brightness(1.12)} .fc{animation:up .65s ease forwards;background:linear-gradient(135deg,rgba(255,200,50,0.08),rgba(0,0,0,0.3));border:1px solid rgba(255,200,50,0.3);border-radius:20px;padding:30px 34px;position:relative;overflow:hidden} .fc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--a),transparent)} .bk{background:none;border:none;color:#5a5048;cursor:pointer;font-family:'Cinzel',serif;font-size:10px;letter-spacing:.13em;font-weight:700;display:flex;align-items:center;gap:6px;margin-bottom:28px} .bk:hover{color:#a8e060}`}</style>
 
       <div style={{position:"relative",zIndex:1,maxWidth:700,margin:"0 auto",padding:"20px 18px 80px"}}>
         <div style={{display:"flex",gap:8,justifyContent:"center",marginBottom:24,flexWrap:"wrap"}}>
@@ -1153,6 +1059,40 @@ export default function AstrologyApp() {
           </div>
         </div>
       </div>
+
+      {/* ── TAURUS SEASON BANNER ── */}
+      {showTaurusBanner && (
+        <div style={{
+          position:"fixed", bottom:24, left:"50%", transform:"translateX(-50%)",
+          zIndex:1000, width:"calc(100% - 32px)", maxWidth:480,
+          background:"linear-gradient(135deg,#1a1508,#0d1a08,#1a1508)",
+          border:"2px solid #a8c97f",
+          borderRadius:20, padding:"20px 24px",
+          boxShadow:"0 0 40px rgba(168,201,127,0.25)",
+          animation:"up .6s ease",
+          textAlign:"center"
+        }}>
+          <div style={{position:"absolute",top:0,left:0,right:0,height:2,background:"linear-gradient(90deg,transparent,#a8c97f,transparent)",borderRadius:"20px 20px 0 0"}}/>
+          <div style={{fontSize:28,marginBottom:8}}>🌿♉🌿</div>
+          <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:15,color:"#a8c97f",letterSpacing:".12em",marginBottom:6}}>
+            HAPPY TAURUS SEASON!
+          </div>
+          <p style={{fontFamily:"Georgia,serif",fontSize:14,color:"#d8e8c0",lineHeight:1.65,margin:"0 0 16px"}}>
+            To every Taurus visiting today — <strong style={{color:"#f5c842"}}>happy birthday, beautiful soul.</strong> The cosmos celebrates you. 🎂✨
+          </p>
+          <button
+            onClick={() => setShowTaurusBanner(false)}
+            style={{
+              background:"linear-gradient(135deg,#a8c97f,#4a8020)",
+              border:"none", color:"#0d1a08",
+              padding:"10px 28px", borderRadius:"100px",
+              fontFamily:"'Cinzel',serif", fontWeight:900,
+              fontSize:11, letterSpacing:".12em", cursor:"pointer"
+            }}>
+            ✦ THANK YOU ✦
+          </button>
+        </div>
+      )}
 
       {activeDoc && (
         <div onClick={()=>setActiveDoc(null)} style={{position:"fixed",inset:0,background:"rgba(5,3,10,0.92)",zIndex:1000,overflowY:"auto",display:"flex",alignItems:"flex-start",justifyContent:"center",padding:"40px 16px"}}>
