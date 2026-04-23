@@ -361,6 +361,10 @@ function ZodiacQuiz() {
   const [isSubscribed, setIsSubscribed] = useState(() => {
     try { return localStorage.getItem("aww_subscribed") === "true"; } catch(e) { return false; }
   });
+  // Show "welcome back" banner only on first mount if progress was restored
+  const [isReturning] = useState(() => {
+    try { return localStorage.getItem("aww_totalAnswered") !== null && JSON.parse(localStorage.getItem("aww_totalAnswered") || "0") > 0; } catch(e) { return false; }
+  });
   const [showMemberVerify, setShowMemberVerify] = useState(false);
   const [memberEmail, setMemberEmail] = useState("");
   const [memberError, setMemberError] = useState(null);
@@ -469,7 +473,7 @@ function ZodiacQuiz() {
     ["screen","level","questionIndex","totalAnswered","correctInLevel","score","unlockedAvatars"].forEach(k => {
       try { localStorage.removeItem("aww_" + k); } catch(e) {}
     });
-    setScreen("intro"); setLevel(1); setQuestionIndex(0);
+    setScreen("playing"); setLevel(1); setQuestionIndex(0);
     setTotalAnswered(0); setCorrectInLevel(0);
     setScore({ correct:0, total:0 }); setSelectedAnswer(null);
     setIsCorrect(null); setNewAvatar(null); setUnlockedAvatars([]);
@@ -659,7 +663,7 @@ function ZodiacQuiz() {
 
   return (
     <div style={{animation:"up .45s ease"}}>
-      {totalAnswered > 0 && questionIndex === loadSaved("questionIndex", 0) && (
+      {isReturning && (
         <div style={{background:"rgba(168,224,96,0.08)",border:"1px solid rgba(168,224,96,0.2)",borderRadius:10,padding:"8px 14px",marginBottom:14,textAlign:"center",animation:"up .4s ease"}}>
           <span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#a8e060",letterSpacing:".1em"}}>✦ WELCOME BACK — PROGRESS RESTORED ✦</span>
         </div>
@@ -847,6 +851,7 @@ const dailyHoroscopes = {
   ],
 };
 
+
 function DailyHoroscope() {
   const [selectedSign, setSelectedSign] = useState(null);
   const [revealed, setRevealed] = useState(false);
@@ -949,11 +954,21 @@ function CelebrityConnection() {
 function DocSection({title,children}){return(<div style={{marginBottom:24}}><div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:13,color:"#f5c842",marginBottom:8,paddingBottom:4,borderBottom:"1px solid rgba(255,200,50,0.1)"}}>{title}</div><div style={{color:"#c8c0b0",fontSize:14,lineHeight:1.85}}>{children}</div></div>);}
 function DocP({children}){return <p style={{margin:"0 0 10px"}}>{children}</p>;}
 function DocBullet({items}){return(<ul style={{margin:"0 0 10px",paddingLeft:20}}>{items.map((item,i)=><li key={i} style={{marginBottom:6}}>{item}</li>)}</ul>);}
-function TermsContent(){return(<><DocP>Please read these Terms of Service carefully before using Arewewoke.</DocP><DocSection title="1. About Arewewoke"><DocP>Arewewoke is an astrology-based entertainment application operated by Ayssia Mason.</DocP></DocSection><DocSection title="2. Entertainment Disclaimer"><DocP>All content on Arewewoke is intended solely for entertainment and personal reflection.</DocP></DocSection><DocSection title="3. Eligibility"><DocP>You must be at least 18 years of age to subscribe to paid features of Arewewoke.</DocP></DocSection><DocSection title="4. Free Trial & Billing"><DocP>Arewewoke offers a 7-day free trial. After the trial, your subscription automatically renews at $4.99 per month unless you cancel before the trial ends.</DocP></DocSection><DocSection title="5. Cancellation"><DocP>You may cancel your subscription at any time via the Stripe customer portal — no emailing required.</DocP></DocSection><DocSection title="6. Intellectual Property"><DocP>All content, design, and features of Arewewoke are the property of Ayssia Mason unless otherwise credited.</DocP></DocSection><DocSection title="7. Contact"><DocP>arewewoke@gmail.com</DocP></DocSection></>);}
-function PrivacyContent(){return(<><DocP>Your privacy matters to Arewewoke.</DocP><DocSection title="1. Information We Collect"><DocBullet items={["Email address and name when you subscribe","Payment information, processed securely by Stripe","Usage data to improve app performance","Subscription status to manage access to paid features"]}/></DocSection><DocSection title="2. How We Use Your Information"><DocBullet items={["To process and manage your subscription","To send receipts and billing communications","To improve app features","To respond to support requests"]}/><DocP>We do not sell, rent, share, or trade your personal information to third parties for marketing purposes.</DocP></DocSection><DocSection title="3. Your Rights"><DocP>You have the right to access, correct, or delete the personal data we hold about you. Contact us at arewewoke@gmail.com.</DocP></DocSection><DocSection title="4. Contact"><DocP>arewewoke@gmail.com</DocP></DocSection></>);}
-function CancellationContent(){return(<><DocSection title="Free Trial Period"><DocP>Your 7-day free trial begins the moment your payment method is verified. If you do not cancel before the trial ends, your $4.99/month subscription begins automatically on day 8.</DocP></DocSection><DocSection title="How to Cancel"><DocBullet items={["Via the Stripe customer portal — the fastest method, available 24/7.","By emailing arewewoke@gmail.com with the subject line: Cancel My Subscription."]}/></DocSection><DocSection title="Refund Policy"><DocP>All subscription fees are non-refundable once charged.</DocP></DocSection><DocSection title="Contact"><DocP>arewewoke@gmail.com</DocP></DocSection></>);}
-function DisclaimerContent(){return(<><DocP>All astrological content on Arewewoke is provided strictly for entertainment and personal reflection.</DocP><DocSection title="Not Professional Advice"><DocP>Nothing on Arewewoke constitutes medical, psychological, financial, legal, or any other form of professional advice.</DocP></DocSection><DocSection title="Contact"><DocP>arewewoke@gmail.com</DocP></DocSection></>);}
+function TermsContent(){return(<><DocP>Please read these Terms of Service carefully before using Arewewoke.</DocP><DocSection title="1. About Arewewoke"><DocP>Arewewoke is an astrology-based entertainment application operated by Ayssia Mason.</DocP></DocSection><DocSection title="2. Entertainment Disclaimer"><DocP>All content on Arewewoke is intended solely for entertainment and personal reflection.</DocP></DocSection><DocSection title="3. Eligibility"><DocP>You must be at least 18 years of age to subscribe to paid features of Arewewoke.</DocP></DocSection><DocSection title="4. Free Trial & Billing"><DocP>Arewewoke offers a 7-day free trial. After the trial, your subscription automatically renews at $4.99 per month unless you cancel before the trial ends.</DocP></DocSection><DocSection title="5. Cancellation"><DocP>You may cancel your subscription at any time via the Stripe customer portal — no emailing required.</DocP></DocSection><DocSection title="6. Intellectual Property"><DocP>All content, design, and features of Arewewoke are the property of Ayssia Mason unless otherwise credited.</DocP></DocSection><DocSection title="7. Contact"><DocP>celestial.insights.app@gmail.com</DocP></DocSection></>);}
+function PrivacyContent(){return(<><DocP>Your privacy matters to Arewewoke.</DocP><DocSection title="1. Information We Collect"><DocBullet items={["Email address and name when you subscribe","Payment information, processed securely by Stripe","Usage data to improve app performance","Subscription status to manage access to paid features"]}/></DocSection><DocSection title="2. How We Use Your Information"><DocBullet items={["To process and manage your subscription","To send receipts and billing communications","To improve app features","To respond to support requests"]}/><DocP>We do not sell, rent, share, or trade your personal information to third parties for marketing purposes.</DocP></DocSection><DocSection title="3. Your Rights"><DocP>You have the right to access, correct, or delete the personal data we hold about you. Contact us at celestial.insights.app@gmail.com.</DocP></DocSection><DocSection title="4. Contact"><DocP>celestial.insights.app@gmail.com</DocP></DocSection></>);}
+function CancellationContent(){return(<><DocSection title="Free Trial Period"><DocP>Your 7-day free trial begins the moment your payment method is verified. If you do not cancel before the trial ends, your $4.99/month subscription begins automatically on day 8.</DocP></DocSection><DocSection title="How to Cancel"><DocBullet items={["Via the Stripe customer portal — the fastest method, available 24/7.","By emailing celestial.insights.app@gmail.com with the subject line: Cancel My Subscription."]}/></DocSection><DocSection title="Refund Policy"><DocP>All subscription fees are non-refundable once charged.</DocP></DocSection><DocSection title="Contact"><DocP>celestial.insights.app@gmail.com</DocP></DocSection></>);}
+function DisclaimerContent(){return(<><DocP>All astrological content on Arewewoke is provided strictly for entertainment and personal reflection.</DocP><DocSection title="Not Professional Advice"><DocP>Nothing on Arewewoke constitutes medical, psychological, financial, legal, or any other form of professional advice.</DocP></DocSection><DocSection title="Contact"><DocP>celestial.insights.app@gmail.com</DocP></DocSection></>);}
 function CreditsContent(){return(<><DocP>Arewewoke is created and operated by Ayssia Mason.</DocP><DocSection title="Astrological Authors Referenced"><DocBullet items={["Steven Forrest — The Inner Sky, evolutionary astrology","Liz Greene — Saturn: A New Look at an Old Devil, psychological astrology","Robert Hand — Planets in Transit","Howard Sasportas — The Twelve Houses","Donna Cunningham — Moon and Venus placements","Isabel Hickey — Astrology: A Cosmic Science","Dane Rudhyar — An Astrological Mandala"]}/></DocSection><DocSection title="Contact"><DocP>celestia.insights.app@gmail.com</DocP></DocSection></>);}
+
+// Stable star particles — generated once, not on every render
+const STAR_PARTICLES = [...Array(70)].map((_,i) => ({
+  size: Math.random()*2.5+0.4,
+  color: i%7===0 ? ("rgba(168,224,96,"+(Math.random()*0.5+0.2)+")") : ("rgba(255,200,50,"+(Math.random()*0.5+0.15)+")"),
+  left: Math.random()*100,
+  top: Math.random()*100,
+  dur: Math.random()*3+2,
+  delay: Math.random()*4,
+}));
 
 // ─── TAURUS SEASON HELPERS ──────────────────────────────────────
 const isTaurusSeason = () => {
@@ -1018,7 +1033,7 @@ export default function AstrologyApp() {
   return (
     <div style={{minHeight:"100vh",background:"#0d0a14",fontFamily:"Georgia,serif",color:"#ffffff",position:"relative",overflow:"hidden"}}>
       <div style={{position:"fixed",inset:0,pointerEvents:"none",zIndex:0}}>
-        {[...Array(70)].map((_,i)=>(<div key={i} style={{position:"absolute",width:Math.random()*2.5+0.4+"px",height:Math.random()*2.5+0.4+"px",borderRadius:"50%",background:i%7===0?("rgba(168,224,96,"+(Math.random()*0.5+0.2)+")"):"rgba(255,200,50,"+(Math.random()*0.5+0.15)+")",left:Math.random()*100+"%",top:Math.random()*100+"%",animation:"tw "+(Math.random()*3+2)+"s ease-in-out infinite",animationDelay:Math.random()*4+"s"}}/>))}
+        {STAR_PARTICLES.map((p,i)=>(<div key={i} style={{position:"absolute",width:p.size+"px",height:p.size+"px",borderRadius:"50%",background:p.color,left:p.left+"%",top:p.top+"%",animation:"tw "+p.dur+"s ease-in-out infinite",animationDelay:p.delay+"s"}}/>))}
       </div>
 
       {/* ── TAURUS SEASON CONFETTI ── */}
@@ -1047,7 +1062,7 @@ export default function AstrologyApp() {
 
         {topTab==="horoscope" && <DailyHoroscope />}
         {topTab==="celebrity" && <CelebrityConnection />}
-        {topTab==="guess" && <ZodiacQuiz />}
+        <div style={{display:topTab==="guess"?"block":"none"}}><ZodiacQuiz /></div>
 
         {topTab==="install" && (
           <div style={{animation:"up .5s ease"}}>
@@ -1148,7 +1163,7 @@ export default function AstrologyApp() {
           <div style={{textAlign:"center",color:"#2a2420",fontFamily:"'Cinzel',serif",fontSize:9,marginBottom:14,letterSpacing:".2em"}}>✦ ✦ ✦</div>
           <p style={{fontFamily:"Georgia,serif",fontSize:10,color:"#3a3228",textAlign:"center",lineHeight:1.7,margin:"0 0 16px",padding:"0 12px"}}>Arewewoke is for entertainment purposes only. Astrological content does not constitute professional advice of any kind.</p>
           <div style={{textAlign:"center",marginBottom:18}}>
-            <a href="mailto:arewewoke@gmail.com" style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#4a4440",letterSpacing:".1em",textDecoration:"none"}} onMouseEnter={e=>e.target.style.color="#a8e060"} onMouseLeave={e=>e.target.style.color="#4a4440"}>arewewoke@gmail.com</a>
+            <a href="mailto:celestial.insights.app@gmail.com" style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#4a4440",letterSpacing:".1em",textDecoration:"none"}} onMouseEnter={e=>e.target.style.color="#a8e060"} onMouseLeave={e=>e.target.style.color="#4a4440"}>celestial.insights.app@gmail.com</a>
           </div>
           <div style={{textAlign:"center"}}>
             <p style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,color:"#2a2420",margin:0,letterSpacing:".1em"}}>powered by <span style={{color:"#a8e060"}}>Ayssia</span></p>
