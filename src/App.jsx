@@ -1021,6 +1021,29 @@ function CosmicLoader({ name }) {
 function BirthChartResults({ result, onReset }) {
   const { name, city, planets: chartPlanets } = result;
   const STRIPE_TRIAL_LINK = "https://buy.stripe.com/bJefZa8lH4TBetl2VL5sA01";
+  const [showMemberVerify, setShowMemberVerify] = useState(false);
+  const [memberEmail, setMemberEmail] = useState("");
+  const [memberError, setMemberError] = useState(null);
+  const [memberVerifying, setMemberVerifying] = useState(false);
+
+  const handleVerifyMember = async () => {
+    const email = memberEmail.trim().toLowerCase();
+    if (!email || !email.includes("@")) { setMemberError("Please enter a valid email."); return; }
+    setMemberVerifying(true); setMemberError(null);
+    try {
+      const res = await fetch(`/api/check-subscription?email=${encodeURIComponent(email)}`);
+      const data = await res.json();
+      if (data.active) {
+        try { localStorage.setItem("aww_subscribed", "true"); } catch(e) {}
+        window.location.reload();
+      } else {
+        setMemberError("No active subscription found for that email.");
+      }
+    } catch {
+      setMemberError("Something went wrong. Please check your connection and try again.");
+    } finally { setMemberVerifying(false); }
+  };
+
   return (
     <div style={{animation:"up 0.5s ease"}}>
       <div style={{textAlign:"center",marginBottom:28}}>
@@ -1047,11 +1070,35 @@ function BirthChartResults({ result, onReset }) {
           <PlanetCard key={planet} planet={planet} sign={chartPlanets[planet]} fact={getFact(chartPlanets[planet], planet)} index={i}/>
         ) : null)}
       </div>
+
+      {/* CTA + Already a Member */}
       <div style={{background:"rgba(168,224,96,0.06)",border:"1px solid rgba(168,224,96,0.2)",borderRadius:14,padding:"18px 20px",textAlign:"center",marginBottom:16}}>
         <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:13,color:"#a8e060",marginBottom:8}}>Want your full reading?</div>
         <p style={{fontFamily:"Georgia,serif",fontSize:13,color:"#d8c890",lineHeight:1.65,margin:"0 0 14px"}}>Subscribe to unlock detailed interpretations for all placements, house positions, and your personal cosmic forecast.</p>
-        <button className="rb" style={{"--a":"#a8e060"}} onClick={()=>window.location.href=STRIPE_TRIAL_LINK}>✦ UNLOCK FULL READING</button>
+        <button className="rb" style={{"--a":"#a8e060",marginBottom:12}} onClick={()=>window.location.href=STRIPE_TRIAL_LINK}>✦ UNLOCK FULL READING</button>
+        <p style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,color:"#4a4440",margin:"0 0 14px",letterSpacing:".08em"}}>7-DAY FREE TRIAL · $4.99/MONTH AFTER · CANCEL ANYTIME</p>
+
+        {!showMemberVerify ? (
+          <button onClick={()=>setShowMemberVerify(true)} style={{background:"none",border:"1px solid rgba(168,224,96,0.3)",color:"#a8e060",padding:"10px 24px",borderRadius:"100px",fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,letterSpacing:".1em",cursor:"pointer"}}>✦ ALREADY A MEMBER</button>
+        ) : (
+          <div style={{padding:"16px",background:"rgba(168,224,96,0.05)",border:"1px solid rgba(168,224,96,0.2)",borderRadius:12,textAlign:"center"}}>
+            <p style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,color:"#a8e060",letterSpacing:".1em",marginBottom:10}}>VERIFY YOUR MEMBERSHIP</p>
+            <input
+              type="email" placeholder="your@email.com" value={memberEmail}
+              onChange={e=>setMemberEmail(e.target.value)}
+              onKeyDown={e=>e.key==="Enter"&&handleVerifyMember()}
+              style={{width:"100%",padding:"11px 14px",borderRadius:10,border:"1px solid rgba(168,224,96,0.3)",background:"rgba(255,255,255,0.04)",color:"#f5f0e0",fontFamily:"Georgia,serif",fontSize:14,textAlign:"center",outline:"none",boxSizing:"border-box",marginBottom:10}}
+            />
+            {memberError && <p style={{fontFamily:"Georgia,serif",color:"#f5c842",fontSize:12,marginBottom:8,lineHeight:1.5}}>{memberError}</p>}
+            <button className="rb" style={{"--a":"#a8e060",marginBottom:8,opacity:memberVerifying?0.6:1}} onClick={handleVerifyMember} disabled={memberVerifying}>
+              {memberVerifying ? "CHECKING..." : "✦ VERIFY & CONTINUE"}
+            </button>
+            <br/>
+            <button onClick={()=>{setShowMemberVerify(false);setMemberError(null);setMemberEmail("");}} style={{background:"none",border:"none",color:"#4a4440",cursor:"pointer",fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,letterSpacing:".1em"}}>← BACK</button>
+          </div>
+        )}
       </div>
+
       <div style={{textAlign:"center"}}>
         <button onClick={onReset} style={{background:"none",border:"none",color:"#4a4440",cursor:"pointer",fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,letterSpacing:".12em"}}>← READ A DIFFERENT CHART</button>
       </div>
