@@ -1,5 +1,5 @@
 // api/birth-chart.js
-// Add this file to your api/ folder alongside check-subscription.js and webhook.js
+// Place this in your api/ folder alongside check-subscription.js and webhook.js
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -23,7 +23,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const response = await fetch("https://astrology-api.io/api/v3/analysis/natal-report", {
+    const response = await fetch("https://astrology-api.io/api/v3/charts/natal", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -43,9 +43,6 @@ export default async function handler(req, res) {
           },
           name: name || "Subject",
         },
-        tradition: "psychological",
-        include_aspect_patterns: false,
-        include_sabian_symbols: false,
       }),
     });
 
@@ -59,26 +56,49 @@ export default async function handler(req, res) {
 
     const data = await response.json();
 
+    // Extract planet signs from the response
     const planets = {};
+
+    // The natal chart endpoint returns planets array
     if (data.planets) {
       for (const [planet, info] of Object.entries(data.planets)) {
-        if (info?.sign) planets[capitalize(planet)] = capitalize(info.sign);
-      }
-    }
-    if (data.ascendant?.sign) planets["Rising"] = capitalize(data.ascendant.sign);
-
-    const interpretations = {};
-    if (data.interpretations) {
-      for (const [key, text] of Object.entries(data.interpretations)) {
-        interpretations[key] = text;
+        if (info?.sign) {
+          planets[capitalize(planet)] = capitalize(info.sign);
+        }
       }
     }
 
-    return res.status(200).json({ name: name || "Your", city, planets, interpretations });
+    // Also check for array format
+    if (Array.isArray(data.planets)) {
+      data.planets.forEach(p => {
+        if (p.name && p.sign) {
+          planets[capitalize(p.name)] = capitalize(p.sign);
+        }
+      });
+    }
+
+    // Rising sign from ascendant
+    if (data.ascendant?.sign) {
+      planets["Rising"] = capitalize(data.ascendant.sign);
+    } else if (data.houses?.ascendant?.sign) {
+      planets["Rising"] = capitalize(data.houses.ascendant.sign);
+    }
+
+    // Log what we got for debugging
+    console.log("API response keys:", Object.keys(data));
+    console.log("Planets extracted:", planets);
+
+    return res.status(200).json({
+      name: name || "Your",
+      city,
+      planets,
+    });
 
   } catch (error) {
     console.error("Birth chart error:", error);
-    return res.status(500).json({ error: "Something went wrong reading the stars. Please try again." });
+    return res.status(500).json({
+      error: "Something went wrong reading the stars. Please try again.",
+    });
   }
 }
 
