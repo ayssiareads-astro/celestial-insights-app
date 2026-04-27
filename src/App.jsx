@@ -1025,6 +1025,9 @@ function BirthChartResults({ result, onReset }) {
   const [memberEmail, setMemberEmail] = useState("");
   const [memberError, setMemberError] = useState(null);
   const [memberVerifying, setMemberVerifying] = useState(false);
+  const [memberVerified, setMemberVerified] = useState(() => {
+    try { return localStorage.getItem("aww_subscribed") === "true"; } catch(e) { return false; }
+  });
 
   const handleVerifyMember = async () => {
     const email = memberEmail.trim().toLowerCase();
@@ -1035,7 +1038,8 @@ function BirthChartResults({ result, onReset }) {
       const data = await res.json();
       if (data.active) {
         try { localStorage.setItem("aww_subscribed", "true"); } catch(e) {}
-        window.location.reload();
+        setMemberVerified(true);
+        setShowMemberVerify(false);
       } else {
         setMemberError("No active subscription found for that email.");
       }
@@ -1072,7 +1076,14 @@ function BirthChartResults({ result, onReset }) {
       </div>
 
       {/* CTA + Already a Member */}
-      <div style={{background:"rgba(168,224,96,0.06)",border:"1px solid rgba(168,224,96,0.2)",borderRadius:14,padding:"18px 20px",textAlign:"center",marginBottom:16}}>
+      {memberVerified ? (
+        <div style={{background:"rgba(168,224,96,0.08)",border:"1px solid rgba(168,224,96,0.3)",borderRadius:14,padding:"18px 20px",textAlign:"center",marginBottom:16,animation:"up 0.4s ease"}}>
+          <div style={{fontSize:28,marginBottom:8}}>✦</div>
+          <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:14,color:"#a8e060",marginBottom:6}}>Membership Verified!</div>
+          <p style={{fontFamily:"Georgia,serif",fontSize:13,color:"#d8c890",lineHeight:1.65,margin:0}}>You have full access. Tap any placement above to read your complete cosmic interpretation.</p>
+        </div>
+      ) : (
+        <div style={{background:"rgba(168,224,96,0.06)",border:"1px solid rgba(168,224,96,0.2)",borderRadius:14,padding:"18px 20px",textAlign:"center",marginBottom:16}}>
         <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:13,color:"#a8e060",marginBottom:8}}>Want your full reading?</div>
         <p style={{fontFamily:"Georgia,serif",fontSize:13,color:"#d8c890",lineHeight:1.65,margin:"0 0 14px"}}>Subscribe to unlock detailed interpretations for all placements, house positions, and your personal cosmic forecast.</p>
         <button className="rb" style={{"--a":"#a8e060",marginBottom:12}} onClick={()=>window.location.href=STRIPE_TRIAL_LINK}>✦ UNLOCK FULL READING</button>
@@ -1098,6 +1109,7 @@ function BirthChartResults({ result, onReset }) {
           </div>
         )}
       </div>
+      )}
 
       <div style={{textAlign:"center"}}>
         <button onClick={onReset} style={{background:"none",border:"none",color:"#4a4440",cursor:"pointer",fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,letterSpacing:".12em"}}>← READ A DIFFERENT CHART</button>
