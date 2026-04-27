@@ -1,5 +1,23 @@
 // api/birth-chart.js
 
+const SIGN_MAP = {
+  "Ari": "Aries", "Tau": "Taurus", "Gem": "Gemini", "Can": "Cancer",
+  "Leo": "Leo", "Vir": "Virgo", "Lib": "Libra", "Sco": "Scorpio",
+  "Sag": "Sagittarius", "Cap": "Capricorn", "Aqu": "Aquarius", "Pis": "Pisces",
+  // Also handle full names just in case
+  "Aries": "Aries", "Taurus": "Taurus", "Gemini": "Gemini", "Cancer": "Cancer",
+  "Virgo": "Virgo", "Libra": "Libra", "Scorpio": "Scorpio",
+  "Sagittarius": "Sagittarius", "Capricorn": "Capricorn", "Aquarius": "Aquarius", "Pisces": "Pisces",
+};
+
+const PLANET_MAP = {
+  "Sun": "Sun", "Moon": "Moon", "Mercury": "Mercury", "Venus": "Venus",
+  "Mars": "Mars", "Jupiter": "Jupiter", "Saturn": "Saturn",
+  "Uranus": "Uranus", "Neptune": "Neptune", "Pluto": "Pluto",
+  "Asc": "Rising", "Ascendant": "Rising", "Rising": "Rising",
+  "Mc": "MC", "MC": "MC",
+};
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
@@ -18,11 +36,10 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: "Invalid date or time format" });
   }
 
-  // NOTE: env var is named Astrology_Api_Key in Vercel (mixed case)
   const apiKey = process.env.Astrology_Api_Key;
 
   if (!apiKey) {
-    console.error("Missing API key — check Vercel environment variable name");
+    console.error("Missing API key");
     return res.status(500).json({ error: "API configuration error." });
   }
 
@@ -59,26 +76,36 @@ export default async function handler(req, res) {
     }
 
     const data = await response.json();
-    console.log("API response:", JSON.stringify(data).slice(0, 500));
+    console.log("API response:", JSON.stringify(data).slice(0, 800));
 
-    // Extract planet signs — handle both object and array formats
     const planets = {};
 
-    if (data.planets && typeof data.planets === "object" && !Array.isArray(data.planets)) {
-      for (const [planet, info] of Object.entries(data.planets)) {
-        if (info?.sign) planets[capitalize(planet)] = capitalize(info.sign);
-      }
-    }
+    // The API returns: { success: true, data: { positions: [...] } }
+    const positions = data?.data?.positions || data?.positions || [];
 
-    if (Array.isArray(data.planets)) {
-      data.planets.forEach(p => {
-        if (p.name && p.sign) planets[capitalize(p.name)] = capitalize(p.sign);
+    if (Array.isArray(positions)) {
+      positions.forEach(p => {
+        const planetName = PLANET_MAP[p.name] || p.name;
+        const signFull = SIGN_MAP[p.sign] || p.sign;
+        if (planetName && signFull) {
+          planets[planetName] = signFull;
+        }
       });
     }
 
-    // Rising sign
-    if (data.ascendant?.sign) planets["Rising"] = capitalize(data.ascendant.sign);
-    else if (data.houses?.ascendant?.sign) planets["Rising"] = capitalize(data.houses.ascendant.sign);
+    // Also check for ascendant/rising separately
+    const ascendant = data?.data?.ascendant || data?.ascendant;
+    if (ascendant?.sign) {
+      planets["Rising"] = SIGN_MAP[ascendant.sign] || ascendant.sign;
+    }
+
+    // Check houses for ascendant
+    const houses = data?.data?.houses || data?.houses;
+    if (houses?.ascendant?.sign && !planets["Rising"]) {
+      planets["Rising"] = SIGN_MAP[houses.ascendant.sign] || houses.ascendant.sign;
+    }
+
+    console.log("Planets extracted:", planets);
 
     return res.status(200).json({ name: name || "Your", city, planets });
 
@@ -86,9 +113,4 @@ export default async function handler(req, res) {
     console.error("Birth chart error:", error);
     return res.status(500).json({ error: "Something went wrong reading the stars. Please try again." });
   }
-}
-
-function capitalize(str) {
-  if (!str) return str;
-  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 }
