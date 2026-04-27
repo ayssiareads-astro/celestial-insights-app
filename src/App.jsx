@@ -960,7 +960,180 @@ function CancellationContent(){return(<><DocSection title="Free Trial Period"><D
 function DisclaimerContent(){return(<><DocP>All astrological content on Arewewoke is provided strictly for entertainment and personal reflection.</DocP><DocSection title="Not Professional Advice"><DocP>Nothing on Arewewoke constitutes medical, psychological, financial, legal, or any other form of professional advice.</DocP></DocSection><DocSection title="Contact"><DocP>celestial.insights.app@gmail.com</DocP></DocSection></>);}
 function CreditsContent(){return(<><DocP>Arewewoke is created and operated by Ayssia Mason.</DocP><DocSection title="Astrological Authors Referenced"><DocBullet items={["Steven Forrest — The Inner Sky, evolutionary astrology","Liz Greene — Saturn: A New Look at an Old Devil, psychological astrology","Robert Hand — Planets in Transit","Howard Sasportas — The Twelve Houses","Donna Cunningham — Moon and Venus placements","Isabel Hickey — Astrology: A Cosmic Science","Dane Rudhyar — An Astrological Mandala"]}/></DocSection><DocSection title="Contact"><DocP>celestia.insights.app@gmail.com</DocP></DocSection></>);}
 
-// Stable star particles — generated once, not on every render
+// ─── BIRTH CHART FEATURE ────────────────────────────────────────
+const CHART_PLANETS = ["Sun","Moon","Rising","Mercury","Venus","Mars","Jupiter","Saturn"];
+
+async function fetchBirthChart({ name, date, time, city, country_code }) {
+  const res = await fetch("/api/birth-chart", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name, date, time, city, country_code }),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error || "Failed to generate birth chart");
+  }
+  return res.json();
+}
+
+function PlanetCard({ planet, sign, fact, index }) {
+  const [expanded, setExpanded] = useState(false);
+  const color = colors[sign] || "#f5c842";
+  return (
+    <div onClick={() => setExpanded(e => !e)} style={{background:`linear-gradient(135deg,${color}12,rgba(0,0,0,0.3))`,border:`1px solid ${color}44`,borderRadius:14,padding:"16px 18px",cursor:"pointer",transition:"all 0.25s",animation:`up 0.5s ease ${index*0.07}s both`,position:"relative",overflow:"hidden"}}>
+      <div style={{position:"absolute",top:0,left:0,right:0,height:2,background:`linear-gradient(90deg,transparent,${color},transparent)`}}/>
+      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+        <div style={{display:"flex",alignItems:"center",gap:10}}>
+          <span style={{fontSize:20}}>{emojis[planet]}</span>
+          <div>
+            <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,color,letterSpacing:".12em"}}>{planet.toUpperCase()}</div>
+            <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:15,color:"#f5f0e0"}}>{emojis[sign]} {sign}</div>
+          </div>
+        </div>
+        <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,color,opacity:0.6,transition:"transform 0.25s",transform:expanded?"rotate(180deg)":"rotate(0deg)"}}>▼</div>
+      </div>
+      {expanded && fact && (
+        <div style={{marginTop:14,paddingTop:14,borderTop:`1px solid ${color}22`,fontFamily:"Georgia,serif",fontSize:14,color:"#d8c890",lineHeight:1.75,animation:"up 0.3s ease"}}>"{fact}"</div>
+      )}
+    </div>
+  );
+}
+
+function CosmicLoader({ name }) {
+  const messages = ["Locating your birth coordinates...","Consulting the Swiss Ephemeris...","Calculating your Rising sign...","Reading your planetary positions...","Interpreting your cosmic blueprint..."];
+  const [msgIndex, setMsgIndex] = useState(0);
+  React.useEffect(() => {
+    const interval = setInterval(() => setMsgIndex(i => (i+1) % messages.length), 600);
+    return () => clearInterval(interval);
+  }, []);
+  return (
+    <div style={{textAlign:"center",padding:"40px 0",animation:"up 0.4s ease"}}>
+      <div style={{fontSize:48,marginBottom:20,animation:"pu 1.5s ease infinite"}}>🌌</div>
+      <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:16,color:"#f5c842",marginBottom:12}}>Reading the stars for {name}...</div>
+      <div style={{fontFamily:"Georgia,serif",fontSize:13,color:"#6a6058",minHeight:20}}>{messages[msgIndex]}</div>
+      <div style={{display:"flex",gap:6,justifyContent:"center",marginTop:24}}>
+        {[0,1,2].map(i=>(<div key={i} style={{width:6,height:6,borderRadius:"50%",background:"#f5c842",animation:`pu 1s ease ${i*0.2}s infinite`}}/>))}
+      </div>
+    </div>
+  );
+}
+
+function BirthChartResults({ result, onReset }) {
+  const { name, city, planets: chartPlanets } = result;
+  const STRIPE_TRIAL_LINK = "https://buy.stripe.com/bJefZa8lH4TBetl2VL5sA01";
+  return (
+    <div style={{animation:"up 0.5s ease"}}>
+      <div style={{textAlign:"center",marginBottom:28}}>
+        <div style={{fontSize:36,marginBottom:10}}>🌌</div>
+        <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:"clamp(18px,4vw,26px)",color:"#f5c842",marginBottom:6}}>{name}'s Birth Chart</div>
+        <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,color:"#a8e060",letterSpacing:".15em"}}>✦ BORN IN {city.toUpperCase()} ✦</div>
+      </div>
+      <div style={{background:"linear-gradient(135deg,rgba(245,200,66,0.08),rgba(0,0,0,0.3))",border:"1px solid rgba(245,200,66,0.3)",borderRadius:16,padding:"18px 20px",marginBottom:20,position:"relative",overflow:"hidden"}}>
+        <div style={{position:"absolute",top:0,left:0,right:0,height:2,background:"linear-gradient(90deg,transparent,#e8a800,transparent)"}}/>
+        <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#f5c842",letterSpacing:".18em",marginBottom:14,textAlign:"center"}}>✦ YOUR BIG THREE ✦</div>
+        <div style={{display:"flex",justifyContent:"space-around"}}>
+          {["Sun","Moon","Rising"].map(p => chartPlanets[p] ? (
+            <div key={p} style={{textAlign:"center"}}>
+              <div style={{fontSize:22,marginBottom:4}}>{emojis[p]}</div>
+              <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#a8e060",letterSpacing:".1em",marginBottom:4}}>{p.toUpperCase()}</div>
+              <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:14,color:colors[chartPlanets[p]]||"#f5c842"}}>{emojis[chartPlanets[p]]} {chartPlanets[p]}</div>
+            </div>
+          ) : null)}
+        </div>
+      </div>
+      <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#f5c842",letterSpacing:".18em",marginBottom:14,textAlign:"center"}}>✦ TAP ANY PLACEMENT TO REVEAL YOUR READING ✦</div>
+      <div style={{display:"flex",flexDirection:"column",gap:10,marginBottom:24}}>
+        {CHART_PLANETS.map((planet, i) => chartPlanets[planet] ? (
+          <PlanetCard key={planet} planet={planet} sign={chartPlanets[planet]} fact={getFact(chartPlanets[planet], planet)} index={i}/>
+        ) : null)}
+      </div>
+      <div style={{background:"rgba(168,224,96,0.06)",border:"1px solid rgba(168,224,96,0.2)",borderRadius:14,padding:"18px 20px",textAlign:"center",marginBottom:16}}>
+        <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:13,color:"#a8e060",marginBottom:8}}>Want your full reading?</div>
+        <p style={{fontFamily:"Georgia,serif",fontSize:13,color:"#d8c890",lineHeight:1.65,margin:"0 0 14px"}}>Subscribe to unlock detailed interpretations for all placements, house positions, and your personal cosmic forecast.</p>
+        <button className="rb" style={{"--a":"#a8e060"}} onClick={()=>window.location.href=STRIPE_TRIAL_LINK}>✦ UNLOCK FULL READING</button>
+      </div>
+      <div style={{textAlign:"center"}}>
+        <button onClick={onReset} style={{background:"none",border:"none",color:"#4a4440",cursor:"pointer",fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,letterSpacing:".12em"}}>← READ A DIFFERENT CHART</button>
+      </div>
+    </div>
+  );
+}
+
+function BirthChart() {
+  const [stage, setStage] = useState("form");
+  const [result, setResult] = useState(null);
+  const [pendingName, setPendingName] = useState("");
+  const [step, setStep] = useState(0);
+  const [form, setForm] = useState({ name:"", date:"", time:"", city:"", country_code:"US" });
+
+  const fieldGroups = [
+    [{ key:"name", label:"What is your name?", placeholder:"Your name", type:"text", hint:"Your cosmic identifier ✦" }],
+    [{ key:"date", label:"When were you born?", placeholder:"", type:"date", hint:"Your Sun sign is determined by this" },
+     { key:"time", label:"What time were you born?", placeholder:"", type:"time", hint:"Required for your Rising sign" }],
+    [{ key:"city", label:"What city were you born in?", placeholder:"e.g. Atlanta", type:"text", hint:"City name for accurate calculations" },
+     { key:"country_code", label:"What country? (2-letter code)", placeholder:"e.g. US, GB, CA", type:"text", hint:"Helps pinpoint the exact location ✦" }],
+  ];
+
+  const currentFields = fieldGroups[step];
+  const canAdvance = currentFields.every(f => form[f.key]?.trim());
+  const isLast = step === fieldGroups.length - 1;
+
+  const handleNext = async () => {
+    if (!canAdvance) return;
+    if (isLast) {
+      setPendingName(form.name);
+      setStage("loading");
+      try {
+        const data = await fetchBirthChart(form);
+        setResult(data);
+        setStage("results");
+      } catch (err) {
+        setStage("form");
+        alert(err.message || "Something went wrong. Please try again.");
+      }
+    } else {
+      setStep(s => s + 1);
+    }
+  };
+
+  const handleReset = () => { setStage("form"); setResult(null); setStep(0); setForm({ name:"", date:"", time:"", city:"", country_code:"US" }); };
+
+  if (stage === "loading") return <CosmicLoader name={pendingName}/>;
+  if (stage === "results" && result) return <BirthChartResults result={result} onReset={handleReset}/>;
+
+  return (
+    <div style={{animation:"up 0.5s ease"}}>
+      <div style={{textAlign:"center",marginBottom:28}}>
+        <div style={{fontSize:36,marginBottom:10}}>🌌</div>
+        <h2 style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:24,color:"#f5c842",margin:"0 0 8px"}}>Birth Chart Reading</h2>
+        <p style={{fontFamily:"Georgia,serif",color:"#a8e060",fontSize:14,margin:0,lineHeight:1.65}}>Enter your birth details for a complete reading of your planetary placements.</p>
+      </div>
+      <div style={{display:"flex",gap:8,justifyContent:"center",marginBottom:28}}>
+        {fieldGroups.map((_,i)=>(<div key={i} style={{width:8,height:8,borderRadius:"50%",background:i<step?"#a8e060":i===step?"#f5c842":"rgba(255,255,255,0.15)",transition:"all 0.3s"}}/>))}
+      </div>
+      {currentFields.map((field, fi) => (
+        <div key={field.key} style={{marginBottom:20,animation:`up 0.4s ease ${fi*0.1}s both`}}>
+          <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:"clamp(16px,3.5vw,22px)",color:"#f5c842",marginBottom:8,lineHeight:1.3}}>{field.label}</div>
+          <input type={field.type} placeholder={field.placeholder} value={form[field.key]}
+            onChange={e=>setForm(f=>({...f,[field.key]:e.target.value}))}
+            onKeyDown={e=>e.key==="Enter"&&handleNext()}
+            style={{width:"100%",boxSizing:"border-box",padding:"14px 18px",borderRadius:12,border:`1.5px solid ${form[field.key]?"rgba(245,200,66,0.5)":"rgba(255,200,50,0.2)"}`,background:"rgba(255,200,50,0.04)",color:"#f5f0e0",fontFamily:"Georgia,serif",fontSize:16,outline:"none",transition:"border-color 0.2s",colorScheme:"dark"}}/>
+          <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#4a4440",letterSpacing:".1em",marginTop:6}}>{field.hint}</div>
+        </div>
+      ))}
+      <div style={{display:"flex",gap:10,marginTop:8}}>
+        {step > 0 && (
+          <button onClick={()=>setStep(s=>s-1)} style={{background:"none",border:"1px solid rgba(255,200,50,0.2)",color:"#6a6058",padding:"12px 20px",borderRadius:"100px",fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,letterSpacing:".1em",cursor:"pointer"}}>← BACK</button>
+        )}
+        <button onClick={handleNext} disabled={!canAdvance} className="rb" style={{"--a":"#e8a800",flex:1,opacity:canAdvance?1:0.4,cursor:canAdvance?"pointer":"default"}}>
+          {isLast ? "✦ REVEAL MY BIRTH CHART" : "✦ CONTINUE"}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ─── STAR PARTICLES & TAURUS HELPERS ────────────────────────────
 const STAR_PARTICLES = [...Array(70)].map((_,i) => ({
   size: Math.random()*2.5+0.4,
   color: i%7===0 ? ("rgba(168,224,96,"+(Math.random()*0.5+0.2)+")") : ("rgba(255,200,50,"+(Math.random()*0.5+0.15)+")"),
@@ -1024,6 +1197,7 @@ export default function AstrologyApp() {
 
   const tabs = [
     {label:"🌠 Daily Horoscope",key:"horoscope"},
+    {label:"🌌 Birth Chart",key:"birthchart"},
     {label:"🔮 Game",key:"guess"},
     {label:"🌟 Celebrity",key:"celebrity"},
     {label:"✦ Fun Facts",key:"facts"},
@@ -1061,6 +1235,7 @@ export default function AstrologyApp() {
         </div>
 
         {topTab==="horoscope" && <DailyHoroscope />}
+        {topTab==="birthchart" && <BirthChart />}
         {topTab==="celebrity" && <CelebrityConnection />}
         <div style={{display:topTab==="guess"?"block":"none"}}><ZodiacQuiz /></div>
 
