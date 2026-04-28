@@ -1182,15 +1182,20 @@ function ReportAccordion({ report }) {
 
   if (!sections.length) return null;
 
-  // Filter out basic planet-in-sign sections AND standalone Ascendant (shown as Rising already)
+  // Filter out basic planet-in-sign sections, standalone Ascendant, and redundant angle-in-house entries
   const isBasicSignSection = (title) => {
     const t = (title || "").toLowerCase();
     const planets = ["sun","moon","mercury","venus","mars","jupiter","saturn","uranus","neptune","pluto"];
     const signs = ["aries","taurus","gemini","cancer","leo","virgo","libra","scorpio","sagittarius","capricorn","aquarius","pisces","cap","lib","sco","vir","sag","pis","aqu","gem","can","ari","tau"];
     const hasHouse = t.includes("house");
     const hasDeep = t.includes("medium") || t.includes("coeli") || t.includes("aspect") || t.includes("pattern") || t.includes("overview") || t.includes("theme") || t.includes("node");
-    // Remove standalone "Ascendant in X" — Rising is already shown in Big Three
+    // Remove standalone "Ascendant in X" — Rising already shown in Big Three
     if ((t.startsWith("ascendant") || t.startsWith("asc")) && !hasHouse && !hasDeep) return true;
+    // Remove "Ascendant in House 1" and "Medium Coeli in House 10" — redundant
+    if (t.includes("ascendant") && t.includes("house")) return true;
+    if ((t.includes("medium") || t.includes("coeli") || t.includes("midheaven")) && t.includes("house")) return true;
+    // Remove standalone Medium Coeli / MC sections
+    if ((t.startsWith("medium") || t.startsWith("medium_coeli") || t.startsWith("midheaven")) && !hasHouse) return true;
     if (hasHouse || hasDeep) return false;
     const hasPlanet = planets.some(p => t.startsWith(p) || t.includes(" " + p + " "));
     const hasSign = signs.some(s => t.endsWith(s) || t.includes(" in " + s) || t.includes(" in " + s.slice(0,3)));
@@ -1200,17 +1205,15 @@ function ReportAccordion({ report }) {
   const filtered = sections.filter(s => !isBasicSignSection(s.title));
   if (!filtered.length) return null;
 
-  // Group into categories
+  // Group into categories — no angles group since we removed those
   const getGroup = (title) => {
     const t = (title || "").toLowerCase();
-    if (t.includes("ascendant") || t.includes("rising") || t.includes("medium") || t.includes("coeli") || t.includes("mc") || t.includes("ac")) return "angles";
     if (t.includes("house")) return "houses";
     if (t.includes("aspect") || t.includes("pattern")) return "aspects";
     return "other";
   };
 
   const groups = {
-    angles: { label:"⬆️ Angles & Chart Points", color:"#d4a5c9", sections:[] },
     houses: { label:"🏠 Planets in Houses", color:"#f5c842", sections:[] },
     aspects: { label:"✦ Aspects & Patterns", color:"#a8e060", sections:[] },
     other:   { label:"📖 Chart Overview", color:"#5bc8d8", sections:[] },
