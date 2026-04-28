@@ -78,12 +78,15 @@ export default async function handler(req, res) {
   };
 
   try {
-    // ── Step 1: Planetary positions (required) ────────────────
-    const positionsRes = await fetch("https://api.astrology-api.io/api/v3/data/positions", {
-      method: "POST",
-      headers,
-      body: JSON.stringify({ subject }),
-    });
+    // ── Step 1: Positions + global positions in parallel ─────
+    const [positionsRes, globalRes] = await Promise.all([
+      fetch("https://api.astrology-api.io/api/v3/data/positions", {
+        method: "POST", headers, body: JSON.stringify({ subject }),
+      }),
+      fetch("https://api.astrology-api.io/api/v3/data/global-positions", {
+        method: "POST", headers, body: JSON.stringify({ subject }),
+      }),
+    ]);
 
     if (!positionsRes.ok) {
       const err = await positionsRes.json().catch(() => ({}));
@@ -108,6 +111,26 @@ export default async function handler(req, res) {
           console.log(`Mapped: ${p.name} -> ${planetName} in ${p.sign} -> ${signFull}`);
         }
       });
+    }
+
+    // ── Outer planets from global-positions ──────────────────
+    if (globalRes.ok) {
+      const globalData = await globalRes.json();
+      const globalPositions = globalData?.data?.positions || globalData?.positions || [];
+      console.log("Global positions:", JSON.stringify(globalPositions.map(p => ({ name: p.name, sign: p.sign }))));
+      if (Array.isArray(globalPositions)) {
+        globalPositions.forEach(p => {
+          const planetName = PLANET_MAP[p.name] || PLANET_MAP[p.name?.toLowerCase()] || p.name;
+          const signFull = SIGN_MAP[p.sign] || SIGN_MAP[p.sign?.toLowerCase()] || p.sign;
+          // Only add if not already mapped (outer planets only)
+          if (planetName && signFull && !planets[planetName]) {
+            planets[planetName] = signFull;
+            console.log(`Global mapped: ${p.name} -> ${planetName} in ${p.sign} -> ${signFull}`);
+          }
+        });
+      }
+    } else {
+      console.warn("Global positions failed:", globalRes.status);
     }
 
     // ── Step 2: Rising sign — try positions array first (most reliable) ──
@@ -144,125 +167,65 @@ export default async function handler(req, res) {
       }
     }
 
-    // ── Steps 3–5: Paid-tier data (run in parallel) ───────────
-    const [aspectsData, reportData, chartData] = await Promise.all([
+    console.log("Final planets:", planets);
 
-      // Aspects
-      safeFetch(
-        "https://api.astrology-api.io/api/v3/data/aspects",
-        { subject, house_system: "whole_sign" },
-        "Aspects"
-      ),
-
-      // Natal report (written interpretations)
-      safeFetch(
-        "https://api.astrology-api.io/api/v3/analysis/natal-report",
-        { subject, house_system: "whole_sign" },
-        "NatalReport"
-      ),
-
-      // SVG chart render
-      safeFetch(
-        "https://api.astrology-api.io/api/v3/render/natal",
-        {
-          subject,
-          house_system: "whole_sign",
-          options: { format: "svg", width: 600 },
-        },
-        "ChartRender"
-      ),
-    ]);
-
-    // ── Parse aspects ─────────────────────────────────────────
-    const aspects = [];
-    const rawAspects =
-      aspectsData?.data?.aspects ||
-      aspectsData?.aspects ||
-      [];
-
-    if (Array.isArray(rawAspects)) {
-      rawAspects.forEach(a => {
-        const p1 = PLANET_MAP[a.planet1] || a.planet1;
-        const p2 = PLANET_MAP[a.planet2] || a.planet2;
-        const type = a.aspect || a.type || a.name || "";
-        const orb = a.orb != null ? parseFloat(a.orb).toFixed(1) : null;
-        if (p1 && p2 && type) {
-          aspects.push({ planet1: p1, planet2: p2, type, orb });
-        }
-      });
-    }
-
-    // ── Parse natal report ────────────────────────────────────
-    // The API returns { data: { subject: {...}, interpretations: [...] } }
-    // where interpretations is an array of { title, text, components, astrological_data }
+    // ── Paid-tier data only ───────────────────────────────────
+    let aspects = [];
     let report = null;
-    if (reportData) {
-      const d = reportData?.data || reportData;
+    let chartSvg = null;
 
-      // Primary format: array of {title, text} interpretation objects
-      const interps =
-        d?.interpretations ||
-        d?.report ||
-        d?.sections ||
-        d?.data ||
-        null;
+    if (paid) {
+      const [aspectsData, reportData] = await Promise.all([
+        safeFetch("https://api.astrology-api.io/api/v3/data/aspects", { subject }, "Aspects"),
+        safeFetch("https://api.astrology-api.io/api/v3/analysis/natal-report", { subject, tradition: "psychological" }, "NatalReport"),
+      ]);
 
-      // ── Correct Rising sign from report if available ─────────
-      // The natal report's "Ascendant in X" section is the most reliable source
-      if (Array.isArray(interps)) {
-        const ascSection = interps.find(s =>
-          s.title && (
-            s.title.toLowerCase().startsWith("ascendant") ||
-            s.title.toLowerCase().startsWith("asc ")
-          ) && !s.title.toLowerCase().includes("house")
-        );
-        if (ascSection?.title) {
-          const match = ascSection.title.match(/\bin\s+([A-Za-z]+)/i);
-          if (match) {
-            const reportSign = SIGN_MAP[match[1]] || (match[1].charAt(0).toUpperCase() + match[1].slice(1).toLowerCase());
-            if (reportSign && reportSign !== planets["Rising"]) {
-              console.log(`Correcting Rising from ${planets["Rising"]} to ${reportSign} (from report)`);
-              planets["Rising"] = reportSign;
+      // Parse aspects
+      const rawAspects = aspectsData?.data?.aspects || aspectsData?.aspects || [];
+      console.log("Raw aspects sample:", JSON.stringify(rawAspects).slice(0, 400));
+      if (Array.isArray(rawAspects)) {
+        rawAspects.forEach(a => {
+          const p1 = PLANET_MAP[a.planet1] || PLANET_MAP[a.planet1?.toLowerCase()] || a.planet1;
+          const p2 = PLANET_MAP[a.planet2] || PLANET_MAP[a.planet2?.toLowerCase()] || a.planet2;
+          const type = a.aspect || a.type || a.name || "";
+          const orb = a.orb != null ? parseFloat(a.orb).toFixed(1) : null;
+          if (p1 && p2 && type) aspects.push({ planet1: p1, planet2: p2, type, orb });
+        });
+      }
+
+      // Parse natal report
+      if (reportData) {
+        const d = reportData?.data || reportData;
+        const interps = d?.interpretations || d?.report || d?.sections || d?.data || null;
+
+        // Correct Rising from report if available
+        if (Array.isArray(interps)) {
+          const ascSection = interps.find(s =>
+            s.title && s.title.toLowerCase().startsWith("ascendant") && !s.title.toLowerCase().includes("house")
+          );
+          if (ascSection?.title) {
+            const match = ascSection.title.match(/\bin\s+([A-Za-z]+)/i);
+            if (match) {
+              const reportSign = SIGN_MAP[match[1]] || (match[1].charAt(0).toUpperCase() + match[1].slice(1).toLowerCase());
+              if (reportSign && reportSign !== planets["Rising"]) {
+                console.log(`Correcting Rising from ${planets["Rising"]} to ${reportSign}`);
+                planets["Rising"] = reportSign;
+              }
             }
           }
         }
+
+        if (Array.isArray(interps) && interps.length > 0) {
+          report = interps.filter(s => s.title && s.text && typeof s.text === "string" && s.text.length > 20)
+            .map(s => ({ title: s.title, text: s.text }));
+        } else if (typeof d === "string") {
+          report = d;
+        }
       }
 
-      if (Array.isArray(interps) && interps.length > 0) {
-        // Filter to only entries that have both a title and meaningful text
-        report = interps
-          .filter(s => s.title && s.text && typeof s.text === "string" && s.text.length > 20)
-          .map(s => ({ title: s.title, text: s.text }));
-      } else if (typeof d === "string") {
-        report = d;
-      } else if (typeof d?.content === "string") {
-        report = d.content;
-      } else {
-        // Log full shape so we can adjust next time
-        console.warn("Unrecognised report shape:", JSON.stringify(d).slice(0, 500));
-        report = null;
-      }
+      console.log("Aspects count:", aspects.length);
+      console.log("Report sections:", Array.isArray(report) ? report.length : (report ? "string" : "none"));
     }
-
-    // ── Parse SVG chart ───────────────────────────────────────
-    let chartSvg = null;
-    if (chartData) {
-      const d = chartData?.data || chartData;
-      if (typeof d === "string" && d.trim().startsWith("<svg")) {
-        chartSvg = d;
-      } else if (typeof d?.svg === "string") {
-        chartSvg = d.svg;
-      } else if (typeof d?.chart === "string") {
-        chartSvg = d.chart;
-      } else if (typeof d?.content === "string" && d.content.trim().startsWith("<svg")) {
-        chartSvg = d.content;
-      }
-    }
-
-    console.log("Final planets:", planets);
-    console.log("Aspects count:", aspects.length);
-    console.log("Report length:", report?.length || 0);
-    console.log("Chart SVG:", chartSvg ? "received" : "none");
 
     return res.status(200).json({
       name: name || "Your",
