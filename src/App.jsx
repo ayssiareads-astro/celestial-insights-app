@@ -963,11 +963,11 @@ function CreditsContent(){return(<><DocP>Arewewoke is created and operated by Ay
 // ─── BIRTH CHART FEATURE ────────────────────────────────────────
 const CHART_PLANETS = ["Sun","Moon","Rising","Mercury","Venus","Mars","Jupiter","Saturn","Uranus","Neptune","Pluto"];
 
-async function fetchBirthChart({ name, date, time, city, country_code }) {
+async function fetchBirthChart({ name, date, time, city, country_code, paid }) {
   const res = await fetch("/api/birth-chart", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name, date, time, city, country_code }),
+    body: JSON.stringify({ name, date, time, city, country_code, paid }),
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
@@ -1281,7 +1281,8 @@ function BirthChart() {
       setPendingName(form.name);
       setStage("loading");
       try {
-        const data = await fetchBirthChart(form);
+        const isSubscribed = (() => { try { return localStorage.getItem("aww_subscribed") === "true"; } catch(e) { return false; } })();
+        const data = await fetchBirthChart({ ...form, paid: isSubscribed });
         setResult(data);
         setStage("results");
       } catch (err) {
