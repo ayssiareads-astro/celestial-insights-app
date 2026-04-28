@@ -961,7 +961,7 @@ function DisclaimerContent(){return(<><DocP>All astrological content on Arewewok
 function CreditsContent(){return(<><DocP>Arewewoke is created and operated by Ayssia Mason.</DocP><DocSection title="Astrological Authors Referenced"><DocBullet items={["Steven Forrest — The Inner Sky, evolutionary astrology","Liz Greene — Saturn: A New Look at an Old Devil, psychological astrology","Robert Hand — Planets in Transit","Howard Sasportas — The Twelve Houses","Donna Cunningham — Moon and Venus placements","Isabel Hickey — Astrology: A Cosmic Science","Dane Rudhyar — An Astrological Mandala"]}/></DocSection><DocSection title="Contact"><DocP>celestia.insights.app@gmail.com</DocP></DocSection></>);}
 
 // ─── BIRTH CHART FEATURE ────────────────────────────────────────
-const CHART_PLANETS = ["Sun","Moon","Rising","Mercury","Venus","Mars","Jupiter","Saturn"];
+const CHART_PLANETS = ["Sun","Moon","Rising","Mercury","Venus","Mars","Jupiter","Saturn","Uranus","Neptune","Pluto"];
 
 async function fetchBirthChart({ name, date, time, city, country_code }) {
   const res = await fetch("/api/birth-chart", {
@@ -1040,6 +1040,8 @@ function BirthChartResults({ result, onReset }) {
         try { localStorage.setItem("aww_subscribed", "true"); } catch(e) {}
         setMemberVerified(true);
         setShowMemberVerify(false);
+        setMemberEmail("");
+        setMemberError(null);
       } else {
         setMemberError("No active subscription found for that email.");
       }
@@ -1071,7 +1073,7 @@ function BirthChartResults({ result, onReset }) {
       <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#f5c842",letterSpacing:".18em",marginBottom:14,textAlign:"center"}}>✦ TAP ANY PLACEMENT TO REVEAL YOUR READING ✦</div>
       <div style={{display:"flex",flexDirection:"column",gap:10,marginBottom:24}}>
         {CHART_PLANETS.map((planet, i) => chartPlanets[planet] ? (
-          <PlanetCard key={planet} planet={planet} sign={chartPlanets[planet]} fact={getFact(chartPlanets[planet], planet)} index={i}/>
+          <PlanetCard key={planet + memberVerified} planet={planet} sign={chartPlanets[planet]} fact={getFact(chartPlanets[planet], planet)} index={i}/>
         ) : null)}
       </div>
 
