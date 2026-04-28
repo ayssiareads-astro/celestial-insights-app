@@ -26,7 +26,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const { name, date, time, city, country_code } = req.body;
+  const { name, date, time, city, country_code, paid } = req.body;
 
   if (!date || !time || !city) {
     return res.status(400).json({ error: "date, time, and city are required" });
