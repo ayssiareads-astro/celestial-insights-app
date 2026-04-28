@@ -21,7 +21,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const { name, date, time, city, country_code } = req.body;
+  const { name, date, time, city, country_code, paid } = req.body;
 
   if (!date || !time || !city) {
     return res.status(400).json({ error: "date, time, and city are required" });
@@ -121,8 +121,16 @@ export default async function handler(req, res) {
       }
     }
 
-    // ── Steps 3–5: Paid-tier data (run in parallel) ───────────
-    const [aspectsData, reportData, chartData] = await Promise.all([
+    // ── Steps 3–5: Paid-tier data only ───────────────────────
+    // Only fetch for verified subscribers — saves API credits for free users
+    let aspects = [];
+    let report = null;
+    let chartSvg = null;
+
+    if (paid) {
+      console.log("Paid user — fetching aspects, report, chart...");
+
+      const [aspectsData, reportData, chartData] = await Promise.all([
 
       // Aspects
       safeFetch(
@@ -150,7 +158,6 @@ export default async function handler(req, res) {
     ]);
 
     // ── Parse aspects ─────────────────────────────────────────
-    const aspects = [];
     const rawAspects =
       aspectsData?.data?.aspects ||
       aspectsData?.aspects ||
@@ -169,13 +176,8 @@ export default async function handler(req, res) {
     }
 
     // ── Parse natal report ────────────────────────────────────
-    // The API returns { data: { subject: {...}, interpretations: [...] } }
-    // where interpretations is an array of { title, text, components, astrological_data }
-    let report = null;
     if (reportData) {
       const d = reportData?.data || reportData;
-
-      // Primary format: array of {title, text} interpretation objects
       const interps =
         d?.interpretations ||
         d?.report ||
@@ -184,8 +186,6 @@ export default async function handler(req, res) {
         null;
 
       if (Array.isArray(interps) && interps.length > 0) {
-        // Filter to only entries that have both a title and meaningful text,
-        // and exclude entries whose title looks like raw JSON or metadata
         report = interps
           .filter(s => s.title && s.text && typeof s.text === "string" && s.text.length > 20)
           .map(s => ({ title: s.title, text: s.text }));
@@ -194,14 +194,12 @@ export default async function handler(req, res) {
       } else if (typeof d?.content === "string") {
         report = d.content;
       } else {
-        // Log full shape so we can adjust next time
         console.warn("Unrecognised report shape:", JSON.stringify(d).slice(0, 500));
         report = null;
       }
     }
 
     // ── Parse SVG chart ───────────────────────────────────────
-    let chartSvg = null;
     if (chartData) {
       const d = chartData?.data || chartData;
       if (typeof d === "string" && d.trim().startsWith("<svg")) {
@@ -215,10 +213,11 @@ export default async function handler(req, res) {
       }
     }
 
-    console.log("Final planets:", planets);
     console.log("Aspects count:", aspects.length);
-    console.log("Report length:", report?.length || 0);
+    console.log("Report sections:", Array.isArray(report) ? report.length : (report ? "string" : "none"));
     console.log("Chart SVG:", chartSvg ? "received" : "none");
+
+    } // end if (paid)
 
     return res.status(200).json({
       name: name || "Your",
