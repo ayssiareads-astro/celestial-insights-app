@@ -21,7 +21,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const { name, date, time, city, country_code, paid } = req.body;
+  const { name, date, time, city, country_code } = req.body;
 
   if (!date || !time || !city) {
     return res.status(400).json({ error: "date, time, and city are required" });
@@ -47,6 +47,7 @@ export default async function handler(req, res) {
       ...(country_code ? { country_code: country_code.toUpperCase() } : {}),
     },
     name: name || "Subject",
+    house_system: "whole_sign",
   };
 
   const headers = {
@@ -99,50 +100,54 @@ export default async function handler(req, res) {
       });
     }
 
-    // ── Step 2: Rising sign from house cusps (optional) ───────
-    const housesData = await safeFetch(
-      "https://api.astrology-api.io/api/v3/data/house-cusps",
-      { subject },
-      "Houses"
+    // ── Step 2: Rising sign — try positions array first (most reliable) ──
+    // The positions endpoint sometimes includes Asc directly
+    const ascFromPositions = positions.find(p =>
+      p.name === "Asc" || p.name === "Ascendant" || p.name === "Rising"
     );
+    if (ascFromPositions?.sign) {
+      planets["Rising"] = SIGN_MAP[ascFromPositions.sign] || ascFromPositions.sign;
+      console.log("Rising from positions array:", planets["Rising"]);
+    }
 
-    if (housesData) {
-      const d = housesData?.data || housesData;
-      if (d?.ascendant?.sign) {
-        planets["Rising"] = SIGN_MAP[d.ascendant.sign] || d.ascendant.sign;
-      } else if (Array.isArray(d?.houses)) {
-        const h1 = d.houses.find(h => h.house === 1 || h.number === 1 || h.name === "I");
-        if (h1?.sign) planets["Rising"] = SIGN_MAP[h1.sign] || h1.sign;
-      } else if (Array.isArray(d?.cusps) && d.cusps[0]?.sign) {
-        planets["Rising"] = SIGN_MAP[d.cusps[0].sign] || d.cusps[0].sign;
-      } else if (Array.isArray(d?.positions)) {
-        const asc = d.positions.find(p => p.name === "Asc" || p.name === "Ascendant");
-        if (asc?.sign) planets["Rising"] = SIGN_MAP[asc.sign] || asc.sign;
+    // ── Step 3: House cusps fallback for Rising ───────────────
+    if (!planets["Rising"]) {
+      const housesData = await safeFetch(
+        "https://api.astrology-api.io/api/v3/data/house-cusps",
+        { subject, house_system: "whole_sign" },
+        "Houses"
+      );
+      if (housesData) {
+        const d = housesData?.data || housesData;
+        if (d?.ascendant?.sign) {
+          planets["Rising"] = SIGN_MAP[d.ascendant.sign] || d.ascendant.sign;
+        } else if (Array.isArray(d?.houses)) {
+          const h1 = d.houses.find(h => h.house === 1 || h.number === 1 || h.name === "I");
+          if (h1?.sign) planets["Rising"] = SIGN_MAP[h1.sign] || h1.sign;
+        } else if (Array.isArray(d?.cusps) && d.cusps[0]?.sign) {
+          planets["Rising"] = SIGN_MAP[d.cusps[0].sign] || d.cusps[0].sign;
+        } else if (Array.isArray(d?.positions)) {
+          const asc = d.positions.find(p => p.name === "Asc" || p.name === "Ascendant");
+          if (asc?.sign) planets["Rising"] = SIGN_MAP[asc.sign] || asc.sign;
+        }
+        console.log("Rising from house-cusps:", planets["Rising"]);
       }
     }
 
-    // ── Steps 3–5: Paid-tier data only ───────────────────────
-    // Only fetch for verified subscribers — saves API credits for free users
-    let aspects = [];
-    let report = null;
-    let chartSvg = null;
-
-    if (paid) {
-      console.log("Paid user — fetching aspects, report, chart...");
-
-      const [aspectsData, reportData, chartData] = await Promise.all([
+    // ── Steps 3–5: Paid-tier data (run in parallel) ───────────
+    const [aspectsData, reportData, chartData] = await Promise.all([
 
       // Aspects
       safeFetch(
         "https://api.astrology-api.io/api/v3/data/aspects",
-        { subject },
+        { subject, house_system: "whole_sign" },
         "Aspects"
       ),
 
       // Natal report (written interpretations)
       safeFetch(
         "https://api.astrology-api.io/api/v3/analysis/natal-report",
-        { subject },
+        { subject, house_system: "whole_sign" },
         "NatalReport"
       ),
 
@@ -151,6 +156,7 @@ export default async function handler(req, res) {
         "https://api.astrology-api.io/api/v3/render/natal",
         {
           subject,
+          house_system: "whole_sign",
           options: { format: "svg", width: 600 },
         },
         "ChartRender"
@@ -158,6 +164,7 @@ export default async function handler(req, res) {
     ]);
 
     // ── Parse aspects ─────────────────────────────────────────
+    const aspects = [];
     const rawAspects =
       aspectsData?.data?.aspects ||
       aspectsData?.aspects ||
@@ -176,8 +183,13 @@ export default async function handler(req, res) {
     }
 
     // ── Parse natal report ────────────────────────────────────
+    // The API returns { data: { subject: {...}, interpretations: [...] } }
+    // where interpretations is an array of { title, text, components, astrological_data }
+    let report = null;
     if (reportData) {
       const d = reportData?.data || reportData;
+
+      // Primary format: array of {title, text} interpretation objects
       const interps =
         d?.interpretations ||
         d?.report ||
@@ -185,7 +197,29 @@ export default async function handler(req, res) {
         d?.data ||
         null;
 
+      // ── Correct Rising sign from report if available ─────────
+      // The natal report's "Ascendant in X" section is the most reliable source
+      if (Array.isArray(interps)) {
+        const ascSection = interps.find(s =>
+          s.title && (
+            s.title.toLowerCase().startsWith("ascendant") ||
+            s.title.toLowerCase().startsWith("asc ")
+          ) && !s.title.toLowerCase().includes("house")
+        );
+        if (ascSection?.title) {
+          const match = ascSection.title.match(/\bin\s+([A-Za-z]+)/i);
+          if (match) {
+            const reportSign = SIGN_MAP[match[1]] || (match[1].charAt(0).toUpperCase() + match[1].slice(1).toLowerCase());
+            if (reportSign && reportSign !== planets["Rising"]) {
+              console.log(`Correcting Rising from ${planets["Rising"]} to ${reportSign} (from report)`);
+              planets["Rising"] = reportSign;
+            }
+          }
+        }
+      }
+
       if (Array.isArray(interps) && interps.length > 0) {
+        // Filter to only entries that have both a title and meaningful text
         report = interps
           .filter(s => s.title && s.text && typeof s.text === "string" && s.text.length > 20)
           .map(s => ({ title: s.title, text: s.text }));
@@ -194,12 +228,14 @@ export default async function handler(req, res) {
       } else if (typeof d?.content === "string") {
         report = d.content;
       } else {
+        // Log full shape so we can adjust next time
         console.warn("Unrecognised report shape:", JSON.stringify(d).slice(0, 500));
         report = null;
       }
     }
 
     // ── Parse SVG chart ───────────────────────────────────────
+    let chartSvg = null;
     if (chartData) {
       const d = chartData?.data || chartData;
       if (typeof d === "string" && d.trim().startsWith("<svg")) {
@@ -213,11 +249,10 @@ export default async function handler(req, res) {
       }
     }
 
+    console.log("Final planets:", planets);
     console.log("Aspects count:", aspects.length);
-    console.log("Report sections:", Array.isArray(report) ? report.length : (report ? "string" : "none"));
+    console.log("Report length:", report?.length || 0);
     console.log("Chart SVG:", chartSvg ? "received" : "none");
-
-    } // end if (paid)
 
     return res.status(200).json({
       name: name || "Your",
