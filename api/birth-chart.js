@@ -54,8 +54,25 @@ export default async function handler(req, res) {
     "Authorization": `Bearer ${apiKey}`,
   };
 
+  // ── Helper: safe fetch that never throws ──────────────────────
+  const safeFetch = async (url, body, label) => {
+    try {
+      const r = await fetch(url, { method: "POST", headers, body: JSON.stringify(body) });
+      if (!r.ok) {
+        console.warn(`${label} failed:`, r.status);
+        return null;
+      }
+      const json = await r.json();
+      console.log(`${label} OK:`, JSON.stringify(json).slice(0, 300));
+      return json;
+    } catch (err) {
+      console.warn(`${label} threw:`, err.message);
+      return null;
+    }
+  };
+
   try {
-    // ── Step 1: Get planetary positions (required) ─────────────
+    // ── Step 1: Planetary positions (required) ────────────────
     const positionsRes = await fetch("https://api.astrology-api.io/api/v3/data/positions", {
       method: "POST",
       headers,
@@ -71,8 +88,6 @@ export default async function handler(req, res) {
     }
 
     const posData = await positionsRes.json();
-    console.log("Positions OK:", JSON.stringify(posData).slice(0, 500));
-
     const planets = {};
     const positions = posData?.data?.positions || posData?.positions || [];
 
@@ -84,42 +99,133 @@ export default async function handler(req, res) {
       });
     }
 
-    // ── Step 2: Get Rising sign from house cusps (optional) ────
-    try {
-      const housesRes = await fetch("https://api.astrology-api.io/api/v3/data/house-cusps", {
-        method: "POST",
-        headers,
-        body: JSON.stringify({ subject }),
-      });
+    // ── Step 2: Rising sign from house cusps (optional) ───────
+    const housesData = await safeFetch(
+      "https://api.astrology-api.io/api/v3/data/house-cusps",
+      { subject },
+      "Houses"
+    );
 
-      if (housesRes.ok) {
-        const housesData = await housesRes.json();
-        console.log("Houses OK:", JSON.stringify(housesData).slice(0, 500));
-        const d = housesData?.data || housesData;
-
-        if (d?.ascendant?.sign) {
-          planets["Rising"] = SIGN_MAP[d.ascendant.sign] || d.ascendant.sign;
-        } else if (Array.isArray(d?.houses)) {
-          const h1 = d.houses.find(h => h.house === 1 || h.number === 1 || h.name === "I");
-          if (h1?.sign) planets["Rising"] = SIGN_MAP[h1.sign] || h1.sign;
-        } else if (Array.isArray(d?.cusps) && d.cusps[0]?.sign) {
-          planets["Rising"] = SIGN_MAP[d.cusps[0].sign] || d.cusps[0].sign;
-        } else if (Array.isArray(d?.positions)) {
-          const asc = d.positions.find(p => p.name === "Asc" || p.name === "Ascendant");
-          if (asc?.sign) planets["Rising"] = SIGN_MAP[asc.sign] || asc.sign;
-        }
-      } else {
-        console.warn("Houses call failed:", housesRes.status, "— continuing without Rising");
+    if (housesData) {
+      const d = housesData?.data || housesData;
+      if (d?.ascendant?.sign) {
+        planets["Rising"] = SIGN_MAP[d.ascendant.sign] || d.ascendant.sign;
+      } else if (Array.isArray(d?.houses)) {
+        const h1 = d.houses.find(h => h.house === 1 || h.number === 1 || h.name === "I");
+        if (h1?.sign) planets["Rising"] = SIGN_MAP[h1.sign] || h1.sign;
+      } else if (Array.isArray(d?.cusps) && d.cusps[0]?.sign) {
+        planets["Rising"] = SIGN_MAP[d.cusps[0].sign] || d.cusps[0].sign;
+      } else if (Array.isArray(d?.positions)) {
+        const asc = d.positions.find(p => p.name === "Asc" || p.name === "Ascendant");
+        if (asc?.sign) planets["Rising"] = SIGN_MAP[asc.sign] || asc.sign;
       }
-    } catch (housesErr) {
-      console.warn("Houses call threw error:", housesErr.message, "— continuing without Rising");
+    }
+
+    // ── Steps 3–5: Paid-tier data (run in parallel) ───────────
+    const [aspectsData, reportData, chartData] = await Promise.all([
+
+      // Aspects
+      safeFetch(
+        "https://api.astrology-api.io/api/v3/data/aspects",
+        { subject },
+        "Aspects"
+      ),
+
+      // Natal report (written interpretations)
+      safeFetch(
+        "https://api.astrology-api.io/api/v3/analysis/natal-report",
+        { subject },
+        "NatalReport"
+      ),
+
+      // SVG chart render
+      safeFetch(
+        "https://api.astrology-api.io/api/v3/render/natal",
+        {
+          subject,
+          options: { format: "svg", width: 600 },
+        },
+        "ChartRender"
+      ),
+    ]);
+
+    // ── Parse aspects ─────────────────────────────────────────
+    const aspects = [];
+    const rawAspects =
+      aspectsData?.data?.aspects ||
+      aspectsData?.aspects ||
+      [];
+
+    if (Array.isArray(rawAspects)) {
+      rawAspects.forEach(a => {
+        const p1 = PLANET_MAP[a.planet1] || a.planet1;
+        const p2 = PLANET_MAP[a.planet2] || a.planet2;
+        const type = a.aspect || a.type || a.name || "";
+        const orb = a.orb != null ? parseFloat(a.orb).toFixed(1) : null;
+        if (p1 && p2 && type) {
+          aspects.push({ planet1: p1, planet2: p2, type, orb });
+        }
+      });
+    }
+
+    // ── Parse natal report ────────────────────────────────────
+    // The API may return the report as a string, nested object, or sections array.
+    // We normalise to a plain string so the frontend just renders it.
+    let report = null;
+    if (reportData) {
+      const d = reportData?.data || reportData;
+      if (typeof d === "string") {
+        report = d;
+      } else if (typeof d?.report === "string") {
+        report = d.report;
+      } else if (typeof d?.content === "string") {
+        report = d.content;
+      } else if (typeof d?.text === "string") {
+        report = d.text;
+      } else if (Array.isArray(d?.sections)) {
+        // Some APIs return an array of {title, content} sections
+        report = d.sections
+          .map(s => `**${s.title || s.name || ""}**\n${s.content || s.text || ""}`)
+          .join("\n\n");
+      } else {
+        // Last resort — stringify so we at least have something to inspect
+        report = JSON.stringify(d);
+      }
+    }
+
+    // ── Parse SVG chart ───────────────────────────────────────
+    let chartSvg = null;
+    if (chartData) {
+      const d = chartData?.data || chartData;
+      if (typeof d === "string" && d.trim().startsWith("<svg")) {
+        chartSvg = d;
+      } else if (typeof d?.svg === "string") {
+        chartSvg = d.svg;
+      } else if (typeof d?.chart === "string") {
+        chartSvg = d.chart;
+      } else if (typeof d?.content === "string" && d.content.trim().startsWith("<svg")) {
+        chartSvg = d.content;
+      }
     }
 
     console.log("Final planets:", planets);
-    return res.status(200).json({ name: name || "Your", city, planets });
+    console.log("Aspects count:", aspects.length);
+    console.log("Report length:", report?.length || 0);
+    console.log("Chart SVG:", chartSvg ? "received" : "none");
+
+    return res.status(200).json({
+      name: name || "Your",
+      city,
+      planets,
+      aspects,
+      report,
+      chartSvg,
+    });
 
   } catch (error) {
     console.error("Birth chart error:", error);
-    return res.status(500).json({ error: "Something went wrong reading the stars. Please try again." });
+    return res.status(500).json({
+      error: "Something went wrong reading the stars. Please try again.",
+    });
   }
 }
