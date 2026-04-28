@@ -74,7 +74,7 @@ export default async function handler(req, res) {
 
   try {
     // ── Step 1: Planetary positions (required) ────────────────
-    const positionsRes = await fetch("https://api.astrology-api.io/api/v3/data/positions", {
+    const positionsRes = await fetch("https://api.astrology-api.io/api/v3/data/positions/enhanced", {
       method: "POST",
       headers,
       body: JSON.stringify({ subject }),
