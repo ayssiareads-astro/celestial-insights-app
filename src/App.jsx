@@ -1212,23 +1212,21 @@ function BirthChartResults({ result, onReset }) {
       {report && (
         <div style={{marginBottom:28}}>
           <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#f5c842",letterSpacing:".18em",marginBottom:14,textAlign:"center"}}>✦ YOUR NATAL READING ✦</div>
-          <div style={{background:"rgba(255,200,50,0.04)",border:"1px solid rgba(255,200,50,0.15)",borderRadius:16,padding:"24px 20px"}}>
-            {report.split("\n\n").map((block, i) => {
-              const isBold = block.startsWith("**") && block.includes("**\n");
-              if (isBold) {
-                const [titleRaw, ...rest] = block.split("\n");
-                const title = titleRaw.replace(/\*\*/g, "");
-                return (
-                  <div key={i} style={{marginBottom:18}}>
-                    <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:11,color:"#f5c842",letterSpacing:".1em",marginBottom:8,paddingBottom:4,borderBottom:"1px solid rgba(255,200,50,0.1)"}}>{title}</div>
-                    <p style={{fontFamily:"Georgia,serif",fontSize:14,color:"#d8c890",lineHeight:1.8,margin:0}}>{rest.join("\n")}</p>
+          <div style={{display:"flex",flexDirection:"column",gap:14}}>
+            {Array.isArray(report)
+              ? report.map((section, i) => (
+                  <div key={i} style={{background:"rgba(255,200,50,0.04)",border:"1px solid rgba(255,200,50,0.12)",borderRadius:14,padding:"20px 18px",position:"relative",overflow:"hidden"}}>
+                    <div style={{position:"absolute",top:0,left:0,right:0,height:2,background:"linear-gradient(90deg,transparent,rgba(255,200,50,0.3),transparent)"}}/>
+                    <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:11,color:"#f5c842",letterSpacing:".1em",marginBottom:10,paddingBottom:6,borderBottom:"1px solid rgba(255,200,50,0.1)"}}>{section.title}</div>
+                    <p style={{fontFamily:"Georgia,serif",fontSize:14,color:"#d8c890",lineHeight:1.85,margin:0}}>{section.text}</p>
                   </div>
-                );
-              }
-              return (
-                <p key={i} style={{fontFamily:"Georgia,serif",fontSize:14,color:"#d8c890",lineHeight:1.8,margin:"0 0 14px"}}>{block}</p>
-              );
-            })}
+                ))
+              : report.split("\n\n").map((block, i) => (
+                  <div key={i} style={{background:"rgba(255,200,50,0.04)",border:"1px solid rgba(255,200,50,0.12)",borderRadius:14,padding:"18px"}}>
+                    <p style={{fontFamily:"Georgia,serif",fontSize:14,color:"#d8c890",lineHeight:1.85,margin:0}}>{block}</p>
+                  </div>
+                ))
+            }
           </div>
         </div>
       )}
