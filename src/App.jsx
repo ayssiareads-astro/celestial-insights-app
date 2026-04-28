@@ -962,7 +962,6 @@ function CreditsContent(){return(<><DocP>Arewewoke is created and operated by Ay
 
 // ─── BIRTH CHART FEATURE ────────────────────────────────────────
 const CHART_PLANETS = ["Sun","Moon","Rising","Mercury","Venus","Mars","Jupiter","Saturn","Uranus","Neptune","Pluto"];
-const CHART_PLANETS = ["Sun","Moon","Rising","Mercury","Venus","Mars","Jupiter","Saturn","Uranus","Neptune","Pluto"];
 
 async function fetchBirthChart({ name, date, time, city, country_code, paid }) {
   const res = await fetch("/api/birth-chart", {
