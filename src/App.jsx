@@ -1221,11 +1221,16 @@ function PaywallSection({ chartPlanets, onVerified }) {
   );
 }
 
-function BirthChartResults({ result, onReset }) {
+function BirthChartResults({ result, onReset, onUpgrade }) {
   const { name, city, planets: chartPlanets, aspects = [], report = null, chartSvg = null } = result;
   const [memberVerified, setMemberVerified] = useState(() => {
     try { return localStorage.getItem("aww_subscribed") === "true"; } catch(e) { return false; }
   });
+
+  const handleVerified = () => {
+    setMemberVerified(true);
+    if (onUpgrade) onUpgrade(); // re-fetch with paid data
+  };
 
   // ── PAID SECTION ────────────────────────────────────────────
   const PaidSection = () => (
@@ -1324,7 +1329,7 @@ function BirthChartResults({ result, onReset }) {
 
       {memberVerified
         ? <PaidSection />
-        : <PaywallSection chartPlanets={chartPlanets} onVerified={() => setMemberVerified(true)} />
+        : <PaywallSection chartPlanets={chartPlanets} onVerified={handleVerified} />
       }
 
       <div style={{textAlign:"center",marginTop:12}}>
@@ -1375,8 +1380,20 @@ function BirthChart() {
 
   const handleReset = () => { setStage("form"); setResult(null); setStep(0); setForm({ name:"", date:"", time:"", city:"", country_code:"US" }); };
 
+  const handleUpgrade = async () => {
+    // Re-fetch with paid:true after membership verified
+    setStage("loading");
+    try {
+      const data = await fetchBirthChart({ ...form, paid: true });
+      setResult(data);
+      setStage("results");
+    } catch(err) {
+      setStage("results"); // stay on results even if upgrade fetch fails
+    }
+  };
+
   if (stage === "loading") return <CosmicLoader name={pendingName}/>;
-  if (stage === "results" && result) return <BirthChartResults result={result} onReset={handleReset}/>;
+  if (stage === "results" && result) return <BirthChartResults result={result} onReset={handleReset} onUpgrade={handleUpgrade}/>;
 
   return (
     <div style={{animation:"up 0.5s ease"}}>
