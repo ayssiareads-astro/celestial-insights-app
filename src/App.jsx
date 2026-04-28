@@ -1247,32 +1247,37 @@ function ReportAccordion({ report }) {
       {Object.entries(groups).map(([key, group]) => {
         if (!group.sections.length) return null;
         return (
-          <div key={key} style={{marginBottom:16}}>
+          <div key={key} style={{marginBottom:20}}>
             {/* Group header */}
-            <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:group.color,letterSpacing:".12em",marginBottom:8,paddingLeft:4,opacity:0.8}}>{group.label}</div>
-            {/* 2-col grid for houses, single col for others */}
+            <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:11,color:group.color,letterSpacing:".12em",marginBottom:10,paddingLeft:4}}>{group.label}</div>
             <div style={{
               display:"grid",
               gridTemplateColumns: key === "houses" ? "1fr 1fr" : "1fr",
-              gap:4
+              gap:6
             }}>
               {group.sections.map((s, i) => {
                 const globalIdx = `${key}-${i}`;
                 const open = openIndex === globalIdx;
                 const color = catColor(s.title);
+                // Clean up underscores and abbreviations in titles
+                const cleanTitle = s.title
+                  .replace(/_/g, " ")
+                  .replace(/\bCoeli\b/g, "Coeli")
+                  .replace(/\bMc\b/gi, "Midheaven")
+                  .replace(/\bAsc\b/gi, "Ascendant");
                 return (
-                  <div key={i} style={{borderRadius:9,overflow:"hidden",border:`1px solid ${open ? color+"55" : "rgba(255,200,50,0.08)"}`,transition:"border-color 0.2s"}}>
+                  <div key={i} style={{borderRadius:12,overflow:"hidden",border:`1px solid ${open ? color+"66" : "rgba(255,200,50,0.12)"}`,transition:"all 0.2s",background:open?`${color}08`:"rgba(255,200,50,0.02)"}}>
                     <button onClick={() => setOpenIndex(open ? null : globalIdx)}
-                      style={{width:"100%",display:"flex",alignItems:"center",justifyContent:"space-between",padding: key==="houses" ? "10px 10px" : "11px 14px",background:open?`${color}10`:"rgba(255,200,50,0.02)",border:"none",cursor:"pointer",gap:6,textAlign:"left"}}>
-                      <div style={{display:"flex",alignItems:"center",gap:6,flex:1,minWidth:0}}>
-                        <div style={{width:2,height:14,borderRadius:2,background:color,flexShrink:0,opacity:open?1:0.3}}/>
-                        <span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize: key==="houses" ? 9 : 10,color:open?color:"#b8b0a0",letterSpacing:".04em",lineHeight:1.3,overflow:"hidden",textOverflow:"ellipsis",whiteSpace: key==="houses" ? "nowrap" : "normal"}}>{s.title}</span>
+                      style={{width:"100%",display:"flex",alignItems:"center",justifyContent:"space-between",padding:"14px 16px",background:"transparent",border:"none",cursor:"pointer",gap:8,textAlign:"left"}}>
+                      <div style={{display:"flex",alignItems:"center",gap:10,flex:1,minWidth:0}}>
+                        <div style={{width:3,height:18,borderRadius:2,background:color,flexShrink:0,opacity:open?1:0.4}}/>
+                        <span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:key==="houses"?11:13,color:open?color:"#d8c890",letterSpacing:".04em",lineHeight:1.3,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:key==="houses"?"nowrap":"normal"}}>{cleanTitle}</span>
                       </div>
-                      <span style={{fontSize:8,color,opacity:0.5,flexShrink:0,transform:open?"rotate(180deg)":"rotate(0deg)",transition:"transform 0.2s"}}>▼</span>
+                      <span style={{fontSize:9,color,opacity:0.6,flexShrink:0,transform:open?"rotate(180deg)":"rotate(0deg)",transition:"transform 0.2s"}}>▼</span>
                     </button>
                     {open && (
-                      <div style={{padding:"0 12px 12px",background:`${color}06`,animation:"up 0.2s ease"}}>
-                        <p style={{fontFamily:"Georgia,serif",fontSize:13,color:"#d8c890",lineHeight:1.8,margin:0}}>{s.text}</p>
+                      <div style={{padding:"0 16px 16px",animation:"up 0.2s ease"}}>
+                        <p style={{fontFamily:"Georgia,serif",fontSize:14,color:"#d8c890",lineHeight:1.85,margin:0}}>{s.text}</p>
                       </div>
                     )}
                   </div>
