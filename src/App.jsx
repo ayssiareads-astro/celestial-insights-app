@@ -1019,8 +1019,9 @@ function CosmicLoader({ name }) {
 }
 
 function BirthChartResults({ result, onReset }) {
-  const { name, city, planets: chartPlanets } = result;
+  const { name, city, planets: chartPlanets, aspects = [], report = null, chartSvg = null } = result;
   const STRIPE_TRIAL_LINK = "https://buy.stripe.com/bJefZa8lH4TBetl2VL5sA01";
+
   const [showMemberVerify, setShowMemberVerify] = useState(false);
   const [memberEmail, setMemberEmail] = useState("");
   const [memberError, setMemberError] = useState(null);
@@ -1050,45 +1051,85 @@ function BirthChartResults({ result, onReset }) {
     } finally { setMemberVerifying(false); }
   };
 
-  return (
-    <div style={{animation:"up 0.5s ease"}}>
-      <div style={{textAlign:"center",marginBottom:28}}>
-        <div style={{fontSize:36,marginBottom:10}}>🌌</div>
-        <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:"clamp(18px,4vw,26px)",color:"#f5c842",marginBottom:6}}>{name}'s Birth Chart</div>
-        <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,color:"#a8e060",letterSpacing:".15em"}}>✦ BORN IN {city.toUpperCase()} ✦</div>
+  // Aspect type styling
+  const aspectStyle = (type) => {
+    const t = type.toLowerCase();
+    if (t.includes("trine") || t.includes("sextile")) return { color: "#a8e060", border: "rgba(168,224,96,0.3)" };
+    if (t.includes("square") || t.includes("opposition")) return { color: "#ff7070", border: "rgba(255,112,112,0.3)" };
+    if (t.includes("conjunct")) return { color: "#f5c842", border: "rgba(245,200,66,0.3)" };
+    return { color: "#a8c0d8", border: "rgba(168,192,216,0.3)" };
+  };
+
+  // ── FREE SECTION: Big Three ─────────────────────────────────
+  const BigThree = () => (
+    <div style={{background:"linear-gradient(135deg,rgba(245,200,66,0.08),rgba(0,0,0,0.3))",border:"1px solid rgba(245,200,66,0.3)",borderRadius:16,padding:"18px 20px",marginBottom:20,position:"relative",overflow:"hidden"}}>
+      <div style={{position:"absolute",top:0,left:0,right:0,height:2,background:"linear-gradient(90deg,transparent,#e8a800,transparent)"}}/>
+      <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#f5c842",letterSpacing:".18em",marginBottom:14,textAlign:"center"}}>✦ YOUR BIG THREE ✦</div>
+      <div style={{display:"flex",justifyContent:"space-around"}}>
+        {["Sun","Moon","Rising"].map(p => chartPlanets[p] ? (
+          <div key={p} style={{textAlign:"center"}}>
+            <div style={{fontSize:22,marginBottom:4}}>{emojis[p]}</div>
+            <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#a8e060",letterSpacing:".1em",marginBottom:4}}>{p.toUpperCase()}</div>
+            <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:14,color:colors[chartPlanets[p]]||"#f5c842"}}>{emojis[chartPlanets[p]]} {chartPlanets[p]}</div>
+          </div>
+        ) : (
+          <div key={p} style={{textAlign:"center",opacity:0.3}}>
+            <div style={{fontSize:22,marginBottom:4}}>{emojis[p]}</div>
+            <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#a8e060",letterSpacing:".1em",marginBottom:4}}>{p.toUpperCase()}</div>
+            <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:11,color:"#4a4440"}}>Unknown</div>
+          </div>
+        ))}
       </div>
-      <div style={{background:"linear-gradient(135deg,rgba(245,200,66,0.08),rgba(0,0,0,0.3))",border:"1px solid rgba(245,200,66,0.3)",borderRadius:16,padding:"18px 20px",marginBottom:20,position:"relative",overflow:"hidden"}}>
-        <div style={{position:"absolute",top:0,left:0,right:0,height:2,background:"linear-gradient(90deg,transparent,#e8a800,transparent)"}}/>
-        <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#f5c842",letterSpacing:".18em",marginBottom:14,textAlign:"center"}}>✦ YOUR BIG THREE ✦</div>
-        <div style={{display:"flex",justifyContent:"space-around"}}>
-          {["Sun","Moon","Rising"].map(p => chartPlanets[p] ? (
-            <div key={p} style={{textAlign:"center"}}>
-              <div style={{fontSize:22,marginBottom:4}}>{emojis[p]}</div>
-              <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#a8e060",letterSpacing:".1em",marginBottom:4}}>{p.toUpperCase()}</div>
-              <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:14,color:colors[chartPlanets[p]]||"#f5c842"}}>{emojis[chartPlanets[p]]} {chartPlanets[p]}</div>
-            </div>
-          ) : null)}
-        </div>
-      </div>
-      <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#f5c842",letterSpacing:".18em",marginBottom:14,textAlign:"center"}}>✦ TAP ANY PLACEMENT TO REVEAL YOUR READING ✦</div>
-      <div style={{display:"flex",flexDirection:"column",gap:10,marginBottom:24}}>
-        {CHART_PLANETS.map((planet, i) => chartPlanets[planet] ? (
-          <PlanetCard key={planet + memberVerified} planet={planet} sign={chartPlanets[planet]} fact={getFact(chartPlanets[planet], planet)} index={i}/>
+      <div style={{marginTop:18,display:"flex",flexDirection:"column",gap:8}}>
+        {["Sun","Moon","Rising"].map((p, i) => chartPlanets[p] ? (
+          <PlanetCard key={p} planet={p} sign={chartPlanets[p]} fact={getFact(chartPlanets[p], p)} index={i}/>
         ) : null)}
       </div>
+    </div>
+  );
 
-      {/* CTA + Already a Member */}
-      {memberVerified ? (
-        <div style={{background:"rgba(168,224,96,0.08)",border:"1px solid rgba(168,224,96,0.3)",borderRadius:14,padding:"18px 20px",textAlign:"center",marginBottom:16,animation:"up 0.4s ease"}}>
-          <div style={{fontSize:28,marginBottom:8}}>✦</div>
-          <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:14,color:"#a8e060",marginBottom:6}}>Membership Verified!</div>
-          <p style={{fontFamily:"Georgia,serif",fontSize:13,color:"#d8c890",lineHeight:1.65,margin:0}}>You have full access. Tap any placement above to read your complete cosmic interpretation.</p>
+  // ── PAYWALL SECTION ─────────────────────────────────────────
+  const PaywallSection = () => (
+    <div style={{marginBottom:24}}>
+      {/* Teaser — blurred planet cards */}
+      <div style={{position:"relative",marginBottom:20,borderRadius:16,overflow:"hidden"}}>
+        <div style={{filter:"blur(4px)",pointerEvents:"none",userSelect:"none",display:"flex",flexDirection:"column",gap:8,padding:"4px 0"}}>
+          {["Mercury","Venus","Mars","Jupiter","Saturn","Uranus","Neptune","Pluto"].map((p,i) => (
+            <div key={p} style={{background:"rgba(255,200,50,0.06)",border:"1px solid rgba(255,200,50,0.2)",borderRadius:14,padding:"16px 18px",display:"flex",alignItems:"center",gap:10}}>
+              <span style={{fontSize:20}}>{emojis[p]}</span>
+              <div>
+                <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,color:"#f5c842",letterSpacing:".12em"}}>{p.toUpperCase()}</div>
+                <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:15,color:"#f5f0e0"}}>
+                  {chartPlanets[p] ? `${emojis[chartPlanets[p]]} ${chartPlanets[p]}` : "— —"}
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
-      ) : (
-        <div style={{background:"rgba(168,224,96,0.06)",border:"1px solid rgba(168,224,96,0.2)",borderRadius:14,padding:"18px 20px",textAlign:"center",marginBottom:16}}>
-        <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:13,color:"#a8e060",marginBottom:8}}>Want your full reading?</div>
-        <p style={{fontFamily:"Georgia,serif",fontSize:13,color:"#d8c890",lineHeight:1.65,margin:"0 0 14px"}}>Subscribe to unlock detailed interpretations for all placements, house positions, and your personal cosmic forecast.</p>
-        <button className="rb" style={{"--a":"#a8e060",marginBottom:12}} onClick={()=>window.location.href=STRIPE_TRIAL_LINK}>✦ UNLOCK FULL READING</button>
+        {/* Lock overlay */}
+        <div style={{position:"absolute",inset:0,background:"linear-gradient(to bottom,rgba(13,10,20,0) 0%,rgba(13,10,20,0.85) 40%,rgba(13,10,20,0.97) 100%)",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"flex-end",padding:"28px 24px 24px"}}>
+          <div style={{fontSize:32,marginBottom:10}}>🔒</div>
+          <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:16,color:"#f5c842",marginBottom:8,textAlign:"center"}}>Full Chart Locked</div>
+          <p style={{fontFamily:"Georgia,serif",fontSize:13,color:"#d8c890",lineHeight:1.65,margin:"0 0 6px",textAlign:"center"}}>
+            Unlock all 11 planetary placements, your visual birth chart wheel, key aspects, and your complete written natal reading.
+          </p>
+        </div>
+      </div>
+
+      {/* CTA card */}
+      <div style={{background:"rgba(168,224,96,0.06)",border:"1px solid rgba(168,224,96,0.2)",borderRadius:14,padding:"22px 20px",textAlign:"center"}}>
+        <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:14,color:"#a8e060",marginBottom:8}}>Unlock Your Full Reading</div>
+        <div style={{display:"flex",flexDirection:"column",gap:6,alignItems:"center",marginBottom:16}}>
+          {[
+            "✦ All 11 planetary placements with interpretations",
+            "✦ Visual natal chart wheel",
+            "✦ Key aspects — how your planets interact",
+            "✦ Complete written natal report",
+          ].map((item,i) => (
+            <div key={i} style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,color:"#a8e060",letterSpacing:".06em"}}>{item}</div>
+          ))}
+        </div>
+        <button className="rb" style={{"--a":"#a8e060",marginBottom:12}} onClick={()=>window.location.href=STRIPE_TRIAL_LINK}>✦ START MY FREE TRIAL</button>
         <p style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,color:"#4a4440",margin:"0 0 14px",letterSpacing:".08em"}}>7-DAY FREE TRIAL · $4.99/MONTH AFTER · CANCEL ANYTIME</p>
 
         {!showMemberVerify ? (
@@ -1111,15 +1152,112 @@ function BirthChartResults({ result, onReset }) {
           </div>
         )}
       </div>
+    </div>
+  );
+
+  // ── PAID SECTION ────────────────────────────────────────────
+  const PaidSection = () => (
+    <div style={{animation:"up 0.5s ease"}}>
+
+      {/* Verified badge */}
+      <div style={{background:"rgba(168,224,96,0.08)",border:"1px solid rgba(168,224,96,0.3)",borderRadius:12,padding:"12px 18px",marginBottom:20,textAlign:"center"}}>
+        <span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,color:"#a8e060",letterSpacing:".12em"}}>✦ FULL READING UNLOCKED ✦</span>
+      </div>
+
+      {/* Remaining planet placements */}
+      <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#f5c842",letterSpacing:".18em",marginBottom:12,textAlign:"center"}}>✦ ALL PLACEMENTS — TAP TO EXPAND ✦</div>
+      <div style={{display:"flex",flexDirection:"column",gap:10,marginBottom:28}}>
+        {["Mercury","Venus","Mars","Jupiter","Saturn","Uranus","Neptune","Pluto"].map((p,i) =>
+          chartPlanets[p] ? (
+            <PlanetCard key={p} planet={p} sign={chartPlanets[p]} fact={getFact(chartPlanets[p], p)} index={i}/>
+          ) : null
+        )}
+      </div>
+
+      {/* Visual chart wheel */}
+      {chartSvg && (
+        <div style={{marginBottom:28}}>
+          <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#f5c842",letterSpacing:".18em",marginBottom:14,textAlign:"center"}}>✦ YOUR NATAL CHART WHEEL ✦</div>
+          <div style={{background:"rgba(255,200,50,0.04)",border:"1px solid rgba(255,200,50,0.2)",borderRadius:16,padding:16,overflow:"hidden"}}
+            dangerouslySetInnerHTML={{__html: chartSvg}}
+          />
+        </div>
       )}
 
-      <div style={{textAlign:"center"}}>
+      {/* Aspects */}
+      {aspects.length > 0 && (
+        <div style={{marginBottom:28}}>
+          <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#f5c842",letterSpacing:".18em",marginBottom:14,textAlign:"center"}}>✦ KEY ASPECTS ✦</div>
+          <div style={{display:"flex",flexDirection:"column",gap:8}}>
+            {aspects.map((a, i) => {
+              const s = aspectStyle(a.type);
+              return (
+                <div key={i} style={{background:`rgba(0,0,0,0.2)`,border:`1px solid ${s.border}`,borderRadius:10,padding:"12px 16px",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+                  <div style={{display:"flex",alignItems:"center",gap:8}}>
+                    <span style={{fontSize:16}}>{emojis[a.planet1] || "✦"}</span>
+                    <div>
+                      <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,color:s.color,letterSpacing:".08em"}}>{a.planet1} {a.type} {a.planet2}</div>
+                      {a.orb && <div style={{fontFamily:"Georgia,serif",fontSize:11,color:"#4a4440"}}>orb {a.orb}°</div>}
+                    </div>
+                  </div>
+                  <span style={{fontSize:16}}>{emojis[a.planet2] || "✦"}</span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Written natal report */}
+      {report && (
+        <div style={{marginBottom:28}}>
+          <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#f5c842",letterSpacing:".18em",marginBottom:14,textAlign:"center"}}>✦ YOUR NATAL READING ✦</div>
+          <div style={{background:"rgba(255,200,50,0.04)",border:"1px solid rgba(255,200,50,0.15)",borderRadius:16,padding:"24px 20px"}}>
+            {report.split("\n\n").map((block, i) => {
+              const isBold = block.startsWith("**") && block.includes("**\n");
+              if (isBold) {
+                const [titleRaw, ...rest] = block.split("\n");
+                const title = titleRaw.replace(/\*\*/g, "");
+                return (
+                  <div key={i} style={{marginBottom:18}}>
+                    <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:11,color:"#f5c842",letterSpacing:".1em",marginBottom:8,paddingBottom:4,borderBottom:"1px solid rgba(255,200,50,0.1)"}}>{title}</div>
+                    <p style={{fontFamily:"Georgia,serif",fontSize:14,color:"#d8c890",lineHeight:1.8,margin:0}}>{rest.join("\n")}</p>
+                  </div>
+                );
+              }
+              return (
+                <p key={i} style={{fontFamily:"Georgia,serif",fontSize:14,color:"#d8c890",lineHeight:1.8,margin:"0 0 14px"}}>{block}</p>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+
+  // ── RENDER ──────────────────────────────────────────────────
+  return (
+    <div style={{animation:"up 0.5s ease"}}>
+      {/* Header */}
+      <div style={{textAlign:"center",marginBottom:28}}>
+        <div style={{fontSize:36,marginBottom:10}}>🌌</div>
+        <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:"clamp(18px,4vw,26px)",color:"#f5c842",marginBottom:6}}>{name}'s Birth Chart</div>
+        <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,color:"#a8e060",letterSpacing:".15em"}}>✦ BORN IN {city.toUpperCase()} ✦</div>
+      </div>
+
+      {/* Free: Big Three */}
+      <BigThree />
+
+      {/* Paid or paywall */}
+      {memberVerified ? <PaidSection /> : <PaywallSection />}
+
+      {/* Reset */}
+      <div style={{textAlign:"center",marginTop:8}}>
         <button onClick={onReset} style={{background:"none",border:"none",color:"#4a4440",cursor:"pointer",fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,letterSpacing:".12em"}}>← READ A DIFFERENT CHART</button>
       </div>
     </div>
   );
 }
-
 function BirthChart() {
   const [stage, setStage] = useState("form");
   const [result, setResult] = useState(null);
