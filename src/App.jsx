@@ -1131,19 +1131,16 @@ function CosmicLoader({ name }) {
   );
 }
 
-function BirthChartResults({ result, onReset }) {
-  const { name, city, planets: chartPlanets, aspects = [], report = null, chartSvg = null } = result;
+// ── Paywall section — must be a top-level component so the email
+//    input never loses focus on re-render
+function PaywallSection({ chartPlanets, onVerified }) {
   const STRIPE_TRIAL_LINK = "https://buy.stripe.com/bJefZa8lH4TBetl2VL5sA01";
-
   const [showMemberVerify, setShowMemberVerify] = useState(false);
   const [memberEmail, setMemberEmail] = useState("");
   const [memberError, setMemberError] = useState(null);
   const [memberVerifying, setMemberVerifying] = useState(false);
-  const [memberVerified, setMemberVerified] = useState(() => {
-    try { return localStorage.getItem("aww_subscribed") === "true"; } catch(e) { return false; }
-  });
-
   const verifyRef = React.useRef(null);
+
   const handleShowVerify = () => {
     setShowMemberVerify(true);
     setTimeout(() => { if (verifyRef.current) verifyRef.current.scrollIntoView({ behavior:"smooth", block:"center" }); }, 80);
@@ -1158,11 +1155,77 @@ function BirthChartResults({ result, onReset }) {
       const data = await res.json();
       if (data.active) {
         try { localStorage.setItem("aww_subscribed","true"); } catch(e) {}
-        setMemberVerified(true); setShowMemberVerify(false); setMemberEmail(""); setMemberError(null);
+        onVerified();
       } else { setMemberError("No active subscription found for that email."); }
     } catch { setMemberError("Something went wrong. Please check your connection and try again."); }
     finally { setMemberVerifying(false); }
   };
+
+  return (
+    <div style={{marginBottom:24}}>
+      {/* Blurred preview */}
+      <div style={{position:"relative",marginBottom:20,borderRadius:16,overflow:"hidden"}}>
+        <div style={{filter:"blur(5px)",pointerEvents:"none",userSelect:"none"}}>
+          <div style={{width:160,height:160,borderRadius:"50%",margin:"0 auto 16px",border:"2px solid rgba(255,200,50,0.2)",background:"radial-gradient(circle,rgba(245,200,66,0.05),rgba(0,0,0,0.3))",display:"flex",alignItems:"center",justifyContent:"center",fontSize:36}}>🌌</div>
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:6,padding:"0 4px"}}>
+            {["Mercury","Venus","Mars","Jupiter","Saturn","Uranus","Neptune","Pluto"].map(p => (
+              <div key={p} style={{background:"rgba(255,200,50,0.06)",border:"1px solid rgba(255,200,50,0.15)",borderRadius:10,padding:"10px 12px",display:"flex",alignItems:"center",gap:8}}>
+                <span style={{fontSize:16}}>{emojis[p]}</span>
+                <div>
+                  <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,color:"#f5c842"}}>{p.toUpperCase()}</div>
+                  <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:12,color:"#f5f0e0"}}>{chartPlanets[p] ? `${emojis[chartPlanets[p]]} ${chartPlanets[p]}` : "——"}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div style={{position:"absolute",inset:0,background:"linear-gradient(to bottom,rgba(13,10,20,0) 0%,rgba(13,10,20,0.88) 45%,rgba(13,10,20,0.98) 100%)",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"flex-end",padding:"24px 20px 20px"}}>
+          <div style={{fontSize:28,marginBottom:8}}>🔒</div>
+          <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:15,color:"#f5c842",marginBottom:6,textAlign:"center"}}>Full Chart Locked</div>
+          <p style={{fontFamily:"Georgia,serif",fontSize:13,color:"#d8c890",lineHeight:1.6,margin:0,textAlign:"center"}}>Unlock the chart wheel, all 11 placements, aspects, and your written natal reading.</p>
+        </div>
+      </div>
+      {/* CTA */}
+      <div style={{background:"rgba(168,224,96,0.06)",border:"1px solid rgba(168,224,96,0.2)",borderRadius:14,padding:"22px 20px",textAlign:"center"}}>
+        <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:14,color:"#a8e060",marginBottom:8}}>Unlock Your Full Reading</div>
+        <div style={{display:"flex",flexDirection:"column",gap:5,alignItems:"center",marginBottom:16}}>
+          {["✦ Natal chart wheel","✦ All 11 placements with interpretations","✦ Key aspects","✦ Complete written natal report"].map((item,i)=>(
+            <div key={i} style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,color:"#a8e060",letterSpacing:".06em"}}>{item}</div>
+          ))}
+        </div>
+        <button className="rb" style={{"--a":"#a8e060",marginBottom:12}} onClick={()=>window.location.href=STRIPE_TRIAL_LINK}>✦ START MY FREE TRIAL</button>
+        <p style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,color:"#4a4440",margin:"0 0 14px",letterSpacing:".08em"}}>7-DAY FREE TRIAL · $4.99/MONTH AFTER · CANCEL ANYTIME</p>
+        {!showMemberVerify ? (
+          <button onClick={handleShowVerify} style={{background:"none",border:"1px solid rgba(168,224,96,0.3)",color:"#a8e060",padding:"10px 24px",borderRadius:"100px",fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,letterSpacing:".1em",cursor:"pointer"}}>✦ ALREADY A MEMBER</button>
+        ) : (
+          <div ref={verifyRef} style={{padding:"16px",background:"rgba(168,224,96,0.05)",border:"1px solid rgba(168,224,96,0.2)",borderRadius:12,textAlign:"center"}}>
+            <p style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,color:"#a8e060",letterSpacing:".1em",marginBottom:10}}>VERIFY YOUR MEMBERSHIP</p>
+            <input
+              type="email"
+              placeholder="your@email.com"
+              value={memberEmail}
+              onChange={e => setMemberEmail(e.target.value)}
+              onKeyDown={e => { if (e.key === "Enter") { e.preventDefault(); handleVerifyMember(); }}}
+              style={{width:"100%",padding:"11px 14px",borderRadius:10,border:"1px solid rgba(168,224,96,0.3)",background:"rgba(255,255,255,0.04)",color:"#f5f0e0",fontFamily:"Georgia,serif",fontSize:14,textAlign:"center",outline:"none",boxSizing:"border-box",marginBottom:10}}
+            />
+            {memberError && <p style={{fontFamily:"Georgia,serif",color:"#f5c842",fontSize:12,marginBottom:8,lineHeight:1.5}}>{memberError}</p>}
+            <button className="rb" style={{"--a":"#a8e060",marginBottom:8,opacity:memberVerifying?0.6:1}} onClick={handleVerifyMember} disabled={memberVerifying}>
+              {memberVerifying ? "CHECKING..." : "✦ VERIFY & UNLOCK"}
+            </button>
+            <br/>
+            <button onClick={()=>{setShowMemberVerify(false);setMemberError(null);setMemberEmail("");}} style={{background:"none",border:"none",color:"#4a4440",cursor:"pointer",fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,letterSpacing:".1em"}}>← BACK</button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function BirthChartResults({ result, onReset }) {
+  const { name, city, planets: chartPlanets, aspects = [], report = null, chartSvg = null } = result;
+  const [memberVerified, setMemberVerified] = useState(() => {
+    try { return localStorage.getItem("aww_subscribed") === "true"; } catch(e) { return false; }
+  });
 
   // ── PAID SECTION ────────────────────────────────────────────
   const PaidSection = () => (
@@ -1228,65 +1291,6 @@ function BirthChartResults({ result, onReset }) {
     </div>
   );
 
-  // ── PAYWALL SECTION ─────────────────────────────────────────
-  const PaywallSection = () => (
-    <div style={{marginBottom:24}}>
-      {/* Blurred preview */}
-      <div style={{position:"relative",marginBottom:20,borderRadius:16,overflow:"hidden"}}>
-        <div style={{filter:"blur(5px)",pointerEvents:"none",userSelect:"none"}}>
-          {/* Mini chart placeholder */}
-          <div style={{width:160,height:160,borderRadius:"50%",margin:"0 auto 16px",border:"2px solid rgba(255,200,50,0.2)",background:"radial-gradient(circle,rgba(245,200,66,0.05),rgba(0,0,0,0.3))",display:"flex",alignItems:"center",justifyContent:"center",fontSize:36}}>🌌</div>
-          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:6,padding:"0 4px"}}>
-            {["Mercury","Venus","Mars","Jupiter","Saturn","Uranus","Neptune","Pluto"].map(p => (
-              <div key={p} style={{background:"rgba(255,200,50,0.06)",border:"1px solid rgba(255,200,50,0.15)",borderRadius:10,padding:"10px 12px",display:"flex",alignItems:"center",gap:8}}>
-                <span style={{fontSize:16}}>{emojis[p]}</span>
-                <div>
-                  <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,color:"#f5c842"}}>{p.toUpperCase()}</div>
-                  <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:12,color:"#f5f0e0"}}>{chartPlanets[p] ? `${emojis[chartPlanets[p]]} ${chartPlanets[p]}` : "——"}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-        <div style={{position:"absolute",inset:0,background:"linear-gradient(to bottom,rgba(13,10,20,0) 0%,rgba(13,10,20,0.88) 45%,rgba(13,10,20,0.98) 100%)",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"flex-end",padding:"24px 20px 20px"}}>
-          <div style={{fontSize:28,marginBottom:8}}>🔒</div>
-          <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:15,color:"#f5c842",marginBottom:6,textAlign:"center"}}>Full Chart Locked</div>
-          <p style={{fontFamily:"Georgia,serif",fontSize:13,color:"#d8c890",lineHeight:1.6,margin:0,textAlign:"center"}}>Unlock the chart wheel, all 11 placements, aspects, and your written natal reading.</p>
-        </div>
-      </div>
-
-      {/* CTA */}
-      <div style={{background:"rgba(168,224,96,0.06)",border:"1px solid rgba(168,224,96,0.2)",borderRadius:14,padding:"22px 20px",textAlign:"center"}}>
-        <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:14,color:"#a8e060",marginBottom:8}}>Unlock Your Full Reading</div>
-        <div style={{display:"flex",flexDirection:"column",gap:5,alignItems:"center",marginBottom:16}}>
-          {["✦ Natal chart wheel","✦ All 11 placements with interpretations","✦ Key aspects","✦ Complete written natal report"].map((item,i)=>(
-            <div key={i} style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,color:"#a8e060",letterSpacing:".06em"}}>{item}</div>
-          ))}
-        </div>
-        <button className="rb" style={{"--a":"#a8e060",marginBottom:12}} onClick={()=>window.location.href=STRIPE_TRIAL_LINK}>✦ START MY FREE TRIAL</button>
-        <p style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,color:"#4a4440",margin:"0 0 14px",letterSpacing:".08em"}}>7-DAY FREE TRIAL · $4.99/MONTH AFTER · CANCEL ANYTIME</p>
-        {!showMemberVerify ? (
-          <button onClick={handleShowVerify} style={{background:"none",border:"1px solid rgba(168,224,96,0.3)",color:"#a8e060",padding:"10px 24px",borderRadius:"100px",fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,letterSpacing:".1em",cursor:"pointer"}}>✦ ALREADY A MEMBER</button>
-        ) : (
-          <div ref={verifyRef} style={{padding:"16px",background:"rgba(168,224,96,0.05)",border:"1px solid rgba(168,224,96,0.2)",borderRadius:12,textAlign:"center"}}>
-            <p style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,color:"#a8e060",letterSpacing:".1em",marginBottom:10}}>VERIFY YOUR MEMBERSHIP</p>
-            <input type="email" placeholder="your@email.com" value={memberEmail}
-              onChange={e=>setMemberEmail(e.target.value)}
-              onKeyDown={e=>{if(e.key==="Enter"){e.preventDefault();handleVerifyMember();}}}
-              style={{width:"100%",padding:"11px 14px",borderRadius:10,border:"1px solid rgba(168,224,96,0.3)",background:"rgba(255,255,255,0.04)",color:"#f5f0e0",fontFamily:"Georgia,serif",fontSize:14,textAlign:"center",outline:"none",boxSizing:"border-box",marginBottom:10}}
-            />
-            {memberError && <p style={{fontFamily:"Georgia,serif",color:"#f5c842",fontSize:12,marginBottom:8,lineHeight:1.5}}>{memberError}</p>}
-            <button className="rb" style={{"--a":"#a8e060",marginBottom:8,opacity:memberVerifying?0.6:1}} onClick={handleVerifyMember} disabled={memberVerifying}>
-              {memberVerifying ? "CHECKING..." : "✦ VERIFY & UNLOCK"}
-            </button>
-            <br/>
-            <button onClick={()=>{setShowMemberVerify(false);setMemberError(null);setMemberEmail("");}} style={{background:"none",border:"none",color:"#4a4440",cursor:"pointer",fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,letterSpacing:".1em"}}>← BACK</button>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-
   return (
     <div style={{animation:"up 0.5s ease"}}>
       {/* Header */}
@@ -1296,7 +1300,7 @@ function BirthChartResults({ result, onReset }) {
         <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#a8e060",letterSpacing:".15em"}}>✦ BORN IN {city.toUpperCase()} ✦</div>
       </div>
 
-      {/* Free: Big Three signs only (no descriptions, no cards) */}
+      {/* Free: Big Three signs only */}
       {!memberVerified && (
         <div style={{background:"linear-gradient(135deg,rgba(245,200,66,0.07),rgba(0,0,0,0.3))",border:"1px solid rgba(245,200,66,0.25)",borderRadius:16,padding:"16px",marginBottom:20,position:"relative",overflow:"hidden"}}>
           <div style={{position:"absolute",top:0,left:0,right:0,height:2,background:"linear-gradient(90deg,transparent,#e8a800,transparent)"}}/>
@@ -1318,13 +1322,17 @@ function BirthChartResults({ result, onReset }) {
         </div>
       )}
 
-      {memberVerified ? <PaidSection /> : <PaywallSection />}
+      {memberVerified
+        ? <PaidSection />
+        : <PaywallSection chartPlanets={chartPlanets} onVerified={() => setMemberVerified(true)} />
+      }
 
       <div style={{textAlign:"center",marginTop:12}}>
         <button onClick={onReset} style={{background:"none",border:"none",color:"#4a4440",cursor:"pointer",fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,letterSpacing:".12em"}}>← READ A DIFFERENT CHART</button>
       </div>
     </div>
   );
+
 }
 
 function BirthChart() {
