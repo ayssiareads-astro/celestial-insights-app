@@ -1582,9 +1582,15 @@ const STAR_PARTICLES = [...Array(70)].map((_,i) => ({
 // ─── MAIN APP ───────────────────────────────────────────────────
 export default function AstrologyApp() {
   const [topTab, setTopTab] = useState("horoscope");
-  const [showDisclaimer, setShowDisclaimer] = useState(() => {
-    try { return localStorage.getItem("aww_disclaimer_seen") !== "true"; } catch(e) { return true; }
-  });
+  const [showDisclaimer, setShowDisclaimer] = useState(false);
+  React.useEffect(() => {
+    try {
+      if (localStorage.getItem("aww_disclaimer_seen") !== "true") {
+        const timer = setTimeout(() => setShowDisclaimer(true), 2000);
+        return () => clearTimeout(timer);
+      }
+    } catch(e) {}
+  }, []);
   const [mode, setMode] = useState("home");
   const [selectedSign, setSelectedSign] = useState(null);
   const [selectedPlanet, setSelectedPlanet] = useState(null);
@@ -1604,10 +1610,10 @@ export default function AstrologyApp() {
 
   const tabs = [
     {label:"🌠 Daily Horoscope",key:"horoscope"},
-    {label:"🌌 Birth Chart",key:"birthchart"},
     {label:"🔮 Game",key:"guess"},
-    {label:"🌟 Celebrity",key:"celebrity"},
+    {label:"🌌 Birth Chart",key:"birthchart"},
     {label:"✦ Fun Facts",key:"facts"},
+    {label:"🌟 Celebrity",key:"celebrity"},
     {label:"📲 Get The App",key:"install"},
   ];
 
