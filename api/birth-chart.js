@@ -78,8 +78,8 @@ export default async function handler(req, res) {
   };
 
   try {
-    // ── Step 1: Positions + global positions in parallel ─────
-    const [positionsRes, globalRes] = await Promise.all([
+    // ── Step 1: Positions (required) + global positions (optional, for outer planets) ─
+    const [positionsRes, globalRes] = await Promise.allSettled([
       fetch("https://api.astrology-api.io/api/v3/data/positions", {
         method: "POST", headers, body: JSON.stringify({ subject }),
       }),
@@ -88,19 +88,20 @@ export default async function handler(req, res) {
       }),
     ]);
 
-    if (!positionsRes.ok) {
-      const err = await positionsRes.json().catch(() => ({}));
-      console.error("Positions failed:", positionsRes.status, err);
-      return res.status(positionsRes.status).json({
+    // positions is required
+    if (positionsRes.status === "rejected" || !positionsRes.value?.ok) {
+      const err = positionsRes.value ? await positionsRes.value.json().catch(() => ({})) : {};
+      console.error("Positions failed:", err);
+      return res.status(500).json({
         error: "Failed to generate birth chart. Please check your birth details and try again.",
       });
     }
 
-    const posData = await positionsRes.json();
+    const posData = await positionsRes.value.json();
     const planets = {};
     const positions = posData?.data?.positions || posData?.positions || [];
 
-    console.log("Raw positions from API:", JSON.stringify(positions.map(p => ({ name: p.name, sign: p.sign }))));
+    console.log("Raw positions:", JSON.stringify(positions.map(p => ({ name: p.name, sign: p.sign }))));
 
     if (Array.isArray(positions)) {
       positions.forEach(p => {
@@ -108,29 +109,28 @@ export default async function handler(req, res) {
         const signFull = SIGN_MAP[p.sign] || SIGN_MAP[p.sign?.toLowerCase()] || p.sign;
         if (planetName && signFull) {
           planets[planetName] = signFull;
-          console.log(`Mapped: ${p.name} -> ${planetName} in ${p.sign} -> ${signFull}`);
         }
       });
     }
 
-    // ── Outer planets from global-positions ──────────────────
-    if (globalRes.ok) {
-      const globalData = await globalRes.json();
-      const globalPositions = globalData?.data?.positions || globalData?.positions || [];
-      console.log("Global positions:", JSON.stringify(globalPositions.map(p => ({ name: p.name, sign: p.sign }))));
-      if (Array.isArray(globalPositions)) {
-        globalPositions.forEach(p => {
-          const planetName = PLANET_MAP[p.name] || PLANET_MAP[p.name?.toLowerCase()] || p.name;
-          const signFull = SIGN_MAP[p.sign] || SIGN_MAP[p.sign?.toLowerCase()] || p.sign;
-          // Only add if not already mapped (outer planets only)
-          if (planetName && signFull && !planets[planetName]) {
-            planets[planetName] = signFull;
-            console.log(`Global mapped: ${p.name} -> ${planetName} in ${p.sign} -> ${signFull}`);
-          }
-        });
+    // Outer planets from global-positions (non-fatal if it fails)
+    try {
+      if (globalRes.status === "fulfilled" && globalRes.value?.ok) {
+        const globalData = await globalRes.value.json();
+        const globalPositions = globalData?.data?.positions || globalData?.positions || [];
+        console.log("Global positions:", JSON.stringify(globalPositions.map(p => ({ name: p.name, sign: p.sign }))));
+        if (Array.isArray(globalPositions)) {
+          globalPositions.forEach(p => {
+            const planetName = PLANET_MAP[p.name] || PLANET_MAP[p.name?.toLowerCase()] || p.name;
+            const signFull = SIGN_MAP[p.sign] || SIGN_MAP[p.sign?.toLowerCase()] || p.sign;
+            if (planetName && signFull && !planets[planetName]) {
+              planets[planetName] = signFull;
+            }
+          });
+        }
       }
-    } else {
-      console.warn("Global positions failed:", globalRes.status);
+    } catch (globalErr) {
+      console.warn("Global positions failed silently:", globalErr.message);
     }
 
     // ── Step 2: Rising sign — try positions array first (most reliable) ──
