@@ -169,27 +169,34 @@ export default async function handler(req, res) {
     }
 
     // ── Parse natal report ────────────────────────────────────
-    // The API may return the report as a string, nested object, or sections array.
-    // We normalise to a plain string so the frontend just renders it.
+    // The API returns { data: { subject: {...}, interpretations: [...] } }
+    // where interpretations is an array of { title, text, components, astrological_data }
     let report = null;
     if (reportData) {
       const d = reportData?.data || reportData;
-      if (typeof d === "string") {
+
+      // Primary format: array of {title, text} interpretation objects
+      const interps =
+        d?.interpretations ||
+        d?.report ||
+        d?.sections ||
+        d?.data ||
+        null;
+
+      if (Array.isArray(interps) && interps.length > 0) {
+        // Filter to only entries that have both a title and meaningful text,
+        // and exclude entries whose title looks like raw JSON or metadata
+        report = interps
+          .filter(s => s.title && s.text && typeof s.text === "string" && s.text.length > 20)
+          .map(s => ({ title: s.title, text: s.text }));
+      } else if (typeof d === "string") {
         report = d;
-      } else if (typeof d?.report === "string") {
-        report = d.report;
       } else if (typeof d?.content === "string") {
         report = d.content;
-      } else if (typeof d?.text === "string") {
-        report = d.text;
-      } else if (Array.isArray(d?.sections)) {
-        // Some APIs return an array of {title, content} sections
-        report = d.sections
-          .map(s => `**${s.title || s.name || ""}**\n${s.content || s.text || ""}`)
-          .join("\n\n");
       } else {
-        // Last resort — stringify so we at least have something to inspect
-        report = JSON.stringify(d);
+        // Log full shape so we can adjust next time
+        console.warn("Unrecognised report shape:", JSON.stringify(d).slice(0, 500));
+        report = null;
       }
     }
 
