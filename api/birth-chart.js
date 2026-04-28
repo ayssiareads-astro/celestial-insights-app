@@ -13,7 +13,12 @@ const PLANET_MAP = {
   "Sun": "Sun", "Moon": "Moon", "Mercury": "Mercury", "Venus": "Venus",
   "Mars": "Mars", "Jupiter": "Jupiter", "Saturn": "Saturn",
   "Uranus": "Uranus", "Neptune": "Neptune", "Pluto": "Pluto",
+  "sun": "Sun", "moon": "Moon", "mercury": "Mercury", "venus": "Venus",
+  "mars": "Mars", "jupiter": "Jupiter", "saturn": "Saturn",
+  "uranus": "Uranus", "neptune": "Neptune", "pluto": "Pluto",
   "Asc": "Rising", "Ascendant": "Rising", "Rising": "Rising",
+  "asc": "Rising", "ascendant": "Rising",
+  "Chiron": "Chiron", "chiron": "Chiron",
 };
 
 export default async function handler(req, res) {
@@ -74,7 +79,7 @@ export default async function handler(req, res) {
 
   try {
     // ── Step 1: Planetary positions (required) ────────────────
-    const positionsRes = await fetch("https://api.astrology-api.io/api/v3/data/positions/enhanced", {
+    const positionsRes = await fetch("https://api.astrology-api.io/api/v3/data/positions", {
       method: "POST",
       headers,
       body: JSON.stringify({ subject }),
@@ -92,11 +97,16 @@ export default async function handler(req, res) {
     const planets = {};
     const positions = posData?.data?.positions || posData?.positions || [];
 
+    console.log("Raw positions from API:", JSON.stringify(positions.map(p => ({ name: p.name, sign: p.sign }))));
+
     if (Array.isArray(positions)) {
       positions.forEach(p => {
-        const planetName = PLANET_MAP[p.name] || p.name;
-        const signFull = SIGN_MAP[p.sign] || p.sign;
-        if (planetName && signFull) planets[planetName] = signFull;
+        const planetName = PLANET_MAP[p.name] || PLANET_MAP[p.name?.toLowerCase()] || p.name;
+        const signFull = SIGN_MAP[p.sign] || SIGN_MAP[p.sign?.toLowerCase()] || p.sign;
+        if (planetName && signFull) {
+          planets[planetName] = signFull;
+          console.log(`Mapped: ${p.name} -> ${planetName} in ${p.sign} -> ${signFull}`);
+        }
       });
     }
 
