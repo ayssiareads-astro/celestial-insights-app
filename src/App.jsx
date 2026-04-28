@@ -1060,16 +1060,58 @@ function AspectChips({ aspects }) {
 // ── Slim report accordion ────────────────────────────────────────
 function ReportAccordion({ report }) {
   const [openIndex, setOpenIndex] = useState(null);
+
   const sections = Array.isArray(report)
     ? report
     : String(report).split("\n\n").filter(Boolean).map((b, i) => ({ title:`Reading ${i+1}`, text:b }));
+
   if (!sections.length) return null;
 
+  // Filter out basic planet-in-sign sections (already on Fun Facts tab)
+  // Keep: house placements, ascendant, MC, aspects, overviews, patterns
+  const isBasicSignSection = (title) => {
+    const t = (title || "").toLowerCase();
+    const planets = ["sun","moon","mercury","venus","mars","jupiter","saturn","uranus","neptune","pluto"];
+    const signs = ["aries","taurus","gemini","cancer","leo","virgo","libra","scorpio","sagittarius","capricorn","aquarius","pisces","cap","lib","sco","vir","sag","pis","aqu","gem","can","ari","tau"];
+    // Only filter if it's JUST "Planet in Sign" — keep if it mentions house, aspect, pattern etc.
+    const hasHouse = t.includes("house") || t.includes("h1") || t.includes("h2") || t.includes("h3") || t.includes("h4") || t.includes("h5") || t.includes("h6") || t.includes("h7") || t.includes("h8") || t.includes("h9") || t.includes("h10") || t.includes("h11") || t.includes("h12");
+    const hasDeep = t.includes("ascendant") || t.includes("rising") || t.includes("medium") || t.includes("coeli") || t.includes("aspect") || t.includes("pattern") || t.includes("overview") || t.includes("theme") || t.includes("node");
+    if (hasHouse || hasDeep) return false;
+    // Check if it's "Planet in Sign" format (basic)
+    const hasPlanet = planets.some(p => t.startsWith(p) || t.includes(" " + p + " "));
+    const hasSign = signs.some(s => t.endsWith(s) || t.includes(" in " + s) || t.includes(" in " + s.slice(0,3)));
+    return hasPlanet && hasSign && !hasHouse && !hasDeep;
+  };
+
+  const filtered = sections.filter(s => !isBasicSignSection(s.title));
+  if (!filtered.length) return null;
+
+  // Group into categories
+  const getGroup = (title) => {
+    const t = (title || "").toLowerCase();
+    if (t.includes("ascendant") || t.includes("rising") || t.includes("medium") || t.includes("coeli") || t.includes("mc") || t.includes("ac")) return "angles";
+    if (t.includes("house")) return "houses";
+    if (t.includes("aspect") || t.includes("pattern")) return "aspects";
+    return "other";
+  };
+
+  const groups = {
+    angles: { label:"⬆️ Angles & Chart Points", color:"#d4a5c9", sections:[] },
+    houses: { label:"🏠 Planets in Houses", color:"#f5c842", sections:[] },
+    aspects: { label:"✦ Aspects & Patterns", color:"#a8e060", sections:[] },
+    other:   { label:"📖 Chart Overview", color:"#5bc8d8", sections:[] },
+  };
+
+  filtered.forEach((s, origIdx) => {
+    const g = getGroup(s.title);
+    groups[g].sections.push({ ...s, origIdx });
+  });
+
   const catColor = (title) => {
-    const t = (title||"").toLowerCase();
+    const t = (title || "").toLowerCase();
     if (t.includes("sun")) return "#ffab40";
     if (t.includes("moon")) return "#a3c4d8";
-    if (t.includes("rising")||t.includes("asc")) return "#d4a5c9";
+    if (t.includes("rising") || t.includes("asc") || t.includes("ascendant")) return "#d4a5c9";
     if (t.includes("mercury")) return "#f7c948";
     if (t.includes("venus")) return "#d4a5c9";
     if (t.includes("mars")) return "#ff6b6b";
@@ -1078,36 +1120,54 @@ function ReportAccordion({ report }) {
     if (t.includes("uranus")) return "#5bc8d8";
     if (t.includes("neptune")) return "#9b8fcc";
     if (t.includes("pluto")) return "#a03060";
-    return "#f5c842";
+    if (t.includes("house")) return "#f5c842";
+    if (t.includes("aspect")) return "#a8e060";
+    return "#5bc8d8";
   };
 
   return (
     <div style={{marginBottom:24}}>
-      <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#f5c842",letterSpacing:".18em",marginBottom:6,textAlign:"center"}}>✦ YOUR NATAL READING ✦</div>
-      <div style={{fontFamily:"Georgia,serif",fontSize:11,color:"#4a4440",textAlign:"center",marginBottom:14}}>Tap any section to read</div>
-      <div style={{display:"flex",flexDirection:"column",gap:4}}>
-        {sections.map((s, i) => {
-          const open = openIndex === i;
-          const color = catColor(s.title);
-          return (
-            <div key={i} style={{borderRadius:10,overflow:"hidden",border:`1px solid ${open?color+"50":"rgba(255,200,50,0.1)"}`,transition:"border-color 0.2s"}}>
-              <button onClick={() => setOpenIndex(open ? null : i)}
-                style={{width:"100%",display:"flex",alignItems:"center",justifyContent:"space-between",padding:"12px 14px",background:open?`${color}12`:"rgba(255,200,50,0.02)",border:"none",cursor:"pointer",gap:10}}>
-                <div style={{display:"flex",alignItems:"center",gap:8,flex:1,minWidth:0}}>
-                  <div style={{width:3,height:16,borderRadius:2,background:color,flexShrink:0,opacity:open?1:0.35}}/>
-                  <span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,color:open?color:"#c8c0b0",letterSpacing:".05em",textAlign:"left",lineHeight:1.3}}>{s.title}</span>
-                </div>
-                <span style={{fontSize:9,color,opacity:0.6,transform:open?"rotate(180deg)":"rotate(0deg)",transition:"transform 0.2s",flexShrink:0}}>▼</span>
-              </button>
-              {open && (
-                <div style={{padding:"0 14px 14px",background:`${color}08`,animation:"up 0.2s ease"}}>
-                  <p style={{fontFamily:"Georgia,serif",fontSize:13,color:"#d8c890",lineHeight:1.8,margin:0}}>{s.text}</p>
-                </div>
-              )}
+      <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#f5c842",letterSpacing:".18em",marginBottom:6,textAlign:"center"}}>✦ YOUR BIRTH CHART READING ✦</div>
+      <div style={{fontFamily:"Georgia,serif",fontSize:11,color:"#4a4440",textAlign:"center",marginBottom:16}}>Tap any section to read</div>
+
+      {Object.entries(groups).map(([key, group]) => {
+        if (!group.sections.length) return null;
+        return (
+          <div key={key} style={{marginBottom:16}}>
+            {/* Group header */}
+            <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:group.color,letterSpacing:".12em",marginBottom:8,paddingLeft:4,opacity:0.8}}>{group.label}</div>
+            {/* 2-col grid for houses, single col for others */}
+            <div style={{
+              display:"grid",
+              gridTemplateColumns: key === "houses" ? "1fr 1fr" : "1fr",
+              gap:4
+            }}>
+              {group.sections.map((s, i) => {
+                const globalIdx = `${key}-${i}`;
+                const open = openIndex === globalIdx;
+                const color = catColor(s.title);
+                return (
+                  <div key={i} style={{borderRadius:9,overflow:"hidden",border:`1px solid ${open ? color+"55" : "rgba(255,200,50,0.08)"}`,transition:"border-color 0.2s"}}>
+                    <button onClick={() => setOpenIndex(open ? null : globalIdx)}
+                      style={{width:"100%",display:"flex",alignItems:"center",justifyContent:"space-between",padding: key==="houses" ? "10px 10px" : "11px 14px",background:open?`${color}10`:"rgba(255,200,50,0.02)",border:"none",cursor:"pointer",gap:6,textAlign:"left"}}>
+                      <div style={{display:"flex",alignItems:"center",gap:6,flex:1,minWidth:0}}>
+                        <div style={{width:2,height:14,borderRadius:2,background:color,flexShrink:0,opacity:open?1:0.3}}/>
+                        <span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize: key==="houses" ? 9 : 10,color:open?color:"#b8b0a0",letterSpacing:".04em",lineHeight:1.3,overflow:"hidden",textOverflow:"ellipsis",whiteSpace: key==="houses" ? "nowrap" : "normal"}}>{s.title}</span>
+                      </div>
+                      <span style={{fontSize:8,color,opacity:0.5,flexShrink:0,transform:open?"rotate(180deg)":"rotate(0deg)",transition:"transform 0.2s"}}>▼</span>
+                    </button>
+                    {open && (
+                      <div style={{padding:"0 12px 12px",background:`${color}06`,animation:"up 0.2s ease"}}>
+                        <p style={{fontFamily:"Georgia,serif",fontSize:13,color:"#d8c890",lineHeight:1.8,margin:0}}>{s.text}</p>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
-          );
-        })}
-      </div>
+          </div>
+        );
+      })}
     </div>
   );
 }
