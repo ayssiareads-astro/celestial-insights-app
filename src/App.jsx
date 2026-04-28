@@ -1578,31 +1578,13 @@ const STAR_PARTICLES = [...Array(70)].map((_,i) => ({
   delay: Math.random()*4,
 }));
 
-// ─── TAURUS SEASON HELPERS ──────────────────────────────────────
-const isTaurusSeason = () => {
-  const now = new Date();
-  const month = now.getMonth() + 1;
-  const day = now.getDate();
-  return (month === 4 && day >= 20) || (month === 5 && day <= 20);
-};
-
-// Stable confetti pieces generated once
-const CONFETTI_PIECES = [...Array(80)].map((_, i) => {
-  const taurusColors = ["#a8c97f","#f5c842","#d4a5c9","#ffffff","#8fbc8f","#e8a800","#c9f0a8"];
-  return {
-    color: taurusColors[i % taurusColors.length],
-    left: Math.random() * 100,
-    delay: Math.random() * 2,
-    duration: 2.5 + Math.random() * 2,
-    size: 6 + Math.random() * 8,
-    shape: i % 3 === 0 ? "50%" : i % 3 === 1 ? "0%" : "2px",
-    rotation: Math.random() * 360,
-  };
-});
 
 // ─── MAIN APP ───────────────────────────────────────────────────
 export default function AstrologyApp() {
   const [topTab, setTopTab] = useState("horoscope");
+  const [showDisclaimer, setShowDisclaimer] = useState(() => {
+    try { return localStorage.getItem("aww_disclaimer_seen") !== "true"; } catch(e) { return true; }
+  });
   const [mode, setMode] = useState("home");
   const [selectedSign, setSelectedSign] = useState(null);
   const [selectedPlanet, setSelectedPlanet] = useState(null);
@@ -1612,16 +1594,6 @@ export default function AstrologyApp() {
   const accent = selectedSign ? colors[selectedSign] : "#e8a800";
 
   // ─── TAURUS SEASON STATE ────────────────────────────────────
-  const [showTaurusBanner, setShowTaurusBanner] = useState(() => isTaurusSeason());
-  const [confettiActive, setConfettiActive] = useState(() => isTaurusSeason());
-
-  React.useEffect(() => {
-    if (confettiActive) {
-      const timer = setTimeout(() => setConfettiActive(false), 4000);
-      return () => clearTimeout(timer);
-    }
-  }, []);
-
   const reset = () => { setSelectedSign(null); setSelectedPlanet(null); setFact(null); };
 
   const handleReveal = () => {
@@ -1645,22 +1617,7 @@ export default function AstrologyApp() {
         {STAR_PARTICLES.map((p,i)=>(<div key={i} style={{position:"absolute",width:p.size+"px",height:p.size+"px",borderRadius:"50%",background:p.color,left:p.left+"%",top:p.top+"%",animation:"tw "+p.dur+"s ease-in-out infinite",animationDelay:p.delay+"s"}}/>))}
       </div>
 
-      {/* ── TAURUS SEASON CONFETTI ── */}
-      {confettiActive && (
-        <div style={{position:"fixed",inset:0,pointerEvents:"none",zIndex:999,overflow:"hidden"}}>
-          {CONFETTI_PIECES.map((p, i) => (
-            <div key={i} style={{
-              position:"absolute", top:"-20px", left:`${p.left}%`,
-              width:`${p.size}px`, height:`${p.size}px`,
-              background:p.color, borderRadius:p.shape,
-              animation:`confettiFall ${p.duration}s ${p.delay}s ease-in forwards`,
-              transform:`rotate(${p.rotation}deg)`
-            }}/>
-          ))}
-        </div>
-      )}
-
-      <style>{`@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&display=swap'); @keyframes tw{0%,100%{opacity:0.2}50%{opacity:1}} @keyframes up{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}} @keyframes sh{0%{background-position:200% center}100%{background-position:-200% center}} @keyframes gl{0%,100%{box-shadow:0 0 18px 3px rgba(232,168,0,0.3)}50%{box-shadow:0 0 40px 10px rgba(232,168,0,0.6)}} @keyframes pu{0%,100%{opacity:0.4}50%{opacity:1}} @keyframes confettiFall{0%{transform:translateY(0) rotate(0deg);opacity:1}100%{transform:translateY(110vh) rotate(720deg);opacity:0}} .sb{background:rgba(255,200,50,0.06);border:1px solid rgba(255,200,50,0.2);color:#f0c030;padding:9px 12px;border-radius:8px;cursor:pointer;font-family:'Cinzel',serif;font-size:10px;letter-spacing:.07em;font-weight:700;transition:all .22s;text-align:center} .sb:hover,.sb.sel{background:rgba(255,200,50,0.15);color:#f5c842;border-color:var(--a);transform:translateY(-2px)} .pb{background:rgba(255,200,50,0.05);border:1px solid rgba(255,200,50,0.18);color:#f0c030;padding:9px 18px;border-radius:100px;cursor:pointer;font-family:'Cinzel',serif;font-size:11px;letter-spacing:.09em;font-weight:700;transition:all .22s} .pb:hover,.pb.sel{background:rgba(255,200,50,0.15);color:#f5c842;border-color:var(--a)} .rb{background:linear-gradient(135deg,var(--a),#8a6000);color:#0d0a14;border:none;padding:14px 38px;border-radius:100px;font-family:'Cinzel',serif;font-size:13px;letter-spacing:.14em;font-weight:900;cursor:pointer;transition:all .3s;animation:gl 3s ease-in-out infinite} .rb:hover{transform:scale(1.04);filter:brightness(1.12)} .fc{animation:up .65s ease forwards;background:linear-gradient(135deg,rgba(255,200,50,0.08),rgba(0,0,0,0.3));border:1px solid rgba(255,200,50,0.3);border-radius:20px;padding:30px 34px;position:relative;overflow:hidden} .fc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--a),transparent)} .bk{background:none;border:none;color:#5a5048;cursor:pointer;font-family:'Cinzel',serif;font-size:10px;letter-spacing:.13em;font-weight:700;display:flex;align-items:center;gap:6px;margin-bottom:28px} .bk:hover{color:#a8e060}`}</style>
+      <style>{`@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&display=swap'); @keyframes tw{0%,100%{opacity:0.2}50%{opacity:1}} @keyframes up{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}} @keyframes sh{0%{background-position:200% center}100%{background-position:-200% center}} @keyframes gl{0%,100%{box-shadow:0 0 18px 3px rgba(232,168,0,0.3)}50%{box-shadow:0 0 40px 10px rgba(232,168,0,0.6)}} @keyframes pu{0%,100%{opacity:0.4}50%{opacity:1}} .sb{background:rgba(255,200,50,0.06);border:1px solid rgba(255,200,50,0.2);color:#f0c030;padding:9px 12px;border-radius:8px;cursor:pointer;font-family:'Cinzel',serif;font-size:10px;letter-spacing:.07em;font-weight:700;transition:all .22s;text-align:center} .sb:hover,.sb.sel{background:rgba(255,200,50,0.15);color:#f5c842;border-color:var(--a);transform:translateY(-2px)} .pb{background:rgba(255,200,50,0.05);border:1px solid rgba(255,200,50,0.18);color:#f0c030;padding:9px 18px;border-radius:100px;cursor:pointer;font-family:'Cinzel',serif;font-size:11px;letter-spacing:.09em;font-weight:700;transition:all .22s} .pb:hover,.pb.sel{background:rgba(255,200,50,0.15);color:#f5c842;border-color:var(--a)} .rb{background:linear-gradient(135deg,var(--a),#8a6000);color:#0d0a14;border:none;padding:14px 38px;border-radius:100px;font-family:'Cinzel',serif;font-size:13px;letter-spacing:.14em;font-weight:900;cursor:pointer;transition:all .3s;animation:gl 3s ease-in-out infinite} .rb:hover{transform:scale(1.04);filter:brightness(1.12)} .fc{animation:up .65s ease forwards;background:linear-gradient(135deg,rgba(255,200,50,0.08),rgba(0,0,0,0.3));border:1px solid rgba(255,200,50,0.3);border-radius:20px;padding:30px 34px;position:relative;overflow:hidden} .fc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--a),transparent)} .bk{background:none;border:none;color:#5a5048;cursor:pointer;font-family:'Cinzel',serif;font-size:10px;letter-spacing:.13em;font-weight:700;display:flex;align-items:center;gap:6px;margin-bottom:28px} .bk:hover{color:#a8e060}`}</style>
 
       <div style={{position:"relative",zIndex:1,maxWidth:700,margin:"0 auto",padding:"20px 18px 80px"}}>
         <div style={{display:"flex",gap:8,justifyContent:"center",marginBottom:24,flexWrap:"wrap"}}>
@@ -1781,37 +1738,37 @@ export default function AstrologyApp() {
         </div>
       </div>
 
-      {/* ── TAURUS SEASON BANNER ── */}
-      {showTaurusBanner && (
-        <div style={{
-          position:"fixed", bottom:24, left:"50%", transform:"translateX(-50%)",
-          zIndex:1000, width:"calc(100% - 32px)", maxWidth:480,
-          background:"linear-gradient(135deg,#1a1508,#0d1a08,#1a1508)",
-          border:"2px solid #a8c97f",
-          borderRadius:20, padding:"20px 24px",
-          boxShadow:"0 0 40px rgba(168,201,127,0.25)",
-          animation:"up .6s ease",
-          textAlign:"center"
-        }}>
-          <div style={{position:"absolute",top:0,left:0,right:0,height:2,background:"linear-gradient(90deg,transparent,#a8c97f,transparent)",borderRadius:"20px 20px 0 0"}}/>
-          <div style={{fontSize:28,marginBottom:8}}>🌿♉🌿</div>
-          <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:15,color:"#a8c97f",letterSpacing:".12em",marginBottom:6}}>
-            HAPPY TAURUS SEASON!
+      {/* ── DISCLAIMER MODAL ── */}
+      {showDisclaimer && (
+        <div style={{position:"fixed",inset:0,background:"rgba(5,3,10,0.94)",zIndex:2000,display:"flex",alignItems:"center",justifyContent:"center",padding:"24px 16px"}}>
+          <div style={{background:"linear-gradient(135deg,#0f0c18,#0a0814)",border:"1px solid rgba(255,200,50,0.25)",borderRadius:24,maxWidth:480,width:"100%",padding:"36px 28px",position:"relative",animation:"up 0.5s ease"}}>
+            <div style={{position:"absolute",top:0,left:0,right:0,height:2,background:"linear-gradient(90deg,transparent,#e8a800,transparent)",borderRadius:"24px 24px 0 0"}}/>
+            <div style={{textAlign:"center",marginBottom:24}}>
+              <div style={{fontSize:36,marginBottom:12}}>🌿</div>
+              <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:16,color:"#f5c842",marginBottom:6,letterSpacing:".06em"}}>A Note Before You Begin</div>
+            </div>
+            <p style={{fontFamily:"Georgia,serif",fontSize:14,color:"#d8c890",lineHeight:1.85,margin:"0 0 16px"}}>
+              The insights on this app reflect <strong style={{color:"#f5c842"}}>energies and tendencies within you</strong> — not fixed destinies. You always have free will.
+            </p>
+            <p style={{fontFamily:"Georgia,serif",fontSize:14,color:"#d8c890",lineHeight:1.85,margin:"0 0 16px"}}>
+              Arewewoke is designed to support <strong style={{color:"#a8e060"}}>self-discovery and healing</strong>. We hope it helps you understand yourself a little more deeply.
+            </p>
+            <div style={{background:"rgba(255,100,100,0.07)",border:"1px solid rgba(255,100,100,0.2)",borderRadius:12,padding:"14px 16px",marginBottom:24}}>
+              <p style={{fontFamily:"Georgia,serif",fontSize:13,color:"#d8c890",lineHeight:1.75,margin:0}}>
+                <strong style={{color:"#ff9090"}}>If you are feeling emotionally unstable or in crisis</strong>, please close this app and reach out for support — a trusted friend, a therapist, or emergency services such as <strong style={{color:"#ff9090"}}>911</strong> or the <strong style={{color:"#ff9090"}}>988 Suicide & Crisis Lifeline</strong> (call or text 988).
+              </p>
+            </div>
+            <button
+              onClick={() => {
+                try { localStorage.setItem("aww_disclaimer_seen","true"); } catch(e) {}
+                setShowDisclaimer(false);
+              }}
+              className="rb"
+              style={{"--a":"#e8a800",width:"100%"}}>
+              ✦ I UNDERSTAND — ENTER THE APP
+            </button>
+            <p style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,color:"#3a3228",textAlign:"center",marginTop:14,letterSpacing:".1em"}}>THIS APP IS FOR ENTERTAINMENT & SELF-REFLECTION ONLY</p>
           </div>
-          <p style={{fontFamily:"Georgia,serif",fontSize:14,color:"#d8e8c0",lineHeight:1.65,margin:"0 0 16px"}}>
-            To every Taurus visiting today — <strong style={{color:"#f5c842"}}>happy birthday, beautiful soul.</strong> The cosmos celebrates you. 🎂✨
-          </p>
-          <button
-            onClick={() => setShowTaurusBanner(false)}
-            style={{
-              background:"linear-gradient(135deg,#a8c97f,#4a8020)",
-              border:"none", color:"#0d1a08",
-              padding:"10px 28px", borderRadius:"100px",
-              fontFamily:"'Cinzel',serif", fontWeight:900,
-              fontSize:11, letterSpacing:".12em", cursor:"pointer"
-            }}>
-            ✦ THANK YOU ✦
-          </button>
         </div>
       )}
 
