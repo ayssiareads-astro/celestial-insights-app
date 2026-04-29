@@ -48,7 +48,7 @@ export default async function handler(req, res) {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${apiKey}`,
       },
-      body: JSON.stringify({ sign }),
+      body: JSON.stringify({ sign: sign.toLowerCase() }),
     });
 
     if (!response.ok) {
@@ -60,16 +60,21 @@ export default async function handler(req, res) {
     }
 
     const data = await response.json();
-    console.log("Horoscope API response:", JSON.stringify(data).slice(0, 400));
+    console.log("Horoscope full response:", JSON.stringify(data).slice(0, 600));
 
     // Parse the horoscope text from the response
     const d = data?.data || data;
+    console.log("Horoscope d keys:", JSON.stringify(Object.keys(d || {})));
+
     const horoscope =
       d?.horoscope ||
       d?.text ||
       d?.description ||
       d?.content ||
       d?.prediction ||
+      d?.daily ||
+      d?.reading ||
+      d?.interpretation ||
       (typeof d === "string" ? d : null);
 
     if (!horoscope) {
