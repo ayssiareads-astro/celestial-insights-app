@@ -13,12 +13,24 @@ const PLANET_MAP = {
   "Sun": "Sun", "Moon": "Moon", "Mercury": "Mercury", "Venus": "Venus",
   "Mars": "Mars", "Jupiter": "Jupiter", "Saturn": "Saturn",
   "Uranus": "Uranus", "Neptune": "Neptune", "Pluto": "Pluto",
-  "sun": "Sun", "moon": "Moon", "mercury": "Mercury", "venus": "Venus",
-  "mars": "Mars", "jupiter": "Jupiter", "saturn": "Saturn",
-  "uranus": "Uranus", "neptune": "Neptune", "pluto": "Pluto",
   "Asc": "Rising", "Ascendant": "Rising", "Rising": "Rising",
-  "asc": "Rising", "ascendant": "Rising",
-  "Chiron": "Chiron", "chiron": "Chiron",
+  "Medium_Coeli": "Midheaven", "Midheaven": "Midheaven",
+  "Chiron": "Chiron",
+};
+
+const HOUSE_NAMES = {
+  1: "1st House — Self & Identity",
+  2: "2nd House — Possessions & Values",
+  3: "3rd House — Communication & Mind",
+  4: "4th House — Home & Roots",
+  5: "5th House — Creativity & Joy",
+  6: "6th House — Health & Service",
+  7: "7th House — Partnerships",
+  8: "8th House — Transformation",
+  9: "9th House — Philosophy & Travel",
+  10: "10th House — Career & Legacy",
+  11: "11th House — Community & Ideals",
+  12: "12th House — Spirituality & Endings",
 };
 
 export default async function handler(req, res) {
@@ -45,6 +57,11 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: "API configuration error." });
   }
 
+  const headers = {
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${apiKey}`,
+  };
+
   const subject = {
     birth_data: {
       day, month, year, hour, minute, second: 0,
@@ -52,22 +69,12 @@ export default async function handler(req, res) {
       ...(country_code ? { country_code: country_code.toUpperCase() } : {}),
     },
     name: name || "Subject",
-    house_system: "whole_sign",
   };
 
-  const headers = {
-    "Content-Type": "application/json",
-    "Authorization": `Bearer ${apiKey}`,
-  };
-
-  // ── Helper: safe fetch that never throws ──────────────────────
   const safeFetch = async (url, body, label) => {
     try {
       const r = await fetch(url, { method: "POST", headers, body: JSON.stringify(body) });
-      if (!r.ok) {
-        console.warn(`${label} failed:`, r.status);
-        return null;
-      }
+      if (!r.ok) { console.warn(`${label} failed:`, r.status); return null; }
       const json = await r.json();
       console.log(`${label} OK:`, JSON.stringify(json).slice(0, 300));
       return json;
@@ -78,137 +85,145 @@ export default async function handler(req, res) {
   };
 
   try {
-    // ── Step 1: Positions (required) + global positions (optional, for outer planets) ─
-    const [positionsRes, globalRes] = await Promise.allSettled([
-      fetch("https://api.astrology-api.io/api/v3/data/positions", {
-        method: "POST", headers, body: JSON.stringify({ subject }),
-      }),
-      fetch("https://api.astrology-api.io/api/v3/data/global-positions", {
-        method: "POST", headers, body: JSON.stringify({ subject }),
-      }),
-    ]);
+    // ── FREE: Basic positions for Big Three ───────────────────
+    const posData = await safeFetch(
+      "https://api.astrology-api.io/api/v3/data/positions",
+      { subject },
+      "Positions"
+    );
 
-    // positions is required
-    if (positionsRes.status === "rejected" || !positionsRes.value?.ok) {
-      const err = positionsRes.value ? await positionsRes.value.json().catch(() => ({})) : {};
-      console.error("Positions failed:", err);
-      return res.status(500).json({
-        error: "Failed to generate birth chart. Please check your birth details and try again.",
-      });
-    }
-
-    const posData = await positionsRes.value.json();
     const planets = {};
     const positions = posData?.data?.positions || posData?.positions || [];
-
-    console.log("Raw positions:", JSON.stringify(positions.map(p => ({ name: p.name, sign: p.sign }))));
-
     if (Array.isArray(positions)) {
       positions.forEach(p => {
-        const planetName = PLANET_MAP[p.name] || PLANET_MAP[p.name?.toLowerCase()] || p.name;
-        const signFull = SIGN_MAP[p.sign] || SIGN_MAP[p.sign?.toLowerCase()] || p.sign;
-        if (planetName && signFull) {
-          planets[planetName] = signFull;
-        }
+        const planetName = PLANET_MAP[p.name] || p.name;
+        const signFull = SIGN_MAP[p.sign] || p.sign;
+        if (planetName && signFull) planets[planetName] = signFull;
       });
     }
 
-    // Outer planets from global-positions (non-fatal if it fails)
-    try {
-      if (globalRes.status === "fulfilled" && globalRes.value?.ok) {
-        const globalData = await globalRes.value.json();
-        const globalPositions = globalData?.data?.positions || globalData?.positions || [];
-        console.log("Global positions:", JSON.stringify(globalPositions.map(p => ({ name: p.name, sign: p.sign }))));
-        if (Array.isArray(globalPositions)) {
-          globalPositions.forEach(p => {
-            const planetName = PLANET_MAP[p.name] || PLANET_MAP[p.name?.toLowerCase()] || p.name;
-            const signFull = SIGN_MAP[p.sign] || SIGN_MAP[p.sign?.toLowerCase()] || p.sign;
-            if (planetName && signFull && !planets[planetName]) {
-              planets[planetName] = signFull;
+    // Rising from house cusps (free tier)
+    const housesData = await safeFetch(
+      "https://api.astrology-api.io/api/v3/data/house-cusps",
+      { subject },
+      "Houses"
+    );
+
+    if (housesData) {
+      const d = housesData?.data || housesData;
+      if (d?.ascendant?.sign) {
+        planets["Rising"] = SIGN_MAP[d.ascendant.sign] || d.ascendant.sign;
+      } else if (Array.isArray(d?.cusps) && d.cusps[0]?.sign) {
+        planets["Rising"] = SIGN_MAP[d.cusps[0].sign] || d.cusps[0].sign;
+      } else if (Array.isArray(d?.positions)) {
+        const asc = d.positions.find(p => p.name === "Asc" || p.name === "Ascendant");
+        if (asc?.sign) planets["Rising"] = SIGN_MAP[asc.sign] || asc.sign;
+      }
+    }
+
+    console.log("Free planets:", planets);
+
+    // ── PAID: Full chart via charts/natal ─────────────────────
+    let chartPlanets = []; // array of { name, sign, house, degree, retrograde }
+    let houseCusps = [];   // array of { house, sign, degree }
+    let aspects = [];      // array of { planet1, planet2, type, orb }
+    let report = null;
+
+    if (paid) {
+      console.log("Paid — fetching full natal chart...");
+
+      const [natalData, reportData] = await Promise.all([
+        safeFetch(
+          "https://api.astrology-api.io/api/v3/charts/natal",
+          {
+            subject,
+            options: { house_system: "W" }, // W = Whole Sign
+          },
+          "NatalChart"
+        ),
+        safeFetch(
+          "https://api.astrology-api.io/api/v3/analysis/natal-report",
+          { subject, tradition: "psychological" },
+          "NatalReport"
+        ),
+      ]);
+
+      if (natalData) {
+        const cd = natalData?.chart_data || natalData?.data || natalData;
+
+        // Parse planetary positions with house numbers
+        const rawPositions = cd?.planetary_positions || [];
+        if (Array.isArray(rawPositions)) {
+          rawPositions.forEach(p => {
+            const planetName = PLANET_MAP[p.name] || p.name;
+            const signFull = SIGN_MAP[p.sign] || p.sign;
+            if (planetName && signFull && planetName !== "Midheaven") {
+              chartPlanets.push({
+                name: planetName,
+                sign: signFull,
+                house: p.house || null,
+                degree: p.degree ? parseFloat(p.degree).toFixed(1) : null,
+                retrograde: p.is_retrograde || false,
+              });
+              // Also update the simple planets map with correct sign
+              if (planetName !== "Rising" || !planets["Rising"]) {
+                planets[planetName] = signFull;
+              }
+              // Grab Rising from Ascendant entry
+              if (p.name === "Ascendant") {
+                planets["Rising"] = signFull;
+              }
             }
           });
         }
-      }
-    } catch (globalErr) {
-      console.warn("Global positions failed silently:", globalErr.message);
-    }
 
-    // ── Step 2: Rising sign — try positions array first (most reliable) ──
-    // The positions endpoint sometimes includes Asc directly
-    const ascFromPositions = positions.find(p =>
-      p.name === "Asc" || p.name === "Ascendant" || p.name === "Rising"
-    );
-    if (ascFromPositions?.sign) {
-      planets["Rising"] = SIGN_MAP[ascFromPositions.sign] || ascFromPositions.sign;
-      console.log("Rising from positions array:", planets["Rising"]);
-    }
-
-    // ── Step 3: House cusps fallback for Rising ───────────────
-    if (!planets["Rising"]) {
-      const housesData = await safeFetch(
-        "https://api.astrology-api.io/api/v3/data/house-cusps",
-        { subject, house_system: "whole_sign" },
-        "Houses"
-      );
-      if (housesData) {
-        const d = housesData?.data || housesData;
-        if (d?.ascendant?.sign) {
-          planets["Rising"] = SIGN_MAP[d.ascendant.sign] || d.ascendant.sign;
-        } else if (Array.isArray(d?.houses)) {
-          const h1 = d.houses.find(h => h.house === 1 || h.number === 1 || h.name === "I");
-          if (h1?.sign) planets["Rising"] = SIGN_MAP[h1.sign] || h1.sign;
-        } else if (Array.isArray(d?.cusps) && d.cusps[0]?.sign) {
-          planets["Rising"] = SIGN_MAP[d.cusps[0].sign] || d.cusps[0].sign;
-        } else if (Array.isArray(d?.positions)) {
-          const asc = d.positions.find(p => p.name === "Asc" || p.name === "Ascendant");
-          if (asc?.sign) planets["Rising"] = SIGN_MAP[asc.sign] || asc.sign;
+        // Parse house cusps
+        const rawHouses = cd?.house_cusps || [];
+        if (Array.isArray(rawHouses)) {
+          houseCusps = rawHouses.map(h => ({
+            house: h.house,
+            sign: SIGN_MAP[h.sign] || h.sign,
+            degree: h.degree ? parseFloat(h.degree).toFixed(1) : null,
+            name: HOUSE_NAMES[h.house] || `House ${h.house}`,
+          }));
         }
-        console.log("Rising from house-cusps:", planets["Rising"]);
-      }
-    }
 
-    console.log("Final planets:", planets);
+        // Parse aspects
+        const rawAspects = cd?.aspects || [];
+        if (Array.isArray(rawAspects)) {
+          rawAspects.forEach(a => {
+            const p1 = PLANET_MAP[a.point1] || a.point1;
+            const p2 = PLANET_MAP[a.point2] || a.point2;
+            const type = a.aspect_type || a.aspect || "";
+            const orb = a.orb != null ? parseFloat(a.orb).toFixed(1) : null;
+            if (p1 && p2 && type) {
+              aspects.push({ planet1: p1, planet2: p2, type, orb });
+            }
+          });
+        }
 
-    // ── Paid-tier data only ───────────────────────────────────
-    let aspects = [];
-    let report = null;
-    let chartSvg = null;
-
-    if (paid) {
-      const [aspectsData, reportData] = await Promise.all([
-        safeFetch("https://api.astrology-api.io/api/v3/data/aspects", { subject }, "Aspects"),
-        safeFetch("https://api.astrology-api.io/api/v3/analysis/natal-report", { subject, tradition: "psychological" }, "NatalReport"),
-      ]);
-
-      // Parse aspects
-      const rawAspects = aspectsData?.data?.aspects || aspectsData?.aspects || [];
-      console.log("Raw aspects sample:", JSON.stringify(rawAspects).slice(0, 400));
-      if (Array.isArray(rawAspects)) {
-        rawAspects.forEach(a => {
-          const p1 = PLANET_MAP[a.planet1] || PLANET_MAP[a.planet1?.toLowerCase()] || a.planet1;
-          const p2 = PLANET_MAP[a.planet2] || PLANET_MAP[a.planet2?.toLowerCase()] || a.planet2;
-          const type = a.aspect || a.type || a.name || "";
-          const orb = a.orb != null ? parseFloat(a.orb).toFixed(1) : null;
-          if (p1 && p2 && type) aspects.push({ planet1: p1, planet2: p2, type, orb });
-        });
+        console.log("Chart planets:", chartPlanets.length);
+        console.log("House cusps:", houseCusps.length);
+        console.log("Aspects:", aspects.length);
       }
 
       // Parse natal report
       if (reportData) {
         const d = reportData?.data || reportData;
-        const interps = d?.interpretations || d?.report || d?.sections || d?.data || null;
+        const interps = d?.interpretations || d?.report || d?.sections || null;
 
-        // Correct Rising from report if available
+        // Correct Rising from report
         if (Array.isArray(interps)) {
           const ascSection = interps.find(s =>
-            s.title && s.title.toLowerCase().startsWith("ascendant") && !s.title.toLowerCase().includes("house")
+            s.title && s.title.toLowerCase().startsWith("ascendant") &&
+            !s.title.toLowerCase().includes("house")
           );
           if (ascSection?.title) {
             const match = ascSection.title.match(/\bin\s+([A-Za-z]+)/i);
             if (match) {
               const reportSign = SIGN_MAP[match[1]] || (match[1].charAt(0).toUpperCase() + match[1].slice(1).toLowerCase());
               if (reportSign && reportSign !== planets["Rising"]) {
-                console.log(`Correcting Rising from ${planets["Rising"]} to ${reportSign}`);
+                console.log(`Correcting Rising to ${reportSign}`);
                 planets["Rising"] = reportSign;
               }
             }
@@ -216,24 +231,22 @@ export default async function handler(req, res) {
         }
 
         if (Array.isArray(interps) && interps.length > 0) {
-          report = interps.filter(s => s.title && s.text && typeof s.text === "string" && s.text.length > 20)
+          report = interps
+            .filter(s => s.title && s.text && typeof s.text === "string" && s.text.length > 20)
             .map(s => ({ title: s.title, text: s.text }));
-        } else if (typeof d === "string") {
-          report = d;
         }
       }
-
-      console.log("Aspects count:", aspects.length);
-      console.log("Report sections:", Array.isArray(report) ? report.length : (report ? "string" : "none"));
     }
 
     return res.status(200).json({
       name: name || "Your",
       city,
-      planets,
-      aspects,
-      report,
-      chartSvg,
+      planets,        // simple sign map for Big Three display
+      chartPlanets,   // full planet data with house numbers (paid only)
+      houseCusps,     // house system (paid only)
+      aspects,        // aspects (paid only)
+      report,         // written report (paid only)
+      chartSvg: null,
     });
 
   } catch (error) {
