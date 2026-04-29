@@ -1276,29 +1276,25 @@ function AspectWheel({ aspects, chartPlanets }) {
       </div>
 
       {/* Selected aspect detail */}
-      {selectedAspect && (
-        <div style={{animation:"up 0.25s ease",background:`${aspectColor(selectedAspect.type)}12`,border:`1px solid ${aspectColor(selectedAspect.type)}44`,borderRadius:14,padding:"18px 20px",marginBottom:12}}>
-          <div style={{textAlign:"center",marginBottom:12}}>
-            <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:15,color:aspectColor(selectedAspect.type),marginBottom:4}}>
-              {emojis[selectedAspect.planet1]||""} {selectedAspect.planet1} {aspectSymbol(selectedAspect.type)} {selectedAspect.planet2} {emojis[selectedAspect.planet2]||""}
+      {selectedAspect && (() => {
+        const color = aspectColor(selectedAspect.type);
+        const specific = getAspectMeaning(selectedAspect.planet1, selectedAspect.planet2, selectedAspect.type);
+        const general = aspectMeanings[(selectedAspect.type||"").toLowerCase()];
+        const text = specific || (general ? `${selectedAspect.planet1} ${selectedAspect.type} ${selectedAspect.planet2} is ${general}.` : null);
+        return (
+          <div style={{animation:"up 0.25s ease",background:`${color}12`,border:`1px solid ${color}44`,borderRadius:14,padding:"18px 20px",marginBottom:12}}>
+            <div style={{textAlign:"center",marginBottom:12}}>
+              <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:15,color,marginBottom:4}}>
+                {emojis[selectedAspect.planet1]||""} {selectedAspect.planet1} {aspectSymbol(selectedAspect.type)} {selectedAspect.planet2} {emojis[selectedAspect.planet2]||""}
+              </div>
+              <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#6a6058",letterSpacing:".1em"}}>
+                {(selectedAspect.type||"").toUpperCase()}{selectedAspect.orb ? ` · ORB ${selectedAspect.orb}°` : ""}
+              </div>
             </div>
-            <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#6a6058",letterSpacing:".1em"}}>
-              {(selectedAspect.type||"").toUpperCase()}{selectedAspect.orb ? ` · ORB ${selectedAspect.orb}°` : ""}
-            </div>
+            {text && <p style={{fontFamily:"Georgia,serif",fontSize:14,color:"#d8c890",lineHeight:1.85,margin:0,textAlign:"center",fontStyle:specific?"normal":"italic"}}>{text}</p>}
           </div>
-          {(() => {
-            const specific = getAspectMeaning(selectedAspect.planet1, selectedAspect.planet2, selectedAspect.type);
-            const general = aspectMeanings[(selectedAspect.type||"").toLowerCase()];
-            return specific ? (
-              <p style={{fontFamily:"Georgia,serif",fontSize:14,color:"#d8c890",lineHeight:1.85,margin:0,textAlign:"center"}}>{specific}</p>
-            ) : general ? (
-              <p style={{fontFamily:"Georgia,serif",fontSize:13,color:"#a8a09a",lineHeight:1.7,margin:0,textAlign:"center",fontStyle:"italic"}}>
-                {selectedAspect.planet1} {selectedAspect.type} {selectedAspect.planet2} is {general}.
-              </p>
-            ) : null;
-          })()}
-        </div>
-      )}
+        );
+      })()}
 
       {/* No fallback list — wheel is the interface */}
     </div>
