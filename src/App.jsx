@@ -962,7 +962,9 @@ function DailyHoroscope() {
                         <span style={{fontSize:18,flexShrink:0}}>{emoji}</span>
                         <div>
                           <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color,letterSpacing:".1em",marginBottom:2}}>{(area.area||"").toUpperCase()}</div>
-                          <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:13,color:isOpen?color:"#f5f0e0"}}>{area.title}</div>
+                          {area.title && area.title.toLowerCase() !== (area.area||"").toLowerCase() && (
+                            <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:13,color:isOpen?color:"#f5f0e0"}}>{area.title}</div>
+                          )}
                         </div>
                       </div>
                       <div style={{display:"flex",flexDirection:"column",alignItems:"flex-end",gap:4,flexShrink:0}}>
