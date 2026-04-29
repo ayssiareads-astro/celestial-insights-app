@@ -6,7 +6,7 @@
 const cache = {};
 
 function getCacheKey(sign, dateStr) {
-  return `${sign}-${dateStr}`;
+  return `v2-${sign}-${dateStr}`;
 }
 
 function getTodayString() {
@@ -72,8 +72,11 @@ export default async function handler(req, res) {
 
     const d = data?.data || data;
 
-    // Extract overall theme
-    const overallTheme = d?.overall_theme || "";
+    // Strip generic filler overall_theme
+    const rawTheme = d?.overall_theme || "";
+    const fillerPhrases = ["suspended animation","astrological energies hover","intentions and actions","responsive to one"];
+    const overallTheme = fillerPhrases.some(p => rawTheme.toLowerCase().includes(p)) ? "" : rawTheme;
+
     const overallRating = d?.overall_rating || null;
 
     // Extract life areas — each has area, title, prediction, rating, keywords
