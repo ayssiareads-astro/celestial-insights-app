@@ -854,12 +854,38 @@ const dailyHoroscopes = {
 
 function DailyHoroscope() {
   const [selectedSign, setSelectedSign] = useState(null);
-  const [revealed, setRevealed] = useState(false);
-  const todayIndex = new Date().getDay();
-  const days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
-  const today = days[todayIndex];
+  const [state, setState] = useState("idle");
+  const [reading, setReading] = useState(null);
+  const [openArea, setOpenArea] = useState(null);
+  const today = new Date().toLocaleDateString("en-US", { weekday:"long", month:"long", day:"numeric" });
   const accent = selectedSign ? colors[selectedSign] : "#e8a800";
-  const horoscope = selectedSign ? dailyHoroscopes[selectedSign][todayIndex] : null;
+
+  const areaEmoji = { identity:"☀️", career:"💼", love:"💕", relationships:"💕", health:"🌿", finance:"✦", spiritual:"🌌", creativity:"🎨", family:"🏠", travel:"✈️", social:"👥", learning:"📚", communication:"💬", home:"🏠", spirituality:"🌌" };
+  const areaColor = { identity:"#ffab40", career:"#f5c842", love:"#d4a5c9", relationships:"#d4a5c9", health:"#a8c97f", finance:"#a8e060", spiritual:"#9b8fcc", spirituality:"#9b8fcc", creativity:"#ff9944", family:"#a3c4d8", travel:"#5bc8d8", social:"#f7c948", learning:"#5bc8d8", communication:"#f7c948", home:"#a3c4d8" };
+
+  const fetchHoroscope = async (sign) => {
+    setState("loading"); setReading(null); setOpenArea(null);
+    try {
+      const res = await fetch("/api/daily-horoscope", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sign }),
+      });
+      if (!res.ok) throw new Error("Failed");
+      const data = await res.json();
+      setReading(data); setState("done");
+    } catch { setState("error"); }
+  };
+
+  const handleSelectSign = (s) => { setSelectedSign(s); setState("idle"); setReading(null); setOpenArea(null); };
+
+  const StarRating = ({ rating, color }) => {
+    if (!rating) return null;
+    return (
+      <div style={{display:"flex",gap:2,justifyContent:"center",marginBottom:6}}>
+        {[1,2,3,4,5].map(i => <span key={i} style={{fontSize:10,color:i<=rating?color:"rgba(255,255,255,0.15)"}}>★</span>)}
+      </div>
+    );
+  };
 
   return (
     <div style={{animation:"up .5s ease"}}>
@@ -872,27 +898,82 @@ function DailyHoroscope() {
         <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,letterSpacing:".18em",color:"#f5c842",marginBottom:12,textAlign:"center"}}>SELECT YOUR SIGN</div>
         <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:7}}>
           {signs.map(s=>(
-            <button key={s} className={"sb"+(selectedSign===s?" sel":"")} style={{"--a":colors[s]}} onClick={()=>{setSelectedSign(s);setRevealed(false);}}>
+            <button key={s} className={"sb"+(selectedSign===s?" sel":"")} style={{"--a":colors[s]}} onClick={()=>handleSelectSign(s)}>
               <div style={{fontSize:16,marginBottom:3}}>{emojis[s]}</div>
               <div style={{fontSize:9}}>{s}</div>
             </button>
           ))}
         </div>
       </div>
-      {selectedSign && !revealed && (
+      {selectedSign && state === "idle" && (
         <div style={{textAlign:"center",marginBottom:20,animation:"up .4s ease"}}>
-          <button className="rb" style={{"--a":accent}} onClick={()=>setRevealed(true)}>✦ REVEAL MY HOROSCOPE</button>
+          <button className="rb" style={{"--a":accent}} onClick={()=>fetchHoroscope(selectedSign)}>✦ REVEAL MY HOROSCOPE</button>
         </div>
       )}
-      {selectedSign && revealed && (
-        <div style={{animation:"up .4s ease"}}>
-          <div className="fc" style={{"--a":accent}}>
-            <div style={{position:"absolute",top:14,right:16,fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,letterSpacing:".12em",color:accent,opacity:.7}}>{today.toUpperCase()}</div>
-            <div style={{fontSize:28,marginBottom:14,textAlign:"center"}}>{emojis[selectedSign]}</div>
-            <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,letterSpacing:".18em",color:accent,textAlign:"center",marginBottom:14}}>{selectedSign.toUpperCase()} – {today.toUpperCase()}</div>
-            <p style={{fontFamily:"Georgia,serif",fontWeight:700,fontSize:"clamp(14px,3vw,18px)",lineHeight:1.85,margin:"0 0 22px",color:"#f5f0e0",textAlign:"center"}}>{horoscope}</p>
-            <div style={{textAlign:"center"}}><span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,letterSpacing:".18em",color:accent,opacity:.6}}>✦ AREWEWOKE ✦</span></div>
+      {selectedSign && state === "loading" && (
+        <div style={{textAlign:"center",padding:"28px 0",animation:"up 0.3s ease"}}>
+          <div style={{fontFamily:"'Cinzel',serif",fontSize:12,color:accent,marginBottom:12}}>Reading the stars...</div>
+          <div style={{display:"flex",gap:6,justifyContent:"center"}}>
+            {[0,1,2].map(i=>(<div key={i} style={{width:6,height:6,borderRadius:"50%",background:accent,animation:`pu 1s ease ${i*0.2}s infinite`}}/>))}
           </div>
+        </div>
+      )}
+      {selectedSign && state === "error" && (
+        <div style={{textAlign:"center",animation:"up 0.3s ease"}}>
+          <p style={{fontFamily:"Georgia,serif",color:"#ff9090",fontSize:13,marginBottom:12}}>Something went wrong. Please try again.</p>
+          <button className="rb" style={{"--a":accent}} onClick={()=>fetchHoroscope(selectedSign)}>✦ TRY AGAIN</button>
+        </div>
+      )}
+      {selectedSign && state === "done" && reading && (
+        <div style={{animation:"up .4s ease"}}>
+          <div className="fc" style={{"--a":accent,marginBottom:16}}>
+            <div style={{position:"absolute",top:14,right:16,fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,letterSpacing:".12em",color:accent,opacity:.7}}>{today.toUpperCase()}</div>
+            <div style={{fontSize:28,marginBottom:8,textAlign:"center"}}>{emojis[selectedSign]}</div>
+            <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,letterSpacing:".18em",color:accent,textAlign:"center",marginBottom:8}}>{selectedSign.toUpperCase()}</div>
+            {reading.overallRating && <StarRating rating={reading.overallRating} color={accent}/>}
+            {reading.overallTheme && <p style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:14,lineHeight:1.6,margin:"0 0 8px",color:"#f5f0e0",textAlign:"center"}}>"{reading.overallTheme}"</p>}
+          </div>
+          {reading.lifeAreas?.length > 0 && (
+            <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:16}}>
+              {reading.lifeAreas.map((area, i) => {
+                const color = areaColor[area.area] || accent;
+                const emoji = areaEmoji[area.area] || "✦";
+                const isOpen = openArea === i;
+                return (
+                  <div key={i} style={{borderRadius:12,overflow:"hidden",border:`1px solid ${isOpen?color+"66":"rgba(255,200,50,0.12)"}`,transition:"all 0.2s",background:isOpen?`${color}08`:"rgba(255,200,50,0.02)"}}>
+                    <button onClick={()=>setOpenArea(isOpen?null:i)} style={{width:"100%",display:"flex",alignItems:"center",justifyContent:"space-between",padding:"14px 16px",background:"transparent",border:"none",cursor:"pointer",gap:10,textAlign:"left"}}>
+                      <div style={{display:"flex",alignItems:"center",gap:10,flex:1}}>
+                        <span style={{fontSize:18,flexShrink:0}}>{emoji}</span>
+                        <div>
+                          <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color,letterSpacing:".1em",marginBottom:2}}>{(area.area||"").toUpperCase()}</div>
+                          {area.title && area.title.toLowerCase() !== (area.area||"").toLowerCase() && (
+                            <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:13,color:isOpen?color:"#f5f0e0"}}>{area.title}</div>
+                          )}
+                        </div>
+                      </div>
+                      <div style={{display:"flex",flexDirection:"column",alignItems:"flex-end",gap:4,flexShrink:0}}>
+                        {area.rating && <StarRating rating={area.rating} color={color}/>}
+                        <span style={{fontSize:9,color,opacity:0.6,transform:isOpen?"rotate(180deg)":"rotate(0deg)",transition:"transform 0.2s"}}>▼</span>
+                      </div>
+                    </button>
+                    {isOpen && (
+                      <div style={{padding:"0 16px 16px",animation:"up 0.2s ease"}}>
+                        <p style={{fontFamily:"Georgia,serif",fontSize:14,color:"#d8c890",lineHeight:1.85,margin:"0 0 10px"}}>{area.prediction}</p>
+                        {area.keywords?.length > 0 && (
+                          <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
+                            {area.keywords.map((kw,j)=>(
+                              <span key={j} style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,color,background:`${color}15`,border:`1px solid ${color}33`,borderRadius:100,padding:"3px 10px",letterSpacing:".06em"}}>{kw}</span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+          <div style={{textAlign:"center"}}><span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,letterSpacing:".18em",color:accent,opacity:.6}}>✦ AREWEWOKE ✦</span></div>
         </div>
       )}
       {!selectedSign && (
@@ -901,7 +982,6 @@ function DailyHoroscope() {
     </div>
   );
 }
-
 function CelebrityAvatar({ celeb }) {
   return (
     <div style={{background:"rgba(255,200,50,0.04)",border:"1px solid rgba(255,200,50,0.2)",borderRadius:16,padding:"24px 20px",textAlign:"center",maxWidth:360,margin:"0 auto"}}>
@@ -1029,6 +1109,61 @@ function BigThreeCard({ planet, sign }) {
 function AspectWheel({ aspects, chartPlanets }) {
   const [selected, setSelected] = useState(null);
 
+  // Aspect interpretations — planet pair + aspect type
+  const getAspectMeaning = (p1, p2, type) => {
+    const key = [p1, p2].sort().join("-") + "-" + type.toLowerCase();
+    const meanings = {
+      "Moon-Sun-conjunction": "Your emotions and your identity are fused — you feel most alive when you are fully yourself. There is little gap between how you feel inside and how you present to the world.",
+      "Moon-Sun-opposition": "Your heart and your ego pull in different directions. Learning to honor both your need for security and your drive for recognition is a lifelong dance — and one you are built for.",
+      "Moon-Sun-trine": "Your emotional world and your sense of self flow naturally together. You rarely feel at war with yourself — there is an ease to how you feel and who you are.",
+      "Moon-Sun-square": "Tension between what you need emotionally and what you want to achieve. This friction is actually fuel — it pushes you to grow in ways that comfort never would.",
+      "Mercury-Sun-conjunction": "Your mind and your identity are inseparable. You think deeply about who you are, and your ideas are an extension of your core self.",
+      "Mercury-Sun-trine": "Communication comes naturally to you. Your mind supports your goals and your identity — you are rarely misunderstood.",
+      "Saturn-Sun-trine": "Discipline feels natural to you, not like a burden. You have an innate sense of how to build something that lasts, and authority comes to you because you have genuinely earned it.",
+      "Saturn-Sun-sextile": "Structure and ambition support each other in your chart. When you apply yourself consistently, doors open in ways that feel almost inevitable.",
+      "Saturn-Sun-square": "Authority figures and external structures have historically challenged you. But this tension has built a resilience in you that more comfortable placements simply cannot produce.",
+      "Saturn-Sun-opposition": "You may feel that the world demands more from you than it gives back. Over time you discover that your own inner authority is more reliable than any external approval.",
+      "Jupiter-Sun-trine": "Optimism and opportunity come naturally to you. You have a gift for seeing possibilities where others see obstacles — and that vision tends to become reality.",
+      "Jupiter-Sun-conjunction": "You carry an expansive, generous energy that draws people and opportunities to you. Confidence is your birthright — the challenge is channeling it with wisdom.",
+      "Mars-Sun-trine": "Your drive and your identity are aligned. When you want something, you go after it without much internal resistance — action feels natural to you.",
+      "Mars-Sun-conjunction": "Fierce, direct, and energized — you lead with your whole self. There is very little distance between what you want and how you pursue it.",
+      "Venus-Sun-conjunction": "Beauty, connection, and self-expression are woven into who you are. You have a natural magnetism that draws others without you trying.",
+      "Moon-Saturn-conjunction": "Emotional security did not come easily early in life — but what you have built for yourself is solid and lasting. You take your inner world seriously.",
+      "Moon-Saturn-trine": "Your emotional steadiness is one of your greatest gifts. You feel things deeply but rarely let them destabilize you — that groundedness earns deep trust from others.",
+      "Moon-Saturn-square": "Emotions and responsibility have been in tension throughout your life. You may have learned to suppress feelings in favor of duty — learning to honor both is your work.",
+      "Moon-Jupiter-trine": "Your emotional generosity is one of your most beautiful qualities. You make people feel genuinely welcome and cared for without even trying.",
+      "Moon-Jupiter-conjunction": "You feel things on a grand scale — big emotions, big empathy, big reactions. Your emotional world is rich and expansive.",
+      "Moon-Mars-square": "Emotional reactivity can be a challenge — you feel anger, passion, and frustration intensely and immediately. Learning to pause before responding has transformed lives with this placement.",
+      "Moon-Mars-conjunction": "Your emotions and your drive are fused — when you care about something, you pursue it with fierce energy. Passion is your natural state.",
+      "Moon-Venus-trine": "Warmth and beauty flow through your emotional world. You are naturally loving, and people feel genuinely nourished by your presence.",
+      "Moon-Venus-conjunction": "Love and feeling are the same thing for you. You express affection easily and naturally — and you need to receive it just as fully.",
+      "Venus-Mars-conjunction": "Passion, desire, and attraction are powerful forces in your life. You love boldly and pursue what you want without apology.",
+      "Venus-Mars-trine": "Your capacity for love and your drive for action complement each other beautifully. Relationships energize rather than drain you.",
+      "Venus-Mars-square": "Love and desire create tension in your life — what you want and what you feel are sometimes in conflict. This friction also generates a powerful creative and romantic magnetism.",
+      "Jupiter-Saturn-trine": "Expansion and discipline work beautifully together in your chart. You know when to take risks and when to be patient — and that balance is rare.",
+      "Jupiter-Saturn-conjunction": "You carry both the optimist and the realist within you. At your best, you dream big and build carefully — a combination that creates lasting success.",
+      "Jupiter-Saturn-square": "Growth and restriction have been in dialogue throughout your life. The tension between wanting more and needing to be responsible has shaped your character profoundly.",
+      "Saturn-Mars-trine": "Your ambition is patient and strategic. You work hard without burning out because you instinctively pace yourself — and the results compound over time.",
+      "Saturn-Mars-conjunction": "Your drive is disciplined and focused. You do not waste energy on things that do not matter — when you commit, you commit fully.",
+      "Saturn-Mars-square": "Frustration and blocked energy have been recurring themes — but so has the extraordinary determination you have developed in response. This placement builds the kind of strength that cannot be taught.",
+      "Neptune-Venus-trine": "You love with an almost spiritual depth. Beauty, music, art, and romance are not indulgences for you — they are how you connect to something larger than yourself.",
+      "Neptune-Venus-conjunction": "Your capacity for idealized love is extraordinary — and occasionally painful. You see the divine in people, which is both your greatest gift and your most significant vulnerability.",
+      "Pluto-Venus-conjunction": "Love transforms you completely. Every significant relationship has fundamentally changed who you are — and that depth of connection is exactly what you seek.",
+      "Pluto-Mars-conjunction": "Your drive is intense, focused, and occasionally obsessive. When you commit to something, you pursue it with a force that can move mountains — or burn bridges.",
+      "Uranus-Venus-trine": "Your love life has been unconventional and you would not have it any other way. You need freedom within connection — and you attract partners who understand that.",
+      "Chiron-Moon-conjunction": "Emotional wounding runs deep in your chart, but so does your capacity for healing — both yourself and others. Your sensitivity is not weakness. It is your greatest gift.",
+    };
+    return meanings[key] || meanings[[p2,p1].sort().join("-")+"-"+type.toLowerCase()] || null;
+  };
+
+  const aspectMeanings = {
+    conjunction: "a powerful merging — these two energies operate as one force within you",
+    opposition: "a tension asking you to find balance between two equally real drives",
+    trine: "a natural flow — these energies support each other with very little effort",
+    square: "a creative friction — this challenge has built something in you that comfort never could",
+    sextile: "an opportunity — these energies can amplify each other when you choose to engage them",
+  };
+
   // Keep major aspects + Chiron, remove Mean_Node, Mean_South_Node, Mean_Lilith
   const SKIP_BODIES = ["mean_node","mean_south_node","mean_lilith","true_node","south_node","lilith","vertex"];
   const MAJOR_TYPES = ["conjunction","opposition","trine","square","sextile"];
@@ -1137,44 +1272,41 @@ function AspectWheel({ aspects, chartPlanets }) {
 
       {/* Selected aspect detail */}
       {selectedAspect && (
-        <div style={{animation:"up 0.25s ease",background:`${aspectColor(selectedAspect.type)}12`,border:`1px solid ${aspectColor(selectedAspect.type)}44`,borderRadius:12,padding:"14px 16px",marginBottom:12,textAlign:"center"}}>
-          <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:13,color:aspectColor(selectedAspect.type),marginBottom:6}}>
-            {emojis[selectedAspect.planet1]||""} {selectedAspect.planet1} {aspectSymbol(selectedAspect.type)} {selectedAspect.planet2} {emojis[selectedAspect.planet2]||""}
+        <div style={{animation:"up 0.25s ease",background:`${aspectColor(selectedAspect.type)}12`,border:`1px solid ${aspectColor(selectedAspect.type)}44`,borderRadius:14,padding:"18px 20px",marginBottom:12}}>
+          <div style={{textAlign:"center",marginBottom:12}}>
+            <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:15,color:aspectColor(selectedAspect.type),marginBottom:4}}>
+              {emojis[selectedAspect.planet1]||""} {selectedAspect.planet1} {aspectSymbol(selectedAspect.type)} {selectedAspect.planet2} {emojis[selectedAspect.planet2]||""}
+            </div>
+            <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#6a6058",letterSpacing:".1em"}}>
+              {selectedAspect.type.toUpperCase()}{selectedAspect.orb ? ` · ORB ${selectedAspect.orb}°` : ""}
+            </div>
           </div>
-          <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#6a6058",letterSpacing:".08em",marginBottom:selectedAspect.text?8:0}}>
-            {selectedAspect.type.toUpperCase()}{selectedAspect.orb ? ` · orb ${selectedAspect.orb}°` : ""}
-          </div>
-          {selectedAspect.text && (
-            <p style={{fontFamily:"Georgia,serif",fontSize:13,color:"#d8c890",lineHeight:1.75,margin:0}}>{selectedAspect.text}</p>
-          )}
+          {(() => {
+            const specific = getAspectMeaning(selectedAspect.planet1, selectedAspect.planet2, selectedAspect.type);
+            const general = aspectMeanings[selectedAspect.type?.toLowerCase()];
+            return (
+              <div>
+                {specific ? (
+                  <p style={{fontFamily:"Georgia,serif",fontSize:14,color:"#d8c890",lineHeight:1.85,margin:"0 0 10px",textAlign:"center"}}>{specific}</p>
+                ) : general ? (
+                  <div>
+                    <p style={{fontFamily:"Georgia,serif",fontSize:13,color:"#a8a09a",lineHeight:1.7,margin:"0 0 8px",textAlign:"center",fontStyle:"italic"}}>
+                      {selectedAspect.planet1} {selectedAspect.type} {selectedAspect.planet2} is {general}.
+                    </p>
+                  </div>
+                ) : null}
+                <div style={{display:"flex",gap:8,justifyContent:"center",flexWrap:"wrap",marginTop:8}}>
+                  <span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,color:aspectColor(selectedAspect.type),background:`${aspectColor(selectedAspect.type)}15`,border:`1px solid ${aspectColor(selectedAspect.type)}33`,borderRadius:100,padding:"3px 10px"}}>{selectedAspect.planet1}</span>
+                  <span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,color:aspectColor(selectedAspect.type)}}>{aspectSymbol(selectedAspect.type)}</span>
+                  <span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,color:aspectColor(selectedAspect.type),background:`${aspectColor(selectedAspect.type)}15`,border:`1px solid ${aspectColor(selectedAspect.type)}33`,borderRadius:100,padding:"3px 10px"}}>{selectedAspect.planet2}</span>
+                </div>
+              </div>
+            );
+          })()}
         </div>
       )}
 
-      {/* Fallback list for aspects with text */}
-      <div style={{display:"flex",flexDirection:"column",gap:4}}>
-        {filtered.filter(a => a.text).slice(0,8).map((a,i) => {
-          const color = aspectColor(a.type);
-          const sym = aspectSymbol(a.type);
-          const isOpen = selected === filtered.indexOf(a);
-          return (
-            <div key={i} onClick={() => setSelected(isOpen ? null : filtered.indexOf(a))}
-              style={{borderRadius:9,overflow:"hidden",border:`1px solid ${isOpen?color+"55":"rgba(255,200,50,0.08)"}`,cursor:"pointer",transition:"border-color 0.2s"}}>
-              <div style={{display:"flex",alignItems:"center",gap:8,padding:"10px 14px",background:isOpen?`${color}10`:"rgba(255,200,50,0.02)"}}>
-                <span style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:13,color,flexShrink:0}}>{sym}</span>
-                <span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,color:isOpen?color:"#b8b0a0",flex:1}}>
-                  {emojis[a.planet1]||""} {a.planet1} {a.type} {a.planet2} {emojis[a.planet2]||""}
-                </span>
-                <span style={{fontSize:8,color,opacity:0.5,transform:isOpen?"rotate(180deg)":"rotate(0deg)",transition:"transform 0.2s"}}>▼</span>
-              </div>
-              {isOpen && (
-                <div style={{padding:"0 14px 12px",background:`${color}06`,animation:"up 0.2s ease"}}>
-                  <p style={{fontFamily:"Georgia,serif",fontSize:13,color:"#d8c890",lineHeight:1.8,margin:0}}>{a.text}</p>
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
+      {/* No fallback list — the wheel is the interface */}
     </div>
   );
 }
