@@ -1109,6 +1109,66 @@ function BigThreeCard({ planet, sign }) {
 function AspectWheel({ aspects, chartPlanets }) {
   const [selected, setSelected] = useState(null);
 
+  const getAspectMeaning = (p1, p2, type) => {
+    const key = [p1, p2].sort().join("-") + "-" + (type||"").toLowerCase();
+    const meanings = {
+      "Moon-Sun-conjunction": "Your emotions and your identity are fused — you feel most alive when you are fully yourself. There is little gap between how you feel inside and how you present to the world.",
+      "Moon-Sun-opposition": "Your heart and your ego pull in different directions. Learning to honor both your need for security and your drive for recognition is a lifelong dance — and one you are built for.",
+      "Moon-Sun-trine": "Your emotional world and your sense of self flow naturally together. You rarely feel at war with yourself — there is an ease to how you feel and who you are.",
+      "Moon-Sun-square": "Tension between what you need emotionally and what you want to achieve. This friction is actually fuel — it pushes you to grow in ways that comfort never would.",
+      "Mercury-Sun-conjunction": "Your mind and your identity are inseparable. You think deeply about who you are, and your ideas are an extension of your core self.",
+      "Mercury-Sun-trine": "Communication comes naturally to you. Your mind supports your goals — you are rarely misunderstood.",
+      "Saturn-Sun-trine": "Discipline feels natural to you, not like a burden. You have an innate sense of how to build something that lasts, and authority comes to you because you have genuinely earned it.",
+      "Saturn-Sun-sextile": "Structure and ambition support each other in your chart. When you apply yourself consistently, doors open in ways that feel almost inevitable.",
+      "Saturn-Sun-square": "Authority figures have historically challenged you. But this tension has built a resilience in you that more comfortable placements simply cannot produce.",
+      "Saturn-Sun-opposition": "You may feel the world demands more than it gives back. Over time you discover that your own inner authority is more reliable than any external approval.",
+      "Jupiter-Sun-trine": "Optimism and opportunity come naturally to you. You have a gift for seeing possibilities where others see obstacles — and that vision tends to become reality.",
+      "Jupiter-Sun-conjunction": "You carry an expansive, generous energy that draws people and opportunities to you. Confidence is your birthright — the challenge is channeling it with wisdom.",
+      "Mars-Sun-trine": "Your drive and your identity are aligned. When you want something, you go after it without much internal resistance — action feels natural to you.",
+      "Mars-Sun-conjunction": "Fierce, direct, and energized — you lead with your whole self. There is very little distance between what you want and how you pursue it.",
+      "Venus-Sun-conjunction": "Beauty, connection, and self-expression are woven into who you are. You have a natural magnetism that draws others without you trying.",
+      "Moon-Saturn-conjunction": "Emotional security did not come easily early in life — but what you have built for yourself is solid and lasting. You take your inner world seriously.",
+      "Moon-Saturn-trine": "Your emotional steadiness is one of your greatest gifts. You feel things deeply but rarely let them destabilize you — that groundedness earns deep trust from others.",
+      "Moon-Saturn-square": "Emotions and responsibility have been in tension. You may have learned to suppress feelings in favor of duty — learning to honor both is your work.",
+      "Moon-Jupiter-trine": "Your emotional generosity is one of your most beautiful qualities. You make people feel genuinely welcome without even trying.",
+      "Moon-Jupiter-conjunction": "You feel things on a grand scale — big emotions, big empathy, big reactions. Your emotional world is rich and expansive.",
+      "Moon-Mars-square": "Emotional reactivity can be a challenge — you feel anger and passion intensely and immediately. Learning to pause before responding transforms this placement.",
+      "Moon-Mars-conjunction": "Your emotions and your drive are fused — when you care about something, you pursue it with fierce energy. Passion is your natural state.",
+      "Moon-Venus-trine": "Warmth and beauty flow through your emotional world. You are naturally loving, and people feel genuinely nourished by your presence.",
+      "Moon-Venus-conjunction": "Love and feeling are the same thing for you. You express affection easily — and you need to receive it just as fully.",
+      "Venus-Mars-conjunction": "Passion, desire, and attraction are powerful forces in your life. You love boldly and pursue what you want without apology.",
+      "Venus-Mars-trine": "Your capacity for love and your drive for action complement each other beautifully. Relationships energize rather than drain you.",
+      "Venus-Mars-square": "Love and desire create tension — what you want and what you feel are sometimes in conflict. This friction also generates a powerful creative and romantic magnetism.",
+      "Jupiter-Saturn-trine": "Expansion and discipline work beautifully together. You know when to take risks and when to be patient — that balance is rare and powerful.",
+      "Jupiter-Saturn-conjunction": "You carry both the optimist and the realist within you. At your best, you dream big and build carefully — a combination that creates lasting success.",
+      "Jupiter-Saturn-square": "Growth and restriction have been in dialogue throughout your life. The tension between wanting more and needing to be responsible has shaped your character profoundly.",
+      "Saturn-Mars-trine": "Your ambition is patient and strategic. You work hard without burning out because you instinctively pace yourself — the results compound over time.",
+      "Saturn-Mars-conjunction": "Your drive is disciplined and focused. You do not waste energy on things that do not matter — when you commit, you commit fully.",
+      "Saturn-Mars-square": "Frustration and blocked energy have been recurring themes — but so has the extraordinary determination you have developed in response.",
+      "Neptune-Venus-trine": "You love with an almost spiritual depth. Beauty, music, art, and romance are how you connect to something larger than yourself.",
+      "Neptune-Venus-conjunction": "Your capacity for idealized love is extraordinary — and occasionally painful. You see the divine in people, which is both your greatest gift and your most significant vulnerability.",
+      "Pluto-Venus-conjunction": "Love transforms you completely. Every significant relationship has fundamentally changed who you are — and that depth is exactly what you seek.",
+      "Pluto-Mars-conjunction": "Your drive is intense, focused, and occasionally obsessive. When you commit to something, you pursue it with a force that can move mountains.",
+      "Uranus-Venus-trine": "Your love life has been unconventional and you would not have it any other way. You need freedom within connection — and you attract partners who understand that.",
+      "Chiron-Moon-conjunction": "Emotional wounding runs deep in your chart, but so does your capacity for healing — both yourself and others. Your sensitivity is your greatest gift.",
+      "Mercury-Moon-trine": "Your mind and emotions work beautifully together. You can articulate how you feel with unusual clarity — and that gift builds deep trust with others.",
+      "Mercury-Moon-square": "Your head and heart often disagree. You may overthink your feelings or dismiss them with logic. Letting both speak is your work.",
+      "Mercury-Venus-conjunction": "Charm and intelligence are intertwined for you. You express affection through words, ideas, and wit — and people feel genuinely seen when you speak to them.",
+      "Mercury-Mars-trine": "Your mind is sharp and your communication is direct. You think fast, argue well, and pursue ideas with genuine passion.",
+      "Mercury-Saturn-trine": "Your thinking is disciplined and precise. You do not speak without thinking — and when you do speak, people listen because your words carry weight.",
+      "Mercury-Jupiter-trine": "Your mind reaches naturally toward the big picture. You are a natural teacher, storyteller, and philosopher.",
+    };
+    return meanings[key] || meanings[[p2,p1].sort().join("-")+"-"+(type||"").toLowerCase()] || null;
+  };
+
+  const aspectMeanings = {
+    conjunction: "a powerful merging — these two energies operate as one force within you",
+    opposition: "a tension asking you to find balance between two equally real drives",
+    trine: "a natural flow — these energies support each other with very little effort",
+    square: "a creative friction — this challenge has built something in you that comfort never could",
+    sextile: "an opportunity — these energies amplify each other when you choose to engage them",
+  };
+
   // Keep major aspects + Chiron, remove Mean_Node, Mean_South_Node, Mean_Lilith
   const SKIP_BODIES = ["mean_node","mean_south_node","mean_lilith","true_node","south_node","lilith","vertex"];
   const MAJOR_TYPES = ["conjunction","opposition","trine","square","sextile"];
@@ -1217,44 +1277,30 @@ function AspectWheel({ aspects, chartPlanets }) {
 
       {/* Selected aspect detail */}
       {selectedAspect && (
-        <div style={{animation:"up 0.25s ease",background:`${aspectColor(selectedAspect.type)}12`,border:`1px solid ${aspectColor(selectedAspect.type)}44`,borderRadius:12,padding:"14px 16px",marginBottom:12,textAlign:"center"}}>
-          <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:13,color:aspectColor(selectedAspect.type),marginBottom:6}}>
-            {emojis[selectedAspect.planet1]||""} {selectedAspect.planet1} {aspectSymbol(selectedAspect.type)} {selectedAspect.planet2} {emojis[selectedAspect.planet2]||""}
+        <div style={{animation:"up 0.25s ease",background:`${aspectColor(selectedAspect.type)}12`,border:`1px solid ${aspectColor(selectedAspect.type)}44`,borderRadius:14,padding:"18px 20px",marginBottom:12}}>
+          <div style={{textAlign:"center",marginBottom:12}}>
+            <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:15,color:aspectColor(selectedAspect.type),marginBottom:4}}>
+              {emojis[selectedAspect.planet1]||""} {selectedAspect.planet1} {aspectSymbol(selectedAspect.type)} {selectedAspect.planet2} {emojis[selectedAspect.planet2]||""}
+            </div>
+            <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#6a6058",letterSpacing:".1em"}}>
+              {(selectedAspect.type||"").toUpperCase()}{selectedAspect.orb ? ` · ORB ${selectedAspect.orb}°` : ""}
+            </div>
           </div>
-          <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#6a6058",letterSpacing:".08em",marginBottom:selectedAspect.text?8:0}}>
-            {selectedAspect.type.toUpperCase()}{selectedAspect.orb ? ` · orb ${selectedAspect.orb}°` : ""}
-          </div>
-          {selectedAspect.text && (
-            <p style={{fontFamily:"Georgia,serif",fontSize:13,color:"#d8c890",lineHeight:1.75,margin:0}}>{selectedAspect.text}</p>
-          )}
+          {(() => {
+            const specific = getAspectMeaning(selectedAspect.planet1, selectedAspect.planet2, selectedAspect.type);
+            const general = aspectMeanings[(selectedAspect.type||"").toLowerCase()];
+            return specific ? (
+              <p style={{fontFamily:"Georgia,serif",fontSize:14,color:"#d8c890",lineHeight:1.85,margin:0,textAlign:"center"}}>{specific}</p>
+            ) : general ? (
+              <p style={{fontFamily:"Georgia,serif",fontSize:13,color:"#a8a09a",lineHeight:1.7,margin:0,textAlign:"center",fontStyle:"italic"}}>
+                {selectedAspect.planet1} {selectedAspect.type} {selectedAspect.planet2} is {general}.
+              </p>
+            ) : null;
+          })()}
         </div>
       )}
 
-      {/* Fallback list for aspects with text */}
-      <div style={{display:"flex",flexDirection:"column",gap:4}}>
-        {filtered.filter(a => a.text).slice(0,8).map((a,i) => {
-          const color = aspectColor(a.type);
-          const sym = aspectSymbol(a.type);
-          const isOpen = selected === filtered.indexOf(a);
-          return (
-            <div key={i} onClick={() => setSelected(isOpen ? null : filtered.indexOf(a))}
-              style={{borderRadius:9,overflow:"hidden",border:`1px solid ${isOpen?color+"55":"rgba(255,200,50,0.08)"}`,cursor:"pointer",transition:"border-color 0.2s"}}>
-              <div style={{display:"flex",alignItems:"center",gap:8,padding:"10px 14px",background:isOpen?`${color}10`:"rgba(255,200,50,0.02)"}}>
-                <span style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:13,color,flexShrink:0}}>{sym}</span>
-                <span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,color:isOpen?color:"#b8b0a0",flex:1}}>
-                  {emojis[a.planet1]||""} {a.planet1} {a.type} {a.planet2} {emojis[a.planet2]||""}
-                </span>
-                <span style={{fontSize:8,color,opacity:0.5,transform:isOpen?"rotate(180deg)":"rotate(0deg)",transition:"transform 0.2s"}}>▼</span>
-              </div>
-              {isOpen && (
-                <div style={{padding:"0 14px 12px",background:`${color}06`,animation:"up 0.2s ease"}}>
-                  <p style={{fontFamily:"Georgia,serif",fontSize:13,color:"#d8c890",lineHeight:1.8,margin:0}}>{a.text}</p>
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
+      {/* No fallback list — wheel is the interface */}
     </div>
   );
 }
@@ -1526,48 +1572,6 @@ function BirthChartResults({ result, onReset, onUpgrade }) {
         {["Sun","Moon","Rising"].map(p => chartPlanets[p] ? <BigThreeCard key={p} planet={p} sign={chartPlanets[p]}/> : null)}
       </div>
 
-      {/* Planet / Sign / House table */}
-      <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#f5c842",letterSpacing:".18em",marginBottom:14,textAlign:"center"}}>✦ PLANETS IN SIGNS & HOUSES ✦</div>
-      <div style={{fontFamily:"Georgia,serif",fontSize:11,color:"#4a4440",textAlign:"center",marginBottom:14}}>Whole Sign House System · Tap any row to read</div>
-
-      <div style={{display:"flex",flexDirection:"column",gap:6,marginBottom:28}}>
-        {fullPlanets.filter(p => p.name !== "Midheaven" && p.name !== "Medium_Coeli").map((p, i) => {
-          const color = colors[p.sign] || "#f5c842";
-          const isOpen = openPlanet === i;
-          const fact = getFact(p.sign, p.name);
-          return (
-            <div key={i} onClick={() => setOpenPlanet(isOpen ? null : i)}
-              style={{borderRadius:12,overflow:"hidden",border:`1px solid ${isOpen?color+"66":"rgba(255,200,50,0.1)"}`,cursor:"pointer",transition:"all 0.2s",background:isOpen?`${color}08`:"rgba(255,200,50,0.02)"}}>
-              <div style={{display:"flex",alignItems:"center",padding:"12px 14px",gap:10}}>
-                {/* Planet */}
-                <div style={{display:"flex",alignItems:"center",gap:6,width:"30%",minWidth:0}}>
-                  <span style={{fontSize:16,flexShrink:0}}>{emojis[p.name]||"✦"}</span>
-                  <div>
-                    <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#6a6058",letterSpacing:".08em"}}>{p.name.toUpperCase()}</div>
-                    {p.retrograde && <div style={{fontFamily:"'Cinzel',serif",fontSize:7,color:"#ff9944",letterSpacing:".06em"}}>℞ RETROGRADE</div>}
-                  </div>
-                </div>
-                {/* Sign */}
-                <div style={{display:"flex",alignItems:"center",gap:4,width:"35%",minWidth:0}}>
-                  <span style={{fontSize:14}}>{emojis[p.sign]||""}</span>
-                  <span style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:12,color}}>{p.sign}</span>
-                </div>
-                {/* House */}
-                <div style={{flex:1,textAlign:"right"}}>
-                  {p.house && <span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,color:"#f5c842",background:"rgba(245,200,66,0.1)",border:"1px solid rgba(245,200,66,0.2)",borderRadius:6,padding:"3px 8px"}}>{houseLabel(p.house)}</span>}
-                </div>
-                <span style={{fontSize:9,color,opacity:0.5,flexShrink:0,transform:isOpen?"rotate(180deg)":"rotate(0deg)",transition:"transform 0.2s"}}>▼</span>
-              </div>
-              {isOpen && (
-                <div style={{padding:"0 14px 14px",animation:"up 0.2s ease"}}>
-                  <p style={{fontFamily:"Georgia,serif",fontSize:13,color:"#d8c890",lineHeight:1.8,margin:0}}>{fact}</p>
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
-
       {/* House System */}
       {houseCusps.length > 0 && (
         <div style={{marginBottom:28}}>
@@ -1614,6 +1618,48 @@ function BirthChartResults({ result, onReset, onUpgrade }) {
           </div>
         </div>
       )}
+
+      {/* Planet / Sign / House table */}
+      <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#f5c842",letterSpacing:".18em",marginBottom:14,textAlign:"center"}}>✦ PLANETS IN SIGNS & HOUSES ✦</div>
+      <div style={{fontFamily:"Georgia,serif",fontSize:11,color:"#4a4440",textAlign:"center",marginBottom:14}}>Whole Sign House System · Tap any row to read</div>
+
+      <div style={{display:"flex",flexDirection:"column",gap:6,marginBottom:28}}>
+        {fullPlanets.filter(p => p.name !== "Midheaven" && p.name !== "Medium_Coeli").map((p, i) => {
+          const color = colors[p.sign] || "#f5c842";
+          const isOpen = openPlanet === i;
+          const fact = getFact(p.sign, p.name);
+          return (
+            <div key={i} onClick={() => setOpenPlanet(isOpen ? null : i)}
+              style={{borderRadius:12,overflow:"hidden",border:`1px solid ${isOpen?color+"66":"rgba(255,200,50,0.1)"}`,cursor:"pointer",transition:"all 0.2s",background:isOpen?`${color}08`:"rgba(255,200,50,0.02)"}}>
+              <div style={{display:"flex",alignItems:"center",padding:"12px 14px",gap:10}}>
+                {/* Planet */}
+                <div style={{display:"flex",alignItems:"center",gap:6,width:"30%",minWidth:0}}>
+                  <span style={{fontSize:16,flexShrink:0}}>{emojis[p.name]||"✦"}</span>
+                  <div>
+                    <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#6a6058",letterSpacing:".08em"}}>{p.name.toUpperCase()}</div>
+                    {p.retrograde && <div style={{fontFamily:"'Cinzel',serif",fontSize:7,color:"#ff9944",letterSpacing:".06em"}}>℞ RETROGRADE</div>}
+                  </div>
+                </div>
+                {/* Sign */}
+                <div style={{display:"flex",alignItems:"center",gap:4,width:"35%",minWidth:0}}>
+                  <span style={{fontSize:14}}>{emojis[p.sign]||""}</span>
+                  <span style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:12,color}}>{p.sign}</span>
+                </div>
+                {/* House */}
+                <div style={{flex:1,textAlign:"right"}}>
+                  {p.house && <span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,color:"#f5c842",background:"rgba(245,200,66,0.1)",border:"1px solid rgba(245,200,66,0.2)",borderRadius:6,padding:"3px 8px"}}>{houseLabel(p.house)}</span>}
+                </div>
+                <span style={{fontSize:9,color,opacity:0.5,flexShrink:0,transform:isOpen?"rotate(180deg)":"rotate(0deg)",transition:"transform 0.2s"}}>▼</span>
+              </div>
+              {isOpen && (
+                <div style={{padding:"0 14px 14px",animation:"up 0.2s ease"}}>
+                  <p style={{fontFamily:"Georgia,serif",fontSize:13,color:"#d8c890",lineHeight:1.8,margin:0}}>{fact}</p>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
 
       {/* Aspect wheel */}
       <AspectWheel aspects={aspects} chartPlanets={chartPlanets}/>
