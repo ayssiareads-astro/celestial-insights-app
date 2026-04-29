@@ -6,100 +6,98 @@
 const cache = {};
 
 function getCacheKey(sign, dateStr) {
-return `${sign}-${dateStr}`;
+  return `${sign}-${dateStr}`;
 }
 
 function getTodayString() {
-const now = new Date();
-return `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
+  const now = new Date();
+  return `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
 }
 
 export default async function handler(req, res) {
-if (req.method !== “POST”) {
-return res.status(405).json({ error: “Method not allowed” });
-}
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed" });
+  }
 
-const { sign } = req.body;
+  const { sign } = req.body;
 
-if (!sign) {
-return res.status(400).json({ error: “sign is required” });
-}
+  if (!sign) {
+    return res.status(400).json({ error: "sign is required" });
+  }
 
-const apiKey = process.env.Astrology_Api_Key;
-if (!apiKey) {
-return res.status(500).json({ error: “API configuration error.” });
-}
+  const apiKey = process.env.Astrology_Api_Key;
+  if (!apiKey) {
+    return res.status(500).json({ error: "API configuration error." });
+  }
 
-const today = getTodayString();
-const cacheKey = getCacheKey(sign, today);
+  const today = getTodayString();
+  const cacheKey = getCacheKey(sign, today);
 
-// Return cached version if available
-if (cache[cacheKey]) {
-console.log(`Cache hit for ${sign} on ${today}`);
-return res.status(200).json(cache[cacheKey]);
-}
+  // Return cached version if available
+  if (cache[cacheKey]) {
+    console.log(`Cache hit for ${sign} on ${today}`);
+    return res.status(200).json(cache[cacheKey]);
+  }
 
-console.log(`Cache miss — fetching live horoscope for ${sign} on ${today}`);
+  console.log(`Cache miss — fetching live horoscope for ${sign} on ${today}`);
 
-try {
-const response = await fetch(“https://api.astrology-api.io/api/v3/horoscope/sign/daily”, {
-method: “POST”,
-headers: {
-“Content-Type”: “application/json”,
-“Authorization”: `Bearer ${apiKey}`,
-},
-body: JSON.stringify({ sign: sign.toLowerCase() }),
-});
+  try {
+    const response = await fetch("https://api.astrology-api.io/api/v3/horoscope/sign/daily", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({ sign: sign.toLowerCase() }),
+    });
 
-```
-if (!response.ok) {
-  const err = await response.json().catch(() => ({}));
-  console.error("Horoscope API failed:", response.status, err);
-  return res.status(response.status).json({
-    error: "Could not fetch today's horoscope. Please try again.",
-  });
-}
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      console.error("Horoscope API failed:", response.status, err);
+      return res.status(response.status).json({
+        error: "Could not fetch today's horoscope. Please try again.",
+      });
+    }
 
-const data = await response.json();
-console.log("Horoscope full response:", JSON.stringify(data).slice(0, 600));
+    const data = await response.json();
+    console.log("Horoscope full response:", JSON.stringify(data).slice(0, 600));
 
-// Parse the horoscope text from the response
-const d = data?.data || data;
-console.log("Horoscope d keys:", JSON.stringify(Object.keys(d || {})));
+    // Parse the horoscope text from the response
+    const d = data?.data || data;
+    console.log("Horoscope d keys:", JSON.stringify(Object.keys(d || {})));
 
-const horoscope =
-  d?.overall_theme ||
-  d?.horoscope ||
-  d?.text ||
-  d?.description ||
-  d?.content ||
-  d?.prediction ||
-  d?.daily ||
-  d?.reading ||
-  d?.interpretation ||
-  (typeof d === "string" ? d : null);
+    const horoscope =
+      d?.overall_theme ||
+      d?.horoscope ||
+      d?.text ||
+      d?.description ||
+      d?.content ||
+      d?.prediction ||
+      d?.daily ||
+      d?.reading ||
+      d?.interpretation ||
+      (typeof d === "string" ? d : null);
 
-if (!horoscope) {
-  console.warn("Unrecognised horoscope shape:", JSON.stringify(d).slice(0, 300));
-  return res.status(500).json({ error: "Could not parse horoscope response." });
-}
+    if (!horoscope) {
+      console.warn("Unrecognised horoscope shape:", JSON.stringify(d).slice(0, 300));
+      return res.status(500).json({ error: "Could not parse horoscope response." });
+    }
 
-const result = {
-  sign,
-  date: today,
-  horoscope: typeof horoscope === "string" ? horoscope : JSON.stringify(horoscope),
-};
+    const result = {
+      sign,
+      date: today,
+      horoscope: typeof horoscope === "string" ? horoscope : JSON.stringify(horoscope),
+    };
 
-// Cache it for today
-cache[cacheKey] = result;
+    // Cache it for today
+    cache[cacheKey] = result;
 
-return res.status(200).json(result);
-```
+    return res.status(200).json(result);
 
-} catch (error) {
-console.error(“Daily horoscope error:”, error);
-return res.status(500).json({
-error: “Something went wrong fetching your horoscope. Please try again.”,
-});
-}
+  } catch (error) {
+    console.error("Daily horoscope error:", error);
+    return res.status(500).json({
+      error: "Something went wrong fetching your horoscope. Please try again.",
+    });
+  }
 }
