@@ -854,12 +854,34 @@ const dailyHoroscopes = {
 
 function DailyHoroscope() {
   const [selectedSign, setSelectedSign] = useState(null);
-  const [revealed, setRevealed] = useState(false);
-  const todayIndex = new Date().getDay();
-  const days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
-  const today = days[todayIndex];
+  const [state, setState] = useState("idle"); // idle | loading | done | error
+  const [horoscope, setHoroscope] = useState(null);
+  const today = new Date().toLocaleDateString("en-US", { weekday:"long", month:"long", day:"numeric" });
   const accent = selectedSign ? colors[selectedSign] : "#e8a800";
-  const horoscope = selectedSign ? dailyHoroscopes[selectedSign][todayIndex] : null;
+
+  const fetchHoroscope = async (sign) => {
+    setState("loading");
+    setHoroscope(null);
+    try {
+      const res = await fetch("/api/daily-horoscope", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sign }),
+      });
+      if (!res.ok) throw new Error("Failed");
+      const data = await res.json();
+      setHoroscope(data.horoscope);
+      setState("done");
+    } catch {
+      setState("error");
+    }
+  };
+
+  const handleSelectSign = (s) => {
+    setSelectedSign(s);
+    setState("idle");
+    setHoroscope(null);
+  };
 
   return (
     <div style={{animation:"up .5s ease"}}>
@@ -872,29 +894,50 @@ function DailyHoroscope() {
         <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,letterSpacing:".18em",color:"#f5c842",marginBottom:12,textAlign:"center"}}>SELECT YOUR SIGN</div>
         <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:7}}>
           {signs.map(s=>(
-            <button key={s} className={"sb"+(selectedSign===s?" sel":"")} style={{"--a":colors[s]}} onClick={()=>{setSelectedSign(s);setRevealed(false);}}>
+            <button key={s} className={"sb"+(selectedSign===s?" sel":"")} style={{"--a":colors[s]}} onClick={()=>handleSelectSign(s)}>
               <div style={{fontSize:16,marginBottom:3}}>{emojis[s]}</div>
               <div style={{fontSize:9}}>{s}</div>
             </button>
           ))}
         </div>
       </div>
-      {selectedSign && !revealed && (
+
+      {selectedSign && state === "idle" && (
         <div style={{textAlign:"center",marginBottom:20,animation:"up .4s ease"}}>
-          <button className="rb" style={{"--a":accent}} onClick={()=>setRevealed(true)}>✦ REVEAL MY HOROSCOPE</button>
+          <button className="rb" style={{"--a":accent}} onClick={()=>fetchHoroscope(selectedSign)}>✦ REVEAL MY HOROSCOPE</button>
         </div>
       )}
-      {selectedSign && revealed && (
+
+      {selectedSign && state === "loading" && (
+        <div style={{textAlign:"center",padding:"28px 0",animation:"up 0.3s ease"}}>
+          <div style={{fontFamily:"'Cinzel',serif",fontSize:12,color:accent,marginBottom:12}}>Reading the stars...</div>
+          <div style={{display:"flex",gap:6,justifyContent:"center"}}>
+            {[0,1,2].map(i=>(<div key={i} style={{width:6,height:6,borderRadius:"50%",background:accent,animation:`pu 1s ease ${i*0.2}s infinite`}}/>))}
+          </div>
+        </div>
+      )}
+
+      {selectedSign && state === "error" && (
+        <div style={{textAlign:"center",animation:"up 0.3s ease"}}>
+          <p style={{fontFamily:"Georgia,serif",color:"#ff9090",fontSize:13,marginBottom:12}}>Something went wrong. Please try again.</p>
+          <button className="rb" style={{"--a":accent}} onClick={()=>fetchHoroscope(selectedSign)}>✦ TRY AGAIN</button>
+        </div>
+      )}
+
+      {selectedSign && state === "done" && horoscope && (
         <div style={{animation:"up .4s ease"}}>
           <div className="fc" style={{"--a":accent}}>
             <div style={{position:"absolute",top:14,right:16,fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,letterSpacing:".12em",color:accent,opacity:.7}}>{today.toUpperCase()}</div>
             <div style={{fontSize:28,marginBottom:14,textAlign:"center"}}>{emojis[selectedSign]}</div>
-            <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,letterSpacing:".18em",color:accent,textAlign:"center",marginBottom:14}}>{selectedSign.toUpperCase()} – {today.toUpperCase()}</div>
+            <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,letterSpacing:".18em",color:accent,textAlign:"center",marginBottom:14}}>{selectedSign.toUpperCase()}</div>
             <p style={{fontFamily:"Georgia,serif",fontWeight:700,fontSize:"clamp(14px,3vw,18px)",lineHeight:1.85,margin:"0 0 22px",color:"#f5f0e0",textAlign:"center"}}>{horoscope}</p>
-            <div style={{textAlign:"center"}}><span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,letterSpacing:".18em",color:accent,opacity:.6}}>✦ AREWEWOKE ✦</span></div>
+            <div style={{textAlign:"center"}}>
+              <span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,letterSpacing:".18em",color:accent,opacity:.6}}>✦ AREWEWOKE ✦</span>
+            </div>
           </div>
         </div>
       )}
+
       {!selectedSign && (
         <div style={{textAlign:"center",padding:"24px 0",fontFamily:"Georgia,serif",color:"#6a6058",fontSize:15}}>Select your sign above to receive today's horoscope ✨</div>
       )}
@@ -1403,11 +1446,146 @@ function PaywallSection({ chartPlanets, onVerified }) {
   );
 }
 
+// ── Today's Energy component ─────────────────────────────────────
+function TodaysEnergy({ birthData }) {
+  const [state, setState] = useState("idle"); // idle | loading | done | error
+  const [reading, setReading] = useState(null);
+  const [openIndex, setOpenIndex] = useState(null);
+
+  const fetchTransit = async () => {
+    setState("loading");
+    try {
+      const res = await fetch("/api/daily-transit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(birthData),
+      });
+      if (!res.ok) throw new Error("Failed");
+      const data = await res.json();
+      setReading(data);
+      setState("done");
+    } catch {
+      setState("error");
+    }
+  };
+
+  const sectionColor = (title) => {    const t = (title || "").toLowerCase();
+    if (t.includes("sun")) return "#ffab40";
+    if (t.includes("moon")) return "#a3c4d8";
+    if (t.includes("mercury")) return "#f7c948";
+    if (t.includes("venus")) return "#d4a5c9";
+    if (t.includes("mars")) return "#ff6b6b";
+    if (t.includes("jupiter")) return "#a8c97f";
+    if (t.includes("saturn")) return "#8b7355";
+    if (t.includes("uranus")) return "#5bc8d8";
+    if (t.includes("neptune")) return "#9b8fcc";
+    if (t.includes("pluto")) return "#a03060";
+    return "#f5c842";
+  };
+
+  return (
+    <div style={{marginBottom:28}}>
+      {/* Section header */}
+      <div style={{background:"linear-gradient(135deg,rgba(163,196,216,0.08),rgba(0,0,0,0.3))",border:"1px solid rgba(163,196,216,0.25)",borderRadius:16,padding:"20px",marginBottom:16,position:"relative",overflow:"hidden",textAlign:"center"}}>
+        <div style={{position:"absolute",top:0,left:0,right:0,height:2,background:"linear-gradient(90deg,transparent,#a3c4d8,transparent)"}}/>
+        <div style={{fontSize:28,marginBottom:8}}>🌠</div>
+        <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:15,color:"#a3c4d8",marginBottom:6,letterSpacing:".08em"}}>
+          Today's Energy for {birthData.name}
+        </div>
+        <p style={{fontFamily:"Georgia,serif",fontSize:13,color:"#7a8898",lineHeight:1.6,margin:"0 0 16px"}}>
+          See how today's planetary transits are personally affecting your natal chart.
+        </p>
+
+        {state === "idle" && (
+          <button className="rb" style={{"--a":"#a3c4d8"}} onClick={fetchTransit}>
+            ✦ READ TODAY'S ENERGY
+          </button>
+        )}
+        {state === "loading" && (
+          <div>
+            <div style={{fontFamily:"'Cinzel',serif",fontSize:12,color:"#a3c4d8",marginBottom:8}}>Reading today's transits...</div>
+            <div style={{display:"flex",gap:6,justifyContent:"center"}}>
+              {[0,1,2].map(i=>(<div key={i} style={{width:6,height:6,borderRadius:"50%",background:"#a3c4d8",animation:`pu 1s ease ${i*0.2}s infinite`}}/>))}
+            </div>
+          </div>
+        )}
+        {state === "error" && (
+          <div>
+            <div style={{fontFamily:"Georgia,serif",fontSize:13,color:"#ff9090",marginBottom:12}}>Something went wrong. Please try again.</div>
+            <button className="rb" style={{"--a":"#a3c4d8"}} onClick={fetchTransit}>✦ TRY AGAIN</button>
+          </div>
+        )}
+      </div>
+
+      {/* Transit sections accordion */}
+      {state === "done" && reading?.horoscope && !reading?.sections?.length && (
+        <div style={{animation:"up 0.4s ease"}}>
+          <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#a3c4d8",letterSpacing:".15em",marginBottom:12,textAlign:"center"}}>
+            ✦ {reading.date?.toUpperCase()} ✦
+          </div>
+          <div style={{background:"rgba(163,196,216,0.06)",border:"1px solid rgba(163,196,216,0.2)",borderRadius:14,padding:"20px",marginBottom:12}}>
+            <p style={{fontFamily:"Georgia,serif",fontSize:15,color:"#d8c890",lineHeight:1.85,margin:0}}>{reading.horoscope}</p>
+          </div>
+          <div style={{textAlign:"center"}}>
+            <button onClick={fetchTransit} style={{background:"none",border:"1px solid rgba(163,196,216,0.25)",color:"#4a6070",padding:"8px 20px",borderRadius:100,fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,letterSpacing:".1em",cursor:"pointer"}}>↺ REFRESH READING</button>
+          </div>
+        </div>
+      )}
+
+      {state === "done" && reading?.sections?.length > 0 && (        <div style={{animation:"up 0.4s ease"}}>
+          <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#a3c4d8",letterSpacing:".15em",marginBottom:12,textAlign:"center"}}>
+            ✦ {reading.date?.toUpperCase()} ✦
+          </div>
+          <div style={{display:"flex",flexDirection:"column",gap:6}}>
+            {reading.sections.map((s, i) => {
+              const open = openIndex === i;
+              const color = sectionColor(s.title);
+              return (
+                <div key={i} style={{borderRadius:12,overflow:"hidden",border:`1px solid ${open?color+"66":"rgba(163,196,216,0.12)"}`,transition:"all 0.2s",background:open?`${color}08`:"rgba(163,196,216,0.02)"}}>
+                  <button onClick={() => setOpenIndex(open ? null : i)}
+                    style={{width:"100%",display:"flex",alignItems:"center",justifyContent:"space-between",padding:"14px 16px",background:"transparent",border:"none",cursor:"pointer",gap:8,textAlign:"left"}}>
+                    <div style={{display:"flex",alignItems:"center",gap:10,flex:1,minWidth:0}}>
+                      <div style={{width:3,height:18,borderRadius:2,background:color,flexShrink:0,opacity:open?1:0.4}}/>
+                      <span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:13,color:open?color:"#d8c890",letterSpacing:".04em",lineHeight:1.3}}>{s.title}</span>
+                    </div>
+                    <span style={{fontSize:9,color,opacity:0.6,flexShrink:0,transform:open?"rotate(180deg)":"rotate(0deg)",transition:"transform 0.2s"}}>▼</span>
+                  </button>
+                  {open && (
+                    <div style={{padding:"0 16px 16px",animation:"up 0.2s ease"}}>
+                      <p style={{fontFamily:"Georgia,serif",fontSize:14,color:"#d8c890",lineHeight:1.85,margin:0}}>{s.text}</p>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+          <div style={{textAlign:"center",marginTop:16}}>
+            <button onClick={fetchTransit} style={{background:"none",border:"1px solid rgba(163,196,216,0.25)",color:"#4a6070",padding:"8px 20px",borderRadius:100,fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,letterSpacing:".1em",cursor:"pointer"}}>↺ REFRESH READING</button>
+          </div>
+        </div>
+      )}
+
+      {state === "done" && (!reading?.sections || reading.sections.length === 0) && (
+        <div style={{textAlign:"center",fontFamily:"Georgia,serif",fontSize:13,color:"#4a4440",padding:"16px 0"}}>
+          No transit data available for today. Try again later.
+        </div>
+      )}
+    </div>
+  );
+}
+
 function BirthChartResults({ result, onReset, onUpgrade }) {
-  const { name, city, planets: chartPlanets, aspects = [], report = null, chartSvg = null } = result;
+  const { name, city, planets: chartPlanets, aspects = [], report = null, chartSvg = null, birthData } = result;
   const [memberVerified, setMemberVerified] = useState(() => {
     try { return localStorage.getItem("aww_subscribed") === "true"; } catch(e) { return false; }
   });
+
+  // Save birth data to localStorage for Today's Energy feature
+  React.useEffect(() => {
+    if (birthData) {
+      try { localStorage.setItem("aww_birth_data", JSON.stringify(birthData)); } catch(e) {}
+    }
+  }, [birthData]);
 
   const handleVerified = () => {
     setMemberVerified(true);
@@ -1442,6 +1620,9 @@ function BirthChartResults({ result, onReset, onUpgrade }) {
 
       {/* Report accordion */}
       {report && <ReportAccordion report={report}/>}
+
+      {/* Today's Energy — personalized daily transit */}
+      <TodaysEnergy birthData={birthData}/>
     </div>
   );
 
@@ -1516,6 +1697,8 @@ function BirthChart() {
       try {
         const isSubscribed = (() => { try { return localStorage.getItem("aww_subscribed") === "true"; } catch(e) { return false; } })();
         const data = await fetchBirthChart({ ...form, paid: isSubscribed });
+        // Attach birth data so it can be saved for Today's Energy
+        data.birthData = { name: form.name, date: form.date, time: form.time, city: form.city, country_code: form.country_code };
         setResult(data);
         setStage("results");
       } catch (err) {
@@ -1530,14 +1713,14 @@ function BirthChart() {
   const handleReset = () => { setStage("form"); setResult(null); setStep(0); setForm({ name:"", date:"", time:"", city:"", country_code:"US" }); };
 
   const handleUpgrade = async () => {
-    // Re-fetch with paid:true after membership verified
     setStage("loading");
     try {
       const data = await fetchBirthChart({ ...form, paid: true });
+      data.birthData = { name: form.name, date: form.date, time: form.time, city: form.city, country_code: form.country_code };
       setResult(data);
       setStage("results");
     } catch(err) {
-      setStage("results"); // stay on results even if upgrade fetch fails
+      setStage("results");
     }
   };
 
