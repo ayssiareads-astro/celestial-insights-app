@@ -854,51 +854,12 @@ const dailyHoroscopes = {
 
 function DailyHoroscope() {
   const [selectedSign, setSelectedSign] = useState(null);
-  const [state, setState] = useState("idle");
-  const [reading, setReading] = useState(null);
-  const [openArea, setOpenArea] = useState(null);
-  const today = new Date().toLocaleDateString("en-US", { weekday:"long", month:"long", day:"numeric" });
+  const [revealed, setRevealed] = useState(false);
+  const todayIndex = new Date().getDay();
+  const days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+  const today = days[todayIndex];
   const accent = selectedSign ? colors[selectedSign] : "#e8a800";
-
-  const areaEmoji = { identity:"☀️", career:"💼", love:"💕", relationships:"💕", health:"🌿", finance:"✦", spiritual:"🌌", creativity:"🎨", family:"🏠", travel:"✈️", social:"👥" };
-  const areaColor = { identity:"#ffab40", career:"#f5c842", love:"#d4a5c9", relationships:"#d4a5c9", health:"#a8c97f", finance:"#a8e060", spiritual:"#9b8fcc", creativity:"#ff9944", family:"#a3c4d8", travel:"#5bc8d8", social:"#f7c948" };
-
-  const fetchHoroscope = async (sign) => {
-    setState("loading");
-    setReading(null);
-    setOpenArea(null);
-    try {
-      const res = await fetch("/api/daily-horoscope", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ sign }),
-      });
-      if (!res.ok) throw new Error("Failed");
-      const data = await res.json();
-      setReading(data);
-      setState("done");
-    } catch {
-      setState("error");
-    }
-  };
-
-  const handleSelectSign = (s) => {
-    setSelectedSign(s);
-    setState("idle");
-    setReading(null);
-    setOpenArea(null);
-  };
-
-  const StarRating = ({ rating, color }) => {
-    if (!rating) return null;
-    return (
-      <div style={{display:"flex",gap:2,justifyContent:"center",marginBottom:6}}>
-        {[1,2,3,4,5].map(i => (
-          <span key={i} style={{fontSize:10,color: i <= rating ? color : "rgba(255,255,255,0.15)"}}>★</span>
-        ))}
-      </div>
-    );
-  };
+  const horoscope = selectedSign ? dailyHoroscopes[selectedSign][todayIndex] : null;
 
   return (
     <div style={{animation:"up .5s ease"}}>
@@ -911,85 +872,27 @@ function DailyHoroscope() {
         <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,letterSpacing:".18em",color:"#f5c842",marginBottom:12,textAlign:"center"}}>SELECT YOUR SIGN</div>
         <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:7}}>
           {signs.map(s=>(
-            <button key={s} className={"sb"+(selectedSign===s?" sel":"")} style={{"--a":colors[s]}} onClick={()=>handleSelectSign(s)}>
+            <button key={s} className={"sb"+(selectedSign===s?" sel":"")} style={{"--a":colors[s]}} onClick={()=>{setSelectedSign(s);setRevealed(false);}}>
               <div style={{fontSize:16,marginBottom:3}}>{emojis[s]}</div>
               <div style={{fontSize:9}}>{s}</div>
             </button>
           ))}
         </div>
       </div>
-      {selectedSign && state === "idle" && (
+      {selectedSign && !revealed && (
         <div style={{textAlign:"center",marginBottom:20,animation:"up .4s ease"}}>
-          <button className="rb" style={{"--a":accent}} onClick={()=>fetchHoroscope(selectedSign)}>✦ REVEAL MY HOROSCOPE</button>
+          <button className="rb" style={{"--a":accent}} onClick={()=>setRevealed(true)}>✦ REVEAL MY HOROSCOPE</button>
         </div>
       )}
-      {selectedSign && state === "loading" && (
-        <div style={{textAlign:"center",padding:"28px 0",animation:"up 0.3s ease"}}>
-          <div style={{fontFamily:"'Cinzel',serif",fontSize:12,color:accent,marginBottom:12}}>Reading the stars...</div>
-          <div style={{display:"flex",gap:6,justifyContent:"center"}}>
-            {[0,1,2].map(i=>(<div key={i} style={{width:6,height:6,borderRadius:"50%",background:accent,animation:`pu 1s ease ${i*0.2}s infinite`}}/>))}
-          </div>
-        </div>
-      )}
-      {selectedSign && state === "error" && (
-        <div style={{textAlign:"center",animation:"up 0.3s ease"}}>
-          <p style={{fontFamily:"Georgia,serif",color:"#ff9090",fontSize:13,marginBottom:12}}>Something went wrong. Please try again.</p>
-          <button className="rb" style={{"--a":accent}} onClick={()=>fetchHoroscope(selectedSign)}>✦ TRY AGAIN</button>
-        </div>
-      )}
-      {selectedSign && state === "done" && reading && (
+      {selectedSign && revealed && (
         <div style={{animation:"up .4s ease"}}>
-          <div className="fc" style={{"--a":accent,marginBottom:16}}>
+          <div className="fc" style={{"--a":accent}}>
             <div style={{position:"absolute",top:14,right:16,fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,letterSpacing:".12em",color:accent,opacity:.7}}>{today.toUpperCase()}</div>
-            <div style={{fontSize:28,marginBottom:8,textAlign:"center"}}>{emojis[selectedSign]}</div>
-            <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,letterSpacing:".18em",color:accent,textAlign:"center",marginBottom:8}}>{selectedSign.toUpperCase()}</div>
-            {reading.overallRating && <StarRating rating={reading.overallRating} color={accent}/>}
-            {reading.overallTheme && (
-              <p style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:14,lineHeight:1.6,margin:"0 0 8px",color:"#f5f0e0",textAlign:"center"}}>"{reading.overallTheme}"</p>
-            )}
+            <div style={{fontSize:28,marginBottom:14,textAlign:"center"}}>{emojis[selectedSign]}</div>
+            <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,letterSpacing:".18em",color:accent,textAlign:"center",marginBottom:14}}>{selectedSign.toUpperCase()} – {today.toUpperCase()}</div>
+            <p style={{fontFamily:"Georgia,serif",fontWeight:700,fontSize:"clamp(14px,3vw,18px)",lineHeight:1.85,margin:"0 0 22px",color:"#f5f0e0",textAlign:"center"}}>{horoscope}</p>
+            <div style={{textAlign:"center"}}><span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,letterSpacing:".18em",color:accent,opacity:.6}}>✦ AREWEWOKE ✦</span></div>
           </div>
-          {reading.lifeAreas?.length > 0 && (
-            <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:16}}>
-              {reading.lifeAreas.map((area, i) => {
-                const color = areaColor[area.area] || accent;
-                const emoji = areaEmoji[area.area] || "✦";
-                const isOpen = openArea === i;
-                return (
-                  <div key={i} style={{borderRadius:12,overflow:"hidden",border:`1px solid ${isOpen?color+"66":"rgba(255,200,50,0.12)"}`,transition:"all 0.2s",background:isOpen?`${color}08`:"rgba(255,200,50,0.02)"}}>
-                    <button onClick={()=>setOpenArea(isOpen?null:i)}
-                      style={{width:"100%",display:"flex",alignItems:"center",justifyContent:"space-between",padding:"14px 16px",background:"transparent",border:"none",cursor:"pointer",gap:10,textAlign:"left"}}>
-                      <div style={{display:"flex",alignItems:"center",gap:10,flex:1}}>
-                        <span style={{fontSize:18,flexShrink:0}}>{emoji}</span>
-                        <div>
-                          <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color,letterSpacing:".1em",marginBottom:2}}>{(area.area||"").toUpperCase()}</div>
-                          {area.title && area.title.toLowerCase() !== (area.area||"").toLowerCase() && (
-                            <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:13,color:isOpen?color:"#f5f0e0"}}>{area.title}</div>
-                          )}
-                        </div>
-                      </div>
-                      <div style={{display:"flex",flexDirection:"column",alignItems:"flex-end",gap:4,flexShrink:0}}>
-                        {area.rating && <StarRating rating={area.rating} color={color}/>}
-                        <span style={{fontSize:9,color,opacity:0.6,transform:isOpen?"rotate(180deg)":"rotate(0deg)",transition:"transform 0.2s"}}>▼</span>
-                      </div>
-                    </button>
-                    {isOpen && (
-                      <div style={{padding:"0 16px 16px",animation:"up 0.2s ease"}}>
-                        <p style={{fontFamily:"Georgia,serif",fontSize:14,color:"#d8c890",lineHeight:1.85,margin:"0 0 10px"}}>{area.prediction}</p>
-                        {area.keywords?.length > 0 && (
-                          <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
-                            {area.keywords.map((kw,j)=>(
-                              <span key={j} style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,color,background:`${color}15`,border:`1px solid ${color}33`,borderRadius:100,padding:"3px 10px",letterSpacing:".06em"}}>{kw}</span>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          )}
-          <div style={{textAlign:"center"}}><span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,letterSpacing:".18em",color:accent,opacity:.6}}>✦ AREWEWOKE ✦</span></div>
         </div>
       )}
       {!selectedSign && (
@@ -998,6 +901,7 @@ function DailyHoroscope() {
     </div>
   );
 }
+
 function CelebrityAvatar({ celeb }) {
   return (
     <div style={{background:"rgba(255,200,50,0.04)",border:"1px solid rgba(255,200,50,0.2)",borderRadius:16,padding:"24px 20px",textAlign:"center",maxWidth:360,margin:"0 auto"}}>
@@ -1058,6 +962,15 @@ function CreditsContent(){return(<><DocP>Arewewoke is created and operated by Ay
 
 // ─── BIRTH CHART FEATURE ────────────────────────────────────────
 const CHART_PLANETS = ["Sun","Moon","Rising","Mercury","Venus","Mars","Jupiter","Saturn","Uranus","Neptune","Pluto"];
+
+const HOUSE_NAMES = {
+  1:"1st House — Self & Identity", 2:"2nd House — Possessions & Values",
+  3:"3rd House — Communication & Mind", 4:"4th House — Home & Roots",
+  5:"5th House — Creativity & Joy", 6:"6th House — Health & Service",
+  7:"7th House — Partnerships", 8:"8th House — Transformation",
+  9:"9th House — Philosophy & Travel", 10:"10th House — Career & Legacy",
+  11:"11th House — Community & Ideals", 12:"12th House — Spirituality & Endings",
+};
 
 async function fetchBirthChart({ name, date, time, city, country_code, paid }) {
   const res = await fetch("/api/birth-chart", {
@@ -1500,14 +1413,21 @@ function PaywallSection({ chartPlanets, onVerified }) {
 }
 
 function BirthChartResults({ result, onReset, onUpgrade }) {
-  const { name, city, planets: chartPlanets, aspects = [], report = null, chartSvg = null } = result;
+  const { name, city, planets: chartPlanets, chartPlanets: fullPlanets = [], houseCusps = [], aspects = [], report = null } = result;
   const [memberVerified, setMemberVerified] = useState(() => {
     try { return localStorage.getItem("aww_subscribed") === "true"; } catch(e) { return false; }
   });
+  const [openPlanet, setOpenPlanet] = useState(null);
 
   const handleVerified = () => {
     setMemberVerified(true);
-    if (onUpgrade) onUpgrade(); // re-fetch with paid data
+    if (onUpgrade) onUpgrade();
+  };
+
+  // House number to ordinal label
+  const houseLabel = (n) => {
+    const labels = {1:"1st",2:"2nd",3:"3rd",4:"4th",5:"5th",6:"6th",7:"7th",8:"8th",9:"9th",10:"10th",11:"11th",12:"12th"};
+    return labels[n] ? `${labels[n]} House` : `House ${n}`;
   };
 
   // ── PAID SECTION ────────────────────────────────────────────
@@ -1521,17 +1441,72 @@ function BirthChartResults({ result, onReset, onUpgrade }) {
 
       {/* Big Three hero row */}
       <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#f5c842",letterSpacing:".18em",marginBottom:12,textAlign:"center"}}>✦ YOUR BIG THREE ✦</div>
-      <div style={{display:"flex",gap:10,marginBottom:24}}>
+      <div style={{display:"flex",gap:10,marginBottom:28}}>
         {["Sun","Moon","Rising"].map(p => chartPlanets[p] ? <BigThreeCard key={p} planet={p} sign={chartPlanets[p]}/> : null)}
       </div>
 
-      {/* All planets 2-column grid */}
-      <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#f5c842",letterSpacing:".18em",marginBottom:12,textAlign:"center"}}>✦ ALL PLACEMENTS — TAP TO READ ✦</div>
-      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:24}}>
-        {CHART_PLANETS.map((p) => chartPlanets[p] ? (
-          <PlanetRow key={p} planet={p} sign={chartPlanets[p]} fact={getFact(chartPlanets[p], p)}/>
-        ) : null)}
+      {/* Planet / Sign / House table */}
+      <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#f5c842",letterSpacing:".18em",marginBottom:14,textAlign:"center"}}>✦ PLANETS IN SIGNS & HOUSES ✦</div>
+      <div style={{fontFamily:"Georgia,serif",fontSize:11,color:"#4a4440",textAlign:"center",marginBottom:14}}>Whole Sign House System · Tap any row to read</div>
+
+      <div style={{display:"flex",flexDirection:"column",gap:6,marginBottom:28}}>
+        {fullPlanets.filter(p => p.name !== "Midheaven" && p.name !== "Medium_Coeli").map((p, i) => {
+          const color = colors[p.sign] || "#f5c842";
+          const isOpen = openPlanet === i;
+          const fact = getFact(p.sign, p.name);
+          return (
+            <div key={i} onClick={() => setOpenPlanet(isOpen ? null : i)}
+              style={{borderRadius:12,overflow:"hidden",border:`1px solid ${isOpen?color+"66":"rgba(255,200,50,0.1)"}`,cursor:"pointer",transition:"all 0.2s",background:isOpen?`${color}08`:"rgba(255,200,50,0.02)"}}>
+              <div style={{display:"flex",alignItems:"center",padding:"12px 14px",gap:10}}>
+                {/* Planet */}
+                <div style={{display:"flex",alignItems:"center",gap:6,width:"30%",minWidth:0}}>
+                  <span style={{fontSize:16,flexShrink:0}}>{emojis[p.name]||"✦"}</span>
+                  <div>
+                    <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#6a6058",letterSpacing:".08em"}}>{p.name.toUpperCase()}</div>
+                    {p.retrograde && <div style={{fontFamily:"'Cinzel',serif",fontSize:7,color:"#ff9944",letterSpacing:".06em"}}>℞ RETROGRADE</div>}
+                  </div>
+                </div>
+                {/* Sign */}
+                <div style={{display:"flex",alignItems:"center",gap:4,width:"35%",minWidth:0}}>
+                  <span style={{fontSize:14}}>{emojis[p.sign]||""}</span>
+                  <span style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:12,color}}>{p.sign}</span>
+                </div>
+                {/* House */}
+                <div style={{flex:1,textAlign:"right"}}>
+                  {p.house && <span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,color:"#f5c842",background:"rgba(245,200,66,0.1)",border:"1px solid rgba(245,200,66,0.2)",borderRadius:6,padding:"3px 8px"}}>{houseLabel(p.house)}</span>}
+                </div>
+                <span style={{fontSize:9,color,opacity:0.5,flexShrink:0,transform:isOpen?"rotate(180deg)":"rotate(0deg)",transition:"transform 0.2s"}}>▼</span>
+              </div>
+              {isOpen && (
+                <div style={{padding:"0 14px 14px",animation:"up 0.2s ease"}}>
+                  <p style={{fontFamily:"Georgia,serif",fontSize:13,color:"#d8c890",lineHeight:1.8,margin:0}}>{fact}</p>
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
+
+      {/* House System */}
+      {houseCusps.length > 0 && (
+        <div style={{marginBottom:28}}>
+          <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#f5c842",letterSpacing:".18em",marginBottom:14,textAlign:"center"}}>✦ YOUR HOUSE SYSTEM ✦</div>
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:6}}>
+            {houseCusps.map((h, i) => {
+              const color = colors[h.sign] || "#f5c842";
+              return (
+                <div key={i} style={{background:"rgba(255,200,50,0.03)",border:"1px solid rgba(255,200,50,0.1)",borderRadius:10,padding:"10px 12px",display:"flex",alignItems:"center",gap:8}}>
+                  <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:11,color:"#f5c842",minWidth:24}}>{h.house}</div>
+                  <div>
+                    <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,color}}>{emojis[h.sign]} {h.sign}</div>
+                    <div style={{fontFamily:"Georgia,serif",fontSize:9,color:"#4a4440",lineHeight:1.3}}>{HOUSE_NAMES[h.house]?.split("—")[1]?.trim() || ""}</div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Aspect wheel */}
       <AspectWheel aspects={aspects} chartPlanets={chartPlanets}/>
