@@ -42,7 +42,7 @@ export default async function handler(req, res) {
   console.log(`Cache miss — fetching live horoscope for ${sign} on ${today}`);
 
   try {
-    const response = await fetch("https://api.astrology-api.io/api/v3/horoscope/sign/daily", {
+    const response = await fetch("https://api.astrology-api.io/api/v3/horoscope/sign/daily/text", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
