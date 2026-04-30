@@ -132,12 +132,12 @@ export default async function handler(req, res) {
     if (paid) {
       console.log("Paid — fetching full natal chart...");
 
-      const [natalData, reportData] = await Promise.all([
+      const [natalData, reportData, enhancedData] = await Promise.all([
         safeFetch(
           "https://api.astrology-api.io/api/v3/charts/natal",
           {
             subject,
-            options: { house_system: "W" }, // W = Whole Sign
+            options: { house_system: "W" },
           },
           "NatalChart"
         ),
@@ -145,6 +145,22 @@ export default async function handler(req, res) {
           "https://api.astrology-api.io/api/v3/analysis/natal-report",
           { subject, tradition: "psychological" },
           "NatalReport"
+        ),
+        safeFetch(
+          "https://api.astrology-api.io/api/v3/data/aspects/enhanced",
+          {
+            subject,
+            options: {
+              house_system: "W",
+              tradition: "classical",
+              detail_level: "full",
+              zodiac_type: "Tropic",
+              active_points: ["Sun","Moon","Mercury","Venus","Mars",
+                              "Jupiter","Saturn","Uranus","Neptune","Pluto"],
+              precision: 3,
+            },
+          },
+          "EnhancedAspects"
         ),
       ]);
 
@@ -205,6 +221,29 @@ export default async function handler(req, res) {
         console.log("Chart planets:", chartPlanets.length);
         console.log("House cusps:", houseCusps.length);
         console.log("Aspects:", aspects.length);
+
+        // Merge enhanced fields (strength, applying, reception) into aspects
+        if (enhancedData) {
+          const rawEnhanced = enhancedData?.aspects || enhancedData?.data?.aspects || [];
+          const enhancedMap = {};
+          rawEnhanced.forEach(a => {
+            const p1 = PLANET_MAP[a.point1] || a.point1;
+            const p2 = PLANET_MAP[a.point2] || a.point2;
+            const type = (a.aspect_type || a.aspect || "").toLowerCase();
+            if (!p1 || !p2 || !type) return;
+            const key = [p1, p2].sort().join("|") + "|" + type;
+            enhancedMap[key] = {
+              strength:  a.strength       ?? null,
+              applying:  a.applying       ?? null,
+              reception: a.reception_data ?? null,
+            };
+          });
+          aspects = aspects.map(a => {
+            const key = [a.planet1, a.planet2].sort().join("|") + "|" + a.type.toLowerCase();
+            return { ...a, ...(enhancedMap[key] || {}) };
+          });
+          console.log("Aspects after enhanced merge:", aspects.length);
+        }
       }
 
       // Parse natal report
