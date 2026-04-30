@@ -1623,7 +1623,25 @@ function BirthChartResults({ result, onReset, onUpgrade }) {
         {fullPlanets.filter(p => p.name !== "Midheaven" && p.name !== "Medium_Coeli").map((p, i) => {
           const color = colors[p.sign] || "#f5c842";
           const isOpen = openPlanet === i;
-          const fact = getFact(p.sign, p.name);
+
+          // Try to find API interpretation for this planet+sign from the report
+          const signAbbr = p.sign ? p.sign.slice(0,3) : "";
+          const apiText = Array.isArray(report) ? (
+            report.find(s => {
+              const t = (s.title || "").toLowerCase();
+              const planetLower = p.name.toLowerCase();
+              const signLower = p.sign.toLowerCase();
+              const signAbbrLower = signAbbr.toLowerCase();
+              return (
+                t.startsWith(planetLower) &&
+                (t.includes(signLower) || t.includes(signAbbrLower)) &&
+                !t.includes("house")
+              );
+            })?.text
+          ) : null;
+
+          const displayText = apiText || getFact(p.sign, p.name);
+
           return (
             <div key={i} onClick={() => setOpenPlanet(isOpen ? null : i)}
               style={{borderRadius:12,overflow:"hidden",border:`1px solid ${isOpen?color+"66":"rgba(255,200,50,0.1)"}`,cursor:"pointer",transition:"all 0.2s",background:isOpen?`${color}08`:"rgba(255,200,50,0.02)"}}>
@@ -1649,7 +1667,7 @@ function BirthChartResults({ result, onReset, onUpgrade }) {
               </div>
               {isOpen && (
                 <div style={{padding:"0 14px 14px",animation:"up 0.2s ease"}}>
-                  <p style={{fontFamily:"Georgia,serif",fontSize:13,color:"#d8c890",lineHeight:1.8,margin:0}}>{fact}</p>
+                  <p style={{fontFamily:"Georgia,serif",fontSize:13,color:"#d8c890",lineHeight:1.8,margin:0}}>{displayText}</p>
                 </div>
               )}
             </div>
