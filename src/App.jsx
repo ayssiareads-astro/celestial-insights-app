@@ -1265,6 +1265,10 @@ function AspectWheel({ aspects, chartPlanets }) {
     return aScore - bScore;
   });
 
+  // Use aspect key string for selection to avoid index mismatch between filtered/sorted
+  const aspectKey = (a) => `${a.planet1}-${a.planet2}-${a.type}`;
+  const selectedAspect = selected !== null ? filtered.find(a => aspectKey(a) === selected) || sorted.find(a => aspectKey(a) === selected) : null;
+
   return (
     <div style={{marginBottom:24}}>
       <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#f5c842",letterSpacing:".18em",marginBottom:4,textAlign:"center"}}>✦ KEY ASPECTS ✦</div>
@@ -1295,9 +1299,9 @@ function AspectWheel({ aspects, chartPlanets }) {
             const p1 = planetPos(i1);
             const p2 = planetPos(i2);
             const color = aspectColor(a.type);
-            const isSelected = selected === i;
+            const isSelected = selected === aspectKey(a);
             return (
-              <g key={i} onClick={() => setSelected(isSelected ? null : i)} style={{cursor:"pointer"}}>
+              <g key={i} onClick={() => setSelected(isSelected ? null : aspectKey(a))} style={{cursor:"pointer"}}>
                 {/* Invisible thick hit area */}
                 <line x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y}
                   stroke="transparent" strokeWidth={16}/>
@@ -1352,14 +1356,14 @@ function AspectWheel({ aspects, chartPlanets }) {
           {sorted.slice(0, 10).map((a, i) => {
             const color = aspectColor(a.type);
             const sym = aspectSymbol(a.type);
-            const isOpen = selected === i;
+            const isOpen = selected === aspectKey(a);
             const specific = getAspectMeaning(a.planet1, a.planet2, a.type);
             const general = aspectMeanings[(a.type||"").toLowerCase()];
             const text = a.text || specific || (general ? `${a.planet1} ${a.type} ${a.planet2} is ${general}.` : null);
             return (
               <div key={i} onClick={() => setSelected(isOpen ? null : i)}
                 style={{borderRadius:12,overflow:"hidden",border:`1px solid ${isOpen?color+"66":"rgba(255,200,50,0.1)"}`,cursor:"pointer",transition:"all 0.2s",background:isOpen?`${color}08`:"rgba(255,200,50,0.02)"}}>
-                <div style={{display:"flex",alignItems:"center",padding:"16px 16px",gap:10}}>
+                <div onClick={() => setSelected(isOpen ? null : aspectKey(a))} style={{display:"flex",alignItems:"center",padding:"16px 16px",gap:10}}>
                   <span style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:16,color,flexShrink:0,width:24,textAlign:"center"}}>{sym}</span>
                   <div style={{flex:1}}>
                     <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:12,color:isOpen?color:"#d8c890"}}>
