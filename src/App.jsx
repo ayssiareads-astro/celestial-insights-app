@@ -1118,45 +1118,85 @@ function AspectWheel({ aspects, chartPlanets }) {
       "Moon-Sun-square": "Tension between what you need emotionally and what you want to achieve. This friction is actually fuel — it pushes you to grow in ways that comfort never would.",
       "Mercury-Sun-conjunction": "Your mind and your identity are inseparable. You think deeply about who you are, and your ideas are an extension of your core self.",
       "Mercury-Sun-trine": "Communication comes naturally to you. Your mind supports your goals — you are rarely misunderstood.",
+      "Mercury-Sun-square": "Your thoughts and your sense of self sometimes clash — you may overthink decisions or second-guess yourself. This tension sharpens your mind over time.",
       "Saturn-Sun-trine": "Discipline feels natural to you, not like a burden. You have an innate sense of how to build something that lasts, and authority comes to you because you have genuinely earned it.",
       "Saturn-Sun-sextile": "Structure and ambition support each other in your chart. When you apply yourself consistently, doors open in ways that feel almost inevitable.",
       "Saturn-Sun-square": "Authority figures have historically challenged you. But this tension has built a resilience in you that more comfortable placements simply cannot produce.",
       "Saturn-Sun-opposition": "You may feel the world demands more than it gives back. Over time you discover that your own inner authority is more reliable than any external approval.",
       "Jupiter-Sun-trine": "Optimism and opportunity come naturally to you. You have a gift for seeing possibilities where others see obstacles — and that vision tends to become reality.",
       "Jupiter-Sun-conjunction": "You carry an expansive, generous energy that draws people and opportunities to you. Confidence is your birthright — the challenge is channeling it with wisdom.",
+      "Jupiter-Sun-square": "Your ambition and your idealism can overreach — you dream big and sometimes promise more than you can deliver. That vision is still a gift when paired with patience.",
       "Mars-Sun-trine": "Your drive and your identity are aligned. When you want something, you go after it without much internal resistance — action feels natural to you.",
       "Mars-Sun-conjunction": "Fierce, direct, and energized — you lead with your whole self. There is very little distance between what you want and how you pursue it.",
+      "Mars-Sun-square": "Your willpower and your ego can create friction — you may struggle with authority or push too hard when patience would serve you better. This placement also gives you extraordinary stamina.",
       "Venus-Sun-conjunction": "Beauty, connection, and self-expression are woven into who you are. You have a natural magnetism that draws others without you trying.",
+      "Venus-Sun-trine": "Charm, creativity, and warmth radiate naturally from you. People are drawn to your presence and your ability to make everything feel a little more beautiful.",
+      "Venus-Sun-sextile": "There is a natural harmony between how you love and who you are. You express affection easily and attract people who appreciate your genuine warmth.",
       "Moon-Saturn-conjunction": "Emotional security did not come easily early in life — but what you have built for yourself is solid and lasting. You take your inner world seriously.",
       "Moon-Saturn-trine": "Your emotional steadiness is one of your greatest gifts. You feel things deeply but rarely let them destabilize you — that groundedness earns deep trust from others.",
       "Moon-Saturn-square": "Emotions and responsibility have been in tension. You may have learned to suppress feelings in favor of duty — learning to honor both is your work.",
+      "Moon-Saturn-opposition": "A deep tension between your need for nurturing and the demands of the world. You may have grown up too fast — but you carry a maturity that few can match.",
       "Moon-Jupiter-trine": "Your emotional generosity is one of your most beautiful qualities. You make people feel genuinely welcome without even trying.",
       "Moon-Jupiter-conjunction": "You feel things on a grand scale — big emotions, big empathy, big reactions. Your emotional world is rich and expansive.",
+      "Moon-Jupiter-square": "Your emotions can swing between optimism and excess — you feel everything so fully that it can overflow. This same quality makes you deeply empathetic.",
       "Moon-Mars-square": "Emotional reactivity can be a challenge — you feel anger and passion intensely and immediately. Learning to pause before responding transforms this placement.",
       "Moon-Mars-conjunction": "Your emotions and your drive are fused — when you care about something, you pursue it with fierce energy. Passion is your natural state.",
+      "Moon-Mars-trine": "Your feelings and your actions are in sync. When you feel something, you know exactly what to do about it — and you act with both heart and courage.",
       "Moon-Venus-trine": "Warmth and beauty flow through your emotional world. You are naturally loving, and people feel genuinely nourished by your presence.",
       "Moon-Venus-conjunction": "Love and feeling are the same thing for you. You express affection easily — and you need to receive it just as fully.",
-      "Venus-Mars-conjunction": "Passion, desire, and attraction are powerful forces in your life. You love boldly and pursue what you want without apology.",
-      "Venus-Mars-trine": "Your capacity for love and your drive for action complement each other beautifully. Relationships energize rather than drain you.",
-      "Venus-Mars-square": "Love and desire create tension — what you want and what you feel are sometimes in conflict. This friction also generates a powerful creative and romantic magnetism.",
-      "Jupiter-Saturn-trine": "Expansion and discipline work beautifully together. You know when to take risks and when to be patient — that balance is rare and powerful.",
-      "Jupiter-Saturn-conjunction": "You carry both the optimist and the realist within you. At your best, you dream big and build carefully — a combination that creates lasting success.",
-      "Jupiter-Saturn-square": "Growth and restriction have been in dialogue throughout your life. The tension between wanting more and needing to be responsible has shaped your character profoundly.",
-      "Saturn-Mars-trine": "Your ambition is patient and strategic. You work hard without burning out because you instinctively pace yourself — the results compound over time.",
-      "Saturn-Mars-conjunction": "Your drive is disciplined and focused. You do not waste energy on things that do not matter — when you commit, you commit fully.",
-      "Saturn-Mars-square": "Frustration and blocked energy have been recurring themes — but so has the extraordinary determination you have developed in response.",
-      "Neptune-Venus-trine": "You love with an almost spiritual depth. Beauty, music, art, and romance are how you connect to something larger than yourself.",
-      "Neptune-Venus-conjunction": "Your capacity for idealized love is extraordinary — and occasionally painful. You see the divine in people, which is both your greatest gift and your most significant vulnerability.",
-      "Pluto-Venus-conjunction": "Love transforms you completely. Every significant relationship has fundamentally changed who you are — and that depth is exactly what you seek.",
-      "Pluto-Mars-conjunction": "Your drive is intense, focused, and occasionally obsessive. When you commit to something, you pursue it with a force that can move mountains.",
-      "Uranus-Venus-trine": "Your love life has been unconventional and you would not have it any other way. You need freedom within connection — and you attract partners who understand that.",
+      "Moon-Venus-square": "What you feel and what you want in love do not always line up. You may attract what you desire but find it does not satisfy — until you learn to love what already nourishes you.",
+      "Moon-Venus-opposition": "Your emotional needs and your romantic desires pull in different directions. Learning to ask for what you truly need in relationships is your most important work.",
       "Chiron-Moon-conjunction": "Emotional wounding runs deep in your chart, but so does your capacity for healing — both yourself and others. Your sensitivity is your greatest gift.",
       "Mercury-Moon-trine": "Your mind and emotions work beautifully together. You can articulate how you feel with unusual clarity — and that gift builds deep trust with others.",
       "Mercury-Moon-square": "Your head and heart often disagree. You may overthink your feelings or dismiss them with logic. Letting both speak is your work.",
+      "Venus-Mars-conjunction": "Passion, desire, and attraction are powerful forces in your life. You love boldly and pursue what you want without apology.",
+      "Venus-Mars-trine": "Your capacity for love and your drive for action complement each other beautifully. Relationships energize rather than drain you.",
+      "Venus-Mars-square": "Love and desire create tension — what you want and what you feel are sometimes in conflict. This friction generates a powerful creative and romantic magnetism.",
+      "Venus-Mars-opposition": "Attraction and assertion are in constant dialogue for you. Your relationships are passionate, sometimes volatile, and always transformative.",
+      "Venus-Saturn-trine": "You love with loyalty and depth. Commitment feels natural to you, not constraining — and the relationships you build are built to last.",
+      "Venus-Saturn-conjunction": "Love and responsibility are deeply linked in your chart. You may have experienced loss in relationships early on — but you love with extraordinary depth and faithfulness.",
+      "Venus-Saturn-square": "Love has felt difficult or delayed at times — but the relationships you do build are real, tested, and lasting. You do not love lightly.",
+      "Venus-Saturn-sextile": "Your relationships are grounded and dependable. You attract people who are serious about connection, and you offer that same reliability in return.",
+      "Venus-Jupiter-trine": "Love comes easily and abundantly to you. You attract warmth, generosity, and beauty — and you give it back tenfold.",
+      "Venus-Jupiter-conjunction": "Your capacity for love and pleasure is enormous. You love generously, sometimes excessively — and the world feels richer for your presence in it.",
+      "Venus-Jupiter-square": "You love big and sometimes overpromise in relationships. Learning to balance your generous heart with realistic expectations is your work.",
+      "Neptune-Venus-trine": "You love with an almost spiritual depth. Beauty, music, art, and romance are how you connect to something larger than yourself.",
+      "Neptune-Venus-conjunction": "Your capacity for idealized love is extraordinary — and occasionally painful. You see the divine in people, which is both your greatest gift and your most significant vulnerability.",
+      "Neptune-Venus-square": "In love, you may idealize partners or find yourself disappointed when reality does not match your vision. Your capacity for romantic imagination is extraordinary — use it wisely.",
+      "Pluto-Venus-conjunction": "Love transforms you completely. Every significant relationship has fundamentally changed who you are — and that depth is exactly what you seek.",
+      "Pluto-Venus-trine": "You are drawn to deep, transformative love. Superficial connections hold no interest — you want to be known completely, and you offer that same depth in return.",
+      "Pluto-Venus-square": "Love and power have been intertwined in your life — you may attract intense, complicated relationships. The lesson is learning to love without needing to control or be controlled.",
+      "Uranus-Venus-trine": "Your love life has been unconventional and you would not have it any other way. You need freedom within connection — and you attract partners who understand that.",
+      "Uranus-Venus-conjunction": "You love freely, unexpectedly, and on your own terms. Traditional relationship structures rarely satisfy you — you need excitement, originality, and genuine independence.",
       "Mercury-Venus-conjunction": "Charm and intelligence are intertwined for you. You express affection through words, ideas, and wit — and people feel genuinely seen when you speak to them.",
+      "Mercury-Venus-trine": "Your words are naturally warm and persuasive. You have a gift for making people feel valued — and your creativity expresses itself most beautifully through communication.",
+      "Saturn-Mars-trine": "Your ambition is patient and strategic. You work hard without burning out because you instinctively pace yourself — the results compound over time.",
+      "Saturn-Mars-conjunction": "Your drive is disciplined and focused. You do not waste energy on things that do not matter — when you commit, you commit fully.",
+      "Saturn-Mars-square": "Frustration and blocked energy have been recurring themes — but so has the extraordinary determination you have developed in response.",
+      "Saturn-Mars-opposition": "You may feel that effort rarely produces the results it should. This tension has made you more strategic, more patient, and more formidable than you know.",
+      "Jupiter-Mars-trine": "Your confidence and your energy are in beautiful alignment. You act boldly, recover quickly, and inspire others to do the same.",
+      "Jupiter-Mars-conjunction": "You pursue goals with infectious enthusiasm. Your drive is expansive and your optimism about what you can accomplish borders on unstoppable.",
+      "Jupiter-Mars-square": "Your ambition can outpace your resources — you take on more than is wise and then push through anyway. That stubborn optimism has carried you further than caution ever would.",
+      "Pluto-Mars-conjunction": "Your drive is intense, focused, and occasionally obsessive. When you commit to something, you pursue it with a force that can move mountains.",
+      "Pluto-Mars-square": "Power, control, and desire create intense internal pressure in your chart. Your drive has likely created conflict at times — but nothing has stopped you for long.",
+      "Neptune-Mars-trine": "Your actions are guided by intuition and idealism. You are drawn to work that has spiritual or creative meaning — and you pursue it with quiet but unmistakable dedication.",
+      "Jupiter-Saturn-trine": "Expansion and discipline work beautifully together. You know when to take risks and when to be patient — that balance is rare and powerful.",
+      "Jupiter-Saturn-conjunction": "You carry both the optimist and the realist within you. At your best, you dream big and build carefully — a combination that creates lasting success.",
+      "Jupiter-Saturn-square": "Growth and restriction have been in dialogue throughout your life. The tension between wanting more and needing to be responsible has shaped your character profoundly.",
+      "Pluto-Jupiter-conjunction": "Your desire for growth and transformation is immense. You are drawn to understanding the deepest truths of existence — and your influence on others can be profound.",
+      "Pluto-Jupiter-trine": "Transformation and growth support each other naturally in your chart. You have a remarkable ability to rebuild and expand after loss — and to help others do the same.",
+      "Neptune-Jupiter-conjunction": "Your idealism and your spiritual hunger are boundless. You are drawn to vision, meaning, and transcendence — at your best you inspire others to believe in something larger.",
+      "Neptune-Jupiter-trine": "Your faith and your imagination reinforce each other. You have a gift for seeing the divine in the ordinary and for inspiring others toward something greater.",
+      "Pluto-Saturn-conjunction": "You carry a deep sense of purpose around structure, power, and transformation. You are here to rebuild — whether that means your own life or something larger.",
+      "Pluto-Saturn-trine": "Discipline and transformation work together in your chart. You have the patience to dismantle what no longer serves and the determination to rebuild something lasting.",
+      "Neptune-Chiron-trine": "Your capacity for spiritual healing is one of your greatest gifts. You understand suffering in a way that allows you to hold space for others without being consumed by their pain.",
+      "Pluto-Chiron-trine": "You have been transformed by your wounds in ways that have made you extraordinarily powerful. Your healing journey is also your greatest source of wisdom.",
       "Mercury-Mars-trine": "Your mind is sharp and your communication is direct. You think fast, argue well, and pursue ideas with genuine passion.",
       "Mercury-Saturn-trine": "Your thinking is disciplined and precise. You do not speak without thinking — and when you do speak, people listen because your words carry weight.",
       "Mercury-Jupiter-trine": "Your mind reaches naturally toward the big picture. You are a natural teacher, storyteller, and philosopher.",
+      "Mercury-Jupiter-conjunction": "Your mind is expansive and curious, always reaching beyond what you already know. You have a gift for synthesis — connecting ideas across vast distances.",
+      "Mercury-Neptune-trine": "Your mind is poetic, intuitive, and visionary. You think in images and feelings as much as words — and that quality gives your communication unusual depth.",
+      "Mercury-Pluto-conjunction": "Your mind goes deep. You are drawn to the hidden, the taboo, and the transformative — and you communicate with an intensity that can unsettle and illuminate in equal measure.",
     };
     return meanings[key] || meanings[[p2,p1].sort().join("-")+"-"+(type||"").toLowerCase()] || null;
   };
@@ -1217,7 +1257,13 @@ function AspectWheel({ aspects, chartPlanets }) {
     return { x: CX + R * Math.cos(angle), y: CY + R * Math.sin(angle) };
   };
 
-  const selectedAspect = selected !== null ? filtered[selected] : null;
+  const PERSONAL_PLANETS = ["Sun","Moon","Mercury","Venus","Mars"];
+  const planetPriority = (name) => PERSONAL_PLANETS.indexOf(name) >= 0 ? PERSONAL_PLANETS.indexOf(name) : 10;
+  const sorted = [...filtered].sort((a, b) => {
+    const aScore = Math.min(planetPriority(a.planet1), planetPriority(a.planet2));
+    const bScore = Math.min(planetPriority(b.planet1), planetPriority(b.planet2));
+    return aScore - bScore;
+  });
 
   return (
     <div style={{marginBottom:24}}>
@@ -1300,10 +1346,10 @@ function AspectWheel({ aspects, chartPlanets }) {
       })()}
 
       {/* Top 6 aspects accordion — API report text if available, else our library */}
-      {filtered.slice(0, 6).length > 0 && (
+      {filtered.slice(0, 10).length > 0 && (
         <div style={{display:"flex",flexDirection:"column",gap:6,marginTop:8}}>
           <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#f5c842",letterSpacing:".15em",marginBottom:8,textAlign:"center"}}>✦ KEY ASPECT READINGS ✦</div>
-          {filtered.slice(0, 6).map((a, i) => {
+          {sorted.slice(0, 10).map((a, i) => {
             const color = aspectColor(a.type);
             const sym = aspectSymbol(a.type);
             const isOpen = selected === i;
