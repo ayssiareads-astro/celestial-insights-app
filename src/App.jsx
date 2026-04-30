@@ -1269,6 +1269,9 @@ function AspectWheel({ aspects, chartPlanets }) {
   const aspectKey = (a) => `${a.planet1}-${a.planet2}-${a.type}`;
   const selectedAspect = selected !== null ? filtered.find(a => aspectKey(a) === selected) || sorted.find(a => aspectKey(a) === selected) : null;
 
+  // Debug: log first few aspects to verify field names
+  if (filtered.length > 0) console.log("Sample aspects:", JSON.stringify(filtered.slice(0,3)));
+
   return (
     <div style={{marginBottom:24}}>
       <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#f5c842",letterSpacing:".18em",marginBottom:4,textAlign:"center"}}>✦ KEY ASPECTS ✦</div>
@@ -1356,14 +1359,15 @@ function AspectWheel({ aspects, chartPlanets }) {
           {sorted.slice(0, 10).map((a, i) => {
             const color = aspectColor(a.type);
             const sym = aspectSymbol(a.type);
-            const isOpen = selected === aspectKey(a);
+            const key = aspectKey(a);
+            const isOpen = selected === key;
             const specific = getAspectMeaning(a.planet1, a.planet2, a.type);
             const general = aspectMeanings[(a.type||"").toLowerCase()];
-            const text = a.text || specific || (general ? `${a.planet1} ${a.type} ${a.planet2} is ${general}.` : null);
+            const text = specific || (general ? `${a.planet1} ${a.type} ${a.planet2} is ${general}.` : null);
             return (
-              <div key={i} onClick={() => setSelected(isOpen ? null : i)}
+              <div key={i}
                 style={{borderRadius:12,overflow:"hidden",border:`1px solid ${isOpen?color+"66":"rgba(255,200,50,0.1)"}`,cursor:"pointer",transition:"all 0.2s",background:isOpen?`${color}08`:"rgba(255,200,50,0.02)"}}>
-                <div onClick={() => setSelected(isOpen ? null : aspectKey(a))} style={{display:"flex",alignItems:"center",padding:"16px 16px",gap:10}}>
+                <div onClick={() => setSelected(isOpen ? null : key)} style={{display:"flex",alignItems:"center",padding:"16px 16px",gap:10}}>
                   <span style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:16,color,flexShrink:0,width:24,textAlign:"center"}}>{sym}</span>
                   <div style={{flex:1}}>
                     <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:12,color:isOpen?color:"#d8c890"}}>
@@ -1375,9 +1379,9 @@ function AspectWheel({ aspects, chartPlanets }) {
                   </div>
                   <span style={{fontSize:9,color,opacity:0.5,transform:isOpen?"rotate(180deg)":"rotate(0deg)",transition:"transform 0.2s",flexShrink:0}}>▼</span>
                 </div>
-                {isOpen && text && (
+                {isOpen && (
                   <div style={{padding:"0 16px 16px",animation:"up 0.2s ease"}}>
-                    <p style={{fontFamily:"Georgia,serif",fontSize:14,color:"#d8c890",lineHeight:1.85,margin:0}}>{text}</p>
+                    <p style={{fontFamily:"Georgia,serif",fontSize:14,color:"#d8c890",lineHeight:1.85,margin:0}}>{text || "No interpretation available."}</p>
                   </div>
                 )}
               </div>
