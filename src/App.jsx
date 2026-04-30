@@ -1432,8 +1432,6 @@ function AspectWheel({ aspects, chartPlanets, report }) {
                 )}
               </div>
             );
-              </div>
-            );
           })}
         </div>
       )}
