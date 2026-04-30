@@ -1251,12 +1251,15 @@ function AspectWheel({ aspects, chartPlanets }) {
             const color = aspectColor(a.type);
             const isSelected = selected === i;
             return (
-              <line key={i} x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y}
-                stroke={color} strokeWidth={isSelected ? 2 : 0.8}
-                strokeOpacity={isSelected ? 1 : 0.35}
-                style={{cursor:"pointer"}}
-                onClick={() => setSelected(isSelected ? null : i)}
-              />
+              <g key={i} onClick={() => setSelected(isSelected ? null : i)} style={{cursor:"pointer"}}>
+                {/* Invisible thick hit area */}
+                <line x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y}
+                  stroke="transparent" strokeWidth={16}/>
+                {/* Visible line */}
+                <line x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y}
+                  stroke={color} strokeWidth={isSelected ? 3 : 1.5}
+                  strokeOpacity={isSelected ? 1 : 0.45}/>
+              </g>
             );
           })}
 
@@ -1282,7 +1285,7 @@ function AspectWheel({ aspects, chartPlanets }) {
         const general = aspectMeanings[(selectedAspect.type||"").toLowerCase()];
         const text = specific || (general ? `${selectedAspect.planet1} ${selectedAspect.type} ${selectedAspect.planet2} is ${general}.` : null);
         return (
-          <div style={{animation:"up 0.25s ease",background:`${color}12`,border:`1px solid ${color}44`,borderRadius:14,padding:"18px 20px",marginBottom:12}}>
+          <div style={{animation:"up 0.25s ease",background:`${color}12`,border:`1px solid ${color}44`,borderRadius:14,padding:"18px 20px",marginBottom:16}}>
             <div style={{textAlign:"center",marginBottom:12}}>
               <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:15,color,marginBottom:4}}>
                 {emojis[selectedAspect.planet1]||""} {selectedAspect.planet1} {aspectSymbol(selectedAspect.type)} {selectedAspect.planet2} {emojis[selectedAspect.planet2]||""}
@@ -1296,7 +1299,42 @@ function AspectWheel({ aspects, chartPlanets }) {
         );
       })()}
 
-      {/* No fallback list — wheel is the interface */}
+      {/* Top 6 aspects accordion — API report text if available, else our library */}
+      {filtered.slice(0, 6).length > 0 && (
+        <div style={{display:"flex",flexDirection:"column",gap:6,marginTop:8}}>
+          <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#f5c842",letterSpacing:".15em",marginBottom:8,textAlign:"center"}}>✦ KEY ASPECT READINGS ✦</div>
+          {filtered.slice(0, 6).map((a, i) => {
+            const color = aspectColor(a.type);
+            const sym = aspectSymbol(a.type);
+            const isOpen = selected === i;
+            const specific = getAspectMeaning(a.planet1, a.planet2, a.type);
+            const general = aspectMeanings[(a.type||"").toLowerCase()];
+            const text = a.text || specific || (general ? `${a.planet1} ${a.type} ${a.planet2} is ${general}.` : null);
+            return (
+              <div key={i} onClick={() => setSelected(isOpen ? null : i)}
+                style={{borderRadius:12,overflow:"hidden",border:`1px solid ${isOpen?color+"66":"rgba(255,200,50,0.1)"}`,cursor:"pointer",transition:"all 0.2s",background:isOpen?`${color}08`:"rgba(255,200,50,0.02)"}}>
+                <div style={{display:"flex",alignItems:"center",padding:"16px 16px",gap:10}}>
+                  <span style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:16,color,flexShrink:0,width:24,textAlign:"center"}}>{sym}</span>
+                  <div style={{flex:1}}>
+                    <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:12,color:isOpen?color:"#d8c890"}}>
+                      {emojis[a.planet1]||""} {a.planet1} & {a.planet2} {emojis[a.planet2]||""}
+                    </div>
+                    <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,color:"#6a6058",letterSpacing:".08em",marginTop:2}}>
+                      {(a.type||"").toUpperCase()}{a.orb ? ` · ORB ${a.orb}°` : ""}
+                    </div>
+                  </div>
+                  <span style={{fontSize:9,color,opacity:0.5,transform:isOpen?"rotate(180deg)":"rotate(0deg)",transition:"transform 0.2s",flexShrink:0}}>▼</span>
+                </div>
+                {isOpen && text && (
+                  <div style={{padding:"0 16px 16px",animation:"up 0.2s ease"}}>
+                    <p style={{fontFamily:"Georgia,serif",fontSize:14,color:"#d8c890",lineHeight:1.85,margin:0}}>{text}</p>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
