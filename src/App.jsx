@@ -1106,8 +1106,42 @@ function BigThreeCard({ planet, sign }) {
 }
 
 // ── Aspect chips ─────────────────────────────────────────────────
-function AspectWheel({ aspects, chartPlanets }) {
+function AspectWheel({ aspects, chartPlanets, report }) {
   const [selected, setSelected] = useState(null);
+
+  // Look up the API's written interpretation for this aspect from the report
+  const getReportText = (p1, p2, type) => {
+    if (!Array.isArray(report)) return null;
+    const t = (type || "").toLowerCase();
+    const match = report.find(s => {
+      const title = (s.title || "").toLowerCase();
+      const hasBothPlanets = title.includes(p1.toLowerCase()) && title.includes(p2.toLowerCase());
+      const hasType = title.includes(t);
+      const isAspectSection = !title.includes("house") && !title.includes("ascendant") && !title.includes("medium");
+      return hasBothPlanets && hasType && isAspectSection;
+    });
+    return match?.text || null;
+  };
+
+  // Build a dynamic context paragraph from enhanced API fields
+  const getAspectContext = (aspect) => {
+    const lines = [];
+    if (aspect.strength != null) {
+      const s = parseFloat(aspect.strength);
+      if (s >= 8) lines.push("This is one of the strongest aspects in your chart — not a subtle background influence but a defining force that actively shapes how you move through the world.");
+      else if (s >= 5) lines.push("This is a moderately strong aspect — present and felt, surfacing most clearly under pressure or in relationships that genuinely matter to you.");
+      else if (s > 0) lines.push("This is a softer aspect — subtler than others, but real. You will notice it most in specific contexts rather than as a constant force.");
+    }
+    if (aspect.applying === true) lines.push("This aspect is still applying — it has not yet reached its peak. The energy described here is still building, and its full influence is ahead of you rather than behind.");
+    else if (aspect.applying === false) lines.push("This aspect is separating — it has already peaked and is slowly releasing. Its lessons are largely integrated into who you are, even when you do not consciously recognize them.");
+    if (aspect.reception) {
+      const r = aspect.reception;
+      if (r.reception_type === "mutual_pure" && r.reception_quality === "excellent") lines.push("These planets share a mutual reception — each in a sign that the other rules or exalts. This is rare: the two energies genuinely support each other at a structural level, not just on the surface.");
+      else if (r.reception_type === "mutual_pure") lines.push("These planets share a mutual reception, meaning they operate in each other's territory. There is a natural understanding between these two parts of you.");
+      else if (r.reception_type === "single" && r.reception_quality === "strong") lines.push("One of these planets is received by the other — operating in a sign that welcomes it. One energy is genuinely strengthening the other in this relationship.");
+    }
+    return lines.join(" ").trim();
+  };
 
   const getAspectMeaning = (p1, p2, type) => {
     const key = [p1, p2].sort().join("-") + "-" + (type||"").toLowerCase();
@@ -1270,7 +1304,7 @@ function AspectWheel({ aspects, chartPlanets }) {
   const selectedAspect = selected !== null ? filtered.find(a => aspectKey(a) === selected) || sorted.find(a => aspectKey(a) === selected) : null;
 
   // Debug: log first few aspects to verify field names
-  if (filtered.length > 0) console.log("Sample aspects:", JSON.stringify(filtered.slice(0,3)));
+  // Debug log removed
 
   return (
     <div style={{marginBottom:24}}>
@@ -1334,12 +1368,11 @@ function AspectWheel({ aspects, chartPlanets }) {
       {/* Selected aspect detail */}
       {selectedAspect && (() => {
         const color = aspectColor(selectedAspect.type);
-        const specific = getAspectMeaning(selectedAspect.planet1, selectedAspect.planet2, selectedAspect.type);
-        const general = aspectMeanings[(selectedAspect.type||"").toLowerCase()];
-        const text = specific || (general ? `${selectedAspect.planet1} ${selectedAspect.type} ${selectedAspect.planet2} is ${general}.` : null);
+        const apiText = getReportText(selectedAspect.planet1, selectedAspect.planet2, selectedAspect.type);
+        const context = getAspectContext(selectedAspect);
         return (
-          <div style={{animation:"up 0.25s ease",background:`${color}12`,border:`1px solid ${color}44`,borderRadius:14,padding:"18px 20px",marginBottom:16}}>
-            <div style={{textAlign:"center",marginBottom:12}}>
+          <div style={{animation:"up 0.25s ease",background:`${color}12`,border:`1px solid ${color}44`,borderRadius:14,padding:"20px",marginBottom:16}}>
+            <div style={{textAlign:"center",marginBottom:14}}>
               <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:15,color,marginBottom:4}}>
                 {emojis[selectedAspect.planet1]||""} {selectedAspect.planet1} {aspectSymbol(selectedAspect.type)} {selectedAspect.planet2} {emojis[selectedAspect.planet2]||""}
               </div>
@@ -1347,7 +1380,13 @@ function AspectWheel({ aspects, chartPlanets }) {
                 {(selectedAspect.type||"").toUpperCase()}{selectedAspect.orb ? ` · ORB ${selectedAspect.orb}°` : ""}
               </div>
             </div>
-            {text && <p style={{fontFamily:"Georgia,serif",fontSize:14,color:"#d8c890",lineHeight:1.85,margin:0,textAlign:"center",fontStyle:specific?"normal":"italic"}}>{text}</p>}
+            {apiText
+              ? <p style={{fontFamily:"Georgia,serif",fontSize:14,color:"#d8c890",lineHeight:1.9,margin:"0 0 12px"}}>{apiText}</p>
+              : <p style={{fontFamily:"Georgia,serif",fontSize:13,color:"#6a6058",lineHeight:1.8,margin:"0 0 12px",fontStyle:"italic"}}>No interpretation available for this aspect.</p>
+            }
+            {context && (
+              <p style={{fontFamily:"Georgia,serif",fontSize:13,color:"#8a8070",lineHeight:1.85,margin:0,borderTop:"1px solid rgba(255,200,50,0.1)",paddingTop:12}}>{context}</p>
+            )}
           </div>
         );
       })()}
@@ -1361,9 +1400,8 @@ function AspectWheel({ aspects, chartPlanets }) {
             const sym = aspectSymbol(a.type);
             const key = aspectKey(a);
             const isOpen = selected === key;
-            const specific = getAspectMeaning(a.planet1, a.planet2, a.type);
-            const general = aspectMeanings[(a.type||"").toLowerCase()];
-            const text = specific || (general ? `${a.planet1} ${a.type} ${a.planet2} is ${general}.` : null);
+            const apiText = getReportText(a.planet1, a.planet2, a.type);
+            const context = getAspectContext(a);
             return (
               <div key={i}
                 style={{borderRadius:12,overflow:"hidden",border:`1px solid ${isOpen?color+"66":"rgba(255,200,50,0.1)"}`,cursor:"pointer",transition:"all 0.2s",background:isOpen?`${color}08`:"rgba(255,200,50,0.02)"}}>
@@ -1375,15 +1413,25 @@ function AspectWheel({ aspects, chartPlanets }) {
                     </div>
                     <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,color:"#6a6058",letterSpacing:".08em",marginTop:2}}>
                       {(a.type||"").toUpperCase()}{a.orb ? ` · ORB ${a.orb}°` : ""}
+                      {a.strength != null ? ` · STRENGTH ${parseFloat(a.strength).toFixed(1)}` : ""}
+                      {a.applying === true ? " · APPLYING" : a.applying === false ? " · SEPARATING" : ""}
                     </div>
                   </div>
                   <span style={{fontSize:9,color,opacity:0.5,transform:isOpen?"rotate(180deg)":"rotate(0deg)",transition:"transform 0.2s",flexShrink:0}}>▼</span>
                 </div>
                 {isOpen && (
                   <div style={{padding:"0 16px 16px",animation:"up 0.2s ease"}}>
-                    <p style={{fontFamily:"Georgia,serif",fontSize:14,color:"#d8c890",lineHeight:1.85,margin:0}}>{text || "No interpretation available."}</p>
+                    {apiText
+                      ? <p style={{fontFamily:"Georgia,serif",fontSize:14,color:"#d8c890",lineHeight:1.9,margin:"0 0 12px"}}>{apiText}</p>
+                      : <p style={{fontFamily:"Georgia,serif",fontSize:13,color:"#6a6058",lineHeight:1.8,margin:"0 0 12px",fontStyle:"italic"}}>No interpretation found for this aspect.</p>
+                    }
+                    {context && (
+                      <p style={{fontFamily:"Georgia,serif",fontSize:13,color:"#8a8070",lineHeight:1.85,margin:0,borderTop:"1px solid rgba(255,200,50,0.1)",paddingTop:12}}>{context}</p>
+                    )}
                   </div>
                 )}
+              </div>
+            );
               </div>
             );
           })}
@@ -1768,7 +1816,7 @@ function BirthChartResults({ result, onReset, onUpgrade }) {
       </div>
 
       {/* Aspect wheel */}
-      <AspectWheel aspects={aspects} chartPlanets={chartPlanets}/>
+      <AspectWheel aspects={aspects} chartPlanets={chartPlanets} report={report}/>
     </div>
   );
 
