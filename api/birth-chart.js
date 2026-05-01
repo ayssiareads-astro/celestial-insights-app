@@ -270,10 +270,68 @@ export default async function handler(req, res) {
         }
 
         if (Array.isArray(interps) && interps.length > 0) {
-          report = interps
-            .filter(s => s.title && s.text && typeof s.text === "string" && s.text.length > 20)
-            .map(s => ({ title: s.title, text: s.text }));
-        }
+  const clean = interps.filter(
+    s => s.title && s.text && typeof s.text === "string" && s.text.length > 20
+  );
+
+  // Separate into three buckets by title pattern
+  const signSections  = {};  // "Sun in Tau" → { title, text }
+  const houseSections = {};  // "Sun in House_10" → { title, text }
+  const otherSections = [];  // aspects and everything else
+
+  clean.forEach(s => {
+    const t = s.title || "";
+
+    // Planet in house: "Sun in House_10"
+    const houseMatch = t.match(/^(\w+)\s+in\s+House_(\d+)$/i);
+    if (houseMatch) {
+      houseSections[houseMatch[1]] = { houseNum: houseMatch[2], text: s.text };
+      return;
+    }
+
+    // Planet in sign: "Sun in Tau" or "Sun in Taurus"
+    const signMatch = t.match(/^(\w+)\s+in\s+([A-Za-z]+)$/i);
+    if (signMatch && !t.toLowerCase().includes("house")) {
+      signSections[signMatch[1]] = { sign: signMatch[2], text: s.text };
+      return;
+    }
+
+    // Everything else (aspects, patterns, overview)
+    otherSections.push(s);
+  });
+
+  // Merge sign + house into one combined card per planet
+  const PLANET_ORDER = [
+    "Sun","Moon","Mercury","Venus","Mars",
+    "Jupiter","Saturn","Uranus","Neptune","Pluto","Chiron"
+  ];
+  const mergedPlanets = PLANET_ORDER
+    .filter(p => signSections[p] || houseSections[p])
+    .map(p => {
+      const signData  = signSections[p]  || {};
+      const houseData = houseSections[p] || {};
+      const houseLabel = houseData.houseNum
+        ? `${["1st","2nd","3rd","4th","5th","6th",
+               "7th","8th","9th","10th","11th","12th"]
+            [parseInt(houseData.houseNum) - 1]} House`
+        : null;
+
+      // Combined title e.g. "Sun in Taurus · 5th House"
+      const signName = SIGN_MAP[signData.sign] || signData.sign || "";
+      const title = houseLabel
+        ? `${p} in ${signName} · ${houseLabel}`
+        : `${p} in ${signName}`;
+
+      // Combined text — sign interpretation first, then house
+      const text = [signData.text, houseData.text]
+        .filter(Boolean)
+        .join("\n\n");
+
+      return { title, text };
+    });
+
+  report = [...mergedPlanets, ...otherSections];
+}
       }
     }
 
