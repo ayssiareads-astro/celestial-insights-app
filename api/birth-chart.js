@@ -142,7 +142,7 @@ export default async function handler(req, res) {
         ),
         safeFetch(
           "https://api.astrology-api.io/api/v3/analysis/natal-report",
-          { subject, tradition: "psychological" },
+          { subject, tradition: "psychological", house_system: "W" },
           "NatalReport"
         ),
         safeFetch(
