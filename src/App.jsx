@@ -1772,8 +1772,7 @@ function BirthChartResults({ result, onReset, onUpgrade }) {
               const signAbbrLower = signAbbr.toLowerCase();
               return (
                 t.startsWith(planetLower) &&
-                (t.includes(signLower) || t.includes(signAbbrLower)) &&
-                !t.includes("house")
+                (t.includes(signLower) || t.includes(signAbbrLower))
               );
             })?.text
           ) : null;
