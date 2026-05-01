@@ -33,6 +33,8 @@ const HOUSE_NAMES = {
   12: "12th House — Spirituality & Endings",
 };
 
+const HOUSE_ORDINALS = ["1st","2nd","3rd","4th","5th","6th","7th","8th","9th","10th","11th","12th"];
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
@@ -124,9 +126,9 @@ export default async function handler(req, res) {
     console.log("Free planets:", planets);
 
     // ── PAID: Full chart via charts/natal ─────────────────────
-    let chartPlanets = []; // array of { name, sign, house, degree, retrograde }
-    let houseCusps = [];   // array of { house, sign, degree }
-    let aspects = [];      // array of { planet1, planet2, type, orb }
+    let chartPlanets = [];
+    let houseCusps = [];
+    let aspects = [];
     let report = null;
 
     if (paid) {
@@ -135,10 +137,7 @@ export default async function handler(req, res) {
       const [natalData, reportData, enhancedData] = await Promise.all([
         safeFetch(
           "https://api.astrology-api.io/api/v3/charts/natal",
-          {
-            subject,
-            options: { house_system: "W" },
-          },
+          { subject, options: { house_system: "W" } },
           "NatalChart"
         ),
         safeFetch(
@@ -167,7 +166,6 @@ export default async function handler(req, res) {
       if (natalData) {
         const cd = natalData?.chart_data || natalData?.data || natalData;
 
-        // Parse planetary positions with house numbers
         const rawPositions = cd?.planetary_positions || [];
         if (Array.isArray(rawPositions)) {
           rawPositions.forEach(p => {
@@ -181,11 +179,9 @@ export default async function handler(req, res) {
                 degree: p.degree ? parseFloat(p.degree).toFixed(1) : null,
                 retrograde: p.is_retrograde || false,
               });
-              // Also update the simple planets map with correct sign
               if (planetName !== "Rising" || !planets["Rising"]) {
                 planets[planetName] = signFull;
               }
-              // Grab Rising from Ascendant entry
               if (p.name === "Ascendant") {
                 planets["Rising"] = signFull;
               }
@@ -193,7 +189,6 @@ export default async function handler(req, res) {
           });
         }
 
-        // Parse house cusps
         const rawHouses = cd?.house_cusps || [];
         if (Array.isArray(rawHouses)) {
           houseCusps = rawHouses.map(h => ({
@@ -204,7 +199,6 @@ export default async function handler(req, res) {
           }));
         }
 
-        // Parse aspects
         const rawAspects = cd?.aspects || [];
         if (Array.isArray(rawAspects)) {
           rawAspects.forEach(a => {
@@ -222,7 +216,6 @@ export default async function handler(req, res) {
         console.log("House cusps:", houseCusps.length);
         console.log("Aspects:", aspects.length);
 
-        // Merge enhanced fields (strength, applying, reception) into aspects
         if (enhancedData) {
           const rawEnhanced = enhancedData?.aspects || enhancedData?.data?.aspects || [];
           const enhancedMap = {};
@@ -246,7 +239,7 @@ export default async function handler(req, res) {
         }
       }
 
-      // Parse natal report
+      // ── Parse natal report ──────────────────────────────────
       if (reportData) {
         const d = reportData?.data || reportData;
         const interps = d?.interpretations || d?.report || d?.sections || null;
@@ -270,79 +263,107 @@ export default async function handler(req, res) {
         }
 
         if (Array.isArray(interps) && interps.length > 0) {
-  const clean = interps.filter(
-    s => s.title && s.text && typeof s.text === "string" && s.text.length > 20
-  );
+          const clean = interps.filter(
+            s => s.title && s.text && typeof s.text === "string" && s.text.length > 20
+          );
 
-  // Separate into three buckets by title pattern
-  const signSections  = {};  // "Sun in Tau" → { title, text }
-  const houseSections = {};  // "Sun in House_10" → { title, text }
-  const otherSections = [];  // aspects and everything else
+          // Debug: log all titles so we can see exactly what the API returns
+          console.log("INTERP TITLES:", clean.map(s => s.title).join(" | "));
 
-  clean.forEach(s => {
-    const t = s.title || "";
+          const KNOWN_PLANETS = new Set([
+            "Sun","Moon","Mercury","Venus","Mars",
+            "Jupiter","Saturn","Uranus","Neptune","Pluto","Chiron",
+            "Ascendant","Rising"
+          ]);
 
-    // Planet in house: "Sun in House_10"
-    const houseMatch = t.match(/^(\w+)\s+in\s+House_(\d+)$/i);
-    if (houseMatch) {
-      houseSections[houseMatch[1]] = { houseNum: houseMatch[2], text: s.text };
-      return;
-    }
+          const signSections  = {};  // keyed by planet name e.g. "Sun"
+          const houseSections = {};  // keyed by planet name e.g. "Sun"
+          const otherSections = [];  // aspects and everything else
 
-    // Planet in sign: "Sun in Tau" or "Sun in Taurus"
-    const signMatch = t.match(/^(\w+)\s+in\s+([A-Za-z]+)$/i);
-    if (signMatch && !t.toLowerCase().includes("house")) {
-      signSections[signMatch[1]] = { sign: signMatch[2], text: s.text };
-      return;
-    }
+          clean.forEach(s => {
+            const t = s.title || "";
 
-    // Everything else (aspects, patterns, overview)
-    otherSections.push(s);
-  });
+            // ── Planet in house: "Sun in House_10" ──────────────
+            const houseMatch = t.match(/^(\w+)\s+in\s+House_(\d+)$/i);
+            if (houseMatch) {
+              const planet = PLANET_MAP[houseMatch[1]] || houseMatch[1];
+              houseSections[planet] = { houseNum: houseMatch[2], text: s.text };
+              return;
+            }
 
-  // Merge sign + house into one combined card per planet
-  const PLANET_ORDER = [
-    "Sun","Moon","Mercury","Venus","Mars",
-    "Jupiter","Saturn","Uranus","Neptune","Pluto","Chiron"
-  ];
-  const mergedPlanets = PLANET_ORDER
-    .filter(p => signSections[p] || houseSections[p])
-    .map(p => {
-      const signData  = signSections[p]  || {};
-      const houseData = houseSections[p] || {};
-      const houseLabel = houseData.houseNum
-        ? `${["1st","2nd","3rd","4th","5th","6th",
-               "7th","8th","9th","10th","11th","12th"]
-            [parseInt(houseData.houseNum) - 1]} House`
-        : null;
+            // ── Planet in sign: "Sun in Tau" or "Sun in Taurus" ─
+            // Must start with a known planet and have exactly "in <word>" with no underscore
+            const signMatch = t.match(/^([A-Za-z]+)\s+in\s+([A-Za-z]+)$/i);
+            if (signMatch) {
+              const planet = PLANET_MAP[signMatch[1]] || signMatch[1];
+              if (KNOWN_PLANETS.has(planet) || KNOWN_PLANETS.has(signMatch[1])) {
+                signSections[planet] = { sign: signMatch[2], text: s.text };
+                return;
+              }
+            }
 
-      // Combined title e.g. "Sun in Taurus · 5th House"
-      const signName = SIGN_MAP[signData.sign] || signData.sign || "";
-      const title = houseLabel
-        ? `${p} in ${signName} · ${houseLabel}`
-        : `${p} in ${signName}`;
+            // ── Everything else: aspects like "Sun_trine_Jupiter" ─
+            otherSections.push(s);
+          });
 
-      // Combined text — sign interpretation first, then house
-      const text = [signData.text, houseData.text]
-        .filter(Boolean)
-        .join("\n\n");
+          console.log("Sign sections:", Object.keys(signSections).join(", "));
+          console.log("House sections:", Object.keys(houseSections).join(", "));
+          console.log("Other sections:", otherSections.length);
 
-      return { title, text };
-    });
+          // Merge sign + house into one combined card per planet
+          const PLANET_ORDER = [
+            "Sun","Moon","Mercury","Venus","Mars",
+            "Jupiter","Saturn","Uranus","Neptune","Pluto","Chiron"
+          ];
 
-  report = [...mergedPlanets, ...otherSections];
-}
+          const mergedPlanets = PLANET_ORDER
+            .filter(p => signSections[p] || houseSections[p])
+            .map(p => {
+              const signData  = signSections[p]  || {};
+              const houseData = houseSections[p] || {};
+
+              const houseLabel = houseData.houseNum
+                ? `${HOUSE_ORDINALS[parseInt(houseData.houseNum) - 1]} House`
+                : null;
+
+              const signName = SIGN_MAP[signData.sign] || signData.sign || "";
+
+              // Title: "Sun in Taurus · 5th House"
+              // We use a special separator "|||" so App.jsx can split if needed,
+              // but it displays fine as-is too
+              const title = houseLabel
+                ? `${p} in ${signName} · ${houseLabel}`
+                : `${p} in ${signName}`;
+
+              // Two paragraphs: sign first, then house
+              const text = [signData.text, houseData.text]
+                .filter(Boolean)
+                .join("\n\n");
+
+              return { title, text };
+            });
+
+          console.log("Merged planet cards:", mergedPlanets.map(p => p.title).join(" | "));
+
+          // Clean up aspect titles: "Sun_trine_Jupiter" → "Sun trine Jupiter"
+          const cleanedOther = otherSections.map(s => ({
+            ...s,
+            title: s.title.replace(/_/g, " "),
+          }));
+
+          report = [...mergedPlanets, ...cleanedOther];
+        }
       }
     }
 
     return res.status(200).json({
       name: name || "Your",
       city,
-      planets,        // simple sign map for Big Three display
-      chartPlanets,   // full planet data with house numbers (paid only)
-      houseCusps,     // house system (paid only)
-      aspects,        // aspects (paid only)
-      report,         // written report (paid only)
+      planets,
+      chartPlanets,
+      houseCusps,
+      aspects,
+      report,
       chartSvg: null,
     });
 
