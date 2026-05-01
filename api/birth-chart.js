@@ -322,9 +322,12 @@ export default async function handler(req, res) {
               const signData  = signSections[p]  || {};
               const houseData = houseSections[p] || {};
 
-              const houseLabel = houseData.houseNum
-                ? `${HOUSE_ORDINALS[parseInt(houseData.houseNum) - 1]} House`
-                : null;
+              const correctHouse = chartPlanets.find(cp => cp.name === p)?.house;
+const houseLabel = correctHouse
+  ? `${HOUSE_ORDINALS[parseInt(correctHouse) - 1]} House`
+  : houseData.houseNum
+    ? `${HOUSE_ORDINALS[parseInt(houseData.houseNum) - 1]} House`
+    : null;
 
               const signName = SIGN_MAP[signData.sign] || signData.sign || "";
 
