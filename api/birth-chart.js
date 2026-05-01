@@ -284,7 +284,7 @@ export default async function handler(req, res) {
             const t = s.title || "";
 
             // ── Planet in house: "Sun in House_10" ──────────────
-            const houseMatch = t.match(/^(\w+)\s+in\s+House_(\d+)$/i);
+            const houseMatch = t.match(/^(\w+)\s+in\s+House[\s_](\d+)$/i);
             if (houseMatch) {
               const planet = PLANET_MAP[houseMatch[1]] || houseMatch[1];
               houseSections[planet] = { houseNum: houseMatch[2], text: s.text };
