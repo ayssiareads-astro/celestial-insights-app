@@ -131,7 +131,6 @@ export default async function handler(req, res) {
     let aspects = [];
     let report = null;
     let houseSignReadings = {};
-    let houseSignReadings = {};
 
     if (paid) {
       console.log("Paid — fetching full natal chart...");
