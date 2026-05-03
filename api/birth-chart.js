@@ -358,42 +358,26 @@ const houseLabel = correctHouse
           report = [...mergedPlanets, ...cleanedOther];
 
           // ── Extract house-sign interpretations for the House System cards ──
-          // Uses outer houseSignReadings variable declared above
+          // API returns "Ascendant in House 1", "Sun in House 5" etc.
+          // Use houseSections (already parsed above) to populate houseSignReadings
 
-          // Method 1: from houseCusps + signSections
-          // Each house has a sign — look for that sign's planet interpretation
-          // e.g. House 1 = Leo → look for "Ascendant in Leo" or "Leo in House 1"
-          houseCusps.forEach(h => {
-            const houseNum = h.house;
-            const sign = h.sign;
-
-            // Look in otherSections for anything mentioning this sign + house
-            const match = clean.find(s => {
-              const t = (s.title || "").toLowerCase();
-              return t.includes(sign.toLowerCase()) &&
-                (t.includes(`house ${houseNum}`) || t.includes(`house_${houseNum}`));
-            });
-            if (match) {
-              houseSignReadings[houseNum] = match.text;
-              return;
+          Object.entries(houseSections).forEach(([planet, data]) => {
+            const houseNum = parseInt(data.houseNum);
+            if (!houseNum || !data.text) return;
+            if (!houseSignReadings[houseNum]) {
+              houseSignReadings[houseNum] = data.text;
             }
+          });
 
-            // Also check ascending/MC sections for house 1 and 10
-            if (houseNum === 1) {
-              const ascMatch = clean.find(s => {
-                const t = (s.title || "").toLowerCase();
-                return (t.includes("ascendant") || t.includes("rising")) &&
-                  t.includes(sign.toLowerCase());
-              });
-              if (ascMatch) houseSignReadings[1] = ascMatch.text;
+          // Override house 1 and 10 with sign-specific readings if available
+          // "Ascendant in Leo" and "Medium_Coeli in Ari" are more specific
+          clean.forEach(s => {
+            const t = (s.title || "").toLowerCase();
+            if ((t.startsWith("ascendant") || t.startsWith("asc")) && !t.includes("house") && s.text) {
+              houseSignReadings[1] = s.text;
             }
-            if (houseNum === 10) {
-              const mcMatch = clean.find(s => {
-                const t = (s.title || "").toLowerCase();
-                return (t.includes("medium") || t.includes("coeli") || t.includes("midheaven")) &&
-                  t.includes(sign.toLowerCase());
-              });
-              if (mcMatch) houseSignReadings[10] = mcMatch.text;
+            if ((t.startsWith("medium") || t.startsWith("medium_coeli")) && !t.includes("house") && s.text) {
+              houseSignReadings[10] = s.text;
             }
           });
 
