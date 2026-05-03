@@ -130,6 +130,8 @@ export default async function handler(req, res) {
     let houseCusps = [];
     let aspects = [];
     let report = null;
+    let houseSignReadings = {};
+    let houseSignReadings = {};
 
     if (paid) {
       console.log("Paid — fetching full natal chart...");
@@ -357,9 +359,7 @@ const houseLabel = correctHouse
           report = [...mergedPlanets, ...cleanedOther];
 
           // ── Extract house-sign interpretations for the House System cards ──
-          // The API returns sections like "Ascendant in Leo", "Moon in House 3" etc.
-          // We want "Sign in House N" readings — map house number → interpretation text
-          const houseSignReadings = {};
+          // Uses outer houseSignReadings variable declared above
 
           // Method 1: from houseCusps + signSections
           // Each house has a sign — look for that sign's planet interpretation
