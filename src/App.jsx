@@ -1717,21 +1717,20 @@ function BirthChartResults({ result, onReset, onUpgrade }) {
               const [openHouse, setOpenHouse] = [openHouseState, setOpenHouseState];
               const isOpen = openHouse === h.house;
               const houseDescriptions = {
-                1: "Leo in the 1st House gives you a radiant, magnetic presence. You walk into a room and people notice — not because you demand it, but because your energy is genuinely luminous.",
-                2: "Your values and sense of worth are shaped by the sign here. This house shows how you relate to money, possessions, and what you consider truly valuable in life.",
-                3: "Your communication style, thinking patterns, and relationship with your immediate world are colored by the sign here.",
-                4: "The foundation of your private self, your home life, and your roots are shaped by the energy of the sign in this house.",
-                5: "Your creative expression, romantic nature, and capacity for joy are filtered through the sign here.",
-                6: "Your approach to daily routines, health, and service is shaped by the sign ruling this house.",
-                7: "What you seek in partners and what you attract in close relationships is shown by the sign here.",
-                8: "Your relationship with transformation, shared resources, and the deeper mysteries of life is colored by this sign.",
-                9: "Your philosophical worldview, spiritual beliefs, and appetite for expansion are shaped by the sign here.",
-                10: "Your public reputation, career path, and life mission are expressed through the sign ruling this house.",
-                11: "Your relationship with community, friendship, and collective causes is shaped by the sign here.",
-                12: "Your inner world, spiritual life, and relationship with solitude and the hidden are colored by this sign.",
+                1: "The sign here shapes your identity, physical appearance, and how you naturally present yourself to the world. It colors your entire personality and first impressions.",
+                2: "The sign here shapes how you relate to money, possessions, and self-worth — including what you truly value and your relationship with your own talents.",
+                3: "The sign here colors your communication style, thinking patterns, and relationship with your immediate environment including siblings and neighbors.",
+                4: "The sign here shapes the foundation of your private self, your home life, emotional roots, and what makes you feel safe and grounded.",
+                5: "The sign here colors your creative expression, romantic nature, capacity for joy, and how you play and take pleasure in life.",
+                6: "The sign here shapes your approach to daily routines, health habits, work ethic, and how you show up in service to others.",
+                7: "The sign here reveals what you seek in committed partnerships and what qualities you attract — and sometimes need to develop — in close relationships.",
+                8: "The sign here shapes your relationship with transformation, shared resources, intimacy, and the deeper mysteries of life.",
+                9: "The sign here colors your philosophical worldview, spiritual beliefs, and appetite for expanding your understanding of the world.",
+                10: "The sign here shapes how you are seen publicly, your career path, and the legacy you are building in the world.",
+                11: "The sign here shapes your relationship with community, friendship, collective causes, and your hopes for the future.",
+                12: "The sign here colors your inner world, spiritual life, relationship with solitude, and connection to what is hidden beneath the surface.",
               };
 
-              // Use API interpretation if available, otherwise fall back to generic
               const apiHouseText = houseSignReadings[h.house];
               const displayText = apiHouseText || houseDescriptions[h.house];
               return (
