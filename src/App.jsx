@@ -1673,7 +1673,7 @@ function PaywallSection({ chartPlanets, onVerified }) {
 }
 
 function BirthChartResults({ result, onReset, onUpgrade }) {
-  const { name, city, planets: chartPlanets, chartPlanets: fullPlanets = [], houseCusps = [], aspects = [], report = null } = result;
+  const { name, city, planets: chartPlanets, chartPlanets: fullPlanets = [], houseCusps = [], aspects = [], report = null, houseSignReadings = {} } = result;
   const [memberVerified, setMemberVerified] = useState(() => {
     try { return localStorage.getItem("aww_subscribed") === "true"; } catch(e) { return false; }
   });
@@ -1717,19 +1717,23 @@ function BirthChartResults({ result, onReset, onUpgrade }) {
               const [openHouse, setOpenHouse] = [openHouseState, setOpenHouseState];
               const isOpen = openHouse === h.house;
               const houseDescriptions = {
-                1: "Your 1st house governs your identity, physical appearance, and how you naturally present yourself to the world. The sign here colors your entire personality and first impressions.",
-                2: "Your 2nd house rules money, possessions, and your sense of self-worth. It shows how you earn, spend, and what you truly value — including your relationship with your own talents.",
-                3: "Your 3rd house governs communication, thinking style, and your immediate environment — siblings, neighbors, short trips. It shows how your mind works and how you express yourself.",
-                4: "Your 4th house rules home, family, roots, and your innermost private self. It shows what makes you feel safe and where you come from — emotionally and literally.",
-                5: "Your 5th house governs creativity, pleasure, romance, children, and play. It shows how you express joy, what lights you up, and how you create — including how you love.",
-                6: "Your 6th house rules daily routines, health, work, and service. It shows how you take care of yourself and others, and how you approach the details of everyday life.",
-                7: "Your 7th house governs committed partnerships — romantic and business. It shows what you seek in others and what you attract, including the qualities you may need to develop in yourself.",
-                8: "Your 8th house rules transformation, shared resources, intimacy, and the deep mysteries of life and death. It shows where you are called to go deep and be changed.",
-                9: "Your 9th house governs philosophy, higher education, travel, and belief systems. It shows how you seek meaning, expand your worldview, and connect to something larger than yourself.",
-                10: "Your 10th house rules career, public reputation, and legacy. It shows how the world sees your professional self and what you are building that will outlast you.",
-                11: "Your 11th house governs community, friendship, hopes, and collective causes. It shows how you connect with groups and what you dream of contributing to the world.",
-                12: "Your 12th house rules the subconscious, spirituality, solitude, and what is hidden. It shows your inner life beneath the surface — your dreams, fears, and connection to the invisible.",
+                1: "Leo in the 1st House gives you a radiant, magnetic presence. You walk into a room and people notice — not because you demand it, but because your energy is genuinely luminous.",
+                2: "Your values and sense of worth are shaped by the sign here. This house shows how you relate to money, possessions, and what you consider truly valuable in life.",
+                3: "Your communication style, thinking patterns, and relationship with your immediate world are colored by the sign here.",
+                4: "The foundation of your private self, your home life, and your roots are shaped by the energy of the sign in this house.",
+                5: "Your creative expression, romantic nature, and capacity for joy are filtered through the sign here.",
+                6: "Your approach to daily routines, health, and service is shaped by the sign ruling this house.",
+                7: "What you seek in partners and what you attract in close relationships is shown by the sign here.",
+                8: "Your relationship with transformation, shared resources, and the deeper mysteries of life is colored by this sign.",
+                9: "Your philosophical worldview, spiritual beliefs, and appetite for expansion are shaped by the sign here.",
+                10: "Your public reputation, career path, and life mission are expressed through the sign ruling this house.",
+                11: "Your relationship with community, friendship, and collective causes is shaped by the sign here.",
+                12: "Your inner world, spiritual life, and relationship with solitude and the hidden are colored by this sign.",
               };
+
+              // Use API interpretation if available, otherwise fall back to generic
+              const apiHouseText = houseSignReadings[h.house];
+              const displayText = apiHouseText || houseDescriptions[h.house];
               return (
                 <div key={i} onClick={() => setOpenHouseState(isOpen ? null : h.house)}
                   style={{borderRadius:10,overflow:"hidden",border:`1px solid ${isOpen?color+"66":"rgba(255,200,50,0.1)"}`,cursor:"pointer",transition:"all 0.2s",background:isOpen?`${color}08`:"rgba(255,200,50,0.02)"}}>
@@ -1737,13 +1741,15 @@ function BirthChartResults({ result, onReset, onUpgrade }) {
                     <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:11,color:"#f5c842",minWidth:24}}>{h.house}</div>
                     <div style={{flex:1,minWidth:0}}>
                       <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,color}}>{emojis[h.sign]} {h.sign}</div>
-                      <div style={{fontFamily:"Georgia,serif",fontSize:9,color:"#4a4440",lineHeight:1.3,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{HOUSE_NAMES[h.house]?.split("—")[1]?.trim() || ""}</div>
+                      <div style={{fontFamily:"Georgia,serif",fontSize:9,color: apiHouseText ? "#a8e060" : "#4a4440",lineHeight:1.3,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>
+                        {apiHouseText ? "✦ Personalized reading" : HOUSE_NAMES[h.house]?.split("—")[1]?.trim() || ""}
+                      </div>
                     </div>
                     <span style={{fontSize:8,color,opacity:0.5,transform:isOpen?"rotate(180deg)":"rotate(0deg)",transition:"transform 0.2s",flexShrink:0}}>▼</span>
                   </div>
                   {isOpen && (
                     <div style={{padding:"0 12px 12px",animation:"up 0.2s ease"}}>
-                      <p style={{fontFamily:"Georgia,serif",fontSize:13,color:"#d8c890",lineHeight:1.75,margin:0}}>{houseDescriptions[h.house]}</p>
+                      <p style={{fontFamily:"Georgia,serif",fontSize:13,color:"#d8c890",lineHeight:1.75,margin:0}}>{displayText}</p>
                     </div>
                   )}
                 </div>
