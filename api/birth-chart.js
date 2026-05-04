@@ -339,10 +339,9 @@ const houseLabel = correctHouse
                 ? `${p} in ${signName} · ${houseLabel}`
                 : `${p} in ${signName}`;
 
-              // Two paragraphs: sign first, then house
-              const text = [signData.text, houseData.text]
-                .filter(Boolean)
-                .join("\n\n");
+              // Sign text only — house interpretation comes from houseDescriptions
+              // in App.jsx using the correct Whole Sign house number from chartPlanets
+              const text = signData.text || "";
 
               return { title, text };
             });
