@@ -100,12 +100,61 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: "Could not parse horoscope response." });
     }
 
+    // ── Rewrite in Arewewoke voice via Claude ──────────────────
+    let rewrittenTheme = overallTheme;
+    let rewrittenAreas = lifeAreas;
+
+    try {
+      const anthropicKey = process.env.ANTHROPIC_API_KEY;
+      if (anthropicKey && (overallTheme || lifeAreas.length > 0)) {
+        const inputText = JSON.stringify({ overallTheme, lifeAreas });
+
+        const rewriteRes = await fetch("https://api.anthropic.com/v1/messages", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-api-key": anthropicKey,
+            "anthropic-version": "2023-06-01",
+          },
+          body: JSON.stringify({
+            model: "claude-sonnet-4-20250514",
+            max_tokens: 1500,
+            messages: [
+              {
+                role: "user",
+                content: `You are the voice of Arewewoke, an astrology app for Gen Z and millennials. Rewrite this horoscope data in a conversational, direct, slightly edgy tone — like a smart friend who actually knows astrology texting you. Rules: short punchy sentences, no flowery or formal language, no words like "unfolds" "celestial" "energies hover" "astrological forces" — just real talk. Keep all the actual astrological accuracy and specific predictions. Do not add anything that wasn't in the original. Return ONLY valid JSON in exactly this shape with no markdown or extra text: {"overallTheme": "string", "lifeAreas": [{"area": "string", "title": "string", "prediction": "string", "rating": number_or_null, "keywords": ["string"]}]}
+
+Here is the horoscope data to rewrite:
+${inputText}`,
+              },
+            ],
+          }),
+        });
+
+        if (rewriteRes.ok) {
+          const rewriteData = await rewriteRes.json();
+          const raw = rewriteData?.content?.[0]?.text || "";
+          const clean = raw.replace(/\`\`\`json|\`\`\`/g, "").trim();
+          const parsed = JSON.parse(clean);
+          if (parsed.overallTheme !== undefined) rewrittenTheme = parsed.overallTheme;
+          if (Array.isArray(parsed.lifeAreas) && parsed.lifeAreas.length > 0) {
+            rewrittenAreas = parsed.lifeAreas;
+          }
+          console.log("Rewrite successful for", sign);
+        } else {
+          console.warn("Rewrite failed, using original:", rewriteRes.status);
+        }
+      }
+    } catch (rewriteErr) {
+      console.warn("Rewrite error, using original:", rewriteErr.message);
+    }
+
     const result = {
       sign,
       date: today,
-      overallTheme,
+      overallTheme: rewrittenTheme,
       overallRating,
-      lifeAreas,
+      lifeAreas: rewrittenAreas,
     };
 
     // Cache it for today
