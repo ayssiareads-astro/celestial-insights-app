@@ -854,37 +854,15 @@ const dailyHoroscopes = {
 
 function DailyHoroscope() {
   const [selectedSign, setSelectedSign] = useState(null);
-  const [state, setState] = useState("idle");
-  const [reading, setReading] = useState(null);
-  const [openArea, setOpenArea] = useState(null);
+  const [revealed, setRevealed] = useState(false);
+  const todayIndex = new Date().getDay(); // 0=Sun, 1=Mon ... 6=Sat
   const today = new Date().toLocaleDateString("en-US", { weekday:"long", month:"long", day:"numeric" });
   const accent = selectedSign ? colors[selectedSign] : "#e8a800";
+  const horoscope = selectedSign ? dailyHoroscopes[selectedSign]?.[todayIndex] : null;
 
-  const areaEmoji = { identity:"☀️", career:"💼", love:"💕", relationships:"💕", health:"🌿", finance:"✦", spiritual:"🌌", creativity:"🎨", family:"🏠", travel:"✈️", social:"👥", learning:"📚", communication:"💬", home:"🏠", spirituality:"🌌" };
-  const areaColor = { identity:"#ffab40", career:"#f5c842", love:"#d4a5c9", relationships:"#d4a5c9", health:"#a8c97f", finance:"#a8e060", spiritual:"#9b8fcc", spirituality:"#9b8fcc", creativity:"#ff9944", family:"#a3c4d8", travel:"#5bc8d8", social:"#f7c948", learning:"#5bc8d8", communication:"#f7c948", home:"#a3c4d8" };
-
-  const fetchHoroscope = async (sign) => {
-    setState("loading"); setReading(null); setOpenArea(null);
-    try {
-      const res = await fetch("/api/daily-horoscope", {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ sign }),
-      });
-      if (!res.ok) throw new Error("Failed");
-      const data = await res.json();
-      setReading(data); setState("done");
-    } catch { setState("error"); }
-  };
-
-  const handleSelectSign = (s) => { setSelectedSign(s); setState("idle"); setReading(null); setOpenArea(null); };
-
-  const StarRating = ({ rating, color }) => {
-    if (!rating) return null;
-    return (
-      <div style={{display:"flex",gap:2,justifyContent:"center",marginBottom:6}}>
-        {[1,2,3,4,5].map(i => <span key={i} style={{fontSize:10,color:i<=rating?color:"rgba(255,255,255,0.15)"}}>★</span>)}
-      </div>
-    );
+  const handleSelectSign = (s) => {
+    setSelectedSign(s);
+    setRevealed(false);
   };
 
   return (
@@ -905,74 +883,19 @@ function DailyHoroscope() {
           ))}
         </div>
       </div>
-      {selectedSign && state === "idle" && (
+      {selectedSign && !revealed && (
         <div style={{textAlign:"center",marginBottom:20,animation:"up .4s ease"}}>
-          <button className="rb" style={{"--a":accent}} onClick={()=>fetchHoroscope(selectedSign)}>✦ REVEAL MY HOROSCOPE</button>
+          <button className="rb" style={{"--a":accent}} onClick={()=>setRevealed(true)}>✦ REVEAL MY HOROSCOPE</button>
         </div>
       )}
-      {selectedSign && state === "loading" && (
-        <div style={{textAlign:"center",padding:"28px 0",animation:"up 0.3s ease"}}>
-          <div style={{fontFamily:"'Cinzel',serif",fontSize:12,color:accent,marginBottom:12}}>Reading the stars...</div>
-          <div style={{display:"flex",gap:6,justifyContent:"center"}}>
-            {[0,1,2].map(i=>(<div key={i} style={{width:6,height:6,borderRadius:"50%",background:accent,animation:`pu 1s ease ${i*0.2}s infinite`}}/>))}
-          </div>
-        </div>
-      )}
-      {selectedSign && state === "error" && (
-        <div style={{textAlign:"center",animation:"up 0.3s ease"}}>
-          <p style={{fontFamily:"Georgia,serif",color:"#ff9090",fontSize:13,marginBottom:12}}>Something went wrong. Please try again.</p>
-          <button className="rb" style={{"--a":accent}} onClick={()=>fetchHoroscope(selectedSign)}>✦ TRY AGAIN</button>
-        </div>
-      )}
-      {selectedSign && state === "done" && reading && (
+      {selectedSign && revealed && horoscope && (
         <div style={{animation:"up .4s ease"}}>
           <div className="fc" style={{"--a":accent,marginBottom:16}}>
             <div style={{position:"absolute",top:14,right:16,fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,letterSpacing:".12em",color:accent,opacity:.7}}>{today.toUpperCase()}</div>
             <div style={{fontSize:28,marginBottom:8,textAlign:"center"}}>{emojis[selectedSign]}</div>
-            <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,letterSpacing:".18em",color:accent,textAlign:"center",marginBottom:8}}>{selectedSign.toUpperCase()}</div>
-            {reading.overallRating && <StarRating rating={reading.overallRating} color={accent}/>}
-            {reading.overallTheme && <p style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:14,lineHeight:1.6,margin:"0 0 8px",color:"#f5f0e0",textAlign:"center"}}>"{reading.overallTheme}"</p>}
+            <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,letterSpacing:".18em",color:accent,textAlign:"center",marginBottom:16}}>{selectedSign.toUpperCase()}</div>
+            <p style={{fontFamily:"Georgia,serif",fontSize:"clamp(15px,3vw,18px)",lineHeight:1.85,margin:0,color:"#f5f0e0"}}>{horoscope}</p>
           </div>
-          {reading.lifeAreas?.length > 0 && (
-            <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:16}}>
-              {reading.lifeAreas.map((area, i) => {
-                const color = areaColor[area.area] || accent;
-                const emoji = areaEmoji[area.area] || "✦";
-                const isOpen = openArea === i;
-                return (
-                  <div key={i} style={{borderRadius:12,overflow:"hidden",border:`1px solid ${isOpen?color+"66":"rgba(255,200,50,0.12)"}`,transition:"all 0.2s",background:isOpen?`${color}08`:"rgba(255,200,50,0.02)"}}>
-                    <button onClick={()=>setOpenArea(isOpen?null:i)} style={{width:"100%",display:"flex",alignItems:"center",justifyContent:"space-between",padding:"14px 16px",background:"transparent",border:"none",cursor:"pointer",gap:10,textAlign:"left"}}>
-                      <div style={{display:"flex",alignItems:"center",gap:10,flex:1}}>
-                        <span style={{fontSize:18,flexShrink:0}}>{emoji}</span>
-                        <div>
-                          <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color,letterSpacing:".1em",marginBottom:2}}>{(area.area||"").toUpperCase()}</div>
-                          {area.title && area.title.toLowerCase() !== (area.area||"").toLowerCase() && (
-                            <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:13,color:isOpen?color:"#f5f0e0"}}>{area.title}</div>
-                          )}
-                        </div>
-                      </div>
-                      <div style={{display:"flex",flexDirection:"column",alignItems:"flex-end",gap:4,flexShrink:0}}>
-                        {area.rating && <StarRating rating={area.rating} color={color}/>}
-                        <span style={{fontSize:9,color,opacity:0.6,transform:isOpen?"rotate(180deg)":"rotate(0deg)",transition:"transform 0.2s"}}>▼</span>
-                      </div>
-                    </button>
-                    {isOpen && (
-                      <div style={{padding:"0 16px 16px",animation:"up 0.2s ease"}}>
-                        <p style={{fontFamily:"Georgia,serif",fontSize:14,color:"#d8c890",lineHeight:1.85,margin:"0 0 10px"}}>{area.prediction}</p>
-                        {area.keywords?.length > 0 && (
-                          <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
-                            {area.keywords.map((kw,j)=>(
-                              <span key={j} style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,color,background:`${color}15`,border:`1px solid ${color}33`,borderRadius:100,padding:"3px 10px",letterSpacing:".06em"}}>{kw}</span>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          )}
           <div style={{textAlign:"center"}}><span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,letterSpacing:".18em",color:accent,opacity:.6}}>✦ AREWEWOKE ✦</span></div>
         </div>
       )}
