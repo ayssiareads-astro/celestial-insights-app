@@ -742,127 +742,149 @@ celebrities.forEach(c => {
 
 const dailyHoroscopes = {
   Aries:[
-    "You are moving fast right now and that energy is real — but fast without direction just burns fuel. Today, pick one thing that actually matters and go all the way in on that. The rest can wait.",
-    "Something you have been avoiding is not going anywhere. You know what it is. The good news is you have more than enough courage to handle it — you always have. Stop circling and just go.",
-    "Your body is running hot right now and that is information. You are either doing too much or holding back something that needs to come out. Either way, move. A walk, a workout, a hard conversation. Just move.",
-    "You started something a while back that you kind of forgot about. Check on it today. The seeds you plant when no one is watching are the ones that actually grow into something real.",
-    "The intensity you are feeling right now is not a problem to solve — it is energy to use. Channel it. Make something, say something, start something. Sitting with it is the one thing that will not help.",
-    "Someone is watching how you handle this moment and they are going to learn from whatever you do. You do not have to be perfect. You just have to be real. That is actually the more impressive thing.",
-    "A situation that has been draining you is closer to done than it feels. You are in the last hard stretch — the part that feels endless right before it ends. Stay in it one more day.",
+    "Today your energy is working for you in a big way. Whatever you put your full attention on is going to move — and move fast. Pick the thing that matters most and go all in. The momentum is real and it is yours.",
+    "Something you have been building is closer to ready than you think. Your courage is one of your most powerful assets right now and the stars are fully behind your next move. Trust yourself and take the step.",
+    "Your body feels alive today and that is your signal to do something with that energy. A workout, a walk, a creative sprint — whatever gets you moving is going to feel amazing. You are in a really good flow right now.",
+    "Something you planted a while back is starting to show signs of life. That quiet work you have been doing is paying off. Today is a good day to check in on it and feel proud of how far it has actually come.",
+    "The intensity you are feeling right now is pure creative fuel. Channel it into something that matters to you — something you make, something you say, something you start. This energy is a gift. Use it.",
+    "You have what it takes to handle whatever today brings — and more than that, you have what it takes to make today genuinely good. Show up fully and watch what happens. People respond to your presence in a real way.",
+    "You are closer to a breakthrough than it might feel. The hard stretch you have been in is about to shift. Stay in it one more day with everything you have — what is coming on the other side is worth it.",
   ],
   Taurus:[
-    "This is your season and you can feel it. Everything that is yours is finding its way to you right now — but you have to actually let it in. Stop second-guessing what is genuinely coming your way.",
-    "Your instincts about money are right. That thing you have been hesitating on — your gut already knows the answer. Stop waiting for more information. You have enough. Trust the read.",
-    "Someone in your life has been noticing you in a way they have not said out loud yet. You do not need them to say it. You can feel it. Just keep being exactly who you are — it is working.",
-    "You have been doing more than you are getting credit for and that is going to change soon. The quiet consistent work is about to become visible. Do not quit right before it lands.",
-    "Today is genuinely a good day to do nothing productive and feel zero guilt about it. Rest is not a reward — it is maintenance. Your body and your nervous system are asking for it. Listen.",
-    "Something creative wants to come out of you. You might not think of yourself that way but something is trying to find its form through you right now. Give it ten minutes and see what happens.",
-    "A relationship in your life is about to get easier. Something that has felt stuck or slightly tense is about to shift. You do not have to force it — just stay soft and let it move.",
+    "This is your season and everything around you is reflecting that back. What is meant for you is finding its way to you right now. Stay open, stay present, and let the good things actually land. You deserve them.",
+    "Your instincts about what to do next are right on. That thing you have been hesitating on — your gut has already decided. Trust it. Move toward it. The timing is better than you think.",
+    "Someone in your world genuinely sees you and appreciates you — maybe more than they have said out loud. You do not need the words. You can feel it. Keep being exactly who you are. It is working beautifully.",
+    "The consistent work you have been putting in is about to become visible in a really satisfying way. What felt invisible is about to be seen. Do not slow down now — you are right at the point where it pays off.",
+    "Today is a genuine gift of rest and pleasure and your only job is to receive it. Slow down, enjoy something beautiful, let your body relax. This is not laziness — it is exactly what you need and exactly what you deserve.",
+    "Something creative is trying to come through you and it is genuinely good. Give it space today. Even ten minutes of making something — writing, cooking, drawing, arranging — will open up something that surprises you.",
+    "A relationship in your life is warming up in a really beautiful way. Something that felt stuck is loosening. Let it shift naturally. The warmth between you and someone important is real and it is growing.",
   ],
   Gemini:[
-    "Your brain is doing that thing where it has seventeen tabs open and none of them are loading. Close most of them. One focused hour beats six scattered ones every time — and you know this.",
-    "A conversation you keep almost having is the one you actually need to have. Stop rehearsing it in your head. The real version is going to go differently than you think — probably better.",
-    "Something is changing in your world and you can feel it at the edges. Do not try to figure out exactly what it is yet. Just stay curious and pay attention. The picture is about to get clearer.",
-    "You have been restless and that is your nervous system telling you something has to shift. It does not have to be a big shift. Sometimes just changing one small thing breaks the whole stuck feeling.",
-    "You thought something was over but it is actually just transforming. The version of it that is coming is going to be better than what you had — but you have to let the old form go first.",
-    "Say yes to the thing that makes you slightly nervous today. Not the reckless thing — the thing that is genuinely interesting and slightly outside your comfort zone. That is where you are right now.",
-    "You are seeing something clearly that most people around you are still confused about. Share it. Even if it feels obvious to you, someone in your circle genuinely needs to hear it today.",
+    "Your mind is a gift today — sharp, quick, making connections that no one else is making. Let it run. Write things down, talk through your ideas, follow the threads. Something genuinely interesting is waiting at the end of one of them.",
+    "A conversation that has been on your mind is going to go better than you expect. Say the thing. The real version is going to land beautifully — better than the rehearsed one. Trust yourself and just speak.",
+    "Something is shifting in your world and you can feel it humming just under the surface. This is exciting, not scary. Stay curious and keep paying attention. Something really good is becoming clear.",
+    "That restless feeling is actually your intuition pointing you toward something new and better. Listen to it. Even one small change today can break the stuck energy and open up a whole new current. Go for it.",
+    "Something you thought was over has actually been transforming into something better. The new version is going to be genuinely exciting. You are at the beginning of something good — let yourself feel that.",
+    "Say yes to the thing that makes you slightly nervous today. Your instincts are good and the risk is worth it. You are in exactly the right place to step into something a little bigger. Do it.",
+    "You see something clearly that most people around you are still figuring out. Share it generously today. Your perspective is valuable and someone in your circle really needs to hear exactly what you are seeing.",
   ],
   Cancer:[
-    "Something really good is working in your favor right now and you might be too anxious to notice it. Look up from the worry for a second. Things are actually moving in your direction. Let that be true.",
-    "The people you love most are your biggest asset right now — not just emotionally but practically. A door is going to open through someone you already know. Stay connected and pay attention.",
-    "That thing you have been quietly hoping for is more possible than you have let yourself believe. Stop being careful with your hope. It is okay to want this. And it is actually within reach.",
-    "You are more sensitive than usual today and that is not a weakness — it is your signal system working. Something in your environment needs attention. Trust what you are picking up.",
-    "An opportunity is coming through a familiar source — not a stranger, not a big break from nowhere. Someone you already trust is going to say something that opens a door. Be present for that conversation.",
-    "You do not have to figure everything out today. You just have to take care of yourself and the people immediately around you. The bigger picture will still be there tomorrow. Today is small and real.",
-    "Your intuition is your most accurate tool right now. If something feels right, move toward it. If something feels off, move away. You do not need more data. You need to trust what you already sense.",
+    "Really good things are moving in your direction right now and they deserve your full attention. Look up from the worry and notice what is actually happening. The universe is being genuinely generous with you today. Receive it.",
+    "A door is about to open through someone you already love and trust. Stay close to your people today. The connection you are looking for is coming through the relationships you have already built. It is beautiful.",
+    "That thing you have been quietly hoping for is genuinely within reach. Give yourself full permission to want it. Your hope is not naive — it is accurate. Keep moving toward it with your whole heart.",
+    "Your sensitivity is one of your greatest superpowers today. You are picking up on things that other people are missing entirely. Trust what you feel. Your emotional intelligence is giving you real information.",
+    "Something good is on its way through a familiar channel — through someone you already know and trust. Be present in your conversations today. The thing you have been waiting for is closer than you think.",
+    "You get to keep it small and real today and that is genuinely enough. Taking care of yourself and the people right next to you is meaningful work. You do not have to carry the whole world. Just today. Just this.",
+    "Your gut is one of the most reliable instruments you have and right now it is working perfectly. Whatever feels right — move toward it. Whatever feels off — trust that signal. You know more than you think you do.",
   ],
   Leo:[
-    "Your moment is building and you can feel the shift happening. Something that felt blocked is starting to loosen. Keep showing up fully and visibly — the recognition that is coming needs to find you in the open.",
-    "You have been giving a lot and today the energy needs to come back to you. Do something that is just for you — not productive, not for anyone else. Just genuinely enjoyable. You have earned it.",
-    "Someone in your life needs your specific brand of warmth right now. Not advice, not fixing — just your presence and your genuine attention. You are better at this than you think. Show up for them.",
-    "Something you made or expressed recently landed better than you realized. The feedback might not have been loud but it was real. What you put out is resonating. Keep making things.",
-    "A leadership moment is in front of you and you are absolutely the right person for it. You do not need a title or permission. You just need to step forward. The rest follows from that.",
-    "Something creative or romantic that felt stuck is starting to move again. The energy around it is shifting. Do not overthink it — just lean in and see where it goes. The momentum is real.",
-    "You are allowed to take up space. All of it. Stop making yourself smaller in situations where your full presence is exactly what is needed. The room needs what you bring — give it all of it.",
+    "Something that felt blocked is genuinely starting to move and it is moving in your direction. Keep showing up fully and visibly — the recognition and opportunity that are coming need to find you in the open. Stay seen.",
+    "Today the energy needs to come back to you and that is not just okay — it is necessary. Do something just for yourself today. Something fun, something indulgent, something that fills you back up. You have earned this completely.",
+    "Someone in your life needs your specific kind of warmth and light today. Your presence genuinely matters to people in ways that go deeper than you always realize. Show up for them — it will mean everything.",
+    "Something you made or put out into the world recently landed better than you know. The impact is real even if the feedback has been quiet. What you are creating is resonating. Keep making things. Keep showing up.",
+    "A leadership moment is right in front of you and you are absolutely the right person for it. You do not need a title. You just need to step forward with the confidence you already have. The rest follows naturally.",
+    "Something creative or romantic that felt stuck is waking up again. The energy around it is shifting in a really good direction. Lean into it with your whole self and see where it goes. The momentum is real.",
+    "You are allowed to take up your full space today — all of it. Your presence is not too much. It is exactly what is needed. Show up big, be loud, be warm, be you. The room needs everything you bring.",
   ],
   Virgo:[
-    "Something you have been carefully and quietly working on is about to get noticed. The quality of your effort is real and it is about to become visible. Keep the standard high — it is paying off.",
-    "Your eye for what is wrong is one of your greatest gifts but today turn it toward what is right. More is working in your favor than you are giving yourself credit for. Let yourself see that clearly.",
-    "Your body is sending you information today. Not a crisis — just a quiet nudge that something needs attention. You are good at paying attention to everything except yourself. Today, reverse that.",
-    "Something you have been refining and adjusting is ready. You have made it better enough. Done and real beats perfect and imaginary. Share it, submit it, send it — it is time.",
-    "A small kindness you did recently without thinking about it is coming back to you in a good way. You did not do it for anything in return — but it mattered more than you know. Something good is on its way.",
-    "The fog that has been making things feel unclear is starting to lift. You do not need to push through it — just wait one more day. Clarity is coming and it is going to feel like a relief.",
-    "You are being too hard on yourself about something that is actually going fine. Zoom out. You are further along than your inner critic is giving you credit for. The standard you are holding yourself to is too high for today.",
+    "Something you have been quietly and carefully building is about to become visible in a really satisfying way. The quality of your work is real and it is about to be recognized. Keep the standard high — it is absolutely paying off.",
+    "More is genuinely working in your favor right now than you are giving yourself credit for. Turn that sharp eye toward what is going right today. The wins are real and they deserve to be acknowledged — by you.",
+    "Your body is wise and today it is pointing you toward something good. Maybe rest, maybe movement, maybe nourishment — whatever it is asking for, give it freely. You take care of everyone else. Today is for you.",
+    "What you have been working on is genuinely ready. You have refined it beautifully. Share it, send it, submit it — let it go out into the world today and watch what comes back. You are going to be pleasantly surprised.",
+    "A small kindness you offered recently mattered more than you know and something good is making its way back to you because of it. You are someone people genuinely appreciate. That appreciation is real and it is coming back around.",
+    "Clarity is arriving and it is going to feel like a genuine relief. The fog that has been in the way is lifting. What is becoming clear is actually good news. You are going to feel so much better once you can see it fully.",
+    "You are doing so much better than your inner critic is acknowledging. Zoom way out today and let yourself actually see the progress. You are further along than you think and the direction you are heading is genuinely right.",
   ],
   Libra:[
-    "The conversation you have been avoiding is the one that needs to happen today. Not because it will be easy — it will not be — but because the weight of not having it is heavier than the conversation itself.",
-    "Something that felt unfair has been sitting with you and you have been too polite to say so. Today is the day to say so. Real balance includes your voice. Keeping the peace at your own expense is not peace.",
-    "A decision that has been going back and forth is ready to be made. Stop waiting for perfect clarity — it is not coming. Pick the direction that feels more right and commit. You can adjust as you go.",
-    "Something beautiful is available to you today and you might walk right past it if you are not paying attention. Slow down enough to notice it. Art, music, a real conversation, a moment of actual connection.",
-    "You have been carrying too much of the emotional labor in a situation and everyone involved knows it — including them. Today let someone else pick it up. You are not responsible for making everything okay.",
-    "A partnership in your life is about to get tested and the ones worth keeping will come through it stronger. The ones that fall away were already done. Trust the process even when it feels uncomfortable.",
-    "Your sense of fairness is one of the most powerful things about you — but right now it is keeping you stuck. Sometimes things are just unfair and the move is forward anyway. Let go of the need for it to be equal first.",
+    "A conversation that has been on your heart is ready to happen today and it is going to go beautifully. Your ability to say hard things with grace is one of your greatest gifts. Use it today. The air is going to clear.",
+    "Your voice matters in this situation and adding it is going to make things genuinely better. Speaking up today is not just okay — it is exactly the right thing. Real balance includes you. Say what you see.",
+    "Something you have been sitting with is ready to move forward. The clarity you have been waiting for is here. Choose the direction that feels most true and commit to it. The stars are fully supporting your decision today.",
+    "Something beautiful is available to you today and it is going to find you if you stay a little bit open. A moment of genuine connection, something that moves you, something that reminds you why being alive is wonderful.",
+    "You get to receive support today instead of giving it and that is a beautiful thing. Let someone else carry something. Let help come in. You are allowed to be taken care of — you more than deserve it.",
+    "A partnership in your life is growing stronger through exactly what it is going through right now. What is being tested is becoming more real. What comes out on the other side is going to be genuinely solid.",
+    "Your sense of fairness and beauty is one of the most powerful things about you and today it is going to guide you exactly right. Trust your instincts about what is good and true. Move toward the more beautiful option.",
   ],
   Scorpio:[
-    "You already know the truth about a situation and you have been waiting for permission to act on it. You do not need permission. What you feel is real and your instincts have been right this whole time.",
-    "Something that has been hidden — maybe your own feelings about something — is ready to come into the open. One honest thing said today changes the entire dynamic. The timing is right. Say the true thing.",
-    "A transformation that has been happening slowly underneath everything is about to become visible. You are not the same person you were six months ago. Let yourself be seen as who you are now.",
-    "You have been carrying something heavy and carrying it alone. Today it is okay to let someone see that you are in it. Letting someone help is not weakness — it is just the next move. Take it.",
-    "Your instincts about a person or situation are correct. You can feel something other people cannot see yet. Do not talk yourself out of it just because you cannot prove it yet. You will be right.",
-    "Something you have been resisting is actually going to make your life better. The resistance is not wisdom — it is just habit. Let it shift. What is on the other side is worth the discomfort of getting there.",
-    "Old feelings are surfacing today and they are not here to hurt you. They are here because you are ready to actually look at them and let them go. This is the real kind of strength — the kind that takes courage.",
+    "Your instincts are sharp and correct today. You can feel what is true about a situation before anyone else can see it. Trust that completely. Your perception is one of your greatest gifts and right now it is working perfectly.",
+    "Something true and good wants to come into the open today and you have exactly the right words for it. One honest thing said today has the power to shift everything in a direction that is genuinely better for everyone.",
+    "A transformation that has been happening quietly underneath everything is about to become visible. You are genuinely not the same person you were and the person you are now is more powerful than ever. Let that be seen.",
+    "You do not have to carry this alone anymore. Letting someone in today is a form of strength — the real kind. The support that comes when you allow it is going to feel like a genuine relief and a genuine gift.",
+    "You already know exactly what is true here and you are completely right. Your perception cuts through to the real thing every time. Act on what you know today. You are not going to regret trusting yourself.",
+    "What is on the other side of the resistance you have been feeling is genuinely better than where you are. Take the step. Let it shift. The discomfort of moving is so much smaller than the reward waiting for you.",
+    "You have done real work on yourself and today that shows up in the most beautiful way. The strength and wisdom you carry right now are extraordinary. You have earned every bit of who you are today.",
   ],
   Sagittarius:[
-    "A big opportunity is right in front of you but it comes with real strings attached — emotional ones. Something good is asking you to also go deep. The question is whether you are ready to do both at once.",
-    "You want to move and the energy pulling you to stay put is frustrating. The growth available to you right now might be in that uncomfortable stillness. Not forever — just for this season. Stay in it.",
-    "That adventure you have been dreaming about is more possible than you think. But dreams without plans stay dreams. Spend some time today turning the vision into actual steps. What is the first real move?",
-    "Someone close to you needs more of your attention than you have been giving lately. The biggest adventure available to you right now might be the people who are already there. Show up for them fully today.",
-    "You said something true recently that hit harder than you meant it to. The truth was right — the delivery could use some softness. Today practice saying the real thing with a little more care around how it lands.",
-    "A belief you have held for a long time is being challenged and that discomfort is actually working on you in a good way. The beliefs that survive real pressure are the ones worth keeping. Let this make you stronger.",
-    "The door you were watching just closed. There is another one opening — not the one you expected, not in the direction you were looking. Stay open enough to see it. The reroute is actually better.",
+    "Something genuinely exciting is opening up right in front of you. It comes with some depth required — and you have exactly what it takes to go there. Say yes to all of it. The adventure and the meaning both.",
+    "The growth that is available to you right now is profound and it is here because you are ready for it. The stillness is working on you in the best way. Stay in it a little longer — what is being built in you is extraordinary.",
+    "That adventure you have been dreaming about is genuinely possible and it is closer than you think. Today is the day to take one real concrete step toward it. What is the first move? Make it. The path is opening.",
+    "The people right next to you are your greatest adventure right now. Showing up fully for them today is going to fill you up in the most unexpected and beautiful way. Connection this close is the best kind of journey.",
+    "You have something true and valuable to say and people genuinely want to hear it. Share it today with all the warmth and directness you have. Your honesty is a gift and right now it is landing exactly right.",
+    "What you believe in is real and what you are building around those beliefs is strong. The challenge is making you more solid, not less. You are coming out of this with a clarity and conviction that is genuinely yours.",
+    "Something even better than what you were expecting is opening up right where you are looking. Stay open, stay curious, keep going. The reroute is not a loss — it is an upgrade. Something wonderful is on its way.",
   ],
   Capricorn:[
-    "The cracks that are showing right now are not a sign of failure — they are showing you what needs attention before it becomes a real problem. This is useful information. Use it while you can.",
-    "Something at work or in a system you rely on is frustrating you. Instead of fighting it directly, ask what it is showing you about what needs to change. That reframe is where the useful answer lives.",
-    "The results feel slow but that does not mean they are not coming. The timeline is longer than you want and the reward is bigger than you can currently see. Stay in it. You are building something real.",
-    "Something you have been holding tightly is starting to slip and that is bothering you more than you are letting on. Today practice letting one thing go. Not everything needs your management. Some things just need to land.",
-    "The people who matter are watching how you handle this period and they are impressed — even if no one is saying it out loud. Your steadiness right now is more visible than you think. Keep going.",
-    "You are closer to a long-term goal than it currently feels. Every hard day is building something in you that cannot be faked or bought elsewhere. The foundation you are laying right now is going to hold for years.",
-    "Someone is looking to you for guidance and you do not have to have all the answers. Just be honest about what you know and what you do not. That honesty lands harder than any advice you could give.",
+    "Everything that is solid in your life is showing itself to be exactly that — solid. What is real is holding. What you have built is standing. Today is actually evidence of how well you have done. Let yourself see that.",
+    "The thing that has been frustrating you is actually pointing you straight to where the real opportunity lives. Follow that thread with curiosity. The answer that is coming out of this is genuinely valuable and genuinely yours.",
+    "You are building something real and the fact that it takes time is not a problem — it is the whole point. The timeline is exactly right. What is coming is bigger and better than the shortcut would have been. Keep going.",
+    "You are more adaptable than you give yourself credit for and today that quality is going to serve you beautifully. The thing that is shifting is shifting for the better. Let it land. Something better is arranging itself.",
+    "The way you are handling this period is genuinely impressive. Your steadiness is one of your most powerful qualities and right now it is creating something that matters. More people are noticing than you know.",
+    "You are so much closer to your goal than it currently feels. The foundation you are laying right now is the best possible work you could be doing. Every day is building something that is going to last. You are right on track.",
+    "Your honest, grounded perspective is exactly what someone needs to hear today and they are going to receive it as a genuine gift. Your wisdom lands in a way that advice rarely does. Share it freely and watch it help.",
   ],
   Aquarius:[
-    "Something about who you have been is changing and the old version of you does not quite fit anymore. That is not a crisis — that is exactly what growth feels like from the inside. Keep going.",
-    "A group or community you care about needs your specific kind of thinking right now. You see the pattern everyone else is missing. Do not keep it to yourself — your perspective is the one that is needed.",
-    "You have been carrying an idea that feels too big or too different for a long time. The world is catching up to how you think. Start saying it out loud more. The timing for it is better than you realize.",
-    "You need more alone time than usual right now and it is not antisocial — it is necessary. Deep work is happening internally and it needs quiet to complete itself. Protect your energy today without guilt.",
-    "Something you are building right now has both structure and freedom in it — and that is actually the combination that works. Do not let anyone convince you to choose between those two things. You can have both.",
-    "Something old is ending and something new is starting and you might be feeling both at the same time. That simultaneous grief and excitement is real and it makes complete sense. You are in a genuine transition.",
-    "An ending you have been processing for a while is finally starting to make sense. The distance you have now is giving you a view that being inside it never could have. What you see from here is actually clarifying.",
+    "The person you are becoming is extraordinary and the process of getting there is happening exactly right. The old version was good — this new version is going to be remarkable. Keep going. You are in the best kind of becoming.",
+    "Your perspective is the one that is missing from the conversation and the moment you add it something is going to click for people. You see the pattern. Share it generously. Your thinking is genuinely needed right now.",
+    "An idea you have been carrying is ready to come out into the world and the timing is perfect. The world has been catching up to how you think and it is finally ready to receive this. Start saying it. Start sharing it.",
+    "The quiet, focused time you are giving yourself right now is building something powerful. Your inner work is real and it is going somewhere genuinely good. Protect this time with confidence. It is productive in the deepest way.",
+    "What you are building has exactly the right combination of freedom and structure and that balance is rare and beautiful. You have figured out something that most people cannot hold together. Keep building. It is working.",
+    "You are in a genuine transition and you are handling it with more grace than you realize. Both the ending and the beginning are real and both deserve to be honored. What is coming is going to be worth everything.",
+    "The clarity that is coming now is genuinely good news. The distance you have is giving you a view that is accurate and useful. What you can see from here is going to inform some of the best decisions you will ever make.",
   ],
   Pisces:[
-    "The fog is lifting and things that felt blurry are getting clearer. This is a new chapter — not just a new day. What you are stepping into is more solid and more real than what you are leaving behind.",
-    "Your creativity, your compassion, your heart — all of it is being amplified right now. Make something today. Express something. The energy that wants to come through you is real. Give it somewhere to go.",
-    "A boundary you set recently that felt uncomfortable was the right call. You gave more than was sustainable for a long time. Holding the line is not selfish — it is finally taking care of yourself the way you take care of everyone else.",
-    "Your dreams have been more vivid and meaningful lately and that is not random. Pay attention to what is coming through in sleep — it is carrying information your waking mind has not caught up to yet.",
-    "Something you let go of is showing you why that was the right move. The perspective you have now from the distance is something you could not have gotten any other way. Trust what you see from here.",
-    "You are more grounded right now than you have been in a long time. The blur is clearing and the picture coming into focus is actually good. What you see in your life right now is worth staying present for.",
-    "A wave of support is coming your way from a direction you did not expect. Stay open to receiving it. You have given so much for so long — the universe is not keeping score against you. Let something good just arrive.",
+    "You are stepping into a genuinely new chapter and it is a good one. The blur that used to make things feel uncertain is becoming a kind of magic — you carry both the dreaminess and the clarity now. That combination is powerful.",
+    "Your creativity, your compassion, your heart — all of it is amplified right now and the world genuinely needs what you carry. Make something today. Express something. Let what is in you come out. It matters more than you know.",
+    "The boundary you held was the right call and now you get to see the beautiful effect of it. You are more able to give from a full place now. What you protected was worth protecting. You made the right choice.",
+    "The messages coming through in your dreams and your quiet moments right now are real and they are pointing you somewhere good. Pay attention to what keeps surfacing. Your intuition is running incredibly clear right now.",
+    "The distance you have from something you let go of is showing you exactly what you needed to see — and what you see is affirming and freeing. You made the right call. The view from here is genuinely beautiful.",
+    "You are so present and so grounded right now — more than you have been in a long time. The picture that is coming into focus is genuinely good. What you see in your life right now is worth staying here for fully.",
+    "Something generous and unexpected is making its way to you right now. Stay open to receiving it. You have given so much for so long and the energy is flowing back beautifully now. Let it in. You deserve this completely.",
   ],
 };
 
 
 function DailyHoroscope() {
   const [selectedSign, setSelectedSign] = useState(null);
-  const [revealed, setRevealed] = useState(false);
-  const todayIndex = new Date().getDay(); // 0=Sun, 1=Mon ... 6=Sat
+  const [state, setState] = useState("idle");
+  const [reading, setReading] = useState(null);
+  const [openArea, setOpenArea] = useState(null);
   const today = new Date().toLocaleDateString("en-US", { weekday:"long", month:"long", day:"numeric" });
   const accent = selectedSign ? colors[selectedSign] : "#e8a800";
-  const horoscope = selectedSign ? dailyHoroscopes[selectedSign]?.[todayIndex] : null;
 
-  const handleSelectSign = (s) => {
-    setSelectedSign(s);
-    setRevealed(false);
+  const areaEmoji = { identity:"☀️", career:"💼", love:"💕", relationships:"💕", health:"🌿", finance:"✦", spiritual:"🌌", creativity:"🎨", family:"🏠", travel:"✈️", social:"👥", learning:"📚", communication:"💬", home:"🏠", spirituality:"🌌" };
+  const areaColor = { identity:"#ffab40", career:"#f5c842", love:"#d4a5c9", relationships:"#d4a5c9", health:"#a8c97f", finance:"#a8e060", spiritual:"#9b8fcc", spirituality:"#9b8fcc", creativity:"#ff9944", family:"#a3c4d8", travel:"#5bc8d8", social:"#f7c948", learning:"#5bc8d8", communication:"#f7c948", home:"#a3c4d8" };
+
+  const fetchHoroscope = async (sign) => {
+    setState("loading"); setReading(null); setOpenArea(null);
+    try {
+      const res = await fetch("/api/daily-horoscope", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sign }),
+      });
+      if (!res.ok) throw new Error("Failed");
+      const data = await res.json();
+      setReading(data); setState("done");
+    } catch { setState("error"); }
+  };
+
+  const handleSelectSign = (s) => { setSelectedSign(s); setState("idle"); setReading(null); setOpenArea(null); };
+
+  const StarRating = ({ rating, color }) => {
+    if (!rating) return null;
+    return (
+      <div style={{display:"flex",gap:2,justifyContent:"center",marginBottom:6}}>
+        {[1,2,3,4,5].map(i => <span key={i} style={{fontSize:10,color:i<=rating?color:"rgba(255,255,255,0.15)"}}>★</span>)}
+      </div>
+    );
   };
 
   return (
@@ -883,19 +905,74 @@ function DailyHoroscope() {
           ))}
         </div>
       </div>
-      {selectedSign && !revealed && (
+      {selectedSign && state === "idle" && (
         <div style={{textAlign:"center",marginBottom:20,animation:"up .4s ease"}}>
-          <button className="rb" style={{"--a":accent}} onClick={()=>setRevealed(true)}>✦ REVEAL MY HOROSCOPE</button>
+          <button className="rb" style={{"--a":accent}} onClick={()=>fetchHoroscope(selectedSign)}>✦ REVEAL MY HOROSCOPE</button>
         </div>
       )}
-      {selectedSign && revealed && horoscope && (
+      {selectedSign && state === "loading" && (
+        <div style={{textAlign:"center",padding:"28px 0",animation:"up 0.3s ease"}}>
+          <div style={{fontFamily:"'Cinzel',serif",fontSize:12,color:accent,marginBottom:12}}>Reading the stars...</div>
+          <div style={{display:"flex",gap:6,justifyContent:"center"}}>
+            {[0,1,2].map(i=>(<div key={i} style={{width:6,height:6,borderRadius:"50%",background:accent,animation:`pu 1s ease ${i*0.2}s infinite`}}/>))}
+          </div>
+        </div>
+      )}
+      {selectedSign && state === "error" && (
+        <div style={{textAlign:"center",animation:"up 0.3s ease"}}>
+          <p style={{fontFamily:"Georgia,serif",color:"#ff9090",fontSize:13,marginBottom:12}}>Something went wrong. Please try again.</p>
+          <button className="rb" style={{"--a":accent}} onClick={()=>fetchHoroscope(selectedSign)}>✦ TRY AGAIN</button>
+        </div>
+      )}
+      {selectedSign && state === "done" && reading && (
         <div style={{animation:"up .4s ease"}}>
           <div className="fc" style={{"--a":accent,marginBottom:16}}>
             <div style={{position:"absolute",top:14,right:16,fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,letterSpacing:".12em",color:accent,opacity:.7}}>{today.toUpperCase()}</div>
             <div style={{fontSize:28,marginBottom:8,textAlign:"center"}}>{emojis[selectedSign]}</div>
-            <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,letterSpacing:".18em",color:accent,textAlign:"center",marginBottom:16}}>{selectedSign.toUpperCase()}</div>
-            <p style={{fontFamily:"Georgia,serif",fontSize:"clamp(15px,3vw,18px)",lineHeight:1.85,margin:0,color:"#f5f0e0"}}>{horoscope}</p>
+            <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,letterSpacing:".18em",color:accent,textAlign:"center",marginBottom:8}}>{selectedSign.toUpperCase()}</div>
+            {reading.overallRating && <StarRating rating={reading.overallRating} color={accent}/>}
+            {reading.overallTheme && <p style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:14,lineHeight:1.6,margin:"0 0 8px",color:"#f5f0e0",textAlign:"center"}}>"{reading.overallTheme}"</p>}
           </div>
+          {reading.lifeAreas?.length > 0 && (
+            <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:16}}>
+              {reading.lifeAreas.map((area, i) => {
+                const color = areaColor[area.area] || accent;
+                const emoji = areaEmoji[area.area] || "✦";
+                const isOpen = openArea === i;
+                return (
+                  <div key={i} style={{borderRadius:12,overflow:"hidden",border:`1px solid ${isOpen?color+"66":"rgba(255,200,50,0.12)"}`,transition:"all 0.2s",background:isOpen?`${color}08`:"rgba(255,200,50,0.02)"}}>
+                    <button onClick={()=>setOpenArea(isOpen?null:i)} style={{width:"100%",display:"flex",alignItems:"center",justifyContent:"space-between",padding:"14px 16px",background:"transparent",border:"none",cursor:"pointer",gap:10,textAlign:"left"}}>
+                      <div style={{display:"flex",alignItems:"center",gap:10,flex:1}}>
+                        <span style={{fontSize:18,flexShrink:0}}>{emoji}</span>
+                        <div>
+                          <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color,letterSpacing:".1em",marginBottom:2}}>{(area.area||"").toUpperCase()}</div>
+                          {area.title && area.title.toLowerCase() !== (area.area||"").toLowerCase() && (
+                            <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:13,color:isOpen?color:"#f5f0e0"}}>{area.title}</div>
+                          )}
+                        </div>
+                      </div>
+                      <div style={{display:"flex",flexDirection:"column",alignItems:"flex-end",gap:4,flexShrink:0}}>
+                        {area.rating && <StarRating rating={area.rating} color={color}/>}
+                        <span style={{fontSize:9,color,opacity:0.6,transform:isOpen?"rotate(180deg)":"rotate(0deg)",transition:"transform 0.2s"}}>▼</span>
+                      </div>
+                    </button>
+                    {isOpen && (
+                      <div style={{padding:"0 16px 16px",animation:"up 0.2s ease"}}>
+                        <p style={{fontFamily:"Georgia,serif",fontSize:14,color:"#d8c890",lineHeight:1.85,margin:"0 0 10px"}}>{area.prediction}</p>
+                        {area.keywords?.length > 0 && (
+                          <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
+                            {area.keywords.map((kw,j)=>(
+                              <span key={j} style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,color,background:`${color}15`,border:`1px solid ${color}33`,borderRadius:100,padding:"3px 10px",letterSpacing:".06em"}}>{kw}</span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
           <div style={{textAlign:"center"}}><span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,letterSpacing:".18em",color:accent,opacity:.6}}>✦ AREWEWOKE ✦</span></div>
         </div>
       )}
@@ -961,7 +1038,7 @@ function TermsContent(){return(<><DocP>Please read these Terms of Service carefu
 function PrivacyContent(){return(<><DocP>Your privacy matters to Arewewoke.</DocP><DocSection title="1. Information We Collect"><DocBullet items={["Email address and name when you subscribe","Payment information, processed securely by Stripe","Usage data to improve app performance","Subscription status to manage access to paid features"]}/></DocSection><DocSection title="2. How We Use Your Information"><DocBullet items={["To process and manage your subscription","To send receipts and billing communications","To improve app features","To respond to support requests"]}/><DocP>We do not sell, rent, share, or trade your personal information to third parties for marketing purposes.</DocP></DocSection><DocSection title="3. Your Rights"><DocP>You have the right to access, correct, or delete the personal data we hold about you. Contact us at celestial.insights.app@gmail.com.</DocP></DocSection><DocSection title="4. Contact"><DocP>celestial.insights.app@gmail.com</DocP></DocSection></>);}
 function CancellationContent(){return(<><DocSection title="Free Trial Period"><DocP>Your 7-day free trial begins the moment your payment method is verified. If you do not cancel before the trial ends, your $4.99/month subscription begins automatically on day 8.</DocP></DocSection><DocSection title="How to Cancel"><DocBullet items={["Via the Stripe customer portal — the fastest method, available 24/7.","By emailing celestial.insights.app@gmail.com with the subject line: Cancel My Subscription."]}/></DocSection><DocSection title="Refund Policy"><DocP>All subscription fees are non-refundable once charged.</DocP></DocSection><DocSection title="Contact"><DocP>celestial.insights.app@gmail.com</DocP></DocSection></>);}
 function DisclaimerContent(){return(<><DocP>All astrological content on Arewewoke is provided strictly for entertainment and personal reflection.</DocP><DocSection title="Not Professional Advice"><DocP>Nothing on Arewewoke constitutes medical, psychological, financial, legal, or any other form of professional advice.</DocP></DocSection><DocSection title="Contact"><DocP>celestial.insights.app@gmail.com</DocP></DocSection></>);}
-function CreditsContent(){return(<><DocP>Arewewoke is created and operated by Ayssia Mason.</DocP><DocSection title="Astrological Authors Referenced"><DocBullet items={["Steven Forrest — The Inner Sky, evolutionary astrology","Liz Greene — Saturn: A New Look at an Old Devil, psychological astrology","Robert Hand — Planets in Transit","Howard Sasportas — The Twelve Houses","Donna Cunningham — Moon and Venus placements","Isabel Hickey — Astrology: A Cosmic Science","Dane Rudhyar — An Astrological Mandala"]}/></DocSection><DocSection title="Contact"><DocP>celestia.insights.app@gmail.com</DocP></DocSection></>);}
+function CreditsContent(){return(<><DocP>Arewewoke is created and operated by Ayssia Mason.</DocP><DocSection title="Brand"><DocP>Powered by Ayssia ✦</DocP></DocSection><DocSection title="Astrological Authors Referenced"><DocBullet items={["Steven Forrest — The Inner Sky, evolutionary astrology","Liz Greene — Saturn: A New Look at an Old Devil, psychological astrology","Robert Hand — Planets in Transit","Howard Sasportas — The Twelve Houses","Donna Cunningham — Moon and Venus placements","Isabel Hickey — Astrology: A Cosmic Science","Dane Rudhyar — An Astrological Mandala"]}/></DocSection><DocSection title="Contact"><DocP>celestia.insights.app@gmail.com</DocP></DocSection></>);}
 
 // ─── BIRTH CHART FEATURE ────────────────────────────────────────
 const CHART_PLANETS = ["Sun","Moon","Rising","Mercury","Venus","Mars","Jupiter","Saturn","Uranus","Neptune","Pluto"];
@@ -2217,9 +2294,7 @@ export default function AstrologyApp() {
           <div style={{textAlign:"center",marginBottom:18}}>
             <a href="mailto:celestial.insights.app@gmail.com" style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#4a4440",letterSpacing:".1em",textDecoration:"none"}} onMouseEnter={e=>e.target.style.color="#a8e060"} onMouseLeave={e=>e.target.style.color="#4a4440"}>celestial.insights.app@gmail.com</a>
           </div>
-          <div style={{textAlign:"center"}}>
-            <p style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,color:"#2a2420",margin:0,letterSpacing:".1em"}}>powered by <span style={{color:"#a8e060"}}>Ayssia</span></p>
-          </div>
+
         </div>
       </div>
 
