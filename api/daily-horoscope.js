@@ -6,7 +6,7 @@
 const cache = {};
 
 function getCacheKey(sign, dateStr) {
-  return `v2-${sign}-${dateStr}`;
+  return `v3-${sign}-${dateStr}`;
 }
 
 function getTodayString() {
