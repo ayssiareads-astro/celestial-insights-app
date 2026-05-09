@@ -2070,6 +2070,180 @@ function BirthChart() {
   );
 }
 
+
+// ─── DAILY CHALLENGE ────────────────────────────────────────────
+const CHALLENGE_QUESTIONS = [
+  { q:"Which sign is most likely to read your messages and not reply for three days?", options:["Gemini","Scorpio","Aquarius","Virgo"], answer:"Scorpio", explain:"Scorpio needs to think before responding. They are not ignoring you — they are calculating their next move." },
+  { q:"Which sign falls in love the fastest?", options:["Libra","Aries","Pisces","Leo"], answer:"Aries", explain:"Aries does not date — they decide. If they like you, you will know within the first hour." },
+  { q:"Which sign is most likely to become a CEO?", options:["Capricorn","Taurus","Scorpio","Leo"], answer:"Capricorn", explain:"Capricorn has been working toward the top since they were twelve. They play the long game and almost always win it." },
+  { q:"Which sign is the most likely to ghost someone?", options:["Sagittarius","Gemini","Aquarius","Aries"], answer:"Aquarius", explain:"Aquarius does not do confrontation. If they are done, they simply disappear — emotionally first, then physically." },
+  { q:"Which sign is known as the most psychic?", options:["Pisces","Scorpio","Cancer","Virgo"], answer:"Pisces", explain:"Pisces lives halfway between this world and another one. They pick up on things before they happen — it is not a skill, it is just how they are wired." },
+  { q:"Which sign is most likely to stay in a bad relationship too long?", options:["Cancer","Taurus","Libra","Pisces"], answer:"Taurus", explain:"Taurus does not quit. On anything. That loyalty is their greatest strength and occasionally their biggest blind spot." },
+  { q:"Which sign is the most competitive?", options:["Leo","Aries","Scorpio","Capricorn"], answer:"Scorpio", explain:"Scorpio does not even let you know it is a competition. They are just quietly keeping score of everything." },
+  { q:"Which sign is most likely to be the life of the party?", options:["Gemini","Leo","Sagittarius","Aries"], answer:"Leo", explain:"Leo was born for an audience. Give them a room and they will fill it. It is completely natural and completely magnetic." },
+  { q:"Which sign is the most likely to cry at a movie?", options:["Pisces","Cancer","Libra","Virgo"], answer:"Cancer", explain:"Cancer feels everything at full volume. Movies, commercials, a song they heard once in 2015 — all of it lands deep." },
+  { q:"Which sign is the hardest to get over after a breakup?", options:["Scorpio","Libra","Leo","Pisces"], answer:"Scorpio", explain:"Scorpio does not just date you — they merge with you. Getting over a Scorpio means getting over a version of yourself you built with them." },
+  { q:"Which sign is most likely to change their mind five times before deciding?", options:["Gemini","Libra","Pisces","Aquarius"], answer:"Libra", explain:"Libra genuinely sees every side of everything. They are not being indecisive — they are just more aware of the options than the rest of us." },
+  { q:"Which sign is most likely to win an argument even when they are wrong?", options:["Gemini","Scorpio","Leo","Aries"], answer:"Gemini", explain:"Gemini is the fastest mind in the room. They will find the angle that makes them right before you have finished your sentence." },
+  { q:"Which sign is the most likely to have a secret double life?", options:["Scorpio","Gemini","Pisces","Aquarius"], answer:"Gemini", explain:"Gemini contains multitudes. There is always another version of them you have not met yet — and they find that completely normal." },
+  { q:"Which sign is most loyal to their friends?", options:["Scorpio","Cancer","Taurus","Capricorn"], answer:"Scorpio", explain:"Scorpio's loyalty is absolute. If they call you a friend, they would do anything for you. The list is short but the commitment is total." },
+  { q:"Which sign is most likely to quit their job on impulse?", options:["Aries","Sagittarius","Aquarius","Gemini"], answer:"Sagittarius", explain:"Sagittarius needs freedom more than security. The moment something feels like a cage, they are already planning the exit." },
+  { q:"Which sign is most likely to start a cult (accidentally)?", options:["Pisces","Leo","Scorpio","Sagittarius"], answer:"Scorpio", explain:"Scorpio has a magnetic pull that makes people want to follow them. They are not trying to recruit anyone — people just naturally orbit them." },
+  { q:"Which sign forgets birthdays the most?", options:["Aquarius","Sagittarius","Aries","Gemini"], answer:"Aquarius", explain:"Aquarius cares deeply about people in theory. Specific dates and calendar reminders are a different conversation entirely." },
+  { q:"Which sign is most likely to be a morning person?", options:["Capricorn","Virgo","Aries","Taurus"], answer:"Capricorn", explain:"Capricorn does not waste daylight. They are up, productive, and three emails deep before most signs have turned off their alarm." },
+  { q:"Which sign takes the longest to trust someone?", options:["Scorpio","Capricorn","Cancer","Aquarius"], answer:"Scorpio", explain:"Scorpio does not trust — they test. Slowly and quietly, over a long period of time. If you pass, you have a friend for life." },
+  { q:"Which sign is most likely to be running on three hours of sleep and somehow thriving?", options:["Gemini","Aries","Aquarius","Sagittarius"], answer:"Gemini", explain:"Gemini runs on mental energy more than physical rest. Their brain simply refuses to shut down — and they secretly love it." },
+  { q:"Which sign is the biggest overthinker?", options:["Virgo","Gemini","Scorpio","Aquarius"], answer:"Virgo", explain:"Virgo does not just think — they analyze every angle, run every scenario, and find the flaw in the plan before it even starts. It is a superpower and an exhausting one." },
+  { q:"Which sign is most likely to disappear for a week and come back totally renewed?", options:["Scorpio","Pisces","Aquarius","Capricorn"], answer:"Scorpio", explain:"Scorpio periodically goes underground. It is not dramatic — it is just how they recharge. They emerge as a slightly different, slightly more powerful version of themselves." },
+  { q:"Which sign is the most stubborn?", options:["Taurus","Scorpio","Leo","Capricorn"], answer:"Taurus", explain:"Taurus does not change their mind. Once they have decided, the decision is made. This makes them extraordinarily reliable and occasionally immovable." },
+  { q:"Which sign is most likely to be obsessed with true crime?", options:["Scorpio","Virgo","Capricorn","Pisces"], answer:"Scorpio", explain:"Scorpio is already drawn to the dark, the hidden, and the psychological. True crime is basically their hobby." },
+  { q:"Which sign is most likely to still be thinking about something someone said to them in 2019?", options:["Cancer","Scorpio","Virgo","Taurus"], answer:"Cancer", explain:"Cancer has a perfect emotional memory. They do not forget how things felt — and some feelings do not have an expiration date." },
+  { q:"Which sign is the most creative?", options:["Pisces","Aquarius","Leo","Gemini"], answer:"Pisces", explain:"Pisces does not create from effort — they channel. Their imagination operates somewhere between this world and another one entirely." },
+  { q:"Which sign is most likely to be the therapist friend?", options:["Cancer","Virgo","Pisces","Libra"], answer:"Pisces", explain:"Pisces absorbs emotion like water. They understand what you are feeling before you do — and they never make you feel judged for it." },
+  { q:"Which sign is most likely to have the most exes?", options:["Gemini","Libra","Sagittarius","Leo"], answer:"Libra", explain:"Libra is magnetic, charming, and genuinely interested in people. They attract connection easily — and sometimes get into situations before they have decided if they are ready for them." },
+  { q:"Which sign is the most independent?", options:["Aquarius","Sagittarius","Aries","Capricorn"], answer:"Aquarius", explain:"Aquarius needs freedom the way other people need oxygen. They love deeply but they will never let a relationship — or anything else — define who they are." },
+  { q:"Which sign is most likely to give the best advice?", options:["Capricorn","Virgo","Scorpio","Sagittarius"], answer:"Sagittarius", explain:"Sagittarius has seen enough of life and thought enough about it to genuinely know things. Their advice is direct, honest, and usually right — even when it is not what you wanted to hear." },
+];
+
+// Seeded random — same result for same day + question index
+function seededRand(seed) {
+  const x = Math.sin(seed + 1) * 10000;
+  return x - Math.floor(x);
+}
+
+function getDailyQuestion() {
+  const today = new Date();
+  const daySeed = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
+  const idx = Math.floor(seededRand(daySeed) * CHALLENGE_QUESTIONS.length);
+  return { question: CHALLENGE_QUESTIONS[idx], idx, daySeed };
+}
+
+function getFakePercentage(daySeed, optionIndex, correctIndex) {
+  // Generate realistic-looking distribution that adds to 100
+  // Correct answer gets the highest number
+  const raw = [0,1,2,3].map(i => {
+    const r = seededRand(daySeed * 10 + i * 37);
+    return i === correctIndex ? 0.35 + r * 0.25 : 0.05 + r * 0.15;
+  });
+  const total = raw.reduce((a, b) => a + b, 0);
+  const normalized = raw.map(v => Math.round((v / total) * 100));
+  // Fix rounding to sum to 100
+  const diff = 100 - normalized.reduce((a, b) => a + b, 0);
+  normalized[correctIndex] += diff;
+  return normalized[optionIndex];
+}
+
+function DailyChallenge({ onDone }) {
+  const { question, idx, daySeed } = getDailyQuestion();
+  const today = new Date().toLocaleDateString("en-US", { weekday:"long", month:"long", day:"numeric" });
+  const storageKey = "aww_challenge_" + daySeed;
+
+  const [answered, setAnswered] = useState(() => {
+    try { return localStorage.getItem(storageKey); } catch(e) { return null; }
+  });
+  const [selected, setSelected] = useState(answered || null);
+  const [showResult, setShowResult] = useState(!!answered);
+
+  const correctIndex = question.options.indexOf(question.answer);
+  const isCorrect = selected === question.answer;
+
+  const handleAnswer = (opt) => {
+    if (showResult) return;
+    setSelected(opt);
+    setShowResult(true);
+    try { localStorage.setItem(storageKey, opt); } catch(e) {}
+  };
+
+  const optionColor = (opt) => {
+    if (!showResult) return "rgba(255,200,50,0.06)";
+    if (opt === question.answer) return "rgba(168,224,96,0.18)";
+    if (opt === selected && !isCorrect) return "rgba(255,80,80,0.15)";
+    return "rgba(255,200,50,0.03)";
+  };
+  const optionBorder = (opt) => {
+    if (!showResult) return "rgba(255,200,50,0.2)";
+    if (opt === question.answer) return "rgba(168,224,96,0.6)";
+    if (opt === selected && !isCorrect) return "rgba(255,80,80,0.4)";
+    return "rgba(255,200,50,0.08)";
+  };
+  const optionTextColor = (opt) => {
+    if (!showResult) return "#f0c030";
+    if (opt === question.answer) return "#a8e060";
+    if (opt === selected && !isCorrect) return "#ff7070";
+    return "#3a3428";
+  };
+
+  return (
+    <div style={{animation:"up .5s ease"}}>
+      <div style={{textAlign:"center",marginBottom:28}}>
+        <div style={{fontSize:36,marginBottom:10}}>⚡</div>
+        <h2 style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:24,color:"#f5c842",margin:"0 0 8px"}}>Daily Challenge</h2>
+        <p style={{fontFamily:"Georgia,serif",color:"#a8e060",fontSize:14,margin:0}}>{today}</p>
+      </div>
+
+      {/* Question card */}
+      <div style={{background:"rgba(255,200,50,0.05)",border:"1px solid rgba(255,200,50,0.25)",borderRadius:20,padding:"28px 22px",marginBottom:20,position:"relative",overflow:"hidden"}}>
+        <div style={{position:"absolute",top:0,left:0,right:0,height:2,background:"linear-gradient(90deg,transparent,#f5c842,transparent)"}}/>
+        <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,letterSpacing:".2em",color:"#f5c842",marginBottom:16,textAlign:"center"}}>✦ TODAY'S QUESTION ✦</div>
+        <p style={{fontFamily:"Georgia,serif",fontWeight:700,fontSize:"clamp(16px,3.5vw,20px)",color:"#ffffff",lineHeight:1.65,margin:0,textAlign:"center"}}>{question.q}</p>
+      </div>
+
+      {/* Options */}
+      <div style={{display:"flex",flexDirection:"column",gap:10,marginBottom:20}}>
+        {question.options.map((opt, i) => {
+          const pct = showResult ? getFakePercentage(daySeed, i, correctIndex) : null;
+          return (
+            <button key={opt} onClick={() => handleAnswer(opt)} disabled={!!showResult}
+              style={{background:optionColor(opt),border:`1.5px solid ${optionBorder(opt)}`,borderRadius:12,padding:"14px 18px",textAlign:"left",cursor:showResult?"default":"pointer",transition:"all 0.3s",position:"relative",overflow:"hidden"}}>
+              {/* Progress bar behind */}
+              {showResult && (
+                <div style={{position:"absolute",top:0,left:0,height:"100%",width:pct+"%",background:opt===question.answer?"rgba(168,224,96,0.08)":"rgba(255,255,255,0.03)",transition:"width 0.8s ease",borderRadius:10}}/>
+              )}
+              <div style={{position:"relative",display:"flex",alignItems:"center",justifyContent:"space-between",gap:10}}>
+                <div style={{display:"flex",alignItems:"center",gap:10}}>
+                  <span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,color:optionTextColor(opt),opacity:0.6,flexShrink:0}}>{"ABCD"[i]}</span>
+                  <span style={{fontFamily:"Georgia,serif",fontWeight:700,fontSize:15,color:optionTextColor(opt)}}>{opt}</span>
+                </div>
+                <div style={{display:"flex",alignItems:"center",gap:8,flexShrink:0}}>
+                  {showResult && <span style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:13,color:optionTextColor(opt)}}>{pct}%</span>}
+                  {showResult && opt === question.answer && <span style={{fontSize:16}}>✓</span>}
+                  {showResult && opt === selected && !isCorrect && <span style={{fontSize:16}}>✗</span>}
+                </div>
+              </div>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Result */}
+      {showResult && (
+        <div style={{animation:"up 0.4s ease"}}>
+          <div style={{background:isCorrect?"rgba(168,224,96,0.08)":"rgba(255,200,50,0.06)",border:`1px solid ${isCorrect?"rgba(168,224,96,0.35)":"rgba(255,200,50,0.25)"}`,borderRadius:16,padding:"22px 20px",marginBottom:16,textAlign:"center"}}>
+            <div style={{fontSize:36,marginBottom:10}}>{isCorrect?"🌟":"💫"}</div>
+            <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:18,color:isCorrect?"#a8e060":"#f5c842",marginBottom:10}}>
+              {isCorrect ? "You got it!" : `It's ${question.answer}`}
+            </div>
+            <p style={{fontFamily:"Georgia,serif",fontSize:15,color:"#d8c890",lineHeight:1.75,margin:"0 0 14px"}}>{question.explain}</p>
+            <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,color:"#6a6058",letterSpacing:".1em"}}>
+              {getFakePercentage(daySeed, correctIndex, correctIndex)}% of players got this right today
+            </div>
+          </div>
+          <div style={{textAlign:"center"}}>
+            <p style={{fontFamily:"Georgia,serif",fontSize:13,color:"#4a4440",margin:"0 0 16px"}}>Come back tomorrow for a new question ✦</p>
+            {onDone && <button onClick={onDone} style={{background:"none",border:"1px solid rgba(255,200,50,0.25)",color:"#f5c842",padding:"10px 28px",borderRadius:"100px",fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,letterSpacing:".1em",cursor:"pointer"}}>✦ CLOSE</button>}
+          </div>
+        </div>
+      )}
+
+      {!showResult && (
+        <div style={{textAlign:"center",marginTop:4}}>
+          <p style={{fontFamily:"Georgia,serif",fontSize:12,color:"#4a4440",margin:0}}>One question per day · Results reveal after you answer</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── STAR PARTICLES & TAURUS HELPERS ────────────────────────────
 const STAR_PARTICLES = [...Array(70)].map((_,i) => ({
   size: Math.random()*2.5+0.4,
@@ -2091,6 +2265,18 @@ export default function AstrologyApp() {
   const [fact, setFact] = useState(null);
   const [animating, setAnimating] = useState(false);
   const [activeDoc, setActiveDoc] = useState(null);
+  const [showChallenge, setShowChallenge] = useState(false);
+
+  // Show challenge popup after 1.5s delay, once per day
+  React.useEffect(() => {
+    const { daySeed } = getDailyQuestion();
+    const storageKey = "aww_challenge_" + daySeed;
+    const alreadyAnswered = (() => { try { return localStorage.getItem(storageKey); } catch(e) { return null; } })();
+    if (!alreadyAnswered) {
+      const timer = setTimeout(() => setShowChallenge(true), 1500);
+      return () => clearTimeout(timer);
+    }
+  }, []);
   const accent = selectedSign ? colors[selectedSign] : "#e8a800";
 
   // ─── TAURUS SEASON STATE ────────────────────────────────────
@@ -2235,6 +2421,17 @@ export default function AstrologyApp() {
 
         </div>
       </div>
+
+      {/* Daily Challenge Popup */}
+      {showChallenge && (
+        <div onClick={()=>setShowChallenge(false)} style={{position:"fixed",inset:0,background:"rgba(5,3,10,0.92)",zIndex:1000,overflowY:"auto",display:"flex",alignItems:"center",justifyContent:"center",padding:"24px 16px"}}>
+          <div onClick={e=>e.stopPropagation()} style={{background:"#0f0c18",border:"1px solid rgba(255,200,50,0.3)",borderRadius:24,maxWidth:480,width:"100%",padding:"32px 24px",position:"relative",animation:"up .4s ease"}}>
+            <div style={{position:"absolute",top:0,left:0,right:0,height:2,background:"linear-gradient(90deg,transparent,#f5c842,transparent)",borderRadius:"24px 24px 0 0"}}/>
+            <button onClick={()=>setShowChallenge(false)} style={{position:"absolute",top:14,right:16,background:"none",border:"none",color:"#4a4440",cursor:"pointer",fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:11,letterSpacing:".1em"}}>✕</button>
+            <DailyChallenge onDone={()=>setShowChallenge(false)}/>
+          </div>
+        </div>
+      )}
 
       {activeDoc && (
         <div onClick={()=>setActiveDoc(null)} style={{position:"fixed",inset:0,background:"rgba(5,3,10,0.92)",zIndex:1000,overflowY:"auto",display:"flex",alignItems:"flex-start",justifyContent:"center",padding:"40px 16px"}}>
