@@ -1169,7 +1169,7 @@ function AspectWheel({ aspects, chartPlanets, report }) {
   };
 
   // Keep major aspects + Chiron, remove Mean_Node, Mean_South_Node, Mean_Lilith
-  const SKIP_BODIES = ["mean_node","mean_south_node","mean_lilith","true_node","south_node","lilith","vertex"];
+  const SKIP_BODIES = ["mean_node","mean_south_node","mean_lilith","true_node","south_node","lilith","vertex","chiron"];
   const MAJOR_TYPES = ["conjunction","opposition","trine","square","sextile"];
   const filtered = (aspects || []).filter(a => {
     const type = (a.type || "").toLowerCase();
@@ -1216,13 +1216,26 @@ function AspectWheel({ aspects, chartPlanets, report }) {
     return { x: CX + R * Math.cos(angle), y: CY + R * Math.sin(angle) };
   };
 
+  // Priority: Venus/Jupiter aspects first, then other personal planets, then outer planets
+  // Positive aspect types (trine/sextile/conjunction) get a bonus
+  const BENEFIC_PLANETS = ["Venus","Jupiter"];
   const PERSONAL_PLANETS = ["Sun","Moon","Mercury","Venus","Mars"];
-  const planetPriority = (name) => PERSONAL_PLANETS.indexOf(name) >= 0 ? PERSONAL_PLANETS.indexOf(name) : 10;
-  const sorted = [...filtered].sort((a, b) => {
-    const aScore = Math.min(planetPriority(a.planet1), planetPriority(a.planet2));
-    const bScore = Math.min(planetPriority(b.planet1), planetPriority(b.planet2));
-    return aScore - bScore;
-  });
+  const POSITIVE_TYPES = ["trine","sextile","conjunction"];
+
+  const aspectScore = (a) => {
+    const p1 = a.planet1; const p2 = a.planet2;
+    const type = (a.type || "").toLowerCase();
+    let score = 100;
+    // Venus or Jupiter involved = big bonus (lower score = higher priority)
+    if (BENEFIC_PLANETS.includes(p1) || BENEFIC_PLANETS.includes(p2)) score -= 50;
+    // Positive aspect type = bonus
+    if (POSITIVE_TYPES.includes(type)) score -= 20;
+    // Personal planet involved = bonus
+    if (PERSONAL_PLANETS.includes(p1) || PERSONAL_PLANETS.includes(p2)) score -= 15;
+    return score;
+  };
+
+  const sorted = [...filtered].sort((a, b) => aspectScore(a) - aspectScore(b));
 
   // Use aspect key string for selection to avoid index mismatch between filtered/sorted
   const aspectKey = (a) => `${a.planet1}-${a.planet2}-${a.type}`;
@@ -2099,7 +2112,7 @@ export default function AstrologyApp() {
   ];
 
   return (
-    <div style={{minHeight:"100vh",background:"#0d0a14",fontFamily:"Georgia,serif",color:"#ffffff",position:"relative",overflow:"hidden"}}>
+    <div style={{minHeight:"100dvh",background:"#0d0a14",fontFamily:"Georgia,serif",color:"#ffffff",position:"relative",overflow:"hidden"}}>
       <div style={{position:"fixed",inset:0,pointerEvents:"none",zIndex:0}}>
         {STAR_PARTICLES.map((p,i)=>(<div key={i} style={{position:"absolute",width:p.size+"px",height:p.size+"px",borderRadius:"50%",background:p.color,left:p.left+"%",top:p.top+"%",animation:"tw "+p.dur+"s ease-in-out infinite",animationDelay:p.delay+"s"}}/>))}
       </div>
