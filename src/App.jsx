@@ -2073,7 +2073,7 @@ function BirthChart() {
 
 // ─── DAILY CHALLENGE ────────────────────────────────────────────
 const CHALLENGE_QUESTIONS = [
-  { q:"Which sign is most likely to read your messages and not reply for three days?", options:["Gemini","Scorpio","Aquarius","Virgo"], answer:"Scorpio", explain:"Scorpio needs to think before responding. They are not ignoring you — they are calculating their next move." },
+  { q:"Which sign is most likely to read your messages and not reply for three days?", options:["Gemini","Scorpio","Aquarius","Taurus"], answer:"Taurus", explain:"Taurus saw your message, fully processed it, decided they will respond when they are ready, and felt completely at peace with that decision. It is not personal. They just move on their own timeline." },
   { q:"Which sign falls in love the fastest?", options:["Libra","Aries","Pisces","Leo"], answer:"Aries", explain:"Aries does not date — they decide. If they like you, you will know within the first hour." },
   { q:"Which sign is most likely to become a CEO?", options:["Capricorn","Taurus","Scorpio","Leo"], answer:"Capricorn", explain:"Capricorn has been working toward the top since they were twelve. They play the long game and almost always win it." },
   { q:"Which sign is the most likely to ghost someone?", options:["Sagittarius","Gemini","Aquarius","Aries"], answer:"Aquarius", explain:"Aquarius does not do confrontation. If they are done, they simply disappear — emotionally first, then physically." },
