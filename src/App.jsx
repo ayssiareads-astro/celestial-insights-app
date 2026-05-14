@@ -2244,6 +2244,249 @@ function DailyChallenge({ onDone }) {
   );
 }
 
+// ─── COMMUNITY COMPONENT ────────────────────────────────────────
+const SIGN_COLORS_C = {
+  Aries:"#ff6b6b", Taurus:"#a8c97f", Gemini:"#f7c948", Cancer:"#a3c4d8",
+  Leo:"#ffab40", Virgo:"#8fbc8f", Libra:"#d4a5c9", Scorpio:"#a03060",
+  Sagittarius:"#e07b39", Capricorn:"#8b7355", Aquarius:"#5bc8d8", Pisces:"#9b8fcc",
+};
+const SIGN_EMOJIS_C = {
+  Aries:"🔥",Taurus:"🌿",Gemini:"✨",Cancer:"🫧",Leo:"👑",Virgo:"🌾",
+  Libra:"⚖️",Scorpio:"🖤",Sagittarius:"🏹",Capricorn:"⛰️",Aquarius:"⚡",Pisces:"💜",
+};
+const ALL_SIGNS_C = ["Aries","Taurus","Gemini","Cancer","Leo","Virgo","Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"];
+
+function timeAgo(ts) {
+  const diff = Math.floor((Date.now() - ts) / 1000);
+  if (diff < 60) return "just now";
+  if (diff < 3600) return Math.floor(diff/60) + "m ago";
+  if (diff < 86400) return Math.floor(diff/3600) + "h ago";
+  return Math.floor(diff/86400) + "d ago";
+}
+
+function Community() {
+  const [promptIndex, setPromptIndex] = React.useState(0);
+  const [prompts, setPrompts] = React.useState([]);
+  const [posts, setPosts] = React.useState([]);
+  const [loading, setLoading] = React.useState(true);
+  const [submitting, setSubmitting] = React.useState(false);
+
+  const [nickname, setNickname] = React.useState("");
+  const [sign, setSign] = React.useState("");
+  const [response, setResponse] = React.useState("");
+  const [gifQuery, setGifQuery] = React.useState("");
+  const [gifs, setGifs] = React.useState([]);
+  const [selectedGif, setSelectedGif] = React.useState(null);
+  const [gifLoading, setGifLoading] = React.useState(false);
+  const [showForm, setShowForm] = React.useState(false);
+  const [submitted, setSubmitted] = React.useState(false);
+  const [error, setError] = React.useState(null);
+
+  React.useEffect(() => {
+    setLoading(true);
+    setPosts([]);
+    fetch(`/api/community?prompt=${promptIndex}`)
+      .then(r => r.json())
+      .then(data => {
+        setPrompts(data.prompts || []);
+        setPosts((data.posts || []).map(p => typeof p === "string" ? JSON.parse(p) : p));
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, [promptIndex]);
+
+  const searchGifs = async () => {
+    if (!gifQuery.trim()) return;
+    setGifLoading(true);
+    try {
+      const key = process.env.NEXT_PUBLIC_GIPHY_API_KEY || "";
+      const res = await fetch(
+        `https://api.giphy.com/v1/gifs/search?api_key=${key}&q=${encodeURIComponent(gifQuery)}&limit=8&rating=pg-13`
+      );
+      const data = await res.json();
+      setGifs(data.data || []);
+    } catch {
+      setGifs([]);
+    }
+    setGifLoading(false);
+  };
+
+  const handleSubmit = async () => {
+    if (!nickname.trim() || !sign || !response.trim()) {
+      setError("Please fill in all fields before posting.");
+      return;
+    }
+    setError(null);
+    setSubmitting(true);
+    try {
+      const res = await fetch("/api/community", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ promptIndex, nickname, sign, response, gifUrl: selectedGif }),
+      });
+      const data = await res.json();
+      if (data.ok) {
+        setPosts(prev => [data.post, ...prev]);
+        setResponse(""); setSelectedGif(null); setGifs([]); setGifQuery("");
+        setShowForm(false); setSubmitted(true);
+        setTimeout(() => setSubmitted(false), 3000);
+      } else {
+        setError(data.error || "Something went wrong.");
+      }
+    } catch {
+      setError("Could not post. Check your connection.");
+    }
+    setSubmitting(false);
+  };
+
+  const currentPrompt = prompts[promptIndex] || "";
+
+  return (
+    <div style={{animation:"up .5s ease"}}>
+      <div style={{textAlign:"center",marginBottom:28}}>
+        <div style={{fontSize:36,marginBottom:10}}>💬</div>
+        <h2 style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:24,color:"#f5c842",margin:"0 0 8px"}}>Community</h2>
+        <p style={{fontFamily:"Georgia,serif",color:"#a8e060",fontSize:14,margin:0,lineHeight:1.65}}>Real talk from real signs. No login required.</p>
+      </div>
+
+      <div style={{marginBottom:24}}>
+        <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,letterSpacing:".18em",color:"#f5c842",marginBottom:12,textAlign:"center"}}>✦ CHOOSE A PROMPT ✦</div>
+        <div style={{display:"flex",flexDirection:"column",gap:8}}>
+          {prompts.map((p, i) => (
+            <button key={i} onClick={() => { setPromptIndex(i); setShowForm(false); }}
+              style={{background:promptIndex===i?"linear-gradient(135deg,rgba(245,200,66,0.18),rgba(0,0,0,0.3))":"rgba(255,200,50,0.05)",border:`1.5px solid ${promptIndex===i?"rgba(245,200,66,0.6)":"rgba(255,200,50,0.18)"}`,borderRadius:12,padding:"13px 18px",textAlign:"left",cursor:"pointer",fontFamily:"Georgia,serif",fontWeight:700,fontSize:14,color:promptIndex===i?"#f5c842":"#9a8e78",transition:"all .22s",position:"relative",overflow:"hidden"}}>
+              {promptIndex===i && <div style={{position:"absolute",top:0,left:0,right:0,height:2,background:"linear-gradient(90deg,transparent,#f5c842,transparent)"}}/>}
+              {p}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {!showForm && (
+        <div style={{textAlign:"center",marginBottom:24}}>
+          <button className="rb" style={{"--a":"#e8a800"}} onClick={() => setShowForm(true)}>✦ ADD YOUR RESPONSE</button>
+        </div>
+      )}
+
+      {submitted && (
+        <div style={{animation:"up .4s ease",background:"rgba(168,224,96,0.1)",border:"1px solid rgba(168,224,96,0.4)",borderRadius:12,padding:"14px 18px",textAlign:"center",marginBottom:20,fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:12,color:"#a8e060"}}>
+          ✦ Your response is live!
+        </div>
+      )}
+
+      {showForm && (
+        <div style={{animation:"up .4s ease",background:"rgba(255,200,50,0.05)",border:"1px solid rgba(255,200,50,0.25)",borderRadius:20,padding:"24px 20px",marginBottom:28,position:"relative",overflow:"hidden"}}>
+          <div style={{position:"absolute",top:0,left:0,right:0,height:2,background:"linear-gradient(90deg,transparent,#f5c842,transparent)"}}/>
+          <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,letterSpacing:".18em",color:"#f5c842",marginBottom:18,textAlign:"center"}}>✦ YOUR RESPONSE ✦</div>
+          <div style={{fontFamily:"Georgia,serif",fontWeight:700,fontSize:14,color:"#d8c890",marginBottom:18,textAlign:"center",fontStyle:"italic"}}>"{currentPrompt}"</div>
+
+          <div style={{marginBottom:14}}>
+            <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,letterSpacing:".12em",color:"#a8a098",marginBottom:6}}>NICKNAME</div>
+            <input value={nickname} onChange={e => setNickname(e.target.value)} maxLength={30} placeholder="e.g. CosmicVirgo"
+              style={{width:"100%",background:"rgba(255,200,50,0.06)",border:"1px solid rgba(255,200,50,0.2)",borderRadius:10,padding:"12px 14px",fontFamily:"Georgia,serif",fontSize:14,color:"#f5f0e0",outline:"none",boxSizing:"border-box"}} />
+          </div>
+
+          <div style={{marginBottom:14}}>
+            <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,letterSpacing:".12em",color:"#a8a098",marginBottom:8}}>YOUR SIGN</div>
+            <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:6}}>
+              {ALL_SIGNS_C.map(s => (
+                <button key={s} onClick={() => setSign(s)}
+                  style={{background:sign===s?"rgba(255,200,50,0.18)":"rgba(255,200,50,0.05)",border:`1px solid ${sign===s?"rgba(245,200,66,0.7)":"rgba(255,200,50,0.15)"}`,borderRadius:8,padding:"8px 4px",cursor:"pointer",textAlign:"center",transition:"all .2s"}}>
+                  <div style={{fontSize:16,marginBottom:2}}>{SIGN_EMOJIS_C[s]}</div>
+                  <div style={{fontFamily:"'Cinzel',serif",fontSize:8,color:sign===s?"#f5c842":"#6a6058",fontWeight:700}}>{s}</div>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div style={{marginBottom:14}}>
+            <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,letterSpacing:".12em",color:"#a8a098",marginBottom:6}}>YOUR RESPONSE <span style={{opacity:.5}}>({280 - response.length} left)</span></div>
+            <textarea value={response} onChange={e => setResponse(e.target.value)} maxLength={280} rows={3} placeholder="Share your truth..."
+              style={{width:"100%",background:"rgba(255,200,50,0.06)",border:"1px solid rgba(255,200,50,0.2)",borderRadius:10,padding:"12px 14px",fontFamily:"Georgia,serif",fontSize:14,color:"#f5f0e0",outline:"none",resize:"vertical",boxSizing:"border-box"}} />
+          </div>
+
+          <div style={{marginBottom:18}}>
+            <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,letterSpacing:".12em",color:"#a8a098",marginBottom:6}}>ADD A GIF (optional)</div>
+            <div style={{display:"flex",gap:8,marginBottom:8}}>
+              <input value={gifQuery} onChange={e => setGifQuery(e.target.value)} onKeyDown={e => e.key==="Enter" && searchGifs()} placeholder="Search Giphy..."
+                style={{flex:1,background:"rgba(255,200,50,0.06)",border:"1px solid rgba(255,200,50,0.2)",borderRadius:10,padding:"10px 14px",fontFamily:"Georgia,serif",fontSize:13,color:"#f5f0e0",outline:"none"}} />
+              <button onClick={searchGifs} disabled={gifLoading}
+                style={{background:"rgba(255,200,50,0.12)",border:"1px solid rgba(255,200,50,0.3)",borderRadius:10,padding:"10px 16px",color:"#f5c842",cursor:"pointer",fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10}}>
+                {gifLoading ? "..." : "SEARCH"}
+              </button>
+            </div>
+            {selectedGif && (
+              <div style={{position:"relative",display:"inline-block",marginBottom:8}}>
+                <img src={selectedGif} alt="selected gif" style={{maxWidth:"100%",borderRadius:10,maxHeight:140,objectFit:"cover"}} />
+                <button onClick={() => setSelectedGif(null)}
+                  style={{position:"absolute",top:4,right:4,background:"rgba(0,0,0,0.7)",border:"none",borderRadius:"50%",width:22,height:22,color:"#fff",cursor:"pointer",fontSize:12,display:"flex",alignItems:"center",justifyContent:"center"}}>✕</button>
+              </div>
+            )}
+            {gifs.length > 0 && !selectedGif && (
+              <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:5}}>
+                {gifs.map(g => (
+                  <img key={g.id} src={g.images.fixed_height_small.url} alt={g.title}
+                    onClick={() => setSelectedGif(g.images.downsized_medium.url)}
+                    style={{width:"100%",height:70,objectFit:"cover",borderRadius:8,cursor:"pointer",border:"2px solid transparent",transition:"border .15s"}}
+                    onMouseEnter={e => e.target.style.border="2px solid #f5c842"}
+                    onMouseLeave={e => e.target.style.border="2px solid transparent"} />
+                ))}
+              </div>
+            )}
+          </div>
+
+          {error && <div style={{fontFamily:"Georgia,serif",fontSize:13,color:"#ff7070",marginBottom:12,textAlign:"center"}}>{error}</div>}
+
+          <div style={{display:"flex",gap:10}}>
+            <button onClick={() => { setShowForm(false); setError(null); }}
+              style={{flex:1,background:"none",border:"1px solid rgba(255,200,50,0.2)",color:"#6a6058",borderRadius:100,padding:"12px",fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,cursor:"pointer"}}>
+              CANCEL
+            </button>
+            <button onClick={handleSubmit} disabled={submitting}
+              style={{flex:2,background:"linear-gradient(135deg,#e8a800,#8a6000)",border:"none",color:"#0d0a14",borderRadius:100,padding:"12px",fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:11,cursor:"pointer",letterSpacing:".1em",opacity:submitting?0.6:1}}>
+              {submitting ? "POSTING..." : "✦ POST IT"}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {loading ? (
+        <div style={{textAlign:"center",padding:40,color:"#f5c842",fontSize:24,animation:"pu .8s ease infinite"}}>✦</div>
+      ) : posts.length === 0 ? (
+        <div style={{textAlign:"center",padding:"40px 20px",fontFamily:"Georgia,serif",color:"#4a4440",fontSize:15}}>
+          No responses yet — be the first to share ✦
+        </div>
+      ) : (
+        <div style={{display:"flex",flexDirection:"column",gap:12}}>
+          {posts.map(post => {
+            const signColor = SIGN_COLORS_C[post.sign] || "#f5c842";
+            return (
+              <div key={post.id} style={{background:"rgba(255,200,50,0.04)",border:"1px solid rgba(255,200,50,0.15)",borderRadius:16,padding:"16px 18px",animation:"up .4s ease",position:"relative",overflow:"hidden"}}>
+                <div style={{position:"absolute",top:0,left:0,width:3,height:"100%",background:signColor,borderRadius:"16px 0 0 16px",opacity:.7}}/>
+                <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:10,paddingLeft:8}}>
+                  <span style={{fontSize:20}}>{SIGN_EMOJIS_C[post.sign] || "✦"}</span>
+                  <div>
+                    <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:11,color:signColor}}>{post.nickname}</div>
+                    <div style={{fontFamily:"'Cinzel',serif",fontSize:8,color:"#4a4440",letterSpacing:".08em"}}>{post.sign?.toUpperCase()} · {timeAgo(post.ts)}</div>
+                  </div>
+                </div>
+                <p style={{fontFamily:"Georgia,serif",fontSize:14,color:"#d8c890",lineHeight:1.75,margin:"0 0 0 8px"}}>{post.response}</p>
+                {post.gifUrl && (
+                  <img src={post.gifUrl} alt="gif" style={{marginTop:10,maxWidth:"100%",borderRadius:10,maxHeight:180,objectFit:"cover",marginLeft:8}} />
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      <div style={{textAlign:"center",marginTop:24,opacity:.4}}>
+        <span style={{fontFamily:"'Cinzel',serif",fontSize:8,color:"#4a4440",letterSpacing:".1em"}}>GIF SEARCH POWERED BY GIPHY</span>
+      </div>
+    </div>
+  );
+}
+
 // ─── STAR PARTICLES & TAURUS HELPERS ────────────────────────────
 const STAR_PARTICLES = [...Array(70)].map((_,i) => ({
   size: Math.random()*2.5+0.4,
@@ -2294,6 +2537,7 @@ export default function AstrologyApp() {
     {label:"🌌 Birth Chart",key:"birthchart"},
     {label:"✦ Fun Facts",key:"facts"},
     {label:"🌟 Celebrity",key:"celebrity"},
+    {label:"💬 Community",key:"community"},
     {label:"📲 Get The App",key:"install"},
   ];
 
@@ -2315,6 +2559,7 @@ export default function AstrologyApp() {
         {topTab==="horoscope" && <DailyHoroscope />}
         {topTab==="birthchart" && <BirthChart />}
         {topTab==="celebrity" && <CelebrityConnection />}
+        {topTab==="community" && <Community />}
         <div style={{display:topTab==="guess"?"block":"none"}}><ZodiacQuiz /></div>
 
         {topTab==="install" && (
