@@ -1,4 +1,12 @@
-// api/community.js — GET comments, POST comment, GET GIFs via Giphy
+// api/community.js
+
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: '1mb',
+    },
+  },
+};
 
 const KV_URL = process.env.KV_REST_API_URL;
 const KV_TOKEN = process.env.KV_REST_API_TOKEN;
@@ -22,7 +30,7 @@ async function kvSet(key, value) {
 
 export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
   if (req.method === "OPTIONS") return res.status(200).end();
 
@@ -56,15 +64,45 @@ export default async function handler(req, res) {
     }
   }
 
-  // ── POST new comment ─────────────────────────────────────────
-  if (req.method === "POST") {
-    const { prompt, nickname, sign, text, gif } = req.body || {};
-    if (!prompt || !nickname || !sign) return res.status(400).json({ error: "prompt, nickname and sign required" });
-    if (!text && !gif) return res.status(400).json({ error: "message or gif required" });
-    if (nickname.length > 30 || (text && text.length > 280)) return res.status(400).json({ error: "Content too long" });
+  // ── DELETE a comment ─────────────────────────────────────────
+  if (req.method === "DELETE") {
+    const { prompt, id } = req.body || {};
+    if (!prompt || !id) return res.status(400).json({ error: "prompt and id required" });
     try {
       const key = `aww_community_${prompt}`;
       const existing = await kvGet(key) || [];
+      const updated = existing.filter(c => c.id !== id);
+      await kvSet(key, updated);
+      return res.status(200).json({ ok: true });
+    } catch(e) {
+      return res.status(500).json({ error: e.message });
+    }
+  }
+
+  // ── POST new comment ─────────────────────────────────────────
+  if (req.method === "POST") {
+    let body = req.body || {};
+
+    // If body is a string (edge case), parse it
+    if (typeof body === "string") {
+      try { body = JSON.parse(body); } catch(e) { body = {}; }
+    }
+
+    console.log("POST body received:", JSON.stringify(body));
+
+    const { prompt, nickname, sign, text, gif, parentId } = body;
+
+    if (!prompt) return res.status(400).json({ error: "missing: prompt" });
+    if (!nickname) return res.status(400).json({ error: "missing: nickname" });
+    if (!sign) return res.status(400).json({ error: "missing: sign" });
+    if (!text && !gif) return res.status(400).json({ error: "missing: text or gif" });
+    if (nickname.length > 30) return res.status(400).json({ error: "nickname too long" });
+    if (text && text.length > 280) return res.status(400).json({ error: "text too long" });
+
+    try {
+      const key = `aww_community_${prompt}`;
+      const existing = await kvGet(key) || [];
+
       const comment = {
         id: Date.now().toString(),
         nickname: nickname.trim().slice(0, 30),
@@ -72,11 +110,25 @@ export default async function handler(req, res) {
         text: (text || "").trim().slice(0, 280),
         gif: gif || null,
         ts: Date.now(),
+        likes: 0,
+        parentId: parentId || null,
       };
-      const updated = [comment, ...existing].slice(0, 200);
+
+      let updated;
+      if (parentId) {
+        updated = existing.map(c =>
+          c.id === parentId
+            ? { ...c, replies: [comment, ...(c.replies || [])] }
+            : c
+        );
+      } else {
+        updated = [comment, ...existing].slice(0, 200);
+      }
+
       await kvSet(key, updated);
       return res.status(200).json({ ok: true, comment });
     } catch(e) {
+      console.error("POST error:", e.message);
       return res.status(500).json({ error: e.message });
     }
   }
