@@ -2274,7 +2274,7 @@ function timeAgo(ts) {
 }
 
 // ── PostCard with nested replies ─────────────────────────────────
-function PostCard({ post, col, onReplyPosted, onDelete, isAdmin = false, isNested = false }) {
+function PostCard({ post, col, onReplyPosted, onDelete, onLike, isAdmin = false, isNested = false }) {
   const [showReplyForm, setShowReplyForm] = React.useState(false);
   const [replyNickname, setReplyNickname] = React.useState(() => { try { return localStorage.getItem("aww_nick") || ""; } catch(e) { return ""; } });
   const [replySign, setReplySign] = React.useState(() => { try { return localStorage.getItem("aww_sign") || ""; } catch(e) { return ""; } });
@@ -2282,7 +2282,17 @@ function PostCard({ post, col, onReplyPosted, onDelete, isAdmin = false, isNeste
   const [replySubmitting, setReplySubmitting] = React.useState(false);
   const [replyError, setReplyError] = React.useState(null);
   const [showReplies, setShowReplies] = React.useState(false);
+  const [liked, setLiked] = React.useState(() => { try { return localStorage.getItem("aww_like_"+post.id)==="1"; } catch(e) { return false; } });
+  const [likeCount, setLikeCount] = React.useState(post.likes || 0);
   const replies = post.replies || [];
+
+  const handleLike = () => {
+    if (liked) return;
+    setLiked(true);
+    setLikeCount(c => c + 1);
+    try { localStorage.setItem("aww_like_"+post.id, "1"); } catch(e) {}
+    onLike && onLike(post.id);
+  };
 
   const handleReplySubmit = async () => {
     if (!replyNickname.trim()) { setReplyError("Please enter a nickname."); return; }
@@ -2326,23 +2336,31 @@ function PostCard({ post, col, onReplyPosted, onDelete, isAdmin = false, isNeste
 
           {/* Action row */}
           {!isNested && (
-            <div style={{display:"flex", gap:14, marginTop:10, alignItems:"center"}}>
-              <button onClick={() => setShowReplyForm(v => !v)}
-                style={{background:"none", border:"none", padding:0, cursor:"pointer", display:"flex", alignItems:"center", gap:4, fontFamily:"'Cinzel',serif", fontSize:8, letterSpacing:".08em", color: showReplyForm ? "#f5c842" : "#4a4440", transition:"color .2s"}}>
+            <div style={{display:"flex", gap:14, marginTop:10, alignItems:"center", flexWrap:"wrap"}}>
+              {/* ⭐ Star like */}
+              <button onClick={handleLike} disabled={liked}
+                style={{background:"none", border:"none", padding:0, cursor:liked?"default":"pointer", display:"flex", alignItems:"center", gap:4, fontFamily:"'Cinzel',serif", fontSize:8, letterSpacing:".08em", color:liked?"#f5c842":"#4a4440", transition:"color .2s"}}>
+                <span style={{fontSize:14, filter:liked?"drop-shadow(0 0 4px #f5c842)":"none", transition:"filter .3s"}}>{liked?"⭐":"☆"}</span>
+                {likeCount > 0 && <span>{likeCount}</span>}
+              </button>
+              {/* 💬 Comment */}
+              <button type="button" onClick={() => setShowReplyForm(v => !v)}
+                style={{background:"none", border:"none", padding:0, cursor:"pointer", display:"flex", alignItems:"center", gap:4, fontFamily:"'Cinzel',serif", fontSize:8, letterSpacing:".08em", color:showReplyForm?"#f5c842":"#4a4440", transition:"color .2s"}}>
                 <span style={{fontSize:12}}>💬</span> {showReplyForm ? "CANCEL" : "COMMENT"}
               </button>
               {replies.length > 0 && (
-                <button onClick={() => setShowReplies(v => !v)}
+                <button type="button" onClick={() => setShowReplies(v => !v)}
                   style={{background:"none", border:"none", padding:0, cursor:"pointer", fontFamily:"'Cinzel',serif", fontSize:8, letterSpacing:".08em", color:"#4a4440"}}>
-                  {showReplies ? `▲ HIDE` : `▼ ${replies.length} ${replies.length === 1 ? "REPLY" : "REPLIES"}`}
+                  {showReplies ? "▲ HIDE" : `▼ ${replies.length} ${replies.length === 1 ? "REPLY" : "REPLIES"}`}
                 </button>
               )}
-              {isAdmin && (
-                <button onClick={() => { if (window.confirm("Delete this post?")) onDelete && onDelete(); }}
-                  style={{background:"none", border:"none", padding:0, cursor:"pointer", display:"flex", alignItems:"center", gap:4, fontFamily:"'Cinzel',serif", fontSize:8, letterSpacing:".08em", color:"#a03060", marginLeft:"auto"}}>
-                  🗑 DELETE
-                </button>
-              )}
+              {/* 🗑 Delete — always visible so users can remove their own posts */}
+              <button type="button" onClick={() => { if (window.confirm("Delete this post?")) onDelete && onDelete(); }}
+                style={{background:"none", border:"none", padding:0, cursor:"pointer", display:"flex", alignItems:"center", gap:4, fontFamily:"'Cinzel',serif", fontSize:8, letterSpacing:".08em", color:"#5a3040", marginLeft:"auto", transition:"color .2s"}}
+                onMouseEnter={e => e.currentTarget.style.color="#ff6b9d"}
+                onMouseLeave={e => e.currentTarget.style.color="#5a3040"}>
+                🗑 DELETE
+              </button>
             </div>
           )}
 
@@ -2364,10 +2382,16 @@ function PostCard({ post, col, onReplyPosted, onDelete, isAdmin = false, isNeste
                 placeholder="Write your reply... emojis welcome 😊✨"
                 style={{width:"100%", background:"rgba(255,200,50,0.06)", border:"1px solid rgba(255,200,50,0.2)", borderRadius:8, padding:"9px 12px", fontFamily:"Georgia,serif", fontSize:13, color:"#f5f0e0", outline:"none", resize:"none", boxSizing:"border-box", marginBottom:6}} />
               {replyError && <div style={{color:"#ff7070", fontFamily:"Georgia,serif", fontSize:12, marginBottom:6}}>{replyError}</div>}
-              <button onClick={handleReplySubmit} disabled={replySubmitting}
-                style={{width:"100%", background:"linear-gradient(135deg,#e8a800,#8a6000)", border:"none", borderRadius:100, padding:"10px", color:"#0d0a14", fontFamily:"'Cinzel',serif", fontWeight:900, fontSize:10, letterSpacing:".1em", cursor:"pointer", opacity:replySubmitting?0.6:1}}>
-                {replySubmitting ? "POSTING..." : "✦ REPLY"}
-              </button>
+              <div style={{display:"flex", gap:8}}>
+                <button type="button" onClick={() => { setShowReplyForm(false); setReplyError(null); setReplyText(""); }}
+                  style={{flex:1, background:"none", border:"1px solid rgba(255,200,50,0.2)", borderRadius:100, padding:"10px", color:"#6a6058", fontFamily:"'Cinzel',serif", fontWeight:700, fontSize:10, letterSpacing:".1em", cursor:"pointer"}}>
+                  CANCEL
+                </button>
+                <button type="button" onClick={handleReplySubmit} disabled={replySubmitting}
+                  style={{flex:2, background:"linear-gradient(135deg,#e8a800,#8a6000)", border:"none", borderRadius:100, padding:"10px", color:"#0d0a14", fontFamily:"'Cinzel',serif", fontWeight:900, fontSize:10, letterSpacing:".1em", cursor:"pointer", opacity:replySubmitting?0.6:1}}>
+                  {replySubmitting ? "POSTING..." : "✦ REPLY"}
+                </button>
+              </div>
             </div>
           )}
 
@@ -2464,7 +2488,7 @@ function PromptThread({ prompt, isAdmin }) {
           {/* Sign picker */}
           <div style={{display:"grid",gridTemplateColumns:"repeat(6,1fr)",gap:5,marginBottom:10}}>
             {ALL_SIGNS_C.map(s => (
-              <button key={s} onClick={() => setSign(s)}
+              <button type="button" key={s} onClick={() => setSign(s)}
                 style={{background:sign===s?"rgba(255,200,50,0.2)":"rgba(255,200,50,0.04)",border:`1px solid ${sign===s?"rgba(245,200,66,0.7)":"rgba(255,200,50,0.12)"}`,borderRadius:8,padding:"7px 4px",cursor:"pointer",transition:"all .18s",textAlign:"center"}}>
                 <div style={{fontSize:14}}>{SIGN_EMOJIS_C[s]}</div>
                 <div style={{fontFamily:"'Cinzel',serif",fontSize:7,color:sign===s?"#f5c842":"#5a5048",fontWeight:700,marginTop:2}}>{s.slice(0,3).toUpperCase()}</div>
@@ -2528,6 +2552,9 @@ function PromptThread({ prompt, isAdmin }) {
         const col = SIGN_COLORS_C[post.sign] || "#f5c842";
         return (
           <PostCard key={post.id || i} post={post} col={col} isAdmin={isAdmin}
+            onLike={(id) => {
+              setPosts(prev => prev.map(p => p.id === id ? { ...p, likes: (p.likes || 0) + 1 } : p));
+            }}
             onReplyPosted={(reply) => {
               setPosts(prev => prev.map(p =>
                 p.id === post.id ? { ...p, replies: [reply, ...(p.replies || [])] } : p
@@ -2687,9 +2714,9 @@ export default function AstrologyApp() {
 
   const tabs = [
     {label:"💬 Community",key:"community"},
-    {label:"🌠 Daily Horoscope",key:"horoscope"},
+    {label:"🌠 Horoscope",key:"horoscope"},
     {label:"🔮 Game",key:"guess"},
-    {label:"🌌 Get A Full Birth Chart Reading",key:"birthchart"},
+    {label:"🌌 Full Birth Chart",key:"birthchart"},
     {label:"✦ Fun Facts",key:"facts"},
     {label:"🌟 Celebrity",key:"celebrity"},
     {label:"📲 Get The App",key:"install"},
@@ -2706,7 +2733,7 @@ export default function AstrologyApp() {
       <div style={{position:"relative",zIndex:1,maxWidth:700,margin:"0 auto",padding:"20px 18px 80px"}}>
         <div style={{display:"flex",gap:8,justifyContent:"center",marginBottom:24,flexWrap:"wrap"}}>
           {tabs.map(tab=>(
-            <button key={tab.key} onClick={()=>{setTopTab(tab.key);setMode("home");reset();}} style={{background:topTab===tab.key?"linear-gradient(135deg,#e8a800,#8a6000)":"rgba(255,200,50,0.08)",border:"2px solid "+(topTab===tab.key?"#e8a800":"rgba(255,200,50,0.3)"),color:topTab===tab.key?"#0d0a14":"#f5c842",padding:"11px 18px",borderRadius:"100px",fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:11,letterSpacing:".09em",cursor:"pointer",transition:"all 0.25s",boxShadow:topTab===tab.key?"0 0 16px 4px rgba(232,168,0,0.3)":"none"}}>{tab.label}</button>
+            <button key={tab.key} onClick={()=>{setTopTab(tab.key);setMode("home");reset();}} style={{background:topTab===tab.key?"linear-gradient(135deg,#e8a800,#8a6000)":"rgba(255,200,50,0.08)",border:"2px solid "+(topTab===tab.key?"#e8a800":"rgba(255,200,50,0.3)"),color:topTab===tab.key?"#0d0a14":"#f5c842",padding:"8px 11px",borderRadius:"100px",fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:9,letterSpacing:".05em",cursor:"pointer",transition:"all 0.25s",boxShadow:topTab===tab.key?"0 0 16px 4px rgba(232,168,0,0.3)":"none"}}>{tab.label}</button>
           ))}
         </div>
 
