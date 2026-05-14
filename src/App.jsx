@@ -2274,7 +2274,7 @@ function timeAgo(ts) {
 }
 
 // ── PostCard with nested replies ─────────────────────────────────
-function PostCard({ post, col, onReplyPosted, isNested = false }) {
+function PostCard({ post, col, onReplyPosted, onDelete, isAdmin = false, isNested = false }) {
   const [showReplyForm, setShowReplyForm] = React.useState(false);
   const [replyNickname, setReplyNickname] = React.useState(() => { try { return localStorage.getItem("aww_nick") || ""; } catch(e) { return ""; } });
   const [replySign, setReplySign] = React.useState(() => { try { return localStorage.getItem("aww_sign") || ""; } catch(e) { return ""; } });
@@ -2337,6 +2337,12 @@ function PostCard({ post, col, onReplyPosted, isNested = false }) {
                   {showReplies ? `▲ HIDE` : `▼ ${replies.length} ${replies.length === 1 ? "REPLY" : "REPLIES"}`}
                 </button>
               )}
+              {isAdmin && (
+                <button onClick={() => { if (window.confirm("Delete this post?")) onDelete && onDelete(); }}
+                  style={{background:"none", border:"none", padding:0, cursor:"pointer", display:"flex", alignItems:"center", gap:4, fontFamily:"'Cinzel',serif", fontSize:8, letterSpacing:".08em", color:"#a03060", marginLeft:"auto"}}>
+                  🗑 DELETE
+                </button>
+              )}
             </div>
           )}
 
@@ -2381,7 +2387,7 @@ function PostCard({ post, col, onReplyPosted, isNested = false }) {
 }
 
 // ── Single prompt thread ─────────────────────────────────────────
-function PromptThread({ prompt }) {
+function PromptThread({ prompt, isAdmin }) {
   const [posts, setPosts] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
   const [expanded, setExpanded] = React.useState(false);
@@ -2521,11 +2527,22 @@ function PromptThread({ prompt }) {
       {visible.map((post, i) => {
         const col = SIGN_COLORS_C[post.sign] || "#f5c842";
         return (
-          <PostCard key={post.id || i} post={post} col={col}
+          <PostCard key={post.id || i} post={post} col={col} isAdmin={isAdmin}
             onReplyPosted={(reply) => {
               setPosts(prev => prev.map(p =>
                 p.id === post.id ? { ...p, replies: [reply, ...(p.replies || [])] } : p
               ));
+            }}
+            onDelete={async () => {
+              try {
+                const res = await fetch("/api/community", {
+                  method:"DELETE",
+                  headers:{"Content-Type":"application/json"},
+                  body: JSON.stringify({ prompt: prompt.id, id: post.id, adminKey: window.__AWW_ADMIN__ }),
+                });
+                const data = await res.json();
+                if (data.ok) setPosts(prev => prev.filter(p => p.id !== post.id));
+              } catch {}
             }}
           />
         );
@@ -2541,14 +2558,74 @@ function PromptThread({ prompt }) {
 }
 
 function Community() {
+  const [isAdmin, setIsAdmin] = React.useState(false);
+  const [showPwPrompt, setShowPwPrompt] = React.useState(false);
+  const [pwInput, setPwInput] = React.useState("");
+
+  // Check for ?admin=true in the URL on mount
+  React.useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("admin") === "true") {
+      setShowPwPrompt(true);
+    }
+  }, []);
+
+  const handleAdminLogin = () => {
+    const key = process.env.NEXT_PUBLIC_ADMIN_KEY || "";
+    if (pwInput && pwInput === key) {
+      window.__AWW_ADMIN__ = pwInput;
+      setIsAdmin(true);
+      setShowPwPrompt(false);
+      setPwInput("");
+      // Clean the URL so the param doesn't linger
+      window.history.replaceState({}, "", window.location.pathname);
+    } else {
+      setPwInput("");
+    }
+  };
+
   return (
     <div style={{animation:"up .5s ease"}}>
       <div style={{textAlign:"center",marginBottom:28}}>
         <div style={{fontSize:36,marginBottom:10}}>💬</div>
-        <h2 style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:24,color:"#f5c842",margin:"0 0 8px"}}>Community</h2>
+        <h2 style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:24,color:"#f5c842",margin:"0 0 8px"}}>
+          Community {isAdmin && <span style={{fontSize:11,color:"#a03060",letterSpacing:".05em"}}> ⚡ ADMIN</span>}
+        </h2>
         <p style={{fontFamily:"Georgia,serif",color:"#a8e060",fontSize:14,margin:0,lineHeight:1.65}}>Real talk from real signs. No login required.</p>
       </div>
-      {PROMPTS.map(p => <PromptThread key={p.id} prompt={p} />)}
+
+      {/* Admin password prompt */}
+      {showPwPrompt && (
+        <div style={{background:"rgba(160,48,96,0.1)",border:"1px solid rgba(160,48,96,0.35)",borderRadius:14,padding:"18px 20px",marginBottom:24,animation:"up .3s ease"}}>
+          <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,letterSpacing:".15em",color:"#d4a5c9",marginBottom:12,textAlign:"center"}}>⚡ ADMIN ACCESS</div>
+          <input value={pwInput} onChange={e => setPwInput(e.target.value)} type="password"
+            onKeyDown={e => e.key==="Enter" && handleAdminLogin()}
+            placeholder="Enter admin password"
+            style={{width:"100%",background:"rgba(0,0,0,0.3)",border:"1px solid rgba(160,48,96,0.4)",borderRadius:8,padding:"11px 14px",fontFamily:"Georgia,serif",fontSize:14,color:"#f5f0e0",outline:"none",boxSizing:"border-box",marginBottom:10}} />
+          <div style={{display:"flex",gap:8}}>
+            <button onClick={handleAdminLogin}
+              style={{flex:1,background:"rgba(160,48,96,0.3)",border:"1px solid rgba(160,48,96,0.5)",borderRadius:100,padding:"10px",color:"#d4a5c9",fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,cursor:"pointer",letterSpacing:".1em"}}>
+              ENTER
+            </button>
+            <button onClick={() => { setShowPwPrompt(false); setPwInput(""); window.history.replaceState({}, "", window.location.pathname); }}
+              style={{flex:1,background:"none",border:"1px solid rgba(255,200,50,0.15)",borderRadius:100,padding:"10px",color:"#4a4440",fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,cursor:"pointer"}}>
+              CANCEL
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Admin mode banner */}
+      {isAdmin && (
+        <div style={{textAlign:"center",marginBottom:16}}>
+          <button onClick={() => { setIsAdmin(false); window.__AWW_ADMIN__ = null; }}
+            style={{background:"rgba(160,48,96,0.15)",border:"1px solid rgba(160,48,96,0.3)",borderRadius:100,padding:"7px 18px",color:"#a03060",fontFamily:"'Cinzel',serif",fontSize:8,fontWeight:700,letterSpacing:".1em",cursor:"pointer"}}>
+            EXIT ADMIN MODE
+          </button>
+        </div>
+      )}
+
+      {PROMPTS.map(p => <PromptThread key={p.id} prompt={p} isAdmin={isAdmin} />)}
       <div style={{textAlign:"center",marginTop:16,opacity:.4}}>
         <span style={{fontFamily:"'Cinzel',serif",fontSize:8,color:"#4a4440",letterSpacing:".1em"}}>GIF SEARCH POWERED BY GIPHY</span>
       </div>
