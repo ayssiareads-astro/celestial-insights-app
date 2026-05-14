@@ -2570,16 +2570,24 @@ function Community() {
     }
   }, []);
 
-  const handleAdminLogin = () => {
-    const key = process.env.NEXT_PUBLIC_ADMIN_KEY || "";
-    if (pwInput && pwInput === key) {
-      window.__AWW_ADMIN__ = pwInput;
-      setIsAdmin(true);
-      setShowPwPrompt(false);
-      setPwInput("");
-      // Clean the URL so the param doesn't linger
-      window.history.replaceState({}, "", window.location.pathname);
-    } else {
+  const handleAdminLogin = async () => {
+    if (!pwInput.trim()) return;
+    try {
+      const res = await fetch("/api/community", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: "woke", id: "auth-check", adminKey: pwInput.trim() }),
+      });
+      if (res.status !== 403) {
+        window.__AWW_ADMIN__ = pwInput.trim();
+        setIsAdmin(true);
+        setShowPwPrompt(false);
+        setPwInput("");
+        window.history.replaceState({}, "", window.location.pathname);
+      } else {
+        setPwInput("");
+      }
+    } catch {
       setPwInput("");
     }
   };
