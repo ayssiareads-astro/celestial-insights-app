@@ -2273,6 +2273,113 @@ function timeAgo(ts) {
   return Math.floor(diff/86400) + "d ago";
 }
 
+// ── PostCard with nested replies ─────────────────────────────────
+function PostCard({ post, col, onReplyPosted, isNested = false }) {
+  const [showReplyForm, setShowReplyForm] = React.useState(false);
+  const [replyNickname, setReplyNickname] = React.useState(() => { try { return localStorage.getItem("aww_nick") || ""; } catch(e) { return ""; } });
+  const [replySign, setReplySign] = React.useState(() => { try { return localStorage.getItem("aww_sign") || ""; } catch(e) { return ""; } });
+  const [replyText, setReplyText] = React.useState("");
+  const [replySubmitting, setReplySubmitting] = React.useState(false);
+  const [replyError, setReplyError] = React.useState(null);
+  const [showReplies, setShowReplies] = React.useState(false);
+  const replies = post.replies || [];
+
+  const handleReplySubmit = async () => {
+    if (!replyNickname.trim()) { setReplyError("Please enter a nickname."); return; }
+    if (!replySign) { setReplyError("Please pick your sign."); return; }
+    if (!replyText.trim()) { setReplyError("Write something!"); return; }
+    setReplySubmitting(true); setReplyError(null);
+    try {
+      try { localStorage.setItem("aww_nick", replyNickname.trim()); localStorage.setItem("aww_sign", replySign); } catch(e) {}
+      const res = await fetch("/api/community", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          prompt: post.promptId || post.prompt,
+          nickname: replyNickname.trim(),
+          sign: replySign,
+          text: replyText.trim(),
+          gif: null,
+          parentId: post.id,
+        }),
+      });
+      const data = await res.json();
+      if (data.ok) {
+        onReplyPosted && onReplyPosted(data.comment);
+        setReplyText(""); setShowReplyForm(false); setShowReplies(true);
+      } else { setReplyError(data.error || "Could not post."); }
+    } catch { setReplyError("Could not post. Check your connection."); }
+    setReplySubmitting(false);
+  };
+
+  return (
+    <div style={{borderTop: isNested ? "none" : "1px solid rgba(255,200,50,0.06)"}}>
+      <div style={{padding: isNested ? "10px 12px 10px 0" : "14px 20px", display:"flex", gap:12, alignItems:"flex-start"}}>
+        <div style={{fontSize: isNested ? 16 : 22, flexShrink:0, marginTop:2}}>{SIGN_EMOJIS_C[post.sign] || "✦"}</div>
+        <div style={{flex:1, minWidth:0}}>
+          <div style={{display:"flex", alignItems:"center", gap:8, marginBottom:5, flexWrap:"wrap"}}>
+            <span style={{fontFamily:"'Cinzel',serif", fontWeight:700, fontSize: isNested ? 10 : 11, color:col}}>{post.nickname}</span>
+            <span style={{fontFamily:"'Cinzel',serif", fontSize:8, color:"#4a4440", letterSpacing:".06em"}}>{post.sign?.toUpperCase()} · {timeAgo(post.ts)}</span>
+          </div>
+          {post.text && <p style={{fontFamily:"Georgia,serif", fontSize: isNested ? 13 : 14, color:"#d8c890", lineHeight:1.7, margin:0}}>{post.text}</p>}
+          {post.gif && <img src={post.gif} alt="gif" style={{marginTop:8, maxWidth:"100%", borderRadius:10, maxHeight:160, objectFit:"cover"}} />}
+
+          {/* Action row */}
+          {!isNested && (
+            <div style={{display:"flex", gap:14, marginTop:10, alignItems:"center"}}>
+              <button onClick={() => setShowReplyForm(v => !v)}
+                style={{background:"none", border:"none", padding:0, cursor:"pointer", display:"flex", alignItems:"center", gap:4, fontFamily:"'Cinzel',serif", fontSize:8, letterSpacing:".08em", color: showReplyForm ? "#f5c842" : "#4a4440", transition:"color .2s"}}>
+                <span style={{fontSize:12}}>💬</span> {showReplyForm ? "CANCEL" : "COMMENT"}
+              </button>
+              {replies.length > 0 && (
+                <button onClick={() => setShowReplies(v => !v)}
+                  style={{background:"none", border:"none", padding:0, cursor:"pointer", fontFamily:"'Cinzel',serif", fontSize:8, letterSpacing:".08em", color:"#4a4440"}}>
+                  {showReplies ? `▲ HIDE` : `▼ ${replies.length} ${replies.length === 1 ? "REPLY" : "REPLIES"}`}
+                </button>
+              )}
+            </div>
+          )}
+
+          {/* Reply form */}
+          {showReplyForm && (
+            <div style={{marginTop:12, background:"rgba(255,200,50,0.04)", borderRadius:12, padding:"14px", border:"1px solid rgba(255,200,50,0.12)", animation:"up .25s ease"}}>
+              <input value={replyNickname} onChange={e => setReplyNickname(e.target.value)} maxLength={30} placeholder="Your nickname"
+                style={{width:"100%", background:"rgba(255,200,50,0.06)", border:"1px solid rgba(255,200,50,0.2)", borderRadius:8, padding:"9px 12px", fontFamily:"Georgia,serif", fontSize:13, color:"#f5f0e0", outline:"none", boxSizing:"border-box", marginBottom:8}} />
+              <div style={{display:"grid", gridTemplateColumns:"repeat(6,1fr)", gap:4, marginBottom:8}}>
+                {ALL_SIGNS_C.map(s => (
+                  <button key={s} onClick={() => setReplySign(s)}
+                    style={{background:replySign===s?"rgba(255,200,50,0.2)":"rgba(255,200,50,0.04)", border:`1px solid ${replySign===s?"rgba(245,200,66,0.7)":"rgba(255,200,50,0.1)"}`, borderRadius:6, padding:"5px 2px", cursor:"pointer", textAlign:"center"}}>
+                    <div style={{fontSize:12}}>{SIGN_EMOJIS_C[s]}</div>
+                    <div style={{fontFamily:"'Cinzel',serif", fontSize:6, color:replySign===s?"#f5c842":"#5a5048", fontWeight:700}}>{s.slice(0,3).toUpperCase()}</div>
+                  </button>
+                ))}
+              </div>
+              <textarea value={replyText} onChange={e => setReplyText(e.target.value)} maxLength={280} rows={2}
+                placeholder="Write your reply... emojis welcome 😊✨"
+                style={{width:"100%", background:"rgba(255,200,50,0.06)", border:"1px solid rgba(255,200,50,0.2)", borderRadius:8, padding:"9px 12px", fontFamily:"Georgia,serif", fontSize:13, color:"#f5f0e0", outline:"none", resize:"none", boxSizing:"border-box", marginBottom:6}} />
+              {replyError && <div style={{color:"#ff7070", fontFamily:"Georgia,serif", fontSize:12, marginBottom:6}}>{replyError}</div>}
+              <button onClick={handleReplySubmit} disabled={replySubmitting}
+                style={{width:"100%", background:"linear-gradient(135deg,#e8a800,#8a6000)", border:"none", borderRadius:100, padding:"10px", color:"#0d0a14", fontFamily:"'Cinzel',serif", fontWeight:900, fontSize:10, letterSpacing:".1em", cursor:"pointer", opacity:replySubmitting?0.6:1}}>
+                {replySubmitting ? "POSTING..." : "✦ REPLY"}
+              </button>
+            </div>
+          )}
+
+          {/* Nested replies */}
+          {showReplies && replies.length > 0 && (
+            <div style={{marginTop:10, borderLeft:"2px solid rgba(255,200,50,0.15)", paddingLeft:12}}>
+              {replies.map((reply, ri) => {
+                const rcol = SIGN_COLORS_C[reply.sign] || "#f5c842";
+                return <PostCard key={reply.id || ri} post={reply} col={rcol} isNested={true} />;
+              })}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── Single prompt thread ─────────────────────────────────────────
 function PromptThread({ prompt }) {
   const [posts, setPosts] = React.useState([]);
@@ -2414,17 +2521,13 @@ function PromptThread({ prompt }) {
       {visible.map((post, i) => {
         const col = SIGN_COLORS_C[post.sign] || "#f5c842";
         return (
-          <div key={post.id || i} style={{padding:"14px 20px",borderTop:"1px solid rgba(255,200,50,0.06)",display:"flex",gap:12,alignItems:"flex-start"}}>
-            <div style={{fontSize:22,flexShrink:0,marginTop:2}}>{SIGN_EMOJIS_C[post.sign] || "✦"}</div>
-            <div style={{flex:1,minWidth:0}}>
-              <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:5,flexWrap:"wrap"}}>
-                <span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:11,color:col}}>{post.nickname}</span>
-                <span style={{fontFamily:"'Cinzel',serif",fontSize:8,color:"#4a4440",letterSpacing:".06em"}}>{post.sign?.toUpperCase()} · {timeAgo(post.ts)}</span>
-              </div>
-              {post.text && <p style={{fontFamily:"Georgia,serif",fontSize:14,color:"#d8c890",lineHeight:1.7,margin:0}}>{post.text}</p>}
-              {post.gif && <img src={post.gif} alt="gif" style={{marginTop:8,maxWidth:"100%",borderRadius:10,maxHeight:160,objectFit:"cover"}} />}
-            </div>
-          </div>
+          <PostCard key={post.id || i} post={post} col={col}
+            onReplyPosted={(reply) => {
+              setPosts(prev => prev.map(p =>
+                p.id === post.id ? { ...p, replies: [reply, ...(p.replies || [])] } : p
+              ));
+            }}
+          />
         );
       })}
       {posts.length > 2 && (
@@ -2466,7 +2569,7 @@ const STAR_PARTICLES = [...Array(70)].map((_,i) => ({
 
 // ─── MAIN APP ───────────────────────────────────────────────────
 export default function AstrologyApp() {
-  const [topTab, setTopTab] = useState("horoscope");
+  const [topTab, setTopTab] = useState("community");
 
   const [mode, setMode] = useState("home");
   const [selectedSign, setSelectedSign] = useState(null);
@@ -2498,12 +2601,12 @@ export default function AstrologyApp() {
   };
 
   const tabs = [
+    {label:"💬 Community",key:"community"},
     {label:"🌠 Daily Horoscope",key:"horoscope"},
     {label:"🔮 Game",key:"guess"},
-    {label:"🌌 Birth Chart",key:"birthchart"},
+    {label:"🌌 Get A Full Birth Chart Reading",key:"birthchart"},
     {label:"✦ Fun Facts",key:"facts"},
     {label:"🌟 Celebrity",key:"celebrity"},
-    {label:"💬 Community",key:"community"},
     {label:"📲 Get The App",key:"install"},
   ];
 
