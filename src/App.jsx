@@ -2276,12 +2276,15 @@ function timeAgo(ts) {
 // ── PostCard with nested replies ─────────────────────────────────
 function PostCard({ post, col, promptId, onReplyPosted, onDelete, onLike, isAdmin = false, isNested = false }) {
   const [showReplyForm, setShowReplyForm] = React.useState(false);
+  const [showEditForm, setShowEditForm] = React.useState(false);
+  const [editText, setEditText] = React.useState(post.text || "");
   const [replyNickname, setReplyNickname] = React.useState(() => { try { return localStorage.getItem("aww_nick") || ""; } catch(e) { return ""; } });
   const [replySign, setReplySign] = React.useState(() => { try { return localStorage.getItem("aww_sign") || ""; } catch(e) { return ""; } });
   const [replyText, setReplyText] = React.useState("");
   const [replySubmitting, setReplySubmitting] = React.useState(false);
   const [replyError, setReplyError] = React.useState(null);
   const [showReplies, setShowReplies] = React.useState(false);
+  const [currentText, setCurrentText] = React.useState(post.text || "");
   const replies = post.replies || [];
   const [liked, setLiked] = React.useState(() => { try { return localStorage.getItem("aww_like_"+post.id)==="1"; } catch(e) { return false; } });
   const [likeCount, setLikeCount] = React.useState(post.likes || 0);
@@ -2292,6 +2295,17 @@ function PostCard({ post, col, promptId, onReplyPosted, onDelete, onLike, isAdmi
     setLikeCount(c => c + 1);
     try { localStorage.setItem("aww_like_"+post.id, "1"); } catch(e) {}
     onLike && onLike(post.id);
+  };
+
+  const handleShare = () => {
+    const text = `"${currentText}" — ${post.nickname} (${post.sign}) on AreWeWoke
+
+arewewoke.com`;
+    if (navigator.share) {
+      navigator.share({ title:"AreWeWoke", text }).catch(() => {});
+    } else {
+      navigator.clipboard.writeText(text).then(() => alert("Copied to clipboard!")).catch(() => {});
+    }
   };
 
   const handleReplySubmit = async () => {
@@ -2322,6 +2336,14 @@ function PostCard({ post, col, promptId, onReplyPosted, onDelete, onLike, isAdmi
     setReplySubmitting(false);
   };
 
+  // Shared action button style
+  const actionBtn = (active) => ({
+    background:"none", border:"none", padding:0, cursor:"pointer",
+    display:"flex", alignItems:"center", gap:3,
+    fontFamily:"'Cinzel',serif", fontSize:8, letterSpacing:".08em",
+    color: active ? "#f5c842" : "#6a6058", transition:"color .2s",
+  });
+
   return (
     <div style={{borderTop: isNested ? "none" : "1px solid rgba(255,200,50,0.06)"}}>
       <div style={{padding: isNested ? "10px 12px 10px 0" : "14px 20px", display:"flex", gap:12, alignItems:"flex-start"}}>
@@ -2331,33 +2353,66 @@ function PostCard({ post, col, promptId, onReplyPosted, onDelete, onLike, isAdmi
             <span style={{fontFamily:"'Cinzel',serif", fontWeight:700, fontSize: isNested ? 10 : 11, color:col}}>{post.nickname}</span>
             <span style={{fontFamily:"'Cinzel',serif", fontSize:8, color:"#4a4440", letterSpacing:".06em"}}>{post.sign?.toUpperCase()} · {timeAgo(post.ts)}</span>
           </div>
-          {post.text && <p style={{fontFamily:"Georgia,serif", fontSize: isNested ? 13 : 14, color:"#d8c890", lineHeight:1.7, margin:0}}>{post.text}</p>}
+          {currentText && <p style={{fontFamily:"Georgia,serif", fontSize: isNested ? 13 : 14, color:"#d8c890", lineHeight:1.7, margin:0}}>{currentText}</p>}
           {post.gif && <img src={post.gif} alt="gif" style={{marginTop:8, maxWidth:"100%", borderRadius:10, maxHeight:160, objectFit:"cover"}} />}
 
-          {/* Action row */}
-          {!isNested && (
-            <div style={{display:"flex", gap:14, marginTop:10, alignItems:"center", flexWrap:"wrap"}}>
-              <button type="button" onClick={handleLike} disabled={liked}
-                style={{background:"none",border:"none",padding:0,cursor:liked?"default":"pointer",display:"flex",alignItems:"center",gap:4,fontFamily:"'Cinzel',serif",fontSize:8,letterSpacing:".08em",color:liked?"#f5c842":"#4a4440",transition:"color .2s"}}>
-                <span style={{fontSize:14,filter:liked?"drop-shadow(0 0 4px #f5c842)":"none",transition:"filter .3s"}}>{liked?"⭐":"☆"}</span>
-                {likeCount > 0 && <span>{likeCount}</span>}
+          {/* Action row — shown on ALL posts including nested */}
+          <div style={{display:"flex", gap:12, marginTop:8, alignItems:"center", flexWrap:"wrap"}}>
+            {/* ⭐ Like */}
+            <button type="button" onClick={handleLike} disabled={liked} style={{...actionBtn(liked), cursor:liked?"default":"pointer"}}>
+              <span style={{fontSize:13, filter:liked?"drop-shadow(0 0 4px #f5c842)":"none", transition:"filter .3s"}}>{liked?"⭐":"☆"}</span>
+              {likeCount > 0 && <span style={{color:liked?"#f5c842":"#6a6058"}}>{likeCount}</span>}
+            </button>
+
+            {/* 💬 Comment — only on top-level posts */}
+            {!isNested && (
+              <button type="button" onClick={() => { setShowReplyForm(v => !v); setShowEditForm(false); }} style={actionBtn(showReplyForm)}>
+                <span style={{fontSize:11}}>💬</span> {showReplyForm ? "CANCEL" : "COMMENT"}
               </button>
-              <button type="button" onClick={() => setShowReplyForm(v => !v)}
-                style={{background:"none",border:"none",padding:0,cursor:"pointer",display:"flex",alignItems:"center",gap:4,fontFamily:"'Cinzel',serif",fontSize:8,letterSpacing:".08em",color:showReplyForm?"#f5c842":"#4a4440",transition:"color .2s"}}>
-                <span style={{fontSize:12}}>💬</span> {showReplyForm ? "CANCEL" : "COMMENT"}
+            )}
+
+            {/* ✏️ Edit */}
+            <button type="button" onClick={() => { setShowEditForm(v => !v); setShowReplyForm(false); setEditText(currentText); }} style={actionBtn(showEditForm)}>
+              <span style={{fontSize:11}}>✏️</span> {showEditForm ? "CANCEL" : "EDIT"}
+            </button>
+
+            {/* 🔗 Share */}
+            <button type="button" onClick={handleShare} style={actionBtn(false)}>
+              <span style={{fontSize:11}}>🔗</span> SHARE
+            </button>
+
+            {/* Show/hide replies */}
+            {!isNested && replies.length > 0 && (
+              <button type="button" onClick={() => setShowReplies(v => !v)} style={actionBtn(false)}>
+                {showReplies ? "▲ HIDE" : `▼ ${replies.length} ${replies.length===1?"REPLY":"REPLIES"}`}
               </button>
-              {replies.length > 0 && (
-                <button type="button" onClick={() => setShowReplies(v => !v)}
-                  style={{background:"none",border:"none",padding:0,cursor:"pointer",fontFamily:"'Cinzel',serif",fontSize:8,letterSpacing:".08em",color:"#4a4440"}}>
-                  {showReplies ? "▲ HIDE" : `▼ ${replies.length} ${replies.length===1?"REPLY":"REPLIES"}`}
+            )}
+
+            {/* 🗑 Delete */}
+            <button type="button"
+              onClick={() => { if (window.confirm("Delete this post?")) onDelete && onDelete(); }}
+              style={{...actionBtn(false), marginLeft:"auto", color:"#5a3040"}}
+              onMouseEnter={e=>e.currentTarget.style.color="#ff6b9d"}
+              onMouseLeave={e=>e.currentTarget.style.color="#5a3040"}>
+              🗑 DELETE
+            </button>
+          </div>
+
+          {/* Edit form */}
+          {showEditForm && (
+            <div style={{marginTop:10, animation:"up .25s ease"}}>
+              <textarea value={editText} onChange={e => setEditText(e.target.value)} maxLength={280} rows={3}
+                style={{width:"100%", background:"rgba(255,200,50,0.06)", border:"1px solid rgba(255,200,50,0.3)", borderRadius:10, padding:"10px 12px", fontFamily:"Georgia,serif", fontSize:13, color:"#f5f0e0", outline:"none", resize:"none", boxSizing:"border-box", marginBottom:8}} />
+              <div style={{display:"flex", gap:8}}>
+                <button type="button" onClick={() => { setShowEditForm(false); setEditText(currentText); }}
+                  style={{flex:1, background:"none", border:"1px solid rgba(255,200,50,0.2)", borderRadius:100, padding:"9px", color:"#6a6058", fontFamily:"'Cinzel',serif", fontWeight:700, fontSize:9, cursor:"pointer"}}>
+                  CANCEL
                 </button>
-              )}
-              <button type="button" onClick={() => { if (window.confirm("Delete this post?")) onDelete && onDelete(); }}
-                style={{background:"none",border:"none",padding:0,cursor:"pointer",display:"flex",alignItems:"center",gap:4,fontFamily:"'Cinzel',serif",fontSize:8,letterSpacing:".08em",color:"#5a3040",marginLeft:"auto",transition:"color .2s"}}
-                onMouseEnter={e=>e.currentTarget.style.color="#ff6b9d"}
-                onMouseLeave={e=>e.currentTarget.style.color="#5a3040"}>
-                🗑 DELETE
-              </button>
+                <button type="button" onClick={() => { if (editText.trim()) { setCurrentText(editText.trim()); setShowEditForm(false); } }}
+                  style={{flex:2, background:"linear-gradient(135deg,#e8a800,#8a6000)", border:"none", borderRadius:100, padding:"9px", color:"#0d0a14", fontFamily:"'Cinzel',serif", fontWeight:900, fontSize:9, cursor:"pointer"}}>
+                  ✦ SAVE EDIT
+                </button>
+              </div>
             </div>
           )}
 
@@ -2368,7 +2423,7 @@ function PostCard({ post, col, promptId, onReplyPosted, onDelete, onLike, isAdmi
                 style={{width:"100%", background:"rgba(255,200,50,0.06)", border:"1px solid rgba(255,200,50,0.2)", borderRadius:8, padding:"9px 12px", fontFamily:"Georgia,serif", fontSize:13, color:"#f5f0e0", outline:"none", boxSizing:"border-box", marginBottom:8}} />
               <div style={{display:"grid", gridTemplateColumns:"repeat(6,1fr)", gap:4, marginBottom:8}}>
                 {ALL_SIGNS_C.map(s => (
-                  <button key={s} onClick={() => setReplySign(s)}
+                  <button type="button" key={s} onClick={() => setReplySign(s)}
                     style={{background:replySign===s?"rgba(255,200,50,0.2)":"rgba(255,200,50,0.04)", border:`1px solid ${replySign===s?"rgba(245,200,66,0.7)":"rgba(255,200,50,0.1)"}`, borderRadius:6, padding:"5px 2px", cursor:"pointer", textAlign:"center"}}>
                     <div style={{fontSize:12}}>{SIGN_EMOJIS_C[s]}</div>
                     <div style={{fontFamily:"'Cinzel',serif", fontSize:6, color:replySign===s?"#f5c842":"#5a5048", fontWeight:700}}>{s.slice(0,3).toUpperCase()}</div>
@@ -2379,13 +2434,13 @@ function PostCard({ post, col, promptId, onReplyPosted, onDelete, onLike, isAdmi
                 placeholder="Write your reply... emojis welcome 😊✨"
                 style={{width:"100%", background:"rgba(255,200,50,0.06)", border:"1px solid rgba(255,200,50,0.2)", borderRadius:8, padding:"9px 12px", fontFamily:"Georgia,serif", fontSize:13, color:"#f5f0e0", outline:"none", resize:"none", boxSizing:"border-box", marginBottom:6}} />
               {replyError && <div style={{color:"#ff7070", fontFamily:"Georgia,serif", fontSize:12, marginBottom:6}}>{replyError}</div>}
-              <div style={{display:"flex",gap:8}}>
+              <div style={{display:"flex", gap:8}}>
                 <button type="button" onClick={() => { setShowReplyForm(false); setReplyError(null); setReplyText(""); }}
-                  style={{flex:1,background:"none",border:"1px solid rgba(255,200,50,0.2)",borderRadius:100,padding:"10px",color:"#6a6058",fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,letterSpacing:".1em",cursor:"pointer"}}>
+                  style={{flex:1, background:"none", border:"1px solid rgba(255,200,50,0.2)", borderRadius:100, padding:"10px", color:"#6a6058", fontFamily:"'Cinzel',serif", fontWeight:700, fontSize:10, letterSpacing:".1em", cursor:"pointer"}}>
                   CANCEL
                 </button>
                 <button type="button" onClick={handleReplySubmit} disabled={replySubmitting}
-                  style={{flex:2,background:"linear-gradient(135deg,#e8a800,#8a6000)",border:"none",borderRadius:100,padding:"10px",color:"#0d0a14",fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:10,letterSpacing:".1em",cursor:"pointer",opacity:replySubmitting?0.6:1}}>
+                  style={{flex:2, background:"linear-gradient(135deg,#e8a800,#8a6000)", border:"none", borderRadius:100, padding:"10px", color:"#0d0a14", fontFamily:"'Cinzel',serif", fontWeight:900, fontSize:10, letterSpacing:".1em", cursor:"pointer", opacity:replySubmitting?0.6:1}}>
                   {replySubmitting ? "POSTING..." : "✦ REPLY"}
                 </button>
               </div>
@@ -2397,7 +2452,19 @@ function PostCard({ post, col, promptId, onReplyPosted, onDelete, onLike, isAdmi
             <div style={{marginTop:10, borderLeft:"2px solid rgba(255,200,50,0.15)", paddingLeft:12}}>
               {replies.map((reply, ri) => {
                 const rcol = SIGN_COLORS_C[reply.sign] || "#f5c842";
-                return <PostCard key={reply.id || ri} post={reply} col={rcol} isNested={true} />;
+                return <PostCard key={reply.id || ri} post={reply} col={rcol} promptId={promptId} isNested={true}
+                  onDelete={async () => {
+                    try {
+                      const res = await fetch("/api/community", {
+                        method:"DELETE",
+                        headers:{"Content-Type":"application/json"},
+                        body: JSON.stringify({ prompt: promptId, id: reply.id }),
+                      });
+                      const data = await res.json();
+                      if (data.ok) onReplyPosted && onReplyPosted(null, reply.id);
+                    } catch {}
+                  }}
+                />;
               })}
             </div>
           )}
