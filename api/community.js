@@ -1,11 +1,7 @@
 // api/community.js
 
 export const config = {
-  api: {
-    bodyParser: {
-      sizeLimit: '1mb',
-    },
-  },
+  api: { bodyParser: { sizeLimit: "1mb" } },
 };
 
 const KV_URL = process.env.KV_REST_API_URL;
@@ -34,7 +30,7 @@ export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
   if (req.method === "OPTIONS") return res.status(200).end();
 
-  // ── GIF search ───────────────────────────────────────────────
+  // GIF search
   if (req.method === "GET" && req.query.action === "gifs") {
     const q = req.query.q || "astrology";
     try {
@@ -52,7 +48,7 @@ export default async function handler(req, res) {
     }
   }
 
-  // ── GET comments for a prompt ────────────────────────────────
+  // GET comments
   if (req.method === "GET" && req.query.action === "get") {
     const prompt = req.query.prompt;
     if (!prompt) return res.status(400).json({ error: "prompt required" });
@@ -64,14 +60,16 @@ export default async function handler(req, res) {
     }
   }
 
-  // ── DELETE a comment ─────────────────────────────────────────
+  // DELETE comment
   if (req.method === "DELETE") {
     const { prompt, id } = req.body || {};
     if (!prompt || !id) return res.status(400).json({ error: "prompt and id required" });
     try {
       const key = `aww_community_${prompt}`;
       const existing = await kvGet(key) || [];
-      const updated = existing.filter(c => c.id !== id);
+      const updated = existing
+        .filter(c => c.id !== id)
+        .map(c => ({ ...c, replies: (c.replies || []).filter(r => r.id !== id) }));
       await kvSet(key, updated);
       return res.status(200).json({ ok: true });
     } catch(e) {
@@ -79,19 +77,38 @@ export default async function handler(req, res) {
     }
   }
 
-  // ── POST new comment ─────────────────────────────────────────
+  // POST — like or new comment
   if (req.method === "POST") {
     let body = req.body || {};
-
-    // If body is a string (edge case), parse it
     if (typeof body === "string") {
       try { body = JSON.parse(body); } catch(e) { body = {}; }
     }
 
-    console.log("POST body received:", JSON.stringify(body));
+    // Like action
+    if (body.action === "like") {
+      const { prompt, id } = body;
+      if (!prompt || !id) return res.status(400).json({ error: "prompt and id required" });
+      try {
+        const key = `aww_community_${prompt}`;
+        const existing = await kvGet(key) || [];
+        const updated = existing.map(c => {
+          if (c.id === id) return { ...c, likes: (c.likes || 0) + 1 };
+          return {
+            ...c,
+            replies: (c.replies || []).map(r =>
+              r.id === id ? { ...r, likes: (r.likes || 0) + 1 } : r
+            ),
+          };
+        });
+        await kvSet(key, updated);
+        return res.status(200).json({ ok: true });
+      } catch(e) {
+        return res.status(500).json({ error: e.message });
+      }
+    }
 
+    // New comment
     const { prompt, nickname, sign, text, gif, parentId } = body;
-
     if (!prompt) return res.status(400).json({ error: "missing: prompt" });
     if (!nickname) return res.status(400).json({ error: "missing: nickname" });
     if (!sign) return res.status(400).json({ error: "missing: sign" });
@@ -102,7 +119,6 @@ export default async function handler(req, res) {
     try {
       const key = `aww_community_${prompt}`;
       const existing = await kvGet(key) || [];
-
       const comment = {
         id: Date.now().toString(),
         nickname: nickname.trim().slice(0, 30),
@@ -113,22 +129,17 @@ export default async function handler(req, res) {
         likes: 0,
         parentId: parentId || null,
       };
-
       let updated;
       if (parentId) {
         updated = existing.map(c =>
-          c.id === parentId
-            ? { ...c, replies: [comment, ...(c.replies || [])] }
-            : c
+          c.id === parentId ? { ...c, replies: [comment, ...(c.replies || [])] } : c
         );
       } else {
         updated = [comment, ...existing].slice(0, 200);
       }
-
       await kvSet(key, updated);
       return res.status(200).json({ ok: true, comment });
     } catch(e) {
-      console.error("POST error:", e.message);
       return res.status(500).json({ error: e.message });
     }
   }
