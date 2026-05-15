@@ -2373,7 +2373,7 @@ function PostCard({ post, col, promptId, onReplyPosted, onDelete, onLike, isAdmi
                 <span style={{fontSize:11}}>🔗</span> SHARE
               </button>
               {showShare && (
-                <div style={{position:"absolute",top:"calc(100% + 6px)",left:0,zIndex:200,background:"#1a1520",border:"1px solid rgba(255,200,50,0.3)",borderRadius:10,padding:"6px",minWidth:170,boxShadow:"0 4px 20px rgba(0,0,0,0.6)",animation:"up .2s ease"}}>
+                <div style={{position:"absolute",top:"calc(100% + 6px)",right:0,zIndex:200,background:"#1a1520",border:"1px solid rgba(255,200,50,0.3)",borderRadius:10,padding:"6px",minWidth:170,boxShadow:"0 4px 20px rgba(0,0,0,0.6)",animation:"up .2s ease"}}>
                   <button type="button" onClick={copyToClipboard}
                     style={{display:"flex",alignItems:"center",gap:8,width:"100%",background:"none",border:"none",padding:"9px 12px",borderRadius:7,cursor:"pointer",fontFamily:"'Cinzel',serif",fontSize:9,color:"#f5c842",letterSpacing:".08em",textAlign:"left"}}
                     onMouseEnter={e=>e.currentTarget.style.background="rgba(255,200,50,0.1)"}
