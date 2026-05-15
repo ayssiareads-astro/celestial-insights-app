@@ -2495,6 +2495,8 @@ function PromptThread({ prompt, isAdmin }) {
   const [showForm, setShowForm] = React.useState(false);
   const [nickname, setNickname] = React.useState(() => { try { return localStorage.getItem("aww_nick") || ""; } catch(e) { return ""; } });
   const [sign, setSign] = React.useState(() => { try { return localStorage.getItem("aww_sign") || ""; } catch(e) { return ""; } });
+  const [changingIdentity, setChangingIdentity] = React.useState(false);
+  const isReturning = !!nickname && !!sign;
   const [text, setText] = React.useState("");
   const [gifQuery, setGifQuery] = React.useState("");
   const [gifs, setGifs] = React.useState([]);
@@ -2549,7 +2551,7 @@ function PromptThread({ prompt, isAdmin }) {
       {/* Thread header */}
       <div style={{padding:"18px 20px 14px",borderBottom: posts.length > 0 || showForm ? "1px solid rgba(255,200,50,0.08)" : "none"}}>
         <div style={{fontFamily:"Georgia,serif",fontWeight:700,fontSize:16,color:"#f5f0e0",lineHeight:1.4,marginBottom:12}}>{prompt.label}</div>
-        <button onClick={() => setShowForm(v => !v)}
+        <button onClick={() => { setShowForm(v => !v); setChangingIdentity(false); }}
           style={{background:"rgba(255,200,50,0.1)",border:"1px solid rgba(255,200,50,0.3)",borderRadius:100,padding:"8px 20px",color:"#f5c842",fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,letterSpacing:".1em",cursor:"pointer",transition:"all .2s"}}>
           {showForm ? "✕ CANCEL" : "+ ADD YOUR TAKE"}
         </button>
@@ -2558,20 +2560,43 @@ function PromptThread({ prompt, isAdmin }) {
       {/* Post form */}
       {showForm && (
         <div style={{padding:"18px 20px",borderBottom:"1px solid rgba(255,200,50,0.08)",animation:"up .3s ease"}}>
-          {/* Nickname */}
-          <input value={nickname} onChange={e => setNickname(e.target.value)} maxLength={30} placeholder="Nickname (e.g. CosmicVirgo)"
-            style={{width:"100%",background:"rgba(255,200,50,0.06)",border:"1px solid rgba(255,200,50,0.2)",borderRadius:10,padding:"11px 14px",fontFamily:"Georgia,serif",fontSize:14,color:"#f5f0e0",outline:"none",boxSizing:"border-box",marginBottom:10}} />
 
-          {/* Sign picker */}
-          <div style={{display:"grid",gridTemplateColumns:"repeat(6,1fr)",gap:5,marginBottom:10}}>
-            {ALL_SIGNS_C.map(s => (
-              <button type="button" key={s} onClick={() => setSign(s)}
-                style={{background:sign===s?"rgba(255,200,50,0.2)":"rgba(255,200,50,0.04)",border:`1px solid ${sign===s?"rgba(245,200,66,0.7)":"rgba(255,200,50,0.12)"}`,borderRadius:8,padding:"7px 4px",cursor:"pointer",transition:"all .18s",textAlign:"center"}}>
-                <div style={{fontSize:14}}>{SIGN_EMOJIS_C[s]}</div>
-                <div style={{fontFamily:"'Cinzel',serif",fontSize:7,color:sign===s?"#f5c842":"#5a5048",fontWeight:700,marginTop:2}}>{s.slice(0,3).toUpperCase()}</div>
+          {/* Returning user — show identity pill, skip nickname+sign */}
+          {isReturning && !changingIdentity ? (
+            <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:14,background:"rgba(255,200,50,0.06)",border:"1px solid rgba(255,200,50,0.15)",borderRadius:10,padding:"10px 14px"}}>
+              <span style={{fontSize:18}}>{SIGN_EMOJIS_C[sign]}</span>
+              <div style={{flex:1}}>
+                <span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:11,color:"#f5c842"}}>{nickname}</span>
+                <span style={{fontFamily:"'Cinzel',serif",fontSize:9,color:"#4a4440",marginLeft:8,letterSpacing:".06em"}}>{sign?.toUpperCase()}</span>
+              </div>
+              <button type="button" onClick={() => setChangingIdentity(true)}
+                style={{background:"none",border:"none",fontFamily:"'Cinzel',serif",fontSize:8,color:"#4a4440",cursor:"pointer",letterSpacing:".08em",textDecoration:"underline"}}>
+                not you?
               </button>
-            ))}
-          </div>
+            </div>
+          ) : (
+            <>
+              {/* Nickname */}
+              <input value={nickname} onChange={e => setNickname(e.target.value)} maxLength={30} placeholder="Choose a nickname (e.g. CosmicVirgo)"
+                style={{width:"100%",background:"rgba(255,200,50,0.06)",border:"1px solid rgba(255,200,50,0.2)",borderRadius:10,padding:"11px 14px",fontFamily:"Georgia,serif",fontSize:14,color:"#f5f0e0",outline:"none",boxSizing:"border-box",marginBottom:10}} />
+              {/* Sign picker */}
+              <div style={{display:"grid",gridTemplateColumns:"repeat(6,1fr)",gap:5,marginBottom:10}}>
+                {ALL_SIGNS_C.map(s => (
+                  <button type="button" key={s} onClick={() => setSign(s)}
+                    style={{background:sign===s?"rgba(255,200,50,0.2)":"rgba(255,200,50,0.04)",border:`1px solid ${sign===s?"rgba(245,200,66,0.7)":"rgba(255,200,50,0.12)"}`,borderRadius:8,padding:"7px 4px",cursor:"pointer",transition:"all .18s",textAlign:"center"}}>
+                    <div style={{fontSize:14}}>{SIGN_EMOJIS_C[s]}</div>
+                    <div style={{fontFamily:"'Cinzel',serif",fontSize:7,color:sign===s?"#f5c842":"#5a5048",fontWeight:700,marginTop:2}}>{s.slice(0,3).toUpperCase()}</div>
+                  </button>
+                ))}
+              </div>
+              {changingIdentity && (
+                <button type="button" onClick={() => setChangingIdentity(false)}
+                  style={{background:"none",border:"none",fontFamily:"'Cinzel',serif",fontSize:8,color:"#4a4440",cursor:"pointer",letterSpacing:".08em",marginBottom:10,textDecoration:"underline"}}>
+                  ← cancel
+                </button>
+              )}
+            </>
+          )}
 
           {/* Text */}
           <textarea value={text} onChange={e => setText(e.target.value)} maxLength={280} rows={3}
