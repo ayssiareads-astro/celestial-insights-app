@@ -2290,11 +2290,19 @@ function PostCard({ post, col, promptId, onReplyPosted, onDelete, onLike, isAdmi
   const [likeCount, setLikeCount] = React.useState(post.likes || 0);
   const isOwner = (() => { try { return localStorage.getItem("aww_nick")?.trim() === post.nickname?.trim(); } catch(e) { return false; } })();
 
-  const handleLike = () => {
+  const handleLike = async () => {
     if (liked) return;
     setLiked(true); setLikeCount(c => c + 1);
     try { localStorage.setItem("aww_like_"+post.id, "1"); } catch(e) {}
     onLike && onLike(post.id);
+    // Persist like to KV
+    try {
+      await fetch("/api/community", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "like", prompt: promptId, id: post.id }),
+      });
+    } catch(e) {}
   };
 
   const getShareText = () => `"${currentText}" — ${post.nickname} (${post.sign}) on AreWeWoke\n\narewewoke.com`;
