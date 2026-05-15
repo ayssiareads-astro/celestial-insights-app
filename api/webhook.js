@@ -1,20 +1,8 @@
 // api/webhook.js
-// Stripe webhook handler — place this file at /api/webhook.js in your project
-//
-// ENVIRONMENT VARIABLES ALREADY SET BY UPSTASH (no action needed):
-//   KV_REST_API_URL
-//   KV_REST_API_TOKEN
-//
-// ENVIRONMENT VARIABLES YOU STILL NEED TO ADD IN VERCEL:
-//   STRIPE_SECRET_KEY       → Stripe Dashboard → Developers → API Keys → Secret key
-//   STRIPE_WEBHOOK_SECRET   → Stripe Dashboard → Developers → Webhooks → Signing secret
-//                             (add this after you register the webhook endpoint in Stripe)
-
 import Stripe from "stripe";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-// Upstash Redis REST helper — works with KV_REST_API_URL and KV_REST_API_TOKEN
 async function kvSet(key, value) {
   const url = process.env.KV_REST_API_URL;
   const token = process.env.KV_REST_API_TOKEN;
@@ -35,12 +23,71 @@ async function kvGet(key) {
   return data.result ? JSON.parse(data.result) : null;
 }
 
-// Tell Vercel NOT to parse the body — Stripe needs the raw body to verify the signature
+async function sendWelcomeEmail(email) {
+  const RESEND_KEY = process.env.RESEND_API_KEY;
+  if (!RESEND_KEY) { console.log("No RESEND_API_KEY — skipping welcome email"); return; }
+
+  try {
+    await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${RESEND_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from: "AreWeWoke <onboarding@resend.dev>",
+        to: email,
+        subject: "✦ Welcome to AreWeWoke — Your Free Trial is Active",
+        html: `
+          <div style="background:#0d0a14;color:#f5f0e0;font-family:Georgia,serif;max-width:560px;margin:0 auto;padding:40px 32px;border-radius:16px;">
+            <div style="text-align:center;margin-bottom:32px;">
+              <h1 style="font-family:Georgia,serif;font-size:28px;color:#f5c842;margin:0 0 8px;">✦ Welcome to AreWeWoke ✦</h1>
+              <p style="color:#a8e060;font-size:15px;margin:0;">Your 7-day free trial is now active.</p>
+            </div>
+
+            <p style="font-size:16px;line-height:1.75;color:#d8c890;">
+              The stars brought you here for a reason. Your full birth chart reading, all 4 quiz levels, all 12 zodiac avatars, and the full community experience are now unlocked.
+            </p>
+
+            <div style="background:rgba(255,200,50,0.08);border:1px solid rgba(255,200,50,0.2);border-radius:12px;padding:20px 24px;margin:24px 0;">
+              <p style="font-family:Georgia,serif;font-weight:700;font-size:14px;color:#f5c842;margin:0 0 12px;">✦ What you now have access to:</p>
+              <ul style="margin:0;padding-left:20px;color:#d8c890;font-size:14px;line-height:2;">
+                <li>Your full birth chart — all 11 planets, houses & aspects</li>
+                <li>The complete 48-question Zodiac Quiz</li>
+                <li>All 12 Zodiac Operative avatars to unlock</li>
+                <li>The Community — share takes, react, post GIFs</li>
+                <li>Daily Challenge — one question every day</li>
+              </ul>
+            </div>
+
+            <div style="text-align:center;margin:32px 0;">
+              <a href="https://arewewoke.com" style="background:linear-gradient(135deg,#e8a800,#8a6000);color:#0d0a14;text-decoration:none;padding:14px 36px;border-radius:100px;font-family:Georgia,serif;font-weight:700;font-size:15px;display:inline-block;">
+                ✦ Open AreWeWoke
+              </a>
+            </div>
+
+            <p style="font-size:13px;line-height:1.75;color:#6a6058;">
+              Your free trial runs for 7 days. After that, you'll be charged $4.99/month — cancel anytime with no hassle via your
+              <a href="https://billing.stripe.com/p/login/5kQ3co6dzeub70TfIx5sA00" style="color:#a8e060;">member portal</a>.
+            </p>
+
+            <div style="border-top:1px solid rgba(255,200,50,0.1);margin-top:32px;padding-top:20px;text-align:center;">
+              <p style="font-size:12px;color:#3a3228;margin:0;">AreWeWoke · celestial.insights.app@gmail.com</p>
+            </div>
+          </div>
+        `,
+      }),
+    });
+    console.log(`Welcome email sent to ${email}`);
+  } catch(e) {
+    console.error("Welcome email error:", e.message);
+  }
+}
+
 export const config = {
   api: { bodyParser: false },
 };
 
-// Read raw body from the request stream
 async function getRawBody(req) {
   return new Promise((resolve, reject) => {
     const chunks = [];
@@ -51,22 +98,14 @@ async function getRawBody(req) {
 }
 
 export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
-  }
+  if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
   const rawBody = await getRawBody(req);
   const signature = req.headers["stripe-signature"];
 
   let event;
-
-  // Verify the webhook came from Stripe
   try {
-    event = stripe.webhooks.constructEvent(
-      rawBody,
-      signature,
-      process.env.STRIPE_WEBHOOK_SECRET
-    );
+    event = stripe.webhooks.constructEvent(rawBody, signature, process.env.STRIPE_WEBHOOK_SECRET);
   } catch (err) {
     console.error("Webhook signature verification failed:", err.message);
     return res.status(400).json({ error: `Webhook error: ${err.message}` });
@@ -75,7 +114,6 @@ export default async function handler(req, res) {
   const subscription = event.data.object;
   const customerId = subscription.customer;
 
-  // Get the customer's email from Stripe
   let customerEmail = null;
   try {
     const customer = await stripe.customers.retrieve(customerId);
@@ -90,10 +128,8 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: "No customer email" });
   }
 
-  // Handle each Stripe event type
   switch (event.type) {
 
-    // Trial started or subscription created
     case "customer.subscription.created": {
       const isTrialing = subscription.status === "trialing";
       const isActive = subscription.status === "active";
@@ -106,12 +142,13 @@ export default async function handler(req, res) {
           currentPeriodEnd: subscription.current_period_end,
           updatedAt: Date.now(),
         });
-        console.log(`Subscription created for ${customerEmail} — status: ${subscription.status}`);
+        // Send welcome email on new subscription
+        await sendWelcomeEmail(customerEmail);
+        console.log(`Subscription created + welcome email sent for ${customerEmail}`);
       }
       break;
     }
 
-    // Subscription updated (trial converted, cancelled at period end, etc.)
     case "customer.subscription.updated": {
       await kvSet(`sub:${customerEmail}`, {
         status: subscription.status,
@@ -126,7 +163,6 @@ export default async function handler(req, res) {
       break;
     }
 
-    // Subscription cancelled or expired — revoke access
     case "customer.subscription.deleted": {
       await kvSet(`sub:${customerEmail}`, {
         status: "canceled",
@@ -138,7 +174,6 @@ export default async function handler(req, res) {
       break;
     }
 
-    // Payment succeeded — confirm active status
     case "invoice.payment_succeeded": {
       const invoice = event.data.object;
       if (invoice.subscription) {
@@ -155,7 +190,6 @@ export default async function handler(req, res) {
       break;
     }
 
-    // Payment failed — flag it but keep access (Stripe will retry)
     case "invoice.payment_failed": {
       const existing = await kvGet(`sub:${customerEmail}`);
       if (existing) {
@@ -173,6 +207,5 @@ export default async function handler(req, res) {
       console.log(`Unhandled event type: ${event.type}`);
   }
 
-  // Always return 200 so Stripe knows we received the webhook
   return res.status(200).json({ received: true });
 }
