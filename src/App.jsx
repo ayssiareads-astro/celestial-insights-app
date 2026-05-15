@@ -2289,6 +2289,7 @@ function PostCard({ post, col, promptId, onReplyPosted, onDelete, onLike, isAdmi
   const replies = post.replies || [];
   const [liked, setLiked] = React.useState(() => { try { return localStorage.getItem("aww_like_"+post.id)==="1"; } catch(e) { return false; } });
   const [likeCount, setLikeCount] = React.useState(post.likes || 0);
+  const isOwner = (() => { try { return localStorage.getItem("aww_nick")?.trim() === post.nickname?.trim(); } catch(e) { return false; } })();
 
   const handleLike = () => {
     if (liked) return;
@@ -2362,10 +2363,12 @@ function PostCard({ post, col, promptId, onReplyPosted, onDelete, onLike, isAdmi
               </button>
             )}
 
-            {/* ✏️ Edit */}
-            <button type="button" onClick={() => { setShowEditForm(v=>!v); setShowReplyForm(false); setEditText(currentText); }} style={actionBtn(showEditForm)}>
-              <span style={{fontSize:11}}>✏️</span> {showEditForm ? "CANCEL" : "EDIT"}
-            </button>
+            {/* ✏️ Edit — only for post owner */}
+            {isOwner && (
+              <button type="button" onClick={() => { setShowEditForm(v=>!v); setShowReplyForm(false); setEditText(currentText); }} style={actionBtn(showEditForm)}>
+                <span style={{fontSize:11}}>✏️</span> {showEditForm ? "CANCEL" : "EDIT"}
+              </button>
+            )}
 
             {/* 🔗 Share — always shows dropdown */}
             <div style={{position:"relative"}}>
@@ -2401,14 +2404,16 @@ function PostCard({ post, col, promptId, onReplyPosted, onDelete, onLike, isAdmi
               </button>
             )}
 
-            {/* 🗑 Delete */}
-            <button type="button"
-              onClick={() => { if (window.confirm("Delete this post?")) onDelete && onDelete(); }}
-              style={{...actionBtn(false), marginLeft:"auto", color:"#5a3040"}}
-              onMouseEnter={e=>e.currentTarget.style.color="#ff6b9d"}
-              onMouseLeave={e=>e.currentTarget.style.color="#5a3040"}>
-              🗑 DELETE
-            </button>
+            {/* 🗑 Delete — only for post owner */}
+            {isOwner && (
+              <button type="button"
+                onClick={() => { if (window.confirm("Delete this post?")) onDelete && onDelete(); }}
+                style={{...actionBtn(false), marginLeft:"auto", color:"#5a3040"}}
+                onMouseEnter={e=>e.currentTarget.style.color="#ff6b9d"}
+                onMouseLeave={e=>e.currentTarget.style.color="#5a3040"}>
+                🗑 DELETE
+              </button>
+            )}
           </div>
 
           {/* Edit form */}
