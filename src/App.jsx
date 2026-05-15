@@ -2276,10 +2276,9 @@ function timeAgo(ts) {
 // ── PostCard with nested replies ─────────────────────────────────
 function PostCard({ post, col, promptId, onReplyPosted, onDelete, onLike, isAdmin = false, isNested = false }) {
   const [showReplyForm, setShowReplyForm] = React.useState(false);
-  const [showEditForm, setShowEditForm] = React.useState(false);
   const [showShare, setShowShare] = React.useState(false);
+  const [reported, setReported] = React.useState(false);
   const [currentText, setCurrentText] = React.useState(post.text || "");
-  const [editText, setEditText] = React.useState(post.text || "");
   const [replyNickname, setReplyNickname] = React.useState(() => { try { return localStorage.getItem("aww_nick") || ""; } catch(e) { return ""; } });
   const [replySign, setReplySign] = React.useState(() => { try { return localStorage.getItem("aww_sign") || ""; } catch(e) { return ""; } });
   const [replyText, setReplyText] = React.useState("");
@@ -2307,6 +2306,24 @@ function PostCard({ post, col, promptId, onReplyPosted, onDelete, onLike, isAdmi
   const shareToX = () => {
     window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(getShareText())}`, "_blank");
     setShowShare(false);
+  };
+
+  const handleReport = async () => {
+    if (reported) return;
+    try {
+      await fetch("/api/report", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nickname: post.nickname,
+          sign: post.sign,
+          text: post.text,
+          promptId: promptId,
+          ts: post.ts,
+        }),
+      });
+    } catch(e) {}
+    setReported(true);
   };
 
   const handleReplySubmit = async () => {
@@ -2363,12 +2380,7 @@ function PostCard({ post, col, promptId, onReplyPosted, onDelete, onLike, isAdmi
               </button>
             )}
 
-            {/* ✏️ Edit — only for post owner */}
-            {isOwner && (
-              <button type="button" onClick={() => { setShowEditForm(v=>!v); setShowReplyForm(false); setEditText(currentText); }} style={actionBtn(showEditForm)}>
-                <span style={{fontSize:11}}>✏️</span> {showEditForm ? "CANCEL" : "EDIT"}
-              </button>
-            )}
+
 
             {/* 🔗 Share — always shows dropdown */}
             <div style={{position:"relative"}}>
@@ -2404,6 +2416,15 @@ function PostCard({ post, col, promptId, onReplyPosted, onDelete, onLike, isAdmi
               </button>
             )}
 
+            {/* 🚩 Report — for everyone except owner */}
+            {!isOwner && (
+              <button type="button" onClick={handleReport} disabled={reported}
+                style={{...actionBtn(reported), color: reported ? "#4a4440" : "#6a6058"}}>
+                <span style={{fontSize:11}}>{reported ? "✓" : "🚩"}</span>
+                {reported ? "REPORTED" : "REPORT"}
+              </button>
+            )}
+
             {/* 🗑 Delete — only for post owner */}
             {isOwner && (
               <button type="button"
@@ -2417,23 +2438,6 @@ function PostCard({ post, col, promptId, onReplyPosted, onDelete, onLike, isAdmi
           </div>
 
           {/* Edit form */}
-          {showEditForm && (
-            <div style={{marginTop:10, animation:"up .25s ease"}}>
-              <textarea value={editText} onChange={e => setEditText(e.target.value)} maxLength={280} rows={3}
-                style={{width:"100%", background:"rgba(255,200,50,0.06)", border:"1px solid rgba(255,200,50,0.3)", borderRadius:10, padding:"10px 12px", fontFamily:"Georgia,serif", fontSize:13, color:"#f5f0e0", outline:"none", resize:"none", boxSizing:"border-box", marginBottom:8}} />
-              <div style={{display:"flex", gap:8}}>
-                <button type="button" onClick={() => { setShowEditForm(false); setEditText(currentText); }}
-                  style={{flex:1, background:"none", border:"1px solid rgba(255,200,50,0.2)", borderRadius:100, padding:"9px", color:"#6a6058", fontFamily:"'Cinzel',serif", fontWeight:700, fontSize:9, cursor:"pointer"}}>
-                  CANCEL
-                </button>
-                <button type="button" onClick={() => { if (editText.trim()) { setCurrentText(editText.trim()); setShowEditForm(false); } }}
-                  style={{flex:2, background:"linear-gradient(135deg,#e8a800,#8a6000)", border:"none", borderRadius:100, padding:"9px", color:"#0d0a14", fontFamily:"'Cinzel',serif", fontWeight:900, fontSize:9, cursor:"pointer"}}>
-                  ✦ SAVE EDIT
-                </button>
-              </div>
-            </div>
-          )}
-
           {/* Reply form */}
           {showReplyForm && (
             <div style={{marginTop:12, background:"rgba(255,200,50,0.04)", borderRadius:12, padding:"14px", border:"1px solid rgba(255,200,50,0.12)", animation:"up .25s ease"}}>
