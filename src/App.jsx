@@ -2277,6 +2277,8 @@ function timeAgo(ts) {
 function PostCard({ post, col, promptId, onReplyPosted, onDelete, onLike, isAdmin = false, isNested = false }) {
   const [showReplyForm, setShowReplyForm] = React.useState(false);
   const [showEditForm, setShowEditForm] = React.useState(false);
+  const [showShare, setShowShare] = React.useState(false);
+  const [currentText, setCurrentText] = React.useState(post.text || "");
   const [editText, setEditText] = React.useState(post.text || "");
   const [replyNickname, setReplyNickname] = React.useState(() => { try { return localStorage.getItem("aww_nick") || ""; } catch(e) { return ""; } });
   const [replySign, setReplySign] = React.useState(() => { try { return localStorage.getItem("aww_sign") || ""; } catch(e) { return ""; } });
@@ -2284,28 +2286,26 @@ function PostCard({ post, col, promptId, onReplyPosted, onDelete, onLike, isAdmi
   const [replySubmitting, setReplySubmitting] = React.useState(false);
   const [replyError, setReplyError] = React.useState(null);
   const [showReplies, setShowReplies] = React.useState(false);
-  const [currentText, setCurrentText] = React.useState(post.text || "");
   const replies = post.replies || [];
   const [liked, setLiked] = React.useState(() => { try { return localStorage.getItem("aww_like_"+post.id)==="1"; } catch(e) { return false; } });
   const [likeCount, setLikeCount] = React.useState(post.likes || 0);
 
   const handleLike = () => {
     if (liked) return;
-    setLiked(true);
-    setLikeCount(c => c + 1);
+    setLiked(true); setLikeCount(c => c + 1);
     try { localStorage.setItem("aww_like_"+post.id, "1"); } catch(e) {}
     onLike && onLike(post.id);
   };
 
-  const handleShare = () => {
-    const text = `"${currentText}" — ${post.nickname} (${post.sign}) on AreWeWoke
+  const getShareText = () => `"${currentText}" — ${post.nickname} (${post.sign}) on AreWeWoke\n\narewewoke.com`;
 
-arewewoke.com`;
-    if (navigator.share) {
-      navigator.share({ title:"AreWeWoke", text }).catch(() => {});
-    } else {
-      navigator.clipboard.writeText(text).then(() => alert("Copied to clipboard!")).catch(() => {});
-    }
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(getShareText()).then(() => setShowShare(false)).catch(() => {});
+  };
+
+  const shareToX = () => {
+    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(getShareText())}`, "_blank");
+    setShowShare(false);
   };
 
   const handleReplySubmit = async () => {
@@ -2318,29 +2318,19 @@ arewewoke.com`;
       const res = await fetch("/api/community", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          prompt: promptId || post.promptId || post.prompt,
-          nickname: replyNickname.trim(),
-          sign: replySign,
-          text: replyText.trim(),
-          gif: null,
-          parentId: post.id,
-        }),
+        body: JSON.stringify({ prompt: promptId || post.promptId || post.prompt, nickname: replyNickname.trim(), sign: replySign, text: replyText.trim(), gif: null, parentId: post.id }),
       });
       const data = await res.json();
-      if (data.ok) {
-        onReplyPosted && onReplyPosted(data.comment);
-        setReplyText(""); setShowReplyForm(false); setShowReplies(true);
-      } else { setReplyError(data.error || "Could not post."); }
+      if (data.ok) { onReplyPosted && onReplyPosted(data.comment); setReplyText(""); setShowReplyForm(false); setShowReplies(true); }
+      else { setReplyError(data.error || "Could not post."); }
     } catch { setReplyError("Could not post. Check your connection."); }
     setReplySubmitting(false);
   };
 
-  // Shared action button style
   const actionBtn = (active) => ({
     background:"none", border:"none", padding:0, cursor:"pointer",
     display:"flex", alignItems:"center", gap:3,
-    fontFamily:"'Cinzel',serif", fontSize:8, letterSpacing:".08em",
+    fontFamily:"'Cinzel',serif", fontSize:8, letterSpacing:".07em",
     color: active ? "#f5c842" : "#6a6058", transition:"color .2s",
   });
 
@@ -2356,34 +2346,57 @@ arewewoke.com`;
           {currentText && <p style={{fontFamily:"Georgia,serif", fontSize: isNested ? 13 : 14, color:"#d8c890", lineHeight:1.7, margin:0}}>{currentText}</p>}
           {post.gif && <img src={post.gif} alt="gif" style={{marginTop:8, maxWidth:"100%", borderRadius:10, maxHeight:160, objectFit:"cover"}} />}
 
-          {/* Action row — shown on ALL posts including nested */}
+          {/* Action row — visible on ALL posts including replies */}
           <div style={{display:"flex", gap:12, marginTop:8, alignItems:"center", flexWrap:"wrap"}}>
+
             {/* ⭐ Like */}
             <button type="button" onClick={handleLike} disabled={liked} style={{...actionBtn(liked), cursor:liked?"default":"pointer"}}>
               <span style={{fontSize:13, filter:liked?"drop-shadow(0 0 4px #f5c842)":"none", transition:"filter .3s"}}>{liked?"⭐":"☆"}</span>
               {likeCount > 0 && <span style={{color:liked?"#f5c842":"#6a6058"}}>{likeCount}</span>}
             </button>
 
-            {/* 💬 Comment — only on top-level posts */}
+            {/* 💬 Comment — top-level only */}
             {!isNested && (
-              <button type="button" onClick={() => { setShowReplyForm(v => !v); setShowEditForm(false); }} style={actionBtn(showReplyForm)}>
+              <button type="button" onClick={() => { setShowReplyForm(v=>!v); setShowEditForm(false); }} style={actionBtn(showReplyForm)}>
                 <span style={{fontSize:11}}>💬</span> {showReplyForm ? "CANCEL" : "COMMENT"}
               </button>
             )}
 
             {/* ✏️ Edit */}
-            <button type="button" onClick={() => { setShowEditForm(v => !v); setShowReplyForm(false); setEditText(currentText); }} style={actionBtn(showEditForm)}>
+            <button type="button" onClick={() => { setShowEditForm(v=>!v); setShowReplyForm(false); setEditText(currentText); }} style={actionBtn(showEditForm)}>
               <span style={{fontSize:11}}>✏️</span> {showEditForm ? "CANCEL" : "EDIT"}
             </button>
 
-            {/* 🔗 Share */}
-            <button type="button" onClick={handleShare} style={actionBtn(false)}>
-              <span style={{fontSize:11}}>🔗</span> SHARE
-            </button>
+            {/* 🔗 Share — always shows dropdown */}
+            <div style={{position:"relative"}}>
+              <button type="button" onClick={() => setShowShare(v=>!v)} style={actionBtn(showShare)}>
+                <span style={{fontSize:11}}>🔗</span> SHARE
+              </button>
+              {showShare && (
+                <div style={{position:"absolute",top:"calc(100% + 6px)",left:0,zIndex:200,background:"#1a1520",border:"1px solid rgba(255,200,50,0.3)",borderRadius:10,padding:"6px",minWidth:170,boxShadow:"0 4px 20px rgba(0,0,0,0.6)",animation:"up .2s ease"}}>
+                  <button type="button" onClick={copyToClipboard}
+                    style={{display:"flex",alignItems:"center",gap:8,width:"100%",background:"none",border:"none",padding:"9px 12px",borderRadius:7,cursor:"pointer",fontFamily:"'Cinzel',serif",fontSize:9,color:"#f5c842",letterSpacing:".08em",textAlign:"left"}}
+                    onMouseEnter={e=>e.currentTarget.style.background="rgba(255,200,50,0.1)"}
+                    onMouseLeave={e=>e.currentTarget.style.background="none"}>
+                    📋 COPY POST
+                  </button>
+                  <button type="button" onClick={shareToX}
+                    style={{display:"flex",alignItems:"center",gap:8,width:"100%",background:"none",border:"none",padding:"9px 12px",borderRadius:7,cursor:"pointer",fontFamily:"'Cinzel',serif",fontSize:9,color:"#f5c842",letterSpacing:".08em",textAlign:"left"}}
+                    onMouseEnter={e=>e.currentTarget.style.background="rgba(255,200,50,0.1)"}
+                    onMouseLeave={e=>e.currentTarget.style.background="none"}>
+                    𝕏 SHARE TO X
+                  </button>
+                  <button type="button" onClick={() => setShowShare(false)}
+                    style={{display:"flex",alignItems:"center",gap:8,width:"100%",background:"none",border:"none",padding:"6px 12px",borderRadius:7,cursor:"pointer",fontFamily:"'Cinzel',serif",fontSize:8,color:"#4a4440",letterSpacing:".08em"}}>
+                    ✕ CLOSE
+                  </button>
+                </div>
+              )}
+            </div>
 
-            {/* Show/hide replies */}
+            {/* ▼ Replies toggle — top-level only */}
             {!isNested && replies.length > 0 && (
-              <button type="button" onClick={() => setShowReplies(v => !v)} style={actionBtn(false)}>
+              <button type="button" onClick={() => setShowReplies(v=>!v)} style={actionBtn(false)}>
                 {showReplies ? "▲ HIDE" : `▼ ${replies.length} ${replies.length===1?"REPLY":"REPLIES"}`}
               </button>
             )}
@@ -2455,11 +2468,7 @@ arewewoke.com`;
                 return <PostCard key={reply.id || ri} post={reply} col={rcol} promptId={promptId} isNested={true}
                   onDelete={async () => {
                     try {
-                      const res = await fetch("/api/community", {
-                        method:"DELETE",
-                        headers:{"Content-Type":"application/json"},
-                        body: JSON.stringify({ prompt: promptId, id: reply.id }),
-                      });
+                      const res = await fetch("/api/community", { method:"DELETE", headers:{"Content-Type":"application/json"}, body: JSON.stringify({ prompt: promptId, id: reply.id }) });
                       const data = await res.json();
                       if (data.ok) onReplyPosted && onReplyPosted(null, reply.id);
                     } catch {}
@@ -2473,7 +2482,6 @@ arewewoke.com`;
     </div>
   );
 }
-
 // ── Single prompt thread ─────────────────────────────────────────
 function PromptThread({ prompt, isAdmin }) {
   const [posts, setPosts] = React.useState([]);
