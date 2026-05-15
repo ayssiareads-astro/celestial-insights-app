@@ -2311,7 +2311,7 @@ function PostCard({ post, col, promptId, onReplyPosted, onDelete, onLike, isAdmi
   const handleReport = async () => {
     if (reported) return;
     try {
-      await fetch("/api/report", {
+      const res = await fetch("/api/report", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -2322,8 +2322,13 @@ function PostCard({ post, col, promptId, onReplyPosted, onDelete, onLike, isAdmi
           ts: post.ts,
         }),
       });
-    } catch(e) {}
-    setReported(true);
+      const data = await res.json();
+      console.log("Report response:", res.status, data);
+      setReported(true);
+    } catch(e) {
+      console.error("Report failed:", e.message);
+      alert("Could not send report: " + e.message);
+    }
   };
 
   const handleReplySubmit = async () => {
@@ -2346,10 +2351,11 @@ function PostCard({ post, col, promptId, onReplyPosted, onDelete, onLike, isAdmi
   };
 
   const actionBtn = (active) => ({
-    background:"none", border:"none", padding:0, cursor:"pointer",
-    display:"flex", alignItems:"center", gap:3,
-    fontFamily:"'Cinzel',serif", fontSize:8, letterSpacing:".07em",
-    color: active ? "#f5c842" : "#6a6058", transition:"color .2s",
+    background:"none", border:"none", padding:"4px 8px", cursor:"pointer",
+    display:"flex", alignItems:"center", gap:4,
+    fontFamily:"'Cinzel',serif", fontSize:9, letterSpacing:".07em", fontWeight:700,
+    color: active ? "#f5c842" : "#a8a098", transition:"color .2s",
+    borderRadius:6,
   });
 
   return (
@@ -2359,18 +2365,18 @@ function PostCard({ post, col, promptId, onReplyPosted, onDelete, onLike, isAdmi
         <div style={{flex:1, minWidth:0}}>
           <div style={{display:"flex", alignItems:"center", gap:8, marginBottom:5, flexWrap:"wrap"}}>
             <span style={{fontFamily:"'Cinzel',serif", fontWeight:700, fontSize: isNested ? 10 : 11, color:col}}>{post.nickname}</span>
-            <span style={{fontFamily:"'Cinzel',serif", fontSize:8, color:"#4a4440", letterSpacing:".06em"}}>{post.sign?.toUpperCase()} · {timeAgo(post.ts)}</span>
+            <span style={{fontFamily:"'Cinzel',serif", fontSize:8, color:"#6a6058", letterSpacing:".06em"}}>{post.sign?.toUpperCase()} · {timeAgo(post.ts)}</span>
           </div>
           {currentText && <p style={{fontFamily:"Georgia,serif", fontSize: isNested ? 13 : 14, color:"#d8c890", lineHeight:1.7, margin:0}}>{currentText}</p>}
           {post.gif && <img src={post.gif} alt="gif" style={{marginTop:8, maxWidth:"100%", borderRadius:10, maxHeight:160, objectFit:"cover"}} />}
 
           {/* Action row — visible on ALL posts including replies */}
-          <div style={{display:"flex", gap:12, marginTop:8, alignItems:"center", flexWrap:"wrap"}}>
+          <div style={{display:"flex", gap:4, marginTop:10, alignItems:"center", flexWrap:"wrap", borderTop:"1px solid rgba(255,200,50,0.08)", paddingTop:8}}>
 
             {/* ⭐ Like */}
             <button type="button" onClick={handleLike} disabled={liked} style={{...actionBtn(liked), cursor:liked?"default":"pointer"}}>
               <span style={{fontSize:13, filter:liked?"drop-shadow(0 0 4px #f5c842)":"none", transition:"filter .3s"}}>{liked?"⭐":"☆"}</span>
-              {likeCount > 0 && <span style={{color:liked?"#f5c842":"#6a6058"}}>{likeCount}</span>}
+              {likeCount > 0 && <span style={{color:liked?"#f5c842":"#a8a098",fontWeight:700}}>{likeCount}</span>}
             </button>
 
             {/* 💬 Comment — top-level only */}
@@ -2416,23 +2422,23 @@ function PostCard({ post, col, promptId, onReplyPosted, onDelete, onLike, isAdmi
               </button>
             )}
 
-            {/* 🚩 Report — for everyone except owner */}
-            {!isOwner && (
+            {/* 🚩 Report — for everyone except owner and admin */}
+            {!isOwner && !isAdmin && (
               <button type="button" onClick={handleReport} disabled={reported}
-                style={{...actionBtn(reported), color: reported ? "#4a4440" : "#6a6058"}}>
+                style={{...actionBtn(reported), color: reported ? "#6a6058" : "#c07040"}}>
                 <span style={{fontSize:11}}>{reported ? "✓" : "🚩"}</span>
                 {reported ? "REPORTED" : "REPORT"}
               </button>
             )}
 
-            {/* 🗑 Delete — only for post owner */}
-            {isOwner && (
+            {/* 🗑 Delete — owner or admin */}
+            {(isOwner || isAdmin) && (
               <button type="button"
                 onClick={() => { if (window.confirm("Delete this post?")) onDelete && onDelete(); }}
-                style={{...actionBtn(false), marginLeft:"auto", color:"#5a3040"}}
+                style={{...actionBtn(false), marginLeft:"auto", color: isAdmin && !isOwner ? "#c0405a" : "#8a5060"}}
                 onMouseEnter={e=>e.currentTarget.style.color="#ff6b9d"}
-                onMouseLeave={e=>e.currentTarget.style.color="#5a3040"}>
-                🗑 DELETE
+                onMouseLeave={e=>e.currentTarget.style.color= isAdmin && !isOwner ? "#c0405a" : "#8a5060"}>
+                🗑 {isAdmin && !isOwner ? "REMOVE" : "DELETE"}
               </button>
             )}
           </div>
