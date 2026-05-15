@@ -2573,6 +2573,7 @@ function PromptThread({ prompt, isAdmin }) {
   const visible = expanded ? posts : posts.slice(0, 2);
 
   return (
+    <>
     <div style={{background:"rgba(255,200,50,0.04)",border:"1px solid rgba(255,200,50,0.15)",borderRadius:20,overflow:"hidden",marginBottom:16}}>
       {/* Thread header */}
       <div style={{padding:"18px 20px 14px",borderBottom:"1px solid rgba(255,200,50,0.08)"}}>
@@ -2702,6 +2703,31 @@ function PromptThread({ prompt, isAdmin }) {
         </button>
       )}
     </div>
+
+      {showPaywall && (
+        <div onClick={()=>setShowPaywall(false)} style={{position:"fixed",inset:0,background:"rgba(5,3,10,0.94)",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center",padding:"24px 16px"}}>
+          <div onClick={e=>e.stopPropagation()} style={{background:"#0f0c18",border:"1px solid rgba(255,200,50,0.3)",borderRadius:24,maxWidth:420,width:"100%",padding:"36px 28px",position:"relative",animation:"up .4s ease",textAlign:"center"}}>
+            <div style={{position:"absolute",top:0,left:0,right:0,height:2,background:"linear-gradient(90deg,transparent,#f5c842,transparent)",borderRadius:"24px 24px 0 0"}}/>
+            <div style={{fontSize:40,marginBottom:14}}>🔮</div>
+            <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:20,color:"#f5c842",marginBottom:10}}>You've had your say!</div>
+            <p style={{fontFamily:"Georgia,serif",fontSize:15,color:"#d8c890",lineHeight:1.75,marginBottom:20}}>
+              Free members can post up to <strong style={{color:"#f5c842"}}>5 times</strong> in the community.<br/>
+              Unlock <strong style={{color:"#f5c842"}}>unlimited posts</strong> with a membership.
+            </p>
+            <div style={{display:"flex",flexDirection:"column",gap:5,alignItems:"center",marginBottom:22}}>
+              {["✦ Unlimited community posts","✦ Full birth chart reading","✦ All 48 quiz questions & avatars"].map((item,i)=>(
+                <div key={i} style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,color:"#a8e060",letterSpacing:".06em"}}>{item}</div>
+              ))}
+            </div>
+            <button className="rb" style={{"--a":"#e8a800",marginBottom:12}} onClick={()=>window.location.href="https://buy.stripe.com/bJefZa8lH4TBetl2VL5sA01"}>
+              ✦ START MY FREE TRIAL
+            </button>
+            <p style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,color:"#4a4440",margin:"0 0 14px",letterSpacing:".08em"}}>7-DAY FREE TRIAL · $4.99/MONTH AFTER · CANCEL ANYTIME</p>
+            <button onClick={()=>setShowPaywall(false)} style={{background:"none",border:"none",color:"#4a4440",cursor:"pointer",fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,letterSpacing:".1em"}}>← MAYBE LATER</button>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 
@@ -2786,30 +2812,7 @@ function Community() {
         <span style={{fontFamily:"'Cinzel',serif",fontSize:8,color:"#4a4440",letterSpacing:".1em"}}>GIF SEARCH POWERED BY GIPHY</span>
       </div>
 
-      {/* Community paywall modal */}
-      {showPaywall && (
-        <div onClick={()=>setShowPaywall(false)} style={{position:"fixed",inset:0,background:"rgba(5,3,10,0.94)",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center",padding:"24px 16px"}}>
-          <div onClick={e=>e.stopPropagation()} style={{background:"#0f0c18",border:"1px solid rgba(255,200,50,0.3)",borderRadius:24,maxWidth:420,width:"100%",padding:"36px 28px",position:"relative",animation:"up .4s ease",textAlign:"center"}}>
-            <div style={{position:"absolute",top:0,left:0,right:0,height:2,background:"linear-gradient(90deg,transparent,#f5c842,transparent)",borderRadius:"24px 24px 0 0"}}/>
-            <div style={{fontSize:40,marginBottom:14}}>🔮</div>
-            <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:20,color:"#f5c842",marginBottom:10}}>You've had your say!</div>
-            <p style={{fontFamily:"Georgia,serif",fontSize:15,color:"#d8c890",lineHeight:1.75,marginBottom:20}}>
-              Free members can post up to <strong style={{color:"#f5c842"}}>5 times</strong> in the community.<br/>
-              Unlock <strong style={{color:"#f5c842"}}>unlimited posts</strong> with a membership.
-            </p>
-            <div style={{display:"flex",flexDirection:"column",gap:5,alignItems:"center",marginBottom:22}}>
-              {["✦ Unlimited community posts","✦ Full birth chart reading","✦ All 48 quiz questions & avatars"].map((item,i)=>(
-                <div key={i} style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,color:"#a8e060",letterSpacing:".06em"}}>{item}</div>
-              ))}
-            </div>
-            <button className="rb" style={{"--a":"#e8a800",marginBottom:12}} onClick={()=>window.location.href="https://buy.stripe.com/bJefZa8lH4TBetl2VL5sA01"}>
-              ✦ START MY FREE TRIAL
-            </button>
-            <p style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,color:"#4a4440",margin:"0 0 14px",letterSpacing:".08em"}}>7-DAY FREE TRIAL · $4.99/MONTH AFTER · CANCEL ANYTIME</p>
-            <button onClick={()=>setShowPaywall(false)} style={{background:"none",border:"none",color:"#4a4440",cursor:"pointer",fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,letterSpacing:".1em"}}>← MAYBE LATER</button>
-          </div>
-        </div>
-      )}
+
     </div>
   );
 }
