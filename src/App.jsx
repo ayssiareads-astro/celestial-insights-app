@@ -2510,7 +2510,12 @@ function PromptThread({ prompt, isAdmin }) {
   const [posts, setPosts] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
   const [expanded, setExpanded] = React.useState(false);
-  const [showForm, setShowForm] = React.useState(false);
+  const [showForm, setShowForm] = React.useState(true);
+  const [showPaywall, setShowPaywall] = React.useState(false);
+  const isSubscribed = (() => { try { return localStorage.getItem("aww_subscribed") === "true"; } catch(e) { return false; } })();
+  const getPostCount = () => { try { return parseInt(localStorage.getItem("aww_post_count") || "0"); } catch(e) { return 0; } };
+  const incrementPostCount = () => { try { localStorage.setItem("aww_post_count", String(getPostCount() + 1)); } catch(e) {} };
+  const POST_LIMIT = 5;
   const [nickname, setNickname] = React.useState(() => { try { return localStorage.getItem("aww_nick") || ""; } catch(e) { return ""; } });
   const [sign, setSign] = React.useState(() => { try { return localStorage.getItem("aww_sign") || ""; } catch(e) { return ""; } });
   const [changingIdentity, setChangingIdentity] = React.useState(false);
@@ -2545,6 +2550,8 @@ function PromptThread({ prompt, isAdmin }) {
     if (!nickname.trim()) { setError("Please enter a nickname."); return; }
     if (!sign) { setError("Please pick your sign."); return; }
     if (!text.trim() && !selectedGif) { setError("Add a message or a GIF."); return; }
+    // Check post limit for non-subscribers
+    if (!isSubscribed && getPostCount() >= POST_LIMIT) { setShowPaywall(true); return; }
     setSubmitting(true); setError(null);
     try {
       try { localStorage.setItem("aww_nick", nickname.trim()); localStorage.setItem("aww_sign", sign); } catch(e) {}
@@ -2555,8 +2562,9 @@ function PromptThread({ prompt, isAdmin }) {
       });
       const data = await res.json();
       if (data.ok) {
+        incrementPostCount();
         setPosts(prev => [data.comment, ...prev]);
-        setText(""); setSelectedGif(null); setGifs([]); setGifQuery(""); setShowForm(false);
+        setText(""); setSelectedGif(null); setGifs([]); setGifQuery("");
       } else { setError(data.error || "Could not post."); }
     } catch { setError("Could not post. Check your connection."); }
     setSubmitting(false);
@@ -2567,12 +2575,8 @@ function PromptThread({ prompt, isAdmin }) {
   return (
     <div style={{background:"rgba(255,200,50,0.04)",border:"1px solid rgba(255,200,50,0.15)",borderRadius:20,overflow:"hidden",marginBottom:16}}>
       {/* Thread header */}
-      <div style={{padding:"18px 20px 14px",borderBottom: posts.length > 0 || showForm ? "1px solid rgba(255,200,50,0.08)" : "none"}}>
-        <div style={{fontFamily:"Georgia,serif",fontWeight:700,fontSize:16,color:"#f5f0e0",lineHeight:1.4,marginBottom:12}}>{prompt.label}</div>
-        <button onClick={() => { setShowForm(v => !v); setChangingIdentity(false); }}
-          style={{background:"rgba(255,200,50,0.1)",border:"1px solid rgba(255,200,50,0.3)",borderRadius:100,padding:"8px 20px",color:"#f5c842",fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,letterSpacing:".1em",cursor:"pointer",transition:"all .2s"}}>
-          {showForm ? "✕ CANCEL" : "+ ADD YOUR TAKE"}
-        </button>
+      <div style={{padding:"18px 20px 14px",borderBottom:"1px solid rgba(255,200,50,0.08)"}}>
+        <div style={{fontFamily:"Georgia,serif",fontWeight:700,fontSize:16,color:"#f5f0e0",lineHeight:1.4}}>{prompt.label}</div>
       </div>
 
       {/* Post form */}
@@ -2781,6 +2785,31 @@ function Community() {
       <div style={{textAlign:"center",marginTop:16,opacity:.4}}>
         <span style={{fontFamily:"'Cinzel',serif",fontSize:8,color:"#4a4440",letterSpacing:".1em"}}>GIF SEARCH POWERED BY GIPHY</span>
       </div>
+
+      {/* Community paywall modal */}
+      {showPaywall && (
+        <div onClick={()=>setShowPaywall(false)} style={{position:"fixed",inset:0,background:"rgba(5,3,10,0.94)",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center",padding:"24px 16px"}}>
+          <div onClick={e=>e.stopPropagation()} style={{background:"#0f0c18",border:"1px solid rgba(255,200,50,0.3)",borderRadius:24,maxWidth:420,width:"100%",padding:"36px 28px",position:"relative",animation:"up .4s ease",textAlign:"center"}}>
+            <div style={{position:"absolute",top:0,left:0,right:0,height:2,background:"linear-gradient(90deg,transparent,#f5c842,transparent)",borderRadius:"24px 24px 0 0"}}/>
+            <div style={{fontSize:40,marginBottom:14}}>🔮</div>
+            <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:20,color:"#f5c842",marginBottom:10}}>You've had your say!</div>
+            <p style={{fontFamily:"Georgia,serif",fontSize:15,color:"#d8c890",lineHeight:1.75,marginBottom:20}}>
+              Free members can post up to <strong style={{color:"#f5c842"}}>5 times</strong> in the community.<br/>
+              Unlock <strong style={{color:"#f5c842"}}>unlimited posts</strong> with a membership.
+            </p>
+            <div style={{display:"flex",flexDirection:"column",gap:5,alignItems:"center",marginBottom:22}}>
+              {["✦ Unlimited community posts","✦ Full birth chart reading","✦ All 48 quiz questions & avatars"].map((item,i)=>(
+                <div key={i} style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,color:"#a8e060",letterSpacing:".06em"}}>{item}</div>
+              ))}
+            </div>
+            <button className="rb" style={{"--a":"#e8a800",marginBottom:12}} onClick={()=>window.location.href="https://buy.stripe.com/bJefZa8lH4TBetl2VL5sA01"}>
+              ✦ START MY FREE TRIAL
+            </button>
+            <p style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,color:"#4a4440",margin:"0 0 14px",letterSpacing:".08em"}}>7-DAY FREE TRIAL · $4.99/MONTH AFTER · CANCEL ANYTIME</p>
+            <button onClick={()=>setShowPaywall(false)} style={{background:"none",border:"none",color:"#4a4440",cursor:"pointer",fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,letterSpacing:".1em"}}>← MAYBE LATER</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
