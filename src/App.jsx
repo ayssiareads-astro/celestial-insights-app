@@ -3147,9 +3147,9 @@ export default function AstrologyApp() {
 
   const tabs = [
     {label:"💬 Community",key:"community"},
+    {label:"✦ Fun Facts",key:"facts"},
     {label:"🌠 Horoscope",key:"horoscope"},
     {label:"🔮 Game",key:"guess"},
-    {label:"✦ Fun Facts",key:"facts"},
     {label:"🌌 Full Birth Chart",key:"birthchart"},
     {label:"🌟 Celebrity",key:"celebrity"},
     {label:"📲 Get The App",key:"install"},
