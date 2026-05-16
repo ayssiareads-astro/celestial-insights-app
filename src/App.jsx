@@ -2932,7 +2932,7 @@ function PlanetExplainer() {
     {
       name: "Sun", emoji: "☀️", color: "#f5c842",
       keyword: "Identity & Purpose",
-      kid: "The Sun is YOU at your core. It's your personality, your confidence, and what makes you feel alive. Your Sun sign is the one most people know — like 'I'm a Leo!' It's the light you shine into the world.",
+      kid: "The Sun is YOU at your core. It's your confidence, the energy you're mastering in this lifetime, and what makes you feel alive. Your Sun sign is the one most people know — like 'I'm a Leo!' It's the light you shine into the world.",
       speed: "Changes signs every ~30 days",
       type: "Personal Planet"
     },
@@ -3013,6 +3013,13 @@ function PlanetExplainer() {
       speed: "Changes signs every ~4–8 years",
       type: "Asteroid / Comet"
     },
+    {
+      name: "Rising Sign", emoji: "🌅", color: "#f5a060",
+      keyword: "Your Mask & First Impression",
+      kid: "Your Rising Sign (also called your Ascendant) is the sign that was rising on the horizon the exact moment you were born. It's the first thing people notice about you — your vibe, your look, your energy when you walk into a room. Think of it as the cover of your book. Your Sun is who you ARE, your Moon is how you FEEL, and your Rising is how the world SEES you. It's why two people with the same Sun sign can seem totally different!",
+      speed: "Changes every ~2 hours — needs your birth time!",
+      type: "Angle / Ascendant"
+    },
   ];
 
   const typeColors = {
@@ -3020,6 +3027,9 @@ function PlanetExplainer() {
     "Social Planet": "#f5c842",
     "Generational Planet": "#70d0e8",
     "Point / Asteroid": "#c060c0",
+    "Asteroid / Comet": "#e08040",
+    "Angle / Ascendant": "#f5a060",
+  };
     "Asteroid / Comet": "#e08040",
   };
 
