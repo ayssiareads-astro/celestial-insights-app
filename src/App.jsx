@@ -2949,7 +2949,7 @@ function PlanetExplainer() {
 
 // ─── MAIN APP ───────────────────────────────────────────────────
 export default function AstrologyApp() {
-  const [topTab, setTopTab] = useState("community");
+  const [topTab, setTopTab] = useState("facts");
 
   const [mode, setMode] = useState("home");
   const [selectedSign, setSelectedSign] = useState(null);
@@ -2970,8 +2970,8 @@ export default function AstrologyApp() {
   };
 
   const tabs = [
-    {label:"💬 Community",key:"community"},
     {label:"✦ Fun Facts",key:"facts"},
+    {label:"💬 Community",key:"community"},
     {label:"🌠 Horoscope",key:"horoscope"},
     {label:"🔮 Game",key:"guess"},
     {label:"🌌 Full Birth Chart",key:"birthchart"},
@@ -3031,11 +3031,37 @@ export default function AstrologyApp() {
         {topTab==="facts" && <>
           <div style={{textAlign:"center",marginBottom:24}}>
             <div style={{fontSize:11,fontFamily:"'Cinzel',serif",fontWeight:700,letterSpacing:".3em",color:"#a8e060",marginBottom:12}}>✦ AREWEWOKE ✦</div>
-            <h1 style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:"clamp(28px,6vw,52px)",lineHeight:1.05,margin:"0 0 10px",background:"linear-gradient(135deg,#f5c842,#e8a800,#f5c842)",backgroundSize:"200% auto",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",backgroundClip:"text",animation:"sh 4s linear infinite"}}>Your Cosmic Fun Facts</h1>
+            <h1 style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:"clamp(28px,6vw,52px)",lineHeight:1.05,margin:"0 0 10px",background:"linear-gradient(135deg,#f5c842,#e8a800,#f5c842)",backgroundSize:"200% auto",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",backgroundClip:"text",animation:"sh 4s linear infinite"}}>What Is Astrology?</h1>
             <p style={{color:"#a8e060",fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:13,margin:0,letterSpacing:".05em"}}>Discover what the stars reveal about you</p>
           </div>
           {mode==="home" && (
             <div style={{animation:"up .5s ease"}}>
+
+              {/* ── WHAT IS ASTROLOGY? ── */}
+              <div style={{marginBottom:28,borderRadius:16,overflow:"hidden",border:"1px solid rgba(255,200,50,0.25)",background:"rgba(255,200,50,0.05)",padding:"24px 20px"}}>
+                <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:16}}>
+                  <span style={{fontSize:28}}>🌌</span>
+                  <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:13,color:"#f5c842",letterSpacing:".08em"}}>WHAT IS ASTROLOGY?</div>
+                </div>
+                <p style={{fontFamily:"Georgia,serif",fontSize:15,color:"#c8c0b0",lineHeight:1.85,margin:"0 0 14px"}}>
+                  Astrology is the study of how the <strong style={{color:"#f5c842"}}>energy from planets, stars, and asteroids</strong> affects human beings every single day. Just like the Moon controls ocean tides, these cosmic energies have a real influence on our emotions, decisions, relationships, and life patterns.
+                </p>
+                <p style={{fontFamily:"Georgia,serif",fontSize:15,color:"#c8c0b0",lineHeight:1.85,margin:"0 0 14px"}}>
+                  Astrologers use <strong style={{color:"#a8e060"}}>mathematics</strong> — precise calculations of planetary positions, angles, and cycles — to map out exactly how these energies are showing up in <em>your</em> life. This is a science rooted in thousands of years of observation and calculation. <strong style={{color:"#f5c842"}}>It is in NO WAY witchcraft.</strong> 🙅🏽‍♀️
+                </p>
+                <p style={{fontFamily:"Georgia,serif",fontSize:15,color:"#c8c0b0",lineHeight:1.85,margin:0}}>
+                  Think of your birth chart like a <strong style={{color:"#a8e060"}}>cosmic snapshot</strong> — a mathematical map of exactly where every planet was the moment you took your first breath. That map is unique to YOU, and it reveals the energies you came here to work with in this lifetime. 🌠
+                </p>
+                <div style={{marginTop:20,display:"flex",flexWrap:"wrap",gap:10}}>
+                  {[["🪐","Planetary Energy","Real forces that affect you daily"],["📐","Mathematics","Precise calculations, not magic"],["🗺️","Your Birth Chart","A unique cosmic map just for you"],["⏳","Thousands of Years","Ancient wisdom + modern science"]].map(([emoji,title,desc])=>(
+                    <div key={title} style={{flex:"1 1 160px",background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,200,50,0.15)",borderRadius:10,padding:"12px 14px"}}>
+                      <div style={{fontSize:20,marginBottom:6}}>{emoji}</div>
+                      <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,color:"#f5c842",letterSpacing:".06em",marginBottom:4}}>{title.toUpperCase()}</div>
+                      <div style={{fontFamily:"Georgia,serif",fontSize:12,color:"#7a6e62",lineHeight:1.6}}>{desc}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
 
               {/* ── WHAT IS A HOUSE SYSTEM? ── */}
               <HouseSystemExplainer />
