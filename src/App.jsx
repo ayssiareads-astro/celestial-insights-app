@@ -2828,6 +2828,290 @@ const STAR_PARTICLES = [...Array(70)].map((_,i) => ({
 }));
 
 
+// ─── HOUSE SYSTEM EXPLAINER ─────────────────────────────────────
+function HouseSystemExplainer() {
+  const [open, setOpen] = React.useState(false);
+  const [activeHouse, setActiveHouse] = React.useState(null);
+
+  const houses = [
+    { num: 1,  emoji: "🪞", name: "Self",               kid: "This is the YOU house! It shows how you look and act when you first meet someone — your personal vibe and first impression." },
+    { num: 2,  emoji: "💰", name: "Stuff & Money",      kid: "This house is about your things — money, possessions, and what you really value. It shows what makes you feel safe and secure." },
+    { num: 3,  emoji: "💬", name: "Talk & Learn",       kid: "This is the talking and learning house! It shows how you communicate, how your brain works, and your bond with siblings." },
+    { num: 4,  emoji: "🏠", name: "Home & Family",      kid: "This house is literally your home. It shows your family, where you grew up, and what makes you feel cozy and safe." },
+    { num: 5,  emoji: "🎨", name: "Fun & Creativity",   kid: "The fun house! It shows what you love to do for joy — art, sports, games, crushes, and being your creative self." },
+    { num: 6,  emoji: "🩺", name: "Health & Habits",    kid: "This house is about your daily routines — taking care of your body, your schedule, and how you help the people around you." },
+    { num: 7,  emoji: "🤝", name: "Partners",           kid: "This house is about partnerships — best friends, relationships, and the people you team up with in life." },
+    { num: 8,  emoji: "🔮", name: "Mysteries",          kid: "The deep and spooky-cool house! It covers secrets, big life changes, and transformation — like a caterpillar becoming a butterfly." },
+    { num: 9,  emoji: "🌍", name: "Adventure & Beliefs",kid: "This house is about exploring the world — travel, learning big ideas, and figuring out what you believe in." },
+    { num: 10, emoji: "🏆", name: "Career & Fame",      kid: "This is your 'what do you want to be when you grow up' house. It shows your goals and how the world sees you." },
+    { num: 11, emoji: "👯", name: "Friends & Dreams",   kid: "The friend group house! It shows your squad, your hopes for the future, and the causes you care deeply about." },
+    { num: 12, emoji: "🌙", name: "Secrets & Dreams",   kid: "The hidden house — your inner world, dreams, and the quiet part of yourself nobody else sees. Very mysterious!" },
+  ];
+
+  const ordinal = n => ["st","nd","rd"][n-1] || "th";
+
+  return (
+    <div style={{marginBottom:28,borderRadius:16,overflow:"hidden",border:"1px solid rgba(255,200,50,0.2)",background:"rgba(255,200,50,0.04)"}}>
+      <button
+        onClick={()=>setOpen(o=>!o)}
+        style={{width:"100%",background:"none",border:"none",padding:"18px 20px",display:"flex",alignItems:"center",justifyContent:"space-between",cursor:"pointer",gap:12}}
+      >
+        <div style={{display:"flex",alignItems:"center",gap:12}}>
+          <span style={{fontSize:24}}>🏡</span>
+          <div style={{textAlign:"left"}}>
+            <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:13,color:"#f5c842",letterSpacing:".08em"}}>WHAT IS A HOUSE SYSTEM?</div>
+            <div style={{fontFamily:"Georgia,serif",fontSize:12,color:"#7a6e62",marginTop:2}}>Tap to learn — explained simply ✨</div>
+          </div>
+        </div>
+        <span style={{fontSize:16,color:"#f5c842",display:"inline-block",transition:"transform .3s",transform:open?"rotate(180deg)":"rotate(0deg)"}}>▾</span>
+      </button>
+
+      {open && (
+        <div style={{padding:"0 20px 24px",animation:"up .35s ease"}}>
+          <div style={{background:"rgba(168,224,96,0.07)",border:"1px solid rgba(168,224,96,0.15)",borderRadius:12,padding:"16px 18px",marginBottom:20}}>
+            <p style={{fontFamily:"Georgia,serif",fontSize:14,color:"#c8c0b0",lineHeight:1.8,margin:0}}>
+              🌌 <strong style={{color:"#a8e060"}}>Imagine the sky is a giant pie</strong> cut into <strong style={{color:"#f5c842"}}>12 slices</strong> all around the Earth. Each slice is called a <strong style={{color:"#f5c842"}}>House</strong>. When you were born, the planets were each chilling in one of these slices — and that tells astrologers something special about <em>your</em> life!
+            </p>
+            <p style={{fontFamily:"Georgia,serif",fontSize:14,color:"#c8c0b0",lineHeight:1.8,margin:"12px 0 0"}}>
+              🕐 The houses shift based on <strong style={{color:"#a8e060"}}>the exact time and place you were born</strong>. That's why two people born on the same day can have totally different charts!
+            </p>
+          </div>
+
+          <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,color:"#a8e060",letterSpacing:".2em",marginBottom:12}}>✦ TAP A HOUSE TO LEARN MORE ✦</div>
+
+          <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:8,marginBottom:20}}>
+            {houses.map(h=>(
+              <button
+                key={h.num}
+                onClick={()=>setActiveHouse(activeHouse===h.num?null:h.num)}
+                style={{
+                  background:activeHouse===h.num?"linear-gradient(135deg,rgba(255,200,50,0.2),rgba(255,200,50,0.06))":"rgba(255,255,255,0.03)",
+                  border:`1px solid ${activeHouse===h.num?"rgba(255,200,50,0.5)":"rgba(255,200,50,0.15)"}`,
+                  borderRadius:10,padding:"12px 8px",cursor:"pointer",transition:"all .2s",textAlign:"center"
+                }}
+              >
+                <div style={{fontSize:20,marginBottom:4}}>{h.emoji}</div>
+                <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#f5c842",letterSpacing:".05em"}}>HOUSE {h.num}</div>
+                <div style={{fontFamily:"Georgia,serif",fontSize:10,color:"#a8e060",marginTop:2}}>{h.name}</div>
+              </button>
+            ))}
+          </div>
+
+          {activeHouse && (()=>{
+            const h = houses.find(x=>x.num===activeHouse);
+            return (
+              <div style={{background:"rgba(255,200,50,0.08)",border:"1px solid rgba(255,200,50,0.3)",borderRadius:12,padding:"16px 18px",marginBottom:16,animation:"up .3s ease"}}>
+                <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:10}}>
+                  <span style={{fontSize:28}}>{h.emoji}</span>
+                  <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:12,color:"#f5c842"}}>
+                    THE {h.num}{ordinal(h.num).toUpperCase()} HOUSE — {h.name.toUpperCase()}
+                  </div>
+                </div>
+                <p style={{fontFamily:"Georgia,serif",fontSize:14,color:"#c8c0b0",lineHeight:1.8,margin:0}}>{h.kid}</p>
+              </div>
+            );
+          })()}
+
+          <div style={{textAlign:"center",marginTop:8}}>
+            <p style={{fontFamily:"Georgia,serif",fontSize:12,color:"#5a5048",lineHeight:1.7}}>
+              💡 The most popular house systems are <span style={{color:"#a8e060"}}>Placidus</span>, <span style={{color:"#a8e060"}}>Whole Sign</span>, and <span style={{color:"#a8e060"}}>Koch</span>. They each divide the sky a little differently — but always into the same 12 houses!
+            </p>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── PLANET EXPLAINER ───────────────────────────────────────────
+function PlanetExplainer() {
+  const [open, setOpen] = React.useState(false);
+  const [activePlanet, setActivePlanet] = React.useState(null);
+
+  const planets = [
+    {
+      name: "Sun", emoji: "☀️", color: "#f5c842",
+      keyword: "Identity & Purpose",
+      kid: "The Sun is YOU at your core. It's your personality, your confidence, and what makes you feel alive. Your Sun sign is the one most people know — like 'I'm a Leo!' It's the light you shine into the world.",
+      speed: "Changes signs every ~30 days",
+      type: "Personal Planet"
+    },
+    {
+      name: "Moon", emoji: "🌙", color: "#c8d8f0",
+      keyword: "Emotions & Instincts",
+      kid: "The Moon is your feelings — the private, soft, emotional side of you that not everyone gets to see. It shows how you feel safe, how you react when something surprises you, and what you need to feel comfy at home.",
+      speed: "Changes signs every ~2.5 days",
+      type: "Personal Planet"
+    },
+    {
+      name: "Mercury", emoji: "☿️", color: "#a8e060",
+      keyword: "Mind & Communication",
+      kid: "Mercury runs your brain! It's how you think, talk, text, and learn. When people say 'Mercury is in retrograde,' they mean communication gets a little glitchy — like missing texts and misunderstandings.",
+      speed: "Changes signs every ~3 weeks",
+      type: "Personal Planet"
+    },
+    {
+      name: "Venus", emoji: "♀️", color: "#f5a0c8",
+      keyword: "Love & Beauty",
+      kid: "Venus is all about love, beauty, and what you find attractive — in people AND in things like art, fashion, and music. It shows how you flirt, what you find gorgeous, and how you like to be loved back.",
+      speed: "Changes signs every ~4 weeks",
+      type: "Personal Planet"
+    },
+    {
+      name: "Mars", emoji: "♂️", color: "#e05050",
+      keyword: "Drive & Passion",
+      kid: "Mars is your inner warrior! It's your energy, your ambition, and what makes you fight for what you want. It shows how you handle anger, how you go after your goals, and your physical energy levels.",
+      speed: "Changes signs every ~6–7 weeks",
+      type: "Personal Planet"
+    },
+    {
+      name: "Jupiter", emoji: "♃", color: "#e8a800",
+      keyword: "Luck & Expansion",
+      kid: "Jupiter is the big lucky planet! It shows where life feels generous and where you naturally grow. It's like having a cosmic boost in whatever area of life it touches. Where is Jupiter in your chart? That's your golden zone.",
+      speed: "Changes signs every ~1 year",
+      type: "Social Planet"
+    },
+    {
+      name: "Saturn", emoji: "♄", color: "#b8a070",
+      keyword: "Lessons & Discipline",
+      kid: "Saturn is the serious one — the teacher planet. It shows where life asks you to work hard, be patient, and learn your biggest lessons. It's tough love from the universe. But once you master it? That area becomes your greatest strength.",
+      speed: "Changes signs every ~2.5 years",
+      type: "Social Planet"
+    },
+    {
+      name: "Uranus", emoji: "⛢", color: "#70d0e8",
+      keyword: "Revolution & Change",
+      kid: "Uranus is the wild card planet! It rules sudden changes, rebellions, and breakthroughs. It's the planet of 'plot twists.' A whole generation shares a Uranus sign — it shapes the big changes that generation brings to the world.",
+      speed: "Changes signs every ~7 years",
+      type: "Generational Planet"
+    },
+    {
+      name: "Neptune", emoji: "♆", color: "#7090f0",
+      keyword: "Dreams & Illusions",
+      kid: "Neptune is the dreamy, mystical planet. It rules imagination, spirituality, and things that are hard to see clearly — like fog. It can make things feel magical OR confusing. A whole generation shares Neptune — it shapes their collective dreams and ideals.",
+      speed: "Changes signs every ~14 years",
+      type: "Generational Planet"
+    },
+    {
+      name: "Pluto", emoji: "♇", color: "#9060c0",
+      keyword: "Transformation & Power",
+      kid: "Don't let Pluto's small size fool you — it's the most intense planet! It rules deep transformation, power, and rebirth. Like a phoenix rising from ashes. It moves SO slowly that a whole generation shares a Pluto sign — it shapes how that generation transforms the world.",
+      speed: "Changes signs every ~12–30 years",
+      type: "Generational Planet"
+    },
+    {
+      name: "Black Moon Lilith", emoji: "🖤", color: "#c060c0",
+      keyword: "Raw Power & Shadow Self",
+      kid: "Lilith isn't a planet — she's a point in the sky connected to the Moon's orbit. She represents your wild, untamed side — the part of you that refuses to be controlled or silenced. She's raw, powerful, and a little rebellious. She shows where you reclaim your power.",
+      speed: "Changes signs every ~9 months",
+      type: "Point / Asteroid"
+    },
+    {
+      name: "Chiron", emoji: "⚷", color: "#e08040",
+      keyword: "The Wounded Healer",
+      kid: "Chiron is called the 'Wounded Healer.' It shows your deepest wound — something that hurt you early in life. But here's the magic: that wound becomes your greatest gift. Where Chiron sits in your chart shows where you've been hurt AND where you have the power to heal others.",
+      speed: "Changes signs every ~4–8 years",
+      type: "Asteroid / Comet"
+    },
+  ];
+
+  const typeColors = {
+    "Personal Planet": "#a8e060",
+    "Social Planet": "#f5c842",
+    "Generational Planet": "#70d0e8",
+    "Point / Asteroid": "#c060c0",
+    "Asteroid / Comet": "#e08040",
+  };
+
+  return (
+    <div style={{marginBottom:28,borderRadius:16,overflow:"hidden",border:"1px solid rgba(168,224,96,0.2)",background:"rgba(168,224,96,0.03)"}}>
+      <button
+        onClick={()=>setOpen(o=>!o)}
+        style={{width:"100%",background:"none",border:"none",padding:"18px 20px",display:"flex",alignItems:"center",justifyContent:"space-between",cursor:"pointer",gap:12}}
+      >
+        <div style={{display:"flex",alignItems:"center",gap:12}}>
+          <span style={{fontSize:24}}>🪐</span>
+          <div style={{textAlign:"left"}}>
+            <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:13,color:"#a8e060",letterSpacing:".08em"}}>WHAT DOES EACH PLANET MEAN?</div>
+            <div style={{fontFamily:"Georgia,serif",fontSize:12,color:"#7a6e62",marginTop:2}}>Sun, Moon, Lilith, Chiron & more ✦</div>
+          </div>
+        </div>
+        <span style={{fontSize:16,color:"#a8e060",display:"inline-block",transition:"transform .3s",transform:open?"rotate(180deg)":"rotate(0deg)"}}>▾</span>
+      </button>
+
+      {open && (
+        <div style={{padding:"0 20px 24px",animation:"up .35s ease"}}>
+          {/* Intro */}
+          <div style={{background:"rgba(255,200,50,0.06)",border:"1px solid rgba(255,200,50,0.15)",borderRadius:12,padding:"16px 18px",marginBottom:20}}>
+            <p style={{fontFamily:"Georgia,serif",fontSize:14,color:"#c8c0b0",lineHeight:1.8,margin:0}}>
+              🌌 In astrology, every planet acts like a <strong style={{color:"#f5c842"}}>character in the story of your life</strong>. Each one rules a different part of who you are — from how you love to how you dream to where your deepest wounds live. Tap any planet below to learn its meaning!
+            </p>
+          </div>
+
+          {/* Type legend */}
+          <div style={{display:"flex",flexWrap:"wrap",gap:8,marginBottom:16}}>
+            {Object.entries(typeColors).map(([type,color])=>(
+              <span key={type} style={{fontFamily:"'Cinzel',serif",fontSize:9,fontWeight:700,letterSpacing:".06em",color,background:`${color}18`,border:`1px solid ${color}40`,borderRadius:100,padding:"4px 10px"}}>
+                {type.toUpperCase()}
+              </span>
+            ))}
+          </div>
+
+          {/* Planet buttons */}
+          <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:8,marginBottom:20}}>
+            {planets.map(p=>(
+              <button
+                key={p.name}
+                onClick={()=>setActivePlanet(activePlanet===p.name?null:p.name)}
+                style={{
+                  background:activePlanet===p.name?`linear-gradient(135deg,${p.color}25,${p.color}08)`:"rgba(255,255,255,0.03)",
+                  border:`1px solid ${activePlanet===p.name?p.color+"80":"rgba(255,255,255,0.08)"}`,
+                  borderRadius:10,padding:"12px 6px",cursor:"pointer",transition:"all .2s",textAlign:"center"
+                }}
+              >
+                <div style={{fontSize:22,marginBottom:4}}>{p.emoji}</div>
+                <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:p.color,letterSpacing:".04em",lineHeight:1.3}}>{p.name.toUpperCase()}</div>
+                <div style={{fontFamily:"Georgia,serif",fontSize:9,color:typeColors[p.type],marginTop:3,opacity:.8}}>{p.type}</div>
+              </button>
+            ))}
+          </div>
+
+          {/* Active planet detail */}
+          {activePlanet && (()=>{
+            const p = planets.find(x=>x.name===activePlanet);
+            return (
+              <div style={{background:`${p.color}12`,border:`1px solid ${p.color}50`,borderRadius:12,padding:"18px 18px",marginBottom:16,animation:"up .3s ease"}}>
+                <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:12}}>
+                  <span style={{fontSize:32}}>{p.emoji}</span>
+                  <div>
+                    <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:13,color:p.color,letterSpacing:".06em"}}>{p.name.toUpperCase()}</div>
+                    <div style={{fontFamily:"Georgia,serif",fontSize:12,color:"#a8e060",fontStyle:"italic",marginTop:2}}>{p.keyword}</div>
+                  </div>
+                </div>
+                <p style={{fontFamily:"Georgia,serif",fontSize:14,color:"#c8c0b0",lineHeight:1.8,margin:"0 0 12px"}}>{p.kid}</p>
+                <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
+                  <span style={{fontFamily:"'Cinzel',serif",fontSize:9,fontWeight:700,color:p.color,background:`${p.color}18`,border:`1px solid ${p.color}40`,borderRadius:100,padding:"4px 10px",letterSpacing:".06em"}}>
+                    ⏱ {p.speed}
+                  </span>
+                  <span style={{fontFamily:"'Cinzel',serif",fontSize:9,fontWeight:700,color:typeColors[p.type],background:`${typeColors[p.type]}18`,border:`1px solid ${typeColors[p.type]}40`,borderRadius:100,padding:"4px 10px",letterSpacing:".06em"}}>
+                    {p.type.toUpperCase()}
+                  </span>
+                </div>
+              </div>
+            );
+          })()}
+
+          <div style={{textAlign:"center",marginTop:8}}>
+            <p style={{fontFamily:"Georgia,serif",fontSize:12,color:"#5a5048",lineHeight:1.7}}>
+              💡 <span style={{color:"#a8e060"}}>Personal planets</span> (Sun–Mars) move fast and shape your individual personality. <span style={{color:"#f5c842"}}>Social planets</span> (Jupiter & Saturn) link you to your generation. <span style={{color:"#70d0e8"}}>Generational planets</span> (Uranus, Neptune, Pluto) move so slowly that entire generations share them!
+            </p>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── MAIN APP ───────────────────────────────────────────────────
 export default function AstrologyApp() {
   const [topTab, setTopTab] = useState("community");
@@ -2865,8 +3149,8 @@ export default function AstrologyApp() {
     {label:"💬 Community",key:"community"},
     {label:"🌠 Horoscope",key:"horoscope"},
     {label:"🔮 Game",key:"guess"},
-    {label:"🌌 Full Birth Chart",key:"birthchart"},
     {label:"✦ Fun Facts",key:"facts"},
+    {label:"🌌 Full Birth Chart",key:"birthchart"},
     {label:"🌟 Celebrity",key:"celebrity"},
     {label:"📲 Get The App",key:"install"},
   ];
@@ -2882,7 +3166,7 @@ export default function AstrologyApp() {
       <div style={{position:"relative",zIndex:1,maxWidth:700,margin:"0 auto",padding:"20px 18px 80px"}}>
         <div style={{display:"flex",gap:8,justifyContent:"center",marginBottom:24,flexWrap:"wrap"}}>
           {tabs.map(tab=>(
-            <button key={tab.key} onClick={()=>{setTopTab(tab.key);setMode("home");reset();}} style={{background:topTab===tab.key?"linear-gradient(135deg,#e8a800,#8a6000)":"rgba(255,200,50,0.08)",border:"2px solid "+(topTab===tab.key?"#e8a800":"rgba(255,200,50,0.3)"),color:topTab===tab.key?"#0d0a14":"#f5c842",padding:"8px 10px",borderRadius:"100px",fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:9,letterSpacing:".04em",cursor:"pointer",transition:"all 0.25s",boxShadow:topTab===tab.key?"0 0 16px 4px rgba(232,168,0,0.3)":"none"}}>{tab.label}</button>
+            <button key={tab.key} onClick={()=>{setTopTab(tab.key);setMode("home");reset();}} style={{background:topTab===tab.key?"linear-gradient(135deg,#e8a800,#8a6000)":"rgba(255,200,50,0.08)",border:"2px solid "+(topTab===tab.key?"#e8a800":"rgba(255,200,50,0.3)"),color:topTab===tab.key?"#0d0a14":"#f5c842",padding:"8px 12px",borderRadius:"100px",fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:11,letterSpacing:".04em",cursor:"pointer",transition:"all 0.25s",boxShadow:topTab===tab.key?"0 0 16px 4px rgba(232,168,0,0.3)":"none"}}>{tab.label}</button>
           ))}
         </div>
 
@@ -2927,10 +3211,19 @@ export default function AstrologyApp() {
             <p style={{color:"#a8e060",fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:13,margin:0,letterSpacing:".05em"}}>Discover what the stars reveal about you</p>
           </div>
           {mode==="home" && (
-            <div style={{animation:"up .5s ease",textAlign:"center",paddingTop:20}}>
-              <div style={{fontSize:48,marginBottom:20}}>🌙</div>
-              <div style={{fontFamily:"Georgia,serif",fontSize:17,color:"#7a6e62",marginBottom:36}}>Choose a sign and a planet to discover your cosmic fun fact.</div>
-              <button className="rb" style={{"--a":"#e8a800"}} onClick={()=>setMode("single")}>✦ EXPLORE YOUR PLACEMENTS</button>
+            <div style={{animation:"up .5s ease"}}>
+
+              {/* ── WHAT IS A HOUSE SYSTEM? ── */}
+              <HouseSystemExplainer />
+
+              {/* ── WHAT DOES EACH PLANET MEAN? ── */}
+              <PlanetExplainer />
+
+              <div style={{textAlign:"center",paddingTop:28}}>
+                <div style={{fontSize:48,marginBottom:20}}>🌙</div>
+                <div style={{fontFamily:"Georgia,serif",fontSize:17,color:"#7a6e62",marginBottom:36}}>Choose a sign and a planet to discover your cosmic fun fact.</div>
+                <button className="rb" style={{"--a":"#e8a800"}} onClick={()=>setMode("single")}>✦ EXPLORE YOUR PLACEMENTS</button>
+              </div>
             </div>
           )}
           {mode==="single" && (
