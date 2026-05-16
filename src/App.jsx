@@ -3050,7 +3050,7 @@ export default function AstrologyApp() {
                   Astrologers use <strong style={{color:"#a8e060"}}>mathematics</strong> — precise calculations of planetary positions, angles, and cycles — to map out exactly how these energies are showing up in <em>your</em> life. This is a science rooted in thousands of years of observation and calculation. <strong style={{color:"#f5c842"}}>It is just pattern recognition you guys. It is in NO WAY, shape or form witchcraft.</strong> 🙅🏽‍♀️
                 </p>
                 <p style={{fontFamily:"Georgia,serif",fontSize:15,color:"#f0ece4",lineHeight:1.85,margin:0}}>
-                  Think of your birth chart like a <strong style={{color:"#a8e060"}}>cosmic snapshot</strong> — a mathematical map of exactly where every planet was the moment you took your first breath. That map is unique to YOU, and it reveals the energies you came here to work with in this lifetime. 🌠
+                  Think of your birth chart like a <strong style={{color:"#a8e060"}}>screenshot of the sky at the time you were born </strong> — a mathematical map of exactly where every planet was the moment you took your first breath. That map is unique to YOU, and it reveals the energies you came here to work with in this lifetime. 🌠
                 </p>
                 <div style={{marginTop:20,display:"flex",flexWrap:"wrap",gap:10}}>
                   {[["🪐","Planetary Energy","Real forces that affect you daily"],["📐","Mathematics","Precise calculations, not magic"],["🗺️","Your Birth Chart","A unique cosmic map just for you"],["⏳","Thousands of Years","Ancient wisdom + modern science"]].map(([emoji,title,desc])=>(
