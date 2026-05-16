@@ -3030,8 +3030,6 @@ function PlanetExplainer() {
     "Asteroid / Comet": "#e08040",
     "Angle / Ascendant": "#f5a060",
   };
-    "Asteroid / Comet": "#e08040",
-  };
 
   return (
     <div style={{marginBottom:28,borderRadius:16,overflow:"hidden",border:"1px solid rgba(168,224,96,0.2)",background:"rgba(168,224,96,0.03)"}}>
