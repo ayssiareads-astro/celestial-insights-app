@@ -2974,7 +2974,7 @@ export default function AstrologyApp() {
     {label:"💬 Community",key:"community"},
     {label:"🌠 Horoscope",key:"horoscope"},
     {label:"🔮 Game",key:"guess"},
-    {label:"🌌 Full Birth Chart",key:"birthchart"},
+    {label:"🌌 Get A Reading",key:"birthchart"},
     {label:"🌟 Celebrity",key:"celebrity"},
     {label:"📲 Get The App",key:"install"},
   ];
@@ -3043,13 +3043,13 @@ export default function AstrologyApp() {
                   <span style={{fontSize:28}}>🌌</span>
                   <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:13,color:"#f5c842",letterSpacing:".08em"}}>WHAT IS ASTROLOGY?</div>
                 </div>
-                <p style={{fontFamily:"Georgia,serif",fontSize:15,color:"#c8c0b0",lineHeight:1.85,margin:"0 0 14px"}}>
+                <p style={{fontFamily:"Georgia,serif",fontSize:15,color:"#f0ece4",lineHeight:1.85,margin:"0 0 14px"}}>
                   Astrology is the study of how the <strong style={{color:"#f5c842"}}>energy from planets, stars, and asteroids</strong> affects human beings every single day. Just like the Moon controls ocean tides, these cosmic energies have a real influence on our emotions, decisions, relationships, and life patterns.
                 </p>
-                <p style={{fontFamily:"Georgia,serif",fontSize:15,color:"#c8c0b0",lineHeight:1.85,margin:"0 0 14px"}}>
+                <p style={{fontFamily:"Georgia,serif",fontSize:15,color:"#f0ece4",lineHeight:1.85,margin:"0 0 14px"}}>
                   Astrologers use <strong style={{color:"#a8e060"}}>mathematics</strong> — precise calculations of planetary positions, angles, and cycles — to map out exactly how these energies are showing up in <em>your</em> life. This is a science rooted in thousands of years of observation and calculation. <strong style={{color:"#f5c842"}}>It is just pattern recognition you guys. It is in NO WAY, shape or form witchcraft.</strong> 🙅🏽‍♀️
                 </p>
-                <p style={{fontFamily:"Georgia,serif",fontSize:15,color:"#c8c0b0",lineHeight:1.85,margin:0}}>
+                <p style={{fontFamily:"Georgia,serif",fontSize:15,color:"#f0ece4",lineHeight:1.85,margin:0}}>
                   Think of your birth chart like a <strong style={{color:"#a8e060"}}>cosmic snapshot</strong> — a mathematical map of exactly where every planet was the moment you took your first breath. That map is unique to YOU, and it reveals the energies you came here to work with in this lifetime. 🌠
                 </p>
                 <div style={{marginTop:20,display:"flex",flexWrap:"wrap",gap:10}}>
@@ -3057,7 +3057,7 @@ export default function AstrologyApp() {
                     <div key={title} style={{flex:"1 1 160px",background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,200,50,0.15)",borderRadius:10,padding:"12px 14px"}}>
                       <div style={{fontSize:20,marginBottom:6}}>{emoji}</div>
                       <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,color:"#f5c842",letterSpacing:".06em",marginBottom:4}}>{title.toUpperCase()}</div>
-                      <div style={{fontFamily:"Georgia,serif",fontSize:12,color:"#7a6e62",lineHeight:1.6}}>{desc}</div>
+                      <div style={{fontFamily:"Georgia,serif",fontSize:12,color:"#c8c0b0",lineHeight:1.6}}>{desc}</div>
                     </div>
                   ))}
                 </div>
