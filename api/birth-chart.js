@@ -62,6 +62,8 @@ export default async function handler(req, res) {
   const headers = {
     "Content-Type": "application/json",
     "Authorization": `Bearer ${apiKey}`,
+    "Cache-Control": "no-cache, no-store",
+    "Pragma": "no-cache",
   };
 
   const subject = {
@@ -75,7 +77,7 @@ export default async function handler(req, res) {
 
   const safeFetch = async (url, body, label) => {
     try {
-      const r = await fetch(url, { method: "POST", headers, body: JSON.stringify(body) });
+      const r = await fetch(`${url}?_=${Date.now()}`, { method: "POST", headers, body: JSON.stringify(body) });
       if (!r.ok) { console.warn(`${label} failed:`, r.status); return null; }
       const json = await r.json();
       console.log(`${label} OK:`, JSON.stringify(json).slice(0, 300));
