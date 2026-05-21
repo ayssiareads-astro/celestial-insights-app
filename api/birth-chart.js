@@ -147,7 +147,27 @@ export default async function handler(req, res) {
 
     console.log("Free planets:", planets);
 
-    // ── PAID: Full chart via charts/natal ─────────────────────
+    // ── ALWAYS: Fetch natal chart for accurate Rising sign ────
+    // (full details only returned to paid users)
+    const natalDataForRising = await safeFetch(
+      "https://api.astrology-api.io/api/v3/charts/natal",
+      { subject, options: { house_system: "W" } },
+      "NatalChartRising"
+    );
+
+    if (natalDataForRising) {
+      const cd = natalDataForRising?.chart_data || natalDataForRising?.data || natalDataForRising;
+      const rawPositions = cd?.planetary_positions || [];
+      if (Array.isArray(rawPositions)) {
+        const ascendant = rawPositions.find(p => p.name === "Ascendant");
+        if (ascendant?.sign) {
+          planets["Rising"] = SIGN_MAP[ascendant.sign] || ascendant.sign;
+          console.log("Rising from natal chart:", planets["Rising"]);
+        }
+      }
+    }
+
+    // ── PAID: Full chart details ─────────────────────────────
     let chartPlanets = [];
     let houseCusps = [];
     let aspects = [];
@@ -158,11 +178,7 @@ export default async function handler(req, res) {
       console.log("Paid — fetching full natal chart...");
 
       const [natalData, reportData, enhancedData] = await Promise.all([
-        safeFetch(
-          "https://api.astrology-api.io/api/v3/charts/natal",
-          { subject, options: { house_system: "W" } },
-          "NatalChart"
-        ),
+        Promise.resolve(natalDataForRising), // reuse already-fetched natal data
         safeFetch(
           "https://api.astrology-api.io/api/v3/analysis/natal-report",
           { subject, tradition: "psychological", house_system: "W" },
