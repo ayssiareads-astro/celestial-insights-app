@@ -113,7 +113,7 @@ export default async function handler(req, res) {
       "Houses"
     );
 
-    if (housesData) {
+    if (housesData && housesData.success !== false) {
       const d = housesData?.data || housesData;
       if (d?.ascendant?.sign) {
         planets["Rising"] = SIGN_MAP[d.ascendant.sign] || d.ascendant.sign;
@@ -122,7 +122,11 @@ export default async function handler(req, res) {
       } else if (Array.isArray(d?.positions)) {
         const asc = d.positions.find(p => p.name === "Asc" || p.name === "Ascendant");
         if (asc?.sign) planets["Rising"] = SIGN_MAP[asc.sign] || asc.sign;
+      } else {
+        planets["Rising"] = null;
       }
+    } else {
+      planets["Rising"] = null;
     }
 
     console.log("Free planets:", planets);
