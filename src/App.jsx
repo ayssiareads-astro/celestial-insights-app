@@ -299,9 +299,9 @@ function getAvatarForMilestone(level, questionIndex) {
   return avatarData[avatarIndex];
 }
 
-const STRIPE_TRIAL_LINK = "https://buy.stripe.com/bJefZa8lH4TBetl2VL5sA01";
+const STRIPE_TRIAL_LINK = "https://buy.stripe.com/fZu8wI45rdq7dph53T5sA02";
 const STRIPE_PORTAL_LINK = "https://billing.stripe.com/p/login/5kQ3co6dzeub70TfIx5sA00";
-const PAYWALL_AFTER = 5;
+const PAYWALL_AFTER = 999;
 
 function AvatarSVG({ avatar, size = 90 }) {
   const c = avatar.color;
@@ -493,8 +493,7 @@ function ZodiacQuiz() {
         <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:20,color:"#f5c842",marginBottom:10}}>Ready for More?</div>
         <p style={{fontFamily:"Georgia,serif",color:"#d8c890",fontSize:15,lineHeight:1.75,marginBottom:16}}>
           You have completed your free preview.<br/>
-          Unlock the full quiz — all 4 levels, all 12 avatars — with a <strong style={{color:"#f5c842"}}>7-day free trial</strong>.<br/>
-          Then just <strong style={{color:"#f5c842"}}>$4.99/month</strong>. Cancel anytime.
+          Unlock the full quiz — all 4 levels, all 12 avatars — with a <strong style={{color:"#f5c842"}}>one-time payment</strong> of just <strong style={{color:"#f5c842"}}>$3.33</strong>. Yours forever.
         </p>
         <div style={{display:"flex",flexDirection:"column",gap:6,alignItems:"center",marginBottom:20}}>
           {["✦ All 48 questions across 4 levels","✦ All 12 Zodiac Operative avatars","✦ Cancel instantly via Stripe — no emails"].map((item,i)=>(
@@ -517,8 +516,8 @@ function ZodiacQuiz() {
             </div>
           </div>
         )}
-        <button className="rb" style={{"--a":"#e8a800",marginBottom:12}} onClick={handleSubscribe}>✦ START MY FREE TRIAL</button>
-        <p style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,color:"#4a4440",margin:"0 0 16px",letterSpacing:".08em"}}>7-DAY FREE TRIAL · $4.99/MONTH AFTER · CANCEL ANYTIME</p>
+        <button className="rb" style={{"--a":"#e8a800",marginBottom:12}} onClick={handleSubscribe}>✦ UNLOCK FOR $3.33</button>
+        <p style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,color:"#4a4440",margin:"0 0 16px",letterSpacing:".08em"}}>ONE-TIME PAYMENT · $3.33 · FULL ACCESS FOREVER</p>
         {!showMemberVerify ? (
           <button onClick={()=>setShowMemberVerify(true)} style={{background:"none",border:"1px solid rgba(168,224,96,0.3)",color:"#a8e060",padding:"10px 24px",borderRadius:"100px",fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,letterSpacing:".1em",cursor:"pointer",marginBottom:14}}>✦ ALREADY A MEMBER</button>
         ) : (
@@ -959,9 +958,9 @@ function CelebrityConnection() {
 function DocSection({title,children}){return(<div style={{marginBottom:24}}><div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:13,color:"#f5c842",marginBottom:8,paddingBottom:4,borderBottom:"1px solid rgba(255,200,50,0.1)"}}>{title}</div><div style={{color:"#c8c0b0",fontSize:14,lineHeight:1.85}}>{children}</div></div>);}
 function DocP({children}){return <p style={{margin:"0 0 10px"}}>{children}</p>;}
 function DocBullet({items}){return(<ul style={{margin:"0 0 10px",paddingLeft:20}}>{items.map((item,i)=><li key={i} style={{marginBottom:6}}>{item}</li>)}</ul>);}
-function TermsContent(){return(<><DocP>Please read these Terms of Service carefully before using Arewewoke.</DocP><DocSection title="1. About Arewewoke"><DocP>Arewewoke is an astrology-based entertainment application operated by Ayssia Mason.</DocP></DocSection><DocSection title="2. Entertainment Disclaimer"><DocP>All content on Arewewoke is intended solely for entertainment and personal reflection.</DocP></DocSection><DocSection title="3. Eligibility"><DocP>You must be at least 18 years of age to subscribe to paid features of Arewewoke.</DocP></DocSection><DocSection title="4. Free Trial & Billing"><DocP>Arewewoke offers a 7-day free trial. After the trial, your subscription automatically renews at $4.99 per month unless you cancel before the trial ends.</DocP></DocSection><DocSection title="5. Cancellation"><DocP>You may cancel your subscription at any time via the Stripe customer portal — no emailing required.</DocP></DocSection><DocSection title="6. Intellectual Property"><DocP>All content, design, and features of Arewewoke are the property of Ayssia Mason unless otherwise credited.</DocP></DocSection><DocSection title="7. Contact"><DocP>celestial.insights.app@gmail.com</DocP></DocSection></>);}
+function TermsContent(){return(<><DocP>Please read these Terms of Service carefully before using Arewewoke.</DocP><DocSection title="1. About Arewewoke"><DocP>Arewewoke is an astrology-based entertainment application operated by Ayssia Mason.</DocP></DocSection><DocSection title="2. Entertainment Disclaimer"><DocP>All content on Arewewoke is intended solely for entertainment and personal reflection.</DocP></DocSection><DocSection title="3. Eligibility"><DocP>You must be at least 18 years of age to subscribe to paid features of Arewewoke.</DocP></DocSection><DocSection title="4. Payment & Billing"><DocP>Arewewoke offers full birth chart readings for a one-time payment of $3.33. There are no recurring charges or subscriptions.</DocP></DocSection><DocSection title="5. Cancellation"><DocP>You may cancel your subscription at any time via the Stripe customer portal — no emailing required.</DocP></DocSection><DocSection title="6. Intellectual Property"><DocP>All content, design, and features of Arewewoke are the property of Ayssia Mason unless otherwise credited.</DocP></DocSection><DocSection title="7. Contact"><DocP>celestial.insights.app@gmail.com</DocP></DocSection></>);}
 function PrivacyContent(){return(<><DocP>Your privacy matters to Arewewoke.</DocP><DocSection title="1. Information We Collect"><DocBullet items={["Email address and name when you subscribe","Payment information, processed securely by Stripe","Usage data to improve app performance","Subscription status to manage access to paid features"]}/></DocSection><DocSection title="2. How We Use Your Information"><DocBullet items={["To process and manage your subscription","To send receipts and billing communications","To improve app features","To respond to support requests"]}/><DocP>We do not sell, rent, share, or trade your personal information to third parties for marketing purposes.</DocP></DocSection><DocSection title="3. Your Rights"><DocP>You have the right to access, correct, or delete the personal data we hold about you. Contact us at celestial.insights.app@gmail.com.</DocP></DocSection><DocSection title="4. Contact"><DocP>celestial.insights.app@gmail.com</DocP></DocSection></>);}
-function CancellationContent(){return(<><DocSection title="Free Trial Period"><DocP>Your 7-day free trial begins the moment your payment method is verified. If you do not cancel before the trial ends, your $4.99/month subscription begins automatically on day 8.</DocP></DocSection><DocSection title="How to Cancel"><DocBullet items={["Via the Stripe customer portal — the fastest method, available 24/7.","By emailing celestial.insights.app@gmail.com with the subject line: Cancel My Subscription."]}/><div style={{marginTop:20,textAlign:"center"}}><a href="https://billing.stripe.com/p/login/5kQ3co6dzeub70TfIx5sA00" target="_blank" rel="noopener noreferrer" style={{display:"inline-block",background:"linear-gradient(135deg,#c0392b,#8b0000)",border:"1px solid rgba(255,80,80,0.4)",color:"#fff",fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:12,letterSpacing:".1em",padding:"14px 32px",borderRadius:100,textDecoration:"none",boxShadow:"0 0 20px rgba(192,57,43,0.3)",cursor:"pointer"}}>✕ CANCEL MY SUBSCRIPTION</a><p style={{fontFamily:"Georgia,serif",fontSize:12,color:"#7a6e62",marginTop:10,lineHeight:1.6}}>You'll be taken to the Stripe customer portal to manage or cancel your subscription.</p></div></DocSection><DocSection title="Refund Policy"><DocP>All subscription fees are non-refundable once charged.</DocP></DocSection><DocSection title="Contact"><DocP>celestial.insights.app@gmail.com</DocP></DocSection></>);}
+function CancellationContent(){return(<><DocSection title="One-Time Payment"><DocP>AreWeWoke now offers full birth chart readings as a one-time payment of $3.33. There is no subscription and no recurring billing.</DocP></DocSection><DocSection title="Refund Policy"><DocP>All payments are non-refundable once the birth chart reading has been delivered.</DocP></DocSection><DocSection title="Contact"><DocP>celestial.insights.app@gmail.com</DocP></DocSection></>);}
 function DisclaimerContent(){return(<><DocP>All astrological content on Arewewoke is provided strictly for entertainment and personal reflection.</DocP><DocSection title="Not Professional Advice"><DocP>Nothing on Arewewoke constitutes medical, psychological, financial, legal, or any other form of professional advice.</DocP></DocSection><DocSection title="Contact"><DocP>celestial.insights.app@gmail.com</DocP></DocSection></>);}
 function CreditsContent(){return(<><DocP>Arewewoke is created and operated by Ayssia Mason.</DocP><DocSection title="Brand"><DocP>Powered by Ayssia ✦</DocP></DocSection><DocSection title="Astrological Authors Referenced"><DocBullet items={["Steven Forrest — The Inner Sky, evolutionary astrology","Liz Greene — Saturn: A New Look at an Old Devil, psychological astrology","Robert Hand — Planets in Transit","Howard Sasportas — The Twelve Houses","Donna Cunningham — Moon and Venus placements","Isabel Hickey — Astrology: A Cosmic Science","Dane Rudhyar — An Astrological Mandala"]}/></DocSection><DocSection title="Contact"><DocP>celestia.insights.app@gmail.com</DocP></DocSection></>);}
 
@@ -1698,7 +1697,7 @@ const planetInHouse = {
 // ── Paywall section — must be a top-level component so the email
 //    input never loses focus on re-render
 function PaywallSection({ chartPlanets, onVerified }) {
-  const STRIPE_TRIAL_LINK = "https://buy.stripe.com/bJefZa8lH4TBetl2VL5sA01";
+  const STRIPE_TRIAL_LINK = "https://buy.stripe.com/fZu8wI45rdq7dph53T5sA02";
   const [showMemberVerify, setShowMemberVerify] = useState(false);
   const [memberEmail, setMemberEmail] = useState("");
   const [memberError, setMemberError] = useState(null);
@@ -1757,8 +1756,8 @@ function PaywallSection({ chartPlanets, onVerified }) {
             <div key={i} style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,color:"#a8e060",letterSpacing:".06em"}}>{item}</div>
           ))}
         </div>
-        <button className="rb" style={{"--a":"#a8e060",marginBottom:12}} onClick={()=>window.location.href=STRIPE_TRIAL_LINK}>✦ START MY FREE TRIAL</button>
-        <p style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,color:"#4a4440",margin:"0 0 14px",letterSpacing:".08em"}}>7-DAY FREE TRIAL · $4.99/MONTH AFTER · CANCEL ANYTIME</p>
+        <button className="rb" style={{"--a":"#a8e060",marginBottom:12}} onClick={()=>window.location.href=STRIPE_TRIAL_LINK}>✦ UNLOCK FOR $3.33</button>
+        <p style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,color:"#4a4440",margin:"0 0 14px",letterSpacing:".08em"}}>ONE-TIME PAYMENT · $3.33 · FULL ACCESS FOREVER</p>
         {!showMemberVerify ? (
           <button onClick={handleShowVerify} style={{background:"none",border:"1px solid rgba(168,224,96,0.3)",color:"#a8e060",padding:"10px 24px",borderRadius:"100px",fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,letterSpacing:".1em",cursor:"pointer"}}>✦ ALREADY A MEMBER</button>
         ) : (
@@ -2342,7 +2341,7 @@ function PromptThread({ prompt, isAdmin }) {
   const isSubscribed = (() => { try { return localStorage.getItem("aww_subscribed") === "true"; } catch(e) { return false; } })();
   const getPostCount = () => { try { return parseInt(localStorage.getItem("aww_post_count") || "0"); } catch(e) { return 0; } };
   const incrementPostCount = () => { try { localStorage.setItem("aww_post_count", String(getPostCount() + 1)); } catch(e) {} };
-  const POST_LIMIT = 5;
+  const POST_LIMIT = 999;
   const [nickname, setNickname] = React.useState(() => { try { return localStorage.getItem("aww_nick") || ""; } catch(e) { return ""; } });
   const [sign, setSign] = React.useState(() => { try { return localStorage.getItem("aww_sign") || ""; } catch(e) { return ""; } });
   const [changingIdentity, setChangingIdentity] = React.useState(false);
@@ -2546,10 +2545,10 @@ function PromptThread({ prompt, isAdmin }) {
                 <div key={i} style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,color:"#a8e060",letterSpacing:".06em"}}>{item}</div>
               ))}
             </div>
-            <button className="rb" style={{"--a":"#e8a800",marginBottom:12}} onClick={()=>window.location.href="https://buy.stripe.com/bJefZa8lH4TBetl2VL5sA01"}>
-              ✦ START MY FREE TRIAL
+            <button className="rb" style={{"--a":"#e8a800",marginBottom:12}} onClick={()=>window.location.href="https://buy.stripe.com/fZu8wI45rdq7dph53T5sA02"}>
+              ✦ UNLOCK FOR $3.33
             </button>
-            <p style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,color:"#4a4440",margin:"0 0 14px",letterSpacing:".08em"}}>7-DAY FREE TRIAL · $4.99/MONTH AFTER · CANCEL ANYTIME</p>
+            <p style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,color:"#4a4440",margin:"0 0 14px",letterSpacing:".08em"}}>ONE-TIME PAYMENT · $3.33 · FULL ACCESS FOREVER</p>
             <button onClick={()=>setShowPaywall(false)} style={{background:"none",border:"none",color:"#4a4440",cursor:"pointer",fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,letterSpacing:".1em"}}>← MAYBE LATER</button>
           </div>
         </div>
