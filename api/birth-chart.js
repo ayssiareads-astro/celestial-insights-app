@@ -109,7 +109,7 @@ export default async function handler(req, res) {
     // Rising from house cusps (free tier)
     const housesData = await safeFetch(
       "https://api.astrology-api.io/api/v3/data/house-cusps",
-      { subject },
+      { subject, options: { house_system: "W" } },
       "Houses"
     );
 
