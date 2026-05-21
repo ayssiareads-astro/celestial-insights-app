@@ -106,27 +106,43 @@ export default async function handler(req, res) {
       });
     }
 
-    // Rising from house cusps (free tier)
-    const housesData = await safeFetch(
-      "https://api.astrology-api.io/api/v3/data/house-cusps",
-      { subject, options: { house_system: "W" } },
-      "Houses"
+    // Rising from enhanced positions (includes Ascendant)
+    const enhancedPosData = await safeFetch(
+      "https://api.astrology-api.io/api/v3/data/positions/enhanced",
+      { subject, options: { house_system: "W", zodiac_type: "Tropic", active_points: ["Ascendant"] } },
+      "EnhancedPositions"
     );
 
-    if (housesData && housesData.success !== false) {
-      const d = housesData?.data || housesData;
-      if (d?.ascendant?.sign) {
-        planets["Rising"] = SIGN_MAP[d.ascendant.sign] || d.ascendant.sign;
-      } else if (Array.isArray(d?.cusps) && d.cusps[0]?.sign) {
-        planets["Rising"] = SIGN_MAP[d.cusps[0].sign] || d.cusps[0].sign;
-      } else if (Array.isArray(d?.positions)) {
-        const asc = d.positions.find(p => p.name === "Asc" || p.name === "Ascendant");
-        if (asc?.sign) planets["Rising"] = SIGN_MAP[asc.sign] || asc.sign;
+    if (enhancedPosData && enhancedPosData.success !== false) {
+      const ePositions = enhancedPosData?.data?.positions || enhancedPosData?.positions || [];
+      const asc = ePositions.find(p => p.name === "Asc" || p.name === "Ascendant");
+      if (asc?.sign) {
+        planets["Rising"] = SIGN_MAP[asc.sign] || asc.sign;
+      }
+    }
+
+    // Fallback: house-cusps if enhanced positions didn't give us Rising
+    if (!planets["Rising"]) {
+      const housesData = await safeFetch(
+        "https://api.astrology-api.io/api/v3/data/house-cusps",
+        { subject, options: { house_system: "W" } },
+        "Houses"
+      );
+      if (housesData && housesData.success !== false) {
+        const d = housesData?.data || housesData;
+        if (d?.ascendant?.sign) {
+          planets["Rising"] = SIGN_MAP[d.ascendant.sign] || d.ascendant.sign;
+        } else if (Array.isArray(d?.cusps) && d.cusps[0]?.sign) {
+          planets["Rising"] = SIGN_MAP[d.cusps[0].sign] || d.cusps[0].sign;
+        } else if (Array.isArray(d?.positions)) {
+          const asc = d.positions.find(p => p.name === "Asc" || p.name === "Ascendant");
+          if (asc?.sign) planets["Rising"] = SIGN_MAP[asc.sign] || asc.sign;
+        } else {
+          planets["Rising"] = null;
+        }
       } else {
         planets["Rising"] = null;
       }
-    } else {
-      planets["Rising"] = null;
     }
 
     console.log("Free planets:", planets);
@@ -290,21 +306,27 @@ export default async function handler(req, res) {
           clean.forEach(s => {
             const t = s.title || "";
 
-            // ── Planet in house: "Sun in House_10" ──────────────
-            const houseMatch = t.match(/^(\w+)\s+in\s+House[\s_](\d+)$/i);
+            // ── Planet in house: "Sun — 4th House" or "Sun in House_10" ──────────────
+            const houseMatch = t.match(/^([A-Za-z_]+)\s*(?:—|-|in)\s*(?:House[\s_])?(\d+)(?:st|nd|rd|th)?\s*House?$/i);
             if (houseMatch) {
               const planet = PLANET_MAP[houseMatch[1]] || houseMatch[1];
               houseSections[planet] = { houseNum: houseMatch[2], text: s.text };
               return;
             }
 
-            // ── Planet in sign: "Sun in Tau" or "Sun in Taurus" ─
-            // Must start with a known planet and have exactly "in <word>" with no underscore
-            const signMatch = t.match(/^([A-Za-z]+)\s+in\s+([A-Za-z]+)$/i);
+            // ── Planet in sign: "Sun — Taurus" or "Sun in Tau" ─
+            const signMatch = t.match(/^([A-Za-z_]+)\s*(?:—|-|in)\s*([A-Za-z]+)$/i);
             if (signMatch) {
               const planet = PLANET_MAP[signMatch[1]] || signMatch[1];
+              const sign = signMatch[2];
               if (KNOWN_PLANETS.has(planet) || KNOWN_PLANETS.has(signMatch[1])) {
-                signSections[planet] = { sign: signMatch[2], text: s.text };
+                signSections[planet] = { sign, text: s.text };
+                // Grab Rising from Ascendant sign section
+                if (planet === "Rising" || signMatch[1] === "Ascendant") {
+                  const risingSign = SIGN_MAP[sign] || sign;
+                  planets["Rising"] = risingSign;
+                  console.log(`Rising corrected from report title to: ${risingSign}`);
+                }
                 return;
               }
             }
