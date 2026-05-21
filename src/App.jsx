@@ -2073,6 +2073,7 @@ function BirthChart() {
 
 // ─── COMMUNITY ──────────────────────────────────────────────────
 const PROMPTS = [
+  { id:"woke",    label:"Astrology Hot Takes",                    placeholder:"Drop your hottest astrology take..." },
   { id:"leos",    label:"Leos be like...",                        placeholder:"Say what we are all thinking..." },
   { id:"petpeeve",label:"As a [sign], my biggest pet peeve is...",placeholder:"Vent freely..." },
   { id:"beef",    label:"Who's most likely to start random beef?",placeholder:"Name the sign and why..." },
