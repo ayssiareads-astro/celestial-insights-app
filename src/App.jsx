@@ -1727,7 +1727,7 @@ function PaywallSection({ chartPlanets, onVerified }) {
   return (
     <div style={{marginBottom:24}}>
       {/* Blurred preview */}
-      <div style={{position:"relative",marginBottom:20,borderRadius:16,overflow:"hidden"}}>
+      <div style={{position:"relative",marginBottom:8,borderRadius:16,overflow:"hidden"}}>
         <div style={{filter:"blur(5px)",pointerEvents:"none",userSelect:"none"}}>
           <div style={{width:160,height:160,borderRadius:"50%",margin:"0 auto 16px",border:"2px solid rgba(255,200,50,0.2)",background:"radial-gradient(circle,rgba(245,200,66,0.05),rgba(0,0,0,0.3))",display:"flex",alignItems:"center",justifyContent:"center",fontSize:36}}>🌌</div>
           <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:6,padding:"0 4px"}}>
@@ -1749,15 +1749,16 @@ function PaywallSection({ chartPlanets, onVerified }) {
         </div>
       </div>
       {/* CTA */}
-      <div style={{background:"rgba(168,224,96,0.06)",border:"1px solid rgba(168,224,96,0.2)",borderRadius:14,padding:"22px 20px",textAlign:"center"}}>
-        <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:14,color:"#a8e060",marginBottom:8}}>Unlock Your Full Reading</div>
+      <div style={{background:"rgba(168,224,96,0.06)",border:"1px solid rgba(168,224,96,0.2)",borderRadius:14,padding:"22px 20px",textAlign:"center",marginTop:4}}>
+        <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:14,color:"#a8e060",marginBottom:4}}>Unlock Your Full Reading</div>
+        <p style={{fontFamily:"Georgia,serif",fontSize:12,color:"#f5c842",marginBottom:12,lineHeight:1.5}}>One-time payment of <strong>$3.33</strong> — yours forever, no subscription.</p>
         <div style={{display:"flex",flexDirection:"column",gap:5,alignItems:"center",marginBottom:16}}>
           {["✦ Natal chart wheel","✦ All 11 placements with interpretations","✦ Key aspects","✦ Complete written natal report"].map((item,i)=>(
             <div key={i} style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,color:"#a8e060",letterSpacing:".06em"}}>{item}</div>
           ))}
         </div>
-        <button className="rb" style={{"--a":"#a8e060",marginBottom:12}} onClick={()=>window.location.href=STRIPE_TRIAL_LINK}>✦ UNLOCK FOR $3.33</button>
-        <p style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,color:"#4a4440",margin:"0 0 14px",letterSpacing:".08em"}}>ONE-TIME PAYMENT · $3.33 · FULL ACCESS FOREVER</p>
+        <button className="rb" style={{"--a":"#a8e060",marginBottom:8}} onClick={()=>window.location.href=STRIPE_TRIAL_LINK}>✦ UNLOCK FOR $3.33</button>
+        <p style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,color:"#4a4440",margin:"0 0 14px",letterSpacing:".08em"}}>ONE-TIME PAYMENT · NO SUBSCRIPTION · FULL ACCESS FOREVER</p>
         {!showMemberVerify ? (
           <button onClick={handleShowVerify} style={{background:"none",border:"1px solid rgba(168,224,96,0.3)",color:"#a8e060",padding:"10px 24px",borderRadius:"100px",fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,letterSpacing:".1em",cursor:"pointer"}}>✦ ALREADY A MEMBER</button>
         ) : (
