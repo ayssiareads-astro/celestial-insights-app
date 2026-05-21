@@ -371,6 +371,7 @@ function ZodiacQuiz() {
   const [memberVerifying, setMemberVerifying] = useState(false);
   const [reactionGif, setReactionGif] = useState(null);
   const [gifLoading, setGifLoading] = useState(false);
+  const [gifCorrect, setGifCorrect] = useState(null);
 
   React.useEffect(() => { save("screen", screen); }, [screen]);
   React.useEffect(() => { save("level", level); }, [level]);
@@ -405,6 +406,7 @@ function ZodiacQuiz() {
             const random = gifs[Math.floor(Math.random() * gifs.length)];
             const gifUrl = random?.images?.fixed_height?.url || null;
             setReactionGif(gifUrl);
+            setGifCorrect(correct);
             // Auto-dismiss after 3 seconds
             if (gifUrl) setTimeout(() => setReactionGif(null), 3000);
           }
@@ -686,10 +688,10 @@ function ZodiacQuiz() {
           onClick={()=>setReactionGif(null)}
           style={{position:"fixed",inset:0,zIndex:9999,background:"rgba(0,0,0,0.88)",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",cursor:"pointer",animation:"fadeIn .2s ease"}}
         >
-          <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:16,color:isCorrect?"#a8e060":"#ff7070",letterSpacing:".1em",marginBottom:16,textAlign:"center"}}>
-            {isCorrect?"✦ CORRECT! THE STARS ALIGN ✦":"✗ NOT QUITE..."}
+          <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:16,color:gifCorrect?"#a8e060":"#ff7070",letterSpacing:".1em",marginBottom:16,textAlign:"center"}}>
+            {gifCorrect?"✦ CORRECT! THE STARS ALIGN ✦":"✗ NOT QUITE..."}
           </div>
-          <div style={{borderRadius:16,overflow:"hidden",maxWidth:"90vw",maxHeight:"60vh",border:`2px solid ${isCorrect?"rgba(168,224,96,0.4)":"rgba(255,100,100,0.4)"}`,boxShadow:`0 0 40px ${isCorrect?"rgba(168,224,96,0.2)":"rgba(255,100,100,0.2)"}`}}>
+          <div style={{borderRadius:16,overflow:"hidden",maxWidth:"90vw",maxHeight:"60vh",border:`2px solid ${gifCorrect?"rgba(168,224,96,0.4)":"rgba(255,100,100,0.4)"}`,boxShadow:`0 0 40px ${gifCorrect?"rgba(168,224,96,0.2)":"rgba(255,100,100,0.2)"}`}}>
             <img src={reactionGif} alt="reaction" style={{display:"block",maxWidth:"100%",maxHeight:"60vh",objectFit:"contain"}} />
           </div>
           <div style={{fontFamily:"'Cinzel',serif",fontSize:9,color:"#4a4440",letterSpacing:".12em",marginTop:16}}>TAP ANYWHERE TO CONTINUE</div>
