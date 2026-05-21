@@ -403,7 +403,10 @@ function ZodiacQuiz() {
           const gifs = data?.data;
           if (gifs && gifs.length > 0) {
             const random = gifs[Math.floor(Math.random() * gifs.length)];
-            setReactionGif(random?.images?.fixed_height?.url || null);
+            const gifUrl = random?.images?.fixed_height?.url || null;
+            setReactionGif(gifUrl);
+            // Auto-dismiss after 3 seconds
+            if (gifUrl) setTimeout(() => setReactionGif(null), 3000);
           }
           setGifLoading(false);
         })
@@ -675,14 +678,21 @@ function ZodiacQuiz() {
           <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:13,color:isCorrect?"#a8e060":"#ff7070"}}>
             {isCorrect?"✦ Correct! The stars align.":"✗ Not quite — "+currentQuestion.answer}
           </div>
-          {gifLoading && (
-            <div style={{marginTop:10,fontFamily:"'Cinzel',serif",fontSize:10,color:"#7a6e62",letterSpacing:".08em"}}>✦ loading reaction...</div>
-          )}
-          {reactionGif && !gifLoading && (
-            <div style={{marginTop:10,borderRadius:10,overflow:"hidden",display:"inline-block",maxWidth:"100%",border:`1px solid ${isCorrect?"rgba(168,224,96,0.2)":"rgba(255,100,100,0.2)"}`}}>
-              <img src={reactionGif} alt="reaction" style={{display:"block",maxWidth:"100%",maxHeight:180,objectFit:"cover"}} />
-            </div>
-          )}
+        </div>
+      )}
+      {/* Fullscreen GIF overlay */}
+      {reactionGif && (
+        <div
+          onClick={()=>setReactionGif(null)}
+          style={{position:"fixed",inset:0,zIndex:9999,background:"rgba(0,0,0,0.88)",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",cursor:"pointer",animation:"fadeIn .2s ease"}}
+        >
+          <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:16,color:isCorrect?"#a8e060":"#ff7070",letterSpacing:".1em",marginBottom:16,textAlign:"center"}}>
+            {isCorrect?"✦ CORRECT! THE STARS ALIGN ✦":"✗ NOT QUITE..."}
+          </div>
+          <div style={{borderRadius:16,overflow:"hidden",maxWidth:"90vw",maxHeight:"60vh",border:`2px solid ${isCorrect?"rgba(168,224,96,0.4)":"rgba(255,100,100,0.4)"}`,boxShadow:`0 0 40px ${isCorrect?"rgba(168,224,96,0.2)":"rgba(255,100,100,0.2)"}`}}>
+            <img src={reactionGif} alt="reaction" style={{display:"block",maxWidth:"100%",maxHeight:"60vh",objectFit:"contain"}} />
+          </div>
+          <div style={{fontFamily:"'Cinzel',serif",fontSize:9,color:"#4a4440",letterSpacing:".12em",marginTop:16}}>TAP ANYWHERE TO CONTINUE</div>
         </div>
       )}
       {!isSubscribed && (
