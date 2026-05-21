@@ -395,7 +395,7 @@ function ZodiacQuiz() {
     const query = correct
       ? ["astrology correct","stars aligned","zodiac win","cosmic yes","celebrat astrology"][Math.floor(Math.random()*5)]
       : ["astrology wrong","zodiac oops","mercury retrograde","cosmic fail","stars no"][Math.floor(Math.random()*5)];
-    const giphyKey = process.env.NEXT_PUBLIC_GIPHY_API_KEY;
+    const giphyKey = "QNGtI6JhNCqeCbfWeG5OePi8gMcLfikp";
     if (giphyKey) {
       fetch(`https://api.giphy.com/v1/gifs/search?api_key=${giphyKey}&q=${encodeURIComponent(query)}&limit=20&rating=pg`)
         .then(r => r.json())
