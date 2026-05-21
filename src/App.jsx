@@ -1727,9 +1727,9 @@ function PaywallSection({ chartPlanets, onVerified }) {
   return (
     <div style={{marginBottom:24}}>
       {/* Blurred preview */}
-      <div style={{position:"relative",marginBottom:8,borderRadius:16,overflow:"hidden"}}>
+      <div style={{position:"relative",marginBottom:0,borderRadius:16,overflow:"hidden"}}>
         <div style={{filter:"blur(5px)",pointerEvents:"none",userSelect:"none"}}>
-          <div style={{width:160,height:160,borderRadius:"50%",margin:"0 auto 16px",border:"2px solid rgba(255,200,50,0.2)",background:"radial-gradient(circle,rgba(245,200,66,0.05),rgba(0,0,0,0.3))",display:"flex",alignItems:"center",justifyContent:"center",fontSize:36}}>🌌</div>
+          <div style={{width:100,height:100,borderRadius:"50%",margin:"0 auto 10px",border:"2px solid rgba(255,200,50,0.2)",background:"radial-gradient(circle,rgba(245,200,66,0.05),rgba(0,0,0,0.3))",display:"flex",alignItems:"center",justifyContent:"center",fontSize:28}}>🌌</div>
           <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:6,padding:"0 4px"}}>
             {["Mercury","Venus","Mars","Jupiter","Saturn","Uranus","Neptune","Pluto"].map(p => (
               <div key={p} style={{background:"rgba(255,200,50,0.06)",border:"1px solid rgba(255,200,50,0.15)",borderRadius:10,padding:"10px 12px",display:"flex",alignItems:"center",gap:8}}>
@@ -1749,7 +1749,7 @@ function PaywallSection({ chartPlanets, onVerified }) {
         </div>
       </div>
       {/* CTA */}
-      <div style={{background:"rgba(168,224,96,0.06)",border:"1px solid rgba(168,224,96,0.2)",borderRadius:14,padding:"22px 20px",textAlign:"center",marginTop:4}}>
+      <div style={{background:"rgba(168,224,96,0.06)",border:"1px solid rgba(168,224,96,0.2)",borderRadius:14,padding:"22px 20px",textAlign:"center",marginTop:0}}>
         <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:14,color:"#a8e060",marginBottom:4}}>Unlock Your Full Reading</div>
         <p style={{fontFamily:"Georgia,serif",fontSize:12,color:"#f5c842",marginBottom:12,lineHeight:1.5}}>One-time payment of <strong>$3.33</strong> — yours forever, no subscription.</p>
         <div style={{display:"flex",flexDirection:"column",gap:5,alignItems:"center",marginBottom:16}}>
