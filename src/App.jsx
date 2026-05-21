@@ -347,7 +347,7 @@ function ZodiacQuiz() {
 
   const [screen, setScreen] = useState(() => {
     const s = loadSaved("screen", "intro");
-    return (s === "playing" || s === "levelComplete" || s === "paywall") ? s : "intro";
+    return (s === "playing" || s === "levelComplete") ? s : "intro";
   });
   const [level, setLevel] = useState(() => loadSaved("level", 1));
   const [questionIndex, setQuestionIndex] = useState(() => loadSaved("questionIndex", 0));
@@ -369,6 +369,8 @@ function ZodiacQuiz() {
   const [memberEmail, setMemberEmail] = useState("");
   const [memberError, setMemberError] = useState(null);
   const [memberVerifying, setMemberVerifying] = useState(false);
+  const [reactionGif, setReactionGif] = useState(null);
+  const [gifLoading, setGifLoading] = useState(false);
 
   React.useEffect(() => { save("screen", screen); }, [screen]);
   React.useEffect(() => { save("level", level); }, [level]);
@@ -386,6 +388,29 @@ function ZodiacQuiz() {
     setSelectedAnswer(option);
     const correct = option === currentQuestion.answer;
     setIsCorrect(correct);
+    setReactionGif(null);
+    setGifLoading(true);
+
+    // Fetch reaction GIF from Giphy
+    const query = correct
+      ? ["astrology correct","stars aligned","zodiac win","cosmic yes","celebrat astrology"][Math.floor(Math.random()*5)]
+      : ["astrology wrong","zodiac oops","mercury retrograde","cosmic fail","stars no"][Math.floor(Math.random()*5)];
+    const giphyKey = process.env.NEXT_PUBLIC_GIPHY_API_KEY;
+    if (giphyKey) {
+      fetch(`https://api.giphy.com/v1/gifs/search?api_key=${giphyKey}&q=${encodeURIComponent(query)}&limit=20&rating=pg`)
+        .then(r => r.json())
+        .then(data => {
+          const gifs = data?.data;
+          if (gifs && gifs.length > 0) {
+            const random = gifs[Math.floor(Math.random() * gifs.length)];
+            setReactionGif(random?.images?.fixed_height?.url || null);
+          }
+          setGifLoading(false);
+        })
+        .catch(() => setGifLoading(false));
+    } else {
+      setGifLoading(false);
+    }
     const newScore = { correct: score.correct + (correct ? 1 : 0), total: score.total + 1 };
     setScore(newScore);
     const newCorrectInLevel = correctInLevel + (correct ? 1 : 0);
@@ -402,18 +427,10 @@ function ZodiacQuiz() {
         if (av) {
           setNewAvatar(av);
           setUnlockedAvatars(prev => [...prev, av.sign]);
-          setSelectedAnswer(null); setIsCorrect(null);
-          if (newTotal >= PAYWALL_AFTER && !isSubscribed && nextQIndex < 12) {
-            setScreen("avatarUnlock");
-            return;
-          }
+          setSelectedAnswer(null); setIsCorrect(null); setReactionGif(null);
           setScreen("avatarUnlock");
           return;
         }
-      }
-      if (newTotal >= PAYWALL_AFTER && !isSubscribed && nextQIndex < 12) {
-        setScreen("paywall");
-        return;
       }
       if (nextQIndex >= 12) {
         setScreen("levelComplete");
@@ -428,10 +445,6 @@ function ZodiacQuiz() {
   const handleNextAfterAvatar = () => {
     const nextQIndex = questionIndex + 1;
     setNewAvatar(null);
-    if (totalAnswered >= PAYWALL_AFTER && !isSubscribed && nextQIndex < 12) {
-      setScreen("paywall");
-      return;
-    }
     if (nextQIndex >= 12) {
       setScreen("levelComplete");
     } else {
@@ -484,64 +497,6 @@ function ZodiacQuiz() {
     if (screen === "intro") setScreen("playing");
   }, []);
   if (screen === "intro") return null;
-
-  if (screen === "paywall") return (
-    <div style={{animation:"up .5s ease",textAlign:"center"}}>
-      <div style={{background:"linear-gradient(135deg,rgba(232,168,0,0.12),rgba(0,0,0,0.35))",border:"1px solid rgba(255,200,50,0.35)",borderRadius:20,padding:"32px 24px",marginBottom:16,position:"relative",overflow:"hidden"}}>
-        <div style={{position:"absolute",top:0,left:0,right:0,height:2,background:"linear-gradient(90deg,transparent,#e8a800,transparent)"}}/>
-        <div style={{fontSize:44,marginBottom:12}}>🔮</div>
-        <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:20,color:"#f5c842",marginBottom:10}}>Ready for More?</div>
-        <p style={{fontFamily:"Georgia,serif",color:"#d8c890",fontSize:15,lineHeight:1.75,marginBottom:16}}>
-          You have completed your free preview.<br/>
-          Unlock the full quiz — all 4 levels, all 12 avatars — with a <strong style={{color:"#f5c842"}}>one-time payment</strong> of just <strong style={{color:"#f5c842"}}>$3.33</strong>. Yours forever.
-        </p>
-        <div style={{display:"flex",flexDirection:"column",gap:6,alignItems:"center",marginBottom:20}}>
-          {["✦ All 48 questions across 4 levels","✦ All 12 Zodiac Operative avatars","✦ Cancel instantly via Stripe — no emails"].map((item,i)=>(
-            <div key={i} style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,color:"#a8e060",letterSpacing:".06em"}}>{item}</div>
-          ))}
-        </div>
-        {unlockedAvatars.length > 0 && (
-          <div style={{marginBottom:20}}>
-            <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#f5c842",letterSpacing:".12em",marginBottom:10}}>AVATARS COLLECTED SO FAR</div>
-            <div style={{display:"flex",gap:8,justifyContent:"center",flexWrap:"wrap"}}>
-              {unlockedAvatars.map(s=>{const av=avatarData.find(a=>a.sign===s);return(
-                <div key={s} style={{textAlign:"center"}}>
-                  <AvatarSVG avatar={av} size={48}/>
-                  <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,color:av.color,marginTop:2}}>{s}</div>
-                </div>
-              );})}
-              {Array.from({length: Math.max(0, 3 - unlockedAvatars.length)}).map((_,i)=>(
-                <div key={"lock"+i} style={{width:48,height:48,borderRadius:8,background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.07)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:18}}>🔒</div>
-              ))}
-            </div>
-          </div>
-        )}
-        <button className="rb" style={{"--a":"#e8a800",marginBottom:12}} onClick={handleSubscribe}>✦ UNLOCK FOR $3.33</button>
-        <p style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,color:"#4a4440",margin:"0 0 16px",letterSpacing:".08em"}}>ONE-TIME PAYMENT · $3.33 · FULL ACCESS FOREVER</p>
-        {!showMemberVerify ? (
-          <button onClick={()=>setShowMemberVerify(true)} style={{background:"none",border:"1px solid rgba(168,224,96,0.3)",color:"#a8e060",padding:"10px 24px",borderRadius:"100px",fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,letterSpacing:".1em",cursor:"pointer",marginBottom:14}}>✦ ALREADY A MEMBER</button>
-        ) : (
-          <div style={{marginBottom:14,padding:"18px",background:"rgba(168,224,96,0.05)",border:"1px solid rgba(168,224,96,0.2)",borderRadius:14}}>
-            <p style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,color:"#a8e060",letterSpacing:".1em",marginBottom:10}}>VERIFY YOUR MEMBERSHIP</p>
-            <input
-              type="email" placeholder="your@email.com" value={memberEmail}
-              onChange={e=>setMemberEmail(e.target.value)}
-              onKeyDown={e=>e.key==="Enter"&&handleVerifyMember()}
-              style={{width:"100%",padding:"11px 14px",borderRadius:10,border:"1px solid rgba(168,224,96,0.3)",background:"rgba(255,255,255,0.04)",color:"#f5f0e0",fontFamily:"Georgia,serif",fontSize:14,textAlign:"center",outline:"none",boxSizing:"border-box",marginBottom:10}}
-            />
-            {memberError && <p style={{fontFamily:"Georgia,serif",color:"#f5c842",fontSize:12,marginBottom:8,lineHeight:1.5}}>{memberError}</p>}
-            <button className="rb" style={{"--a":"#a8e060",marginBottom:8,opacity:memberVerifying?0.6:1}} onClick={handleVerifyMember} disabled={memberVerifying}>
-              {memberVerifying ? "CHECKING..." : "✦ VERIFY & CONTINUE"}
-            </button>
-            <br/>
-            <button onClick={()=>{setShowMemberVerify(false);setMemberError(null);setMemberEmail("");}} style={{background:"none",border:"none",color:"#4a4440",cursor:"pointer",fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,letterSpacing:".1em"}}>← BACK</button>
-          </div>
-        )}
-        <br/>
-        <button onClick={resetAll} style={{background:"none",border:"1px solid rgba(255,200,50,0.15)",color:"#6a6058",padding:"8px 22px",borderRadius:"100px",fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,letterSpacing:".1em",cursor:"pointer"}}>← BACK TO START</button>
-      </div>
-    </div>
-  );
 
   if (screen === "avatarUnlock" && newAvatar) return (
     <div style={{animation:"up .6s ease",textAlign:"center"}}>
@@ -720,13 +675,19 @@ function ZodiacQuiz() {
           <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:13,color:isCorrect?"#a8e060":"#ff7070"}}>
             {isCorrect?"✦ Correct! The stars align.":"✗ Not quite — "+currentQuestion.answer}
           </div>
+          {gifLoading && (
+            <div style={{marginTop:10,fontFamily:"'Cinzel',serif",fontSize:10,color:"#7a6e62",letterSpacing:".08em"}}>✦ loading reaction...</div>
+          )}
+          {reactionGif && !gifLoading && (
+            <div style={{marginTop:10,borderRadius:10,overflow:"hidden",display:"inline-block",maxWidth:"100%",border:`1px solid ${isCorrect?"rgba(168,224,96,0.2)":"rgba(255,100,100,0.2)"}`}}>
+              <img src={reactionGif} alt="reaction" style={{display:"block",maxWidth:"100%",maxHeight:180,objectFit:"cover"}} />
+            </div>
+          )}
         </div>
       )}
       {!isSubscribed && (
         <div style={{marginTop:16,textAlign:"center"}}>
-          <span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,color:"#4a4440",letterSpacing:".08em"}}>
-            {Math.max(0, PAYWALL_AFTER - totalAnswered) > 0 ? `${Math.max(0,PAYWALL_AFTER-totalAnswered)} free questions remaining` : "✦ TRIAL ACTIVE"}
-          </span>
+          <span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,color:"#4a4440",letterSpacing:".08em"}}>✦ FREE TO PLAY</span>
         </div>
       )}
     </div>
