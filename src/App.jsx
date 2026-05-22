@@ -380,6 +380,8 @@ function ZodiacQuiz() {
   React.useEffect(() => { save("correctInLevel", correctInLevel); }, [correctInLevel]);
   React.useEffect(() => { save("score", score); }, [score]);
   React.useEffect(() => { save("unlockedAvatars", unlockedAvatars); }, [unlockedAvatars]);
+  // Clear answer state whenever question or level changes
+  React.useEffect(() => { setSelectedAnswer(null); setIsCorrect(null); setReactionGif(null); }, [questionIndex, level]);
 
   const levelData = quizLevels[level - 1];
   const currentQuestion = levelData.questions[questionIndex];
@@ -463,6 +465,9 @@ function ZodiacQuiz() {
     setLevel(l => l + 1);
     setQuestionIndex(0);
     setCorrectInLevel(0);
+    setSelectedAnswer(null);
+    setIsCorrect(null);
+    setReactionGif(null);
     setScreen("playing");
   };
 
