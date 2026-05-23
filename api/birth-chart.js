@@ -230,8 +230,24 @@ export default async function handler(req, res) {
           "https://api.astrology-api.io/api/v3/charts/transit",
           {
             subject,
-            transit_time: now.toISOString().slice(0, 19).replace("T", " "),
-            options: { house_system: "W", orb: 3 },
+            transit_time: {
+              datetime: {
+                year: now.getUTCFullYear(),
+                month: now.getUTCMonth() + 1,
+                day: now.getUTCDate(),
+                hour: now.getUTCHours(),
+                minute: now.getUTCMinutes(),
+                second: 0,
+                city: city.trim(),
+                ...(country_code ? { country_code: country_code.toUpperCase() } : { country_code: "US" }),
+              }
+            },
+            options: {
+              house_system: "W",
+              zodiac_type: "Tropic",
+              active_points: ["Sun","Moon","Mercury","Venus","Mars","Jupiter","Saturn","Uranus","Neptune","Pluto"],
+              precision: 2,
+            },
           },
           "TransitSnapshot"
         ),
