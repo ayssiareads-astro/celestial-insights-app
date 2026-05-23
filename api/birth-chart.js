@@ -154,7 +154,17 @@ export default async function handler(req, res) {
     // (full details only returned to paid users)
     const natalDataForRising = await safeFetch(
       "https://api.astrology-api.io/api/v3/charts/natal",
-      { subject, options: { house_system: "W" } },
+      {
+        subject,
+        options: {
+          house_system: "W",
+          active_points: [
+            "Sun","Moon","Mercury","Venus","Mars","Jupiter","Saturn",
+            "Uranus","Neptune","Pluto","Chiron","Mean_Node","Mean_South_Node","Mean_Lilith",
+            "Ascendant","Medium_Coeli"
+          ]
+        }
+      },
       "NatalChartRising"
     );
 
@@ -220,9 +230,7 @@ export default async function handler(req, res) {
           "https://api.astrology-api.io/api/v3/charts/transit",
           {
             subject,
-            transit_time: {
-              datetime: now.toISOString().slice(0, 19).replace("T", " "),
-            },
+            transit_time: now.toISOString().slice(0, 19).replace("T", " "),
             options: { house_system: "W", orb: 3 },
           },
           "TransitSnapshot"
