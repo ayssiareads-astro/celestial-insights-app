@@ -1763,6 +1763,155 @@ function PaywallSection({ chartPlanets, onVerified }) {
   );
 }
 
+function NatalChartWheel({ houseCusps, chartPlanets, fullPlanets }) {
+  const cx = 200, cy = 200, r = 180;
+  const outerR = r, innerR = r * 0.72, planetR = r * 0.60, labelR = r * 0.82;
+  const signColors = {
+    Aries:"#e8534a",Taurus:"#7cba6b",Gemini:"#f5c842",Cancer:"#7ab8d4",
+    Leo:"#e8953a",Virgo:"#a8c87a",Libra:"#d4a0c8",Scorpio:"#8a5a9a",
+    Sagittarius:"#e8843a",Capricorn:"#7a8a9a",Aquarius:"#5ab8d8",Pisces:"#9ab0d8"
+  };
+  const signSymbols = {
+    Aries:"♈",Taurus:"♉",Gemini:"♊",Cancer:"♋",Leo:"♌",Virgo:"♍",
+    Libra:"♎",Scorpio:"♏",Sagittarius:"♐",Capricorn:"♑",Aquarius:"♒",Pisces:"♓"
+  };
+  const planetSymbols = {
+    Sun:"☉",Moon:"☽",Mercury:"☿",Venus:"♀",Mars:"♂",Jupiter:"♃",
+    Saturn:"♄",Uranus:"⛢",Neptune:"♆",Pluto:"♇",Rising:"Asc",Chiron:"⚷"
+  };
+  const planetColors = {
+    Sun:"#f5c842",Moon:"#c8d8f0",Mercury:"#a8c8a8",Venus:"#d4a0c8",
+    Mars:"#e8534a",Jupiter:"#e8953a",Saturn:"#9a9a7a",Uranus:"#5ab8d8",
+    Neptune:"#9ab0d8",Pluto:"#8a5a9a",Rising:"#a8e060",Chiron:"#c8a878"
+  };
+
+  // Get ascending sign from houseCusps house 1
+  const ascSign = houseCusps.find(h => h.house === 1)?.sign || "Aries";
+  const ascIndex = signs.indexOf(ascSign);
+
+  // Convert sign index to angle (Asc = left/9 o'clock = 180deg in SVG)
+  const signToAngle = (signName) => {
+    const idx = signs.indexOf(signName);
+    const offset = (idx - ascIndex + 12) % 12;
+    return 180 + offset * 30; // degrees, CCW from right
+  };
+
+  const degToRad = (deg) => (deg * Math.PI) / 180;
+  const polarToXY = (angleDeg, radius) => {
+    const rad = degToRad(angleDeg);
+    return { x: cx + radius * Math.cos(rad), y: cy + radius * Math.sin(rad) };
+  };
+
+  // Draw zodiac wheel segments
+  const zodiacSegments = signs.map((sign, i) => {
+    const startAngle = 180 + ((i - ascIndex + 12) % 12) * 30;
+    const endAngle = startAngle + 30;
+    const s1 = polarToXY(startAngle, outerR);
+    const e1 = polarToXY(endAngle, outerR);
+    const s2 = polarToXY(endAngle, innerR);
+    const e2 = polarToXY(startAngle, innerR);
+    const midAngle = startAngle + 15;
+    const lbl = polarToXY(midAngle, labelR);
+    const col = signColors[sign] || "#f5c842";
+    return (
+      <g key={sign}>
+        <path
+          d={`M ${s1.x} ${s1.y} A ${outerR} ${outerR} 0 0 1 ${e1.x} ${e1.y} L ${s2.x} ${s2.y} A ${innerR} ${innerR} 0 0 0 ${e2.x} ${e2.y} Z`}
+          fill={col} fillOpacity={0.15} stroke={col} strokeOpacity={0.4} strokeWidth={0.5}
+        />
+        <text x={lbl.x} y={lbl.y} textAnchor="middle" dominantBaseline="middle"
+          fontSize={10} fill={col} fontWeight="bold" style={{userSelect:"none"}}>
+          {signSymbols[sign]}
+        </text>
+      </g>
+    );
+  });
+
+  // House lines
+  const houseLines = houseCusps.map((h) => {
+    const angle = signToAngle(h.sign);
+    const inner = polarToXY(angle, innerR * 0.35);
+    const outer = polarToXY(angle, innerR);
+    const lbl = polarToXY(angle - 14, innerR * 0.55);
+    const isAngular = [1,4,7,10].includes(h.house);
+    return (
+      <g key={h.house}>
+        <line x1={inner.x} y1={inner.y} x2={outer.x} y2={outer.y}
+          stroke={isAngular?"rgba(245,200,66,0.6)":"rgba(255,200,50,0.2)"}
+          strokeWidth={isAngular?1.5:0.7}/>
+        <text x={lbl.x} y={lbl.y} textAnchor="middle" dominantBaseline="middle"
+          fontSize={7} fill="rgba(245,200,66,0.6)" fontFamily="Cinzel,serif" style={{userSelect:"none"}}>
+          {h.house}
+        </text>
+      </g>
+    );
+  });
+
+  // Planet positions
+  const placedPlanets = [];
+  const planetNodes = fullPlanets
+    .filter(p => p.name !== "Midheaven" && planetSymbols[p.name])
+    .map((p, i) => {
+      const houseForPlanet = houseCusps.find(h => h.house === (p.house || 1));
+      const baseSign = houseForPlanet?.sign || p.sign;
+      let angle = signToAngle(baseSign) + 15;
+      // Spread planets in same house
+      const sameHouse = placedPlanets.filter(pp => pp.house === p.house);
+      angle += sameHouse.length * 12;
+      placedPlanets.push({ house: p.house, angle });
+      const pos = polarToXY(angle, planetR);
+      const col = planetColors[p.name] || "#f5c842";
+      return (
+        <g key={p.name}>
+          <circle cx={pos.x} cy={pos.y} r={10} fill="rgba(0,0,0,0.7)" stroke={col} strokeWidth={1}/>
+          <text x={pos.x} y={pos.y} textAnchor="middle" dominantBaseline="middle"
+            fontSize={p.name === "Rising" ? 6 : 10} fill={col} style={{userSelect:"none"}}>
+            {planetSymbols[p.name]}
+          </text>
+        </g>
+      );
+    });
+
+  // Asc line
+  const ascLine1 = polarToXY(180, outerR);
+  const ascLine2 = polarToXY(180, innerR * 0.3);
+
+  return (
+    <div style={{marginBottom:28}}>
+      <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#f5c842",letterSpacing:".18em",marginBottom:12,textAlign:"center"}}>✦ YOUR NATAL CHART WHEEL ✦</div>
+      <div style={{display:"flex",justifyContent:"center"}}>
+        <svg viewBox="0 0 400 400" width="100%" style={{maxWidth:380,borderRadius:16,background:"radial-gradient(circle,rgba(20,15,35,1),rgba(5,5,15,1))"}}>
+          {/* Outer border */}
+          <circle cx={cx} cy={cy} r={outerR-1} fill="none" stroke="rgba(245,200,66,0.3)" strokeWidth={1}/>
+          {/* Inner border */}
+          <circle cx={cx} cy={cy} r={innerR} fill="none" stroke="rgba(245,200,66,0.2)" strokeWidth={0.5}/>
+          {/* Chart background */}
+          <circle cx={cx} cy={cy} r={innerR-1} fill="rgba(10,8,20,0.95)"/>
+          {/* Inner circle */}
+          <circle cx={cx} cy={cy} r={innerR*0.38} fill="rgba(245,200,66,0.03)" stroke="rgba(245,200,66,0.15)" strokeWidth={0.5}/>
+          {zodiacSegments}
+          {houseLines}
+          {planetNodes}
+          {/* ASC marker */}
+          <line x1={ascLine1.x} y1={ascLine1.y} x2={ascLine2.x} y2={ascLine2.y}
+            stroke="#a8e060" strokeWidth={2}/>
+          <text x={polarToXY(180, outerR+10).x} y={polarToXY(180, outerR+10).y}
+            textAnchor="middle" dominantBaseline="middle" fontSize={8} fill="#a8e060" fontWeight="bold">ASC</text>
+        </svg>
+      </div>
+      {/* Legend */}
+      <div style={{display:"flex",flexWrap:"wrap",gap:"6px 12px",justifyContent:"center",marginTop:10}}>
+        {fullPlanets.filter(p => p.name !== "Midheaven" && planetSymbols[p.name]).map(p => (
+          <div key={p.name} style={{display:"flex",alignItems:"center",gap:4}}>
+            <span style={{fontSize:10,color:planetColors[p.name]||"#f5c842"}}>{planetSymbols[p.name]}</span>
+            <span style={{fontFamily:"'Cinzel',serif",fontSize:7,color:"#6a6058",letterSpacing:".06em"}}>{p.name.toUpperCase()}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function BirthChartResults({ result, onReset, onUpgrade }) {
   const { name, city, planets: chartPlanets, chartPlanets: fullPlanets = [], houseCusps = [], aspects = [], report = null } = result;
   const [memberVerified, setMemberVerified] = useState(() => {
@@ -1832,6 +1981,11 @@ function BirthChartResults({ result, onReset, onUpgrade }) {
             })}
           </div>
         </div>
+      )}
+
+      {/* Natal Chart Wheel */}
+      {houseCusps.length > 0 && fullPlanets.length > 0 && (
+        <NatalChartWheel houseCusps={houseCusps} chartPlanets={chartPlanets} fullPlanets={fullPlanets}/>
       )}
 
       {/* Planet / Sign / House table */}
