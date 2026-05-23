@@ -173,6 +173,7 @@ export default async function handler(req, res) {
     let aspects = [];
     let report = null;
     let houseSignReadings = {};
+    let transitData = null;
 
     if (paid) {
       console.log("Paid — fetching full natal chart...");
@@ -180,11 +181,16 @@ export default async function handler(req, res) {
       // Get today's date/time for transit snapshot
       const now = new Date();
       const transitTime = {
-        datetime: now.toISOString().slice(0, 16), // "YYYY-MM-DDTHH:MM"
+        year: now.getUTCFullYear(),
+        month: now.getUTCMonth() + 1,
+        day: now.getUTCDate(),
+        hour: now.getUTCHours(),
+        minute: now.getUTCMinutes(),
+        second: 0,
       };
 
-      const [natalData, reportData, enhancedData, transitData] = await Promise.all([
-        Promise.resolve(natalDataForRising), // reuse already-fetched natal data
+      const [natalData, reportData, enhancedData, transitResult] = await Promise.all([
+        Promise.resolve(natalDataForRising),
         safeFetch(
           "https://api.astrology-api.io/api/v3/analysis/natal-report",
           { subject, tradition: "psychological", house_system: "W" },
@@ -210,12 +216,13 @@ export default async function handler(req, res) {
           "https://api.astrology-api.io/api/v3/charts/transit",
           {
             subject,
-            transit_time: transitTime,
+            transit_time: { datetime: transitTime },
             options: { house_system: "W", orb: 3 },
           },
           "TransitSnapshot"
         ),
       ]);
+      transitData = transitResult;
 
       if (natalData) {
         const cd = natalData?.chart_data || natalData?.data || natalData;
