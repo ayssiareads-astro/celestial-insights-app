@@ -1956,7 +1956,7 @@ function NatalChartWheel({ houseCusps, chartPlanets, fullPlanets, report, planet
       {transitDate && transitPlanets.length > 0 && (
         <div style={{display:"flex",justifyContent:"center",alignItems:"center",gap:10,marginBottom:12}}>
           <button onClick={()=>setShowTransits(t=>!t)} style={{background:showTransits?"rgba(90,184,216,0.15)":"rgba(255,255,255,0.03)",border:`1px solid ${showTransits?"rgba(90,184,216,0.5)":"rgba(255,255,255,0.1)"}`,color:showTransits?"#5ab8d8":"#4a4440",fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,letterSpacing:".1em",padding:"6px 14px",borderRadius:20,cursor:"pointer"}}>
-            {showTransits?"✦ TRANSITS ON":"✦ TRANSITS OFF"}
+            {showTransits?"✦ CURRENT DAY ON":"✦ CURRENT DAY OFF"}
           </button>
           <span style={{fontFamily:"Georgia,serif",fontSize:10,color:"#4a4440"}}>{transitDate}</span>
         </div>
