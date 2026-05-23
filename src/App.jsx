@@ -1765,8 +1765,9 @@ function PaywallSection({ chartPlanets, onVerified }) {
   );
 }
 
-function NatalChartWheel({ houseCusps, chartPlanets, fullPlanets, report, planetInHouse, getFact, aspects = [] }) {
+function NatalChartWheel({ houseCusps, chartPlanets, fullPlanets, report, planetInHouse, getFact, aspects = [], transitPlanets = [], transitAspects = [], transitDate = null }) {
   const [activePlanet, setActivePlanet] = React.useState(null);
+  const [showTransits, setShowTransits] = React.useState(true);
   const cx = 250, cy = 250;
   const outerR = 230, zodiacInnerR = 185, houseR = 108, planetR = 160, houseNumR = 120;
 
@@ -1951,7 +1952,15 @@ function NatalChartWheel({ houseCusps, chartPlanets, fullPlanets, report, planet
 
   return (
     <div style={{marginBottom:28}}>
-      <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#f5c842",letterSpacing:".18em",marginBottom:12,textAlign:"center"}}>✦ YOUR NATAL CHART WHEEL ✦</div>
+      <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#f5c842",letterSpacing:".18em",marginBottom:8,textAlign:"center"}}>✦ YOUR NATAL CHART WHEEL ✦</div>
+      {transitDate && transitPlanets.length > 0 && (
+        <div style={{display:"flex",justifyContent:"center",alignItems:"center",gap:10,marginBottom:12}}>
+          <button onClick={()=>setShowTransits(t=>!t)} style={{background:showTransits?"rgba(90,184,216,0.15)":"rgba(255,255,255,0.03)",border:`1px solid ${showTransits?"rgba(90,184,216,0.5)":"rgba(255,255,255,0.1)"}`,color:showTransits?"#5ab8d8":"#4a4440",fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,letterSpacing:".1em",padding:"6px 14px",borderRadius:20,cursor:"pointer"}}>
+            {showTransits?"✦ TRANSITS ON":"✦ TRANSITS OFF"}
+          </button>
+          <span style={{fontFamily:"Georgia,serif",fontSize:10,color:"#4a4440"}}>{transitDate}</span>
+        </div>
+      )}
       <div style={{display:"flex",justifyContent:"center"}}>
         <svg viewBox="0 0 500 500" width="100%" style={{maxWidth:500,borderRadius:"50%",background:"radial-gradient(circle,rgba(18,12,32,1),rgba(4,4,12,1))"}}>
           <circle cx={cx} cy={cy} r={outerR} fill="none" stroke="rgba(245,200,66,0.35)" strokeWidth={1}/>
@@ -1962,6 +1971,46 @@ function NatalChartWheel({ houseCusps, chartPlanets, fullPlanets, report, planet
           {houseElements}
           {aspectLines}
           {planetNodes}
+          {/* Transit layer */}
+          {showTransits && transitPlanets.map((tp, i) => {
+            // Place transit planets on the zodiac ring (between outerR and zodiacInnerR)
+            const tSignIndex = signs.indexOf(tp.sign);
+            const tOffset = (tSignIndex - signs.indexOf(houseCusps.find(h=>h.house===1)?.sign||"Aries") + 12) % 12;
+            const tAngle = 180 - tOffset * 30 - 15 - (parseFloat(tp.degree||15)/30)*30;
+            const tPos = polarToXY(tAngle, (outerR + zodiacInnerR) / 2 - 8);
+            const tcol = planetColors[tp.name] || "#5ab8d8";
+            return (
+              <g key={"t"+tp.name+i}>
+                <circle cx={tPos.x} cy={tPos.y} r={8} fill="rgba(0,0,20,0.9)"
+                  stroke="#5ab8d8" strokeWidth={1} strokeDasharray="2,1"/>
+                <text x={tPos.x} y={tPos.y} textAnchor="middle" dominantBaseline="middle"
+                  fontSize={9} fill="#5ab8d8" style={{userSelect:"none"}}>
+                  {planetSymbols[tp.name]||"•"}
+                </text>
+              </g>
+            );
+          })}
+          {/* Transit aspect lines to natal planets */}
+          {showTransits && transitAspects.map((a, i) => {
+            const natalPos = planetPositionMap[a.planet1] || planetPositionMap[a.planet2];
+            const transitPlanetName = transitPlanets.find(tp =>
+              tp.name === a.planet1 || tp.name === a.planet2
+            )?.name;
+            const tpData = transitPlanets.find(tp => tp.name === transitPlanetName);
+            if (!natalPos || !tpData) return null;
+            const tSignIndex = signs.indexOf(tpData.sign);
+            const tOffset = (tSignIndex - signs.indexOf(houseCusps.find(h=>h.house===1)?.sign||"Aries") + 12) % 12;
+            const tAngle = 180 - tOffset * 30 - 15 - (parseFloat(tpData.degree||15)/30)*30;
+            const tPos = polarToXY(tAngle, (outerR + zodiacInnerR) / 2 - 8);
+            const type = (a.type||"").toLowerCase();
+            const col = aspectColors[type] || "#5ab8d8";
+            return (
+              <line key={"ta"+i}
+                x1={tPos.x} y1={tPos.y} x2={natalPos.x} y2={natalPos.y}
+                stroke={col} strokeOpacity={0.5} strokeWidth={1}
+                strokeDasharray="4,3"/>
+            );
+          }).filter(Boolean)}
           {/* ASC/DSC axis */}
           <line x1={polarToXY(180,outerR).x} y1={polarToXY(180,outerR).y}
                 x2={polarToXY(0,outerR).x} y2={polarToXY(0,outerR).y}
@@ -2033,12 +2082,47 @@ function NatalChartWheel({ houseCusps, chartPlanets, fullPlanets, report, planet
           </div>
         ))}
       </div>
+
+      {/* Transit key */}
+      {transitPlanets.length > 0 && (
+        <div style={{marginTop:8,display:"flex",alignItems:"center",justifyContent:"center",gap:8}}>
+          <div style={{width:16,height:1,borderTop:"2px dashed #5ab8d8"}}/>
+          <span style={{fontFamily:"'Cinzel',serif",fontSize:7,color:"#5ab8d8",letterSpacing:".08em"}}>TRANSITING PLANETS (TODAY)</span>
+          <div style={{width:16,height:1,borderTop:"2px dashed #5ab8d8"}}/>
+        </div>
+      )}
+
+      {/* Today's active transit aspects */}
+      {showTransits && transitAspects.length > 0 && (
+        <div style={{marginTop:14,padding:"14px 16px",background:"rgba(90,184,216,0.05)",border:"1px solid rgba(90,184,216,0.2)",borderRadius:12}}>
+          <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#5ab8d8",letterSpacing:".12em",marginBottom:10,textAlign:"center"}}>✦ TODAY'S ACTIVE TRANSITS · {transitDate} ✦</div>
+          <div style={{display:"flex",flexDirection:"column",gap:8}}>
+            {transitAspects.slice(0,6).map((a,i) => {
+              const type = (a.type||"").toLowerCase();
+              const col = aspectColors[type] || "#5ab8d8";
+              return (
+                <div key={i} style={{display:"flex",alignItems:"flex-start",gap:8,paddingBottom:8,borderBottom:i<Math.min(transitAspects.length,6)-1?"1px solid rgba(90,184,216,0.1)":"none"}}>
+                  <span style={{fontFamily:"'Cinzel',serif",fontSize:9,color:col,textTransform:"capitalize",minWidth:70,paddingTop:1}}>{a.type}</span>
+                  <div style={{flex:1}}>
+                    <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,color:"#d8c890",marginBottom:2}}>
+                      {a.planet1} → {a.planet2}
+                      {a.orb && <span style={{fontFamily:"Georgia,serif",fontSize:9,color:"#4a4440",fontWeight:400,marginLeft:6}}>orb {a.orb}°</span>}
+                      {a.applying === true && <span style={{fontFamily:"'Cinzel',serif",fontSize:7,color:"#a8e060",marginLeft:6,letterSpacing:".06em"}}>APPLYING</span>}
+                      {a.applying === false && <span style={{fontFamily:"'Cinzel',serif",fontSize:7,color:"#f5c842",marginLeft:6,letterSpacing:".06em"}}>SEPARATING</span>}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
 function BirthChartResults({ result, onReset, onUpgrade }) {
-  const { name, city, planets: chartPlanets, chartPlanets: fullPlanets = [], houseCusps = [], aspects = [], report = null } = result;
+  const { name, city, planets: chartPlanets, chartPlanets: fullPlanets = [], houseCusps = [], aspects = [], report = null, transitPlanets = [], transitAspects = [], transitDate = null } = result;
   const [memberVerified, setMemberVerified] = useState(() => {
     try { return localStorage.getItem("aww_subscribed") === "true"; } catch(e) { return false; }
   });
@@ -2110,7 +2194,7 @@ function BirthChartResults({ result, onReset, onUpgrade }) {
 
       {/* Natal Chart Wheel */}
       {houseCusps.length > 0 && fullPlanets.length > 0 && (
-        <NatalChartWheel houseCusps={houseCusps} chartPlanets={chartPlanets} fullPlanets={fullPlanets} report={report} planetInHouse={planetInHouse} getFact={getFact} aspects={aspects}/>
+        <NatalChartWheel houseCusps={houseCusps} chartPlanets={chartPlanets} fullPlanets={fullPlanets} report={report} planetInHouse={planetInHouse} getFact={getFact} aspects={aspects} transitPlanets={transitPlanets} transitAspects={transitAspects} transitDate={transitDate}/>
       )}
 
       {/* Planet / Sign / House table */}
