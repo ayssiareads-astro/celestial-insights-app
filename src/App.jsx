@@ -1763,7 +1763,7 @@ function PaywallSection({ chartPlanets, onVerified }) {
   );
 }
 
-function NatalChartWheel({ houseCusps, chartPlanets, fullPlanets, report, planetInHouse, getFact }) {
+function NatalChartWheel({ houseCusps, chartPlanets, fullPlanets, report, planetInHouse, getFact, aspects = [] }) {
   const [activePlanet, setActivePlanet] = React.useState(null);
   const cx = 200, cy = 200;
   const outerR = 178, zodiacInnerR = 142, houseR = 108, planetR = 124, houseNumR = 90;
@@ -1906,6 +1906,47 @@ function NatalChartWheel({ houseCusps, chartPlanets, fullPlanets, report, planet
   // Active planet info
   const activePlanetData = activePlanet ? visiblePlanets.find(p => p.name === activePlanet) : null;
 
+  // Build planet position map for aspect lines
+  const planetPositionMap = {};
+  const housePlanetCount2 = {};
+  visiblePlanets.forEach((p) => {
+    const houseNum = p.house || 1;
+    if (!housePlanetCount2[houseNum]) housePlanetCount2[houseNum] = 0;
+    const idx = housePlanetCount2[houseNum];
+    housePlanetCount2[houseNum]++;
+    const houseStartSVG = 180 - (houseNum - 1) * 30;
+    const angle = houseStartSVG - 8 - idx * 14;
+    planetPositionMap[p.name] = polarToXY(angle, planetR);
+  });
+
+  const aspectColors = {
+    trine:"#a8e060", sextile:"#5ab8d8", conjunction:"#f5c842",
+    opposition:"#e8534a", square:"#e8953a"
+  };
+  const aspectOpacity = { trine:0.45, sextile:0.35, conjunction:0.5, opposition:0.4, square:0.4 };
+
+  // Draw aspect lines — only major aspects, filter by strength
+  const majorAspects = ["trine","sextile","conjunction","opposition","square"];
+  const aspectLines = aspects
+    .filter(a => majorAspects.includes((a.type||"").toLowerCase()))
+    .filter(a => !a.strength || a.strength >= 2)
+    .map((a, i) => {
+      const p1 = planetPositionMap[a.planet1];
+      const p2 = planetPositionMap[a.planet2];
+      if (!p1 || !p2) return null;
+      const type = (a.type||"").toLowerCase();
+      const col = aspectColors[type] || "rgba(255,200,50,0.3)";
+      const op = aspectOpacity[type] || 0.3;
+      const isActive = activePlanet && (a.planet1 === activePlanet || a.planet2 === activePlanet);
+      return (
+        <line key={i}
+          x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y}
+          stroke={col} strokeOpacity={isActive ? op * 2.2 : op}
+          strokeWidth={isActive ? 1.5 : 0.7}
+          strokeDasharray={type === "sextile" ? "3,3" : type === "square" ? "4,2" : "none"}/>
+      );
+    }).filter(Boolean);
+
   return (
     <div style={{marginBottom:28}}>
       <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#f5c842",letterSpacing:".18em",marginBottom:12,textAlign:"center"}}>✦ YOUR NATAL CHART WHEEL ✦</div>
@@ -1917,6 +1958,7 @@ function NatalChartWheel({ houseCusps, chartPlanets, fullPlanets, report, planet
           <circle cx={cx} cy={cy} r={20} fill="rgba(245,200,66,0.04)" stroke="rgba(245,200,66,0.12)" strokeWidth={0.5}/>
           {zodiacSegments}
           {houseElements}
+          {aspectLines}
           {planetNodes}
           {/* ASC/DSC axis */}
           <line x1={polarToXY(180,outerR).x} y1={polarToXY(180,outerR).y}
@@ -1939,7 +1981,7 @@ function NatalChartWheel({ houseCusps, chartPlanets, fullPlanets, report, planet
             </div>
             <button onClick={()=>setActivePlanet(null)} style={{background:"none",border:"none",color:"#4a4440",cursor:"pointer",fontSize:14}}>✕</button>
           </div>
-          <p style={{fontFamily:"Georgia,serif",fontSize:12,color:"#d8c890",lineHeight:1.7,margin:0}}>
+          <p style={{fontFamily:"Georgia,serif",fontSize:12,color:"#d8c890",lineHeight:1.7,margin:"0 0 10px"}}>
             {Array.isArray(report) ? (
               report.find(s => {
                 const t = (s.title||"").toLowerCase();
@@ -1947,6 +1989,29 @@ function NatalChartWheel({ houseCusps, chartPlanets, fullPlanets, report, planet
               })?.text || getFact(activePlanetData.sign, activePlanetData.name)
             ) : getFact(activePlanetData.sign, activePlanetData.name)}
           </p>
+          {/* Show aspects involving this planet */}
+          {aspects.filter(a => (a.planet1 === activePlanet || a.planet2 === activePlanet) && majorAspects.includes((a.type||"").toLowerCase())).length > 0 && (
+            <div>
+              <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,color:"#f5c842",letterSpacing:".1em",marginBottom:6}}>KEY ASPECTS</div>
+              <div style={{display:"flex",flexDirection:"column",gap:4}}>
+                {aspects
+                  .filter(a => (a.planet1 === activePlanet || a.planet2 === activePlanet) && majorAspects.includes((a.type||"").toLowerCase()))
+                  .slice(0,4)
+                  .map((a,i) => {
+                    const other = a.planet1 === activePlanet ? a.planet2 : a.planet1;
+                    const type = (a.type||"").toLowerCase();
+                    const col = aspectColors[type] || "#f5c842";
+                    return (
+                      <div key={i} style={{display:"flex",alignItems:"center",gap:6}}>
+                        <span style={{fontFamily:"'Cinzel',serif",fontSize:9,color:col,letterSpacing:".06em",textTransform:"capitalize"}}>{a.type}</span>
+                        <span style={{fontFamily:"Georgia,serif",fontSize:11,color:"#d8c890"}}>{other}</span>
+                        {a.orb && <span style={{fontFamily:"Georgia,serif",fontSize:9,color:"#4a4440"}}>orb {parseFloat(a.orb).toFixed(1)}°</span>}
+                      </div>
+                    );
+                  })}
+              </div>
+            </div>
+          )}
         </div>
       )}
 
@@ -2037,7 +2102,7 @@ function BirthChartResults({ result, onReset, onUpgrade }) {
 
       {/* Natal Chart Wheel */}
       {houseCusps.length > 0 && fullPlanets.length > 0 && (
-        <NatalChartWheel houseCusps={houseCusps} chartPlanets={chartPlanets} fullPlanets={fullPlanets} report={report} planetInHouse={planetInHouse} getFact={getFact}/>
+        <NatalChartWheel houseCusps={houseCusps} chartPlanets={chartPlanets} fullPlanets={fullPlanets} report={report} planetInHouse={planetInHouse} getFact={getFact} aspects={aspects}/>
       )}
 
       {/* Planet / Sign / House table */}
