@@ -1926,7 +1926,7 @@ function NatalChartWheel({ houseCusps, chartPlanets, fullPlanets, report, planet
     trine:"#a8e060", sextile:"#5ab8d8", conjunction:"#f5c842",
     opposition:"#e8534a", square:"#e8953a"
   };
-  const aspectOpacity = { trine:0.45, sextile:0.35, conjunction:0.5, opposition:0.4, square:0.4 };
+  const aspectOpacity = { trine:0.7, sextile:0.55, conjunction:0.75, opposition:0.65, square:0.65 };
 
   // Draw aspect lines — only major aspects, filter by strength
   const majorAspects = ["trine","sextile","conjunction","opposition","square"];
@@ -1945,7 +1945,7 @@ function NatalChartWheel({ houseCusps, chartPlanets, fullPlanets, report, planet
         <line key={i}
           x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y}
           stroke={col} strokeOpacity={isActive ? op * 2.2 : op}
-          strokeWidth={isActive ? 1.5 : 0.7}
+          strokeWidth={isActive ? 2.5 : 1.5}
           strokeDasharray={type === "sextile" ? "3,3" : type === "square" ? "4,2" : "none"}/>
       );
     }).filter(Boolean);
@@ -1955,9 +1955,13 @@ function NatalChartWheel({ houseCusps, chartPlanets, fullPlanets, report, planet
       <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#f5c842",letterSpacing:".18em",marginBottom:8,textAlign:"center"}}>✦ YOUR NATAL CHART WHEEL ✦</div>
       {houseCusps.length > 0 && (
         <div style={{display:"flex",justifyContent:"center",alignItems:"center",gap:10,marginBottom:12}}>
-          <button onClick={()=>setShowTransits(t=>!t)} style={{background:showTransits?"rgba(90,184,216,0.15)":"rgba(255,255,255,0.03)",border:`1px solid ${showTransits?"rgba(90,184,216,0.5)":"rgba(255,255,255,0.1)"}`,color:showTransits?"#5ab8d8":"#4a4440",fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,letterSpacing:".1em",padding:"6px 14px",borderRadius:20,cursor:"pointer"}}>
-            {showTransits?"✦ CURRENT DAY ON":"✦ CURRENT DAY OFF"}
-          </button>
+          <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:12,justifyContent:"center"}}>
+            <span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:!showTransits?"#f5c842":"#4a4440",letterSpacing:".1em",transition:"color 0.2s"}}>BIRTH CHART</span>
+            <div onClick={()=>setShowTransits(t=>!t)} style={{width:44,height:24,borderRadius:12,background:showTransits?"rgba(90,184,216,0.3)":"rgba(245,200,66,0.2)",border:`1px solid ${showTransits?"rgba(90,184,216,0.6)":"rgba(245,200,66,0.4)"}`,cursor:"pointer",position:"relative",transition:"all 0.3s",flexShrink:0}}>
+              <div style={{position:"absolute",top:3,left:showTransits?22:3,width:16,height:16,borderRadius:"50%",background:showTransits?"#5ab8d8":"#f5c842",transition:"left 0.3s, background 0.3s",boxShadow:`0 0 6px ${showTransits?"rgba(90,184,216,0.8)":"rgba(245,200,66,0.8)"}`}}/>
+            </div>
+            <span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:showTransits?"#5ab8d8":"#4a4440",letterSpacing:".1em",transition:"color 0.2s"}}>TODAY</span>
+          </div>
           <span style={{fontFamily:"Georgia,serif",fontSize:10,color:"#4a4440"}}>{transitDate}</span>
         </div>
       )}
