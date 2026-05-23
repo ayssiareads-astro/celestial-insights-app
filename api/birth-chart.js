@@ -221,14 +221,7 @@ export default async function handler(req, res) {
           {
             subject,
             transit_time: {
-              datetime: {
-                year: now.getUTCFullYear(),
-                month: now.getUTCMonth() + 1,
-                day: now.getUTCDate(),
-                hour: now.getUTCHours(),
-                minute: now.getUTCMinutes(),
-                second: 0,
-              }
+              datetime: now.toISOString().slice(0, 19).replace("T", " "),
             },
             options: { house_system: "W", orb: 3 },
           },
@@ -473,21 +466,22 @@ const houseLabel = correctHouse
         console.log("TransitSnapshot data:", JSON.stringify(transitData).slice(0, 500));
         const td = transitData?.chart_data || transitData?.data || transitData;
 
-        // Transit planet positions — log the full structure so we can tune parsing
-        const rawTransitPositions = td?.planetary_positions || td?.transit_positions || td?.positions || [];
+        // Transit planet positions — schema: chart_data.planetary_positions, names like "Sun_transit"
+        const rawTransitPositions = td?.planetary_positions || [];
         console.log("Transit raw positions count:", rawTransitPositions.length);
         if (rawTransitPositions.length > 0) {
-          console.log("Transit first position sample:", JSON.stringify(rawTransitPositions[0]));
+          console.log("Transit position names:", rawTransitPositions.map(p=>p.name).join(", "));
         }
 
         if (Array.isArray(rawTransitPositions)) {
           rawTransitPositions.forEach(p => {
             const rawName = p.name || "";
-            const isTransit = rawName.toLowerCase().includes("transit") || p.is_transit === true || p.type === "transit";
-            const cleanName = rawName.replace(/_?[Tt]ransit/g, "").trim();
-            const planetName = PLANET_MAP[cleanName] || PLANET_MAP[rawName] || cleanName;
+            // Transit planets end with _transit, natal planets end with _natal
+            if (!rawName.includes("_transit")) return;
+            const cleanName = rawName.replace("_transit", "");
+            const planetName = PLANET_MAP[cleanName] || cleanName;
             const signFull = SIGN_MAP[p.sign] || p.sign;
-            if (isTransit && planetName && signFull) {
+            if (planetName && signFull) {
               transitPlanets.push({
                 name: planetName,
                 sign: signFull,
@@ -499,44 +493,27 @@ const houseLabel = correctHouse
           });
         }
 
-        // Fallback: look for nested transit object
-        if (transitPlanets.length === 0) {
-          const altPositions = td?.transit?.positions || td?.transiting_planets || td?.transit?.planetary_positions || [];
-          console.log("Transit alt positions count:", altPositions.length);
-          if (Array.isArray(altPositions)) {
-            altPositions.forEach(p => {
-              const planetName = PLANET_MAP[p.name] || p.name;
-              const signFull = SIGN_MAP[p.sign] || p.sign;
-              if (planetName && signFull) {
-                transitPlanets.push({
-                  name: planetName,
-                  sign: signFull,
-                  house: p.house || null,
-                  degree: p.degree ? parseFloat(p.degree).toFixed(1) : null,
-                  retrograde: p.is_retrograde || false,
-                });
-              }
-            });
-          }
-        }
-
-        // Transit aspects
-        const rawTransitAspects = td?.aspects || td?.transit_aspects || td?.transit?.aspects || [];
+        // Transit aspects — schema uses point1/point2/aspect_type/aspect_direction
+        const rawTransitAspects = td?.aspects || [];
         if (Array.isArray(rawTransitAspects)) {
           rawTransitAspects.forEach(a => {
-            const p1 = a.point1 || a.planet1 || "";
-            const p2 = a.point2 || a.planet2 || "";
-            const type = a.aspect_type || a.aspect || "";
+            const p1 = a.point1 || "";
+            const p2 = a.point2 || "";
+            const type = a.aspect_type || "";
             const orb = a.orb != null ? parseFloat(a.orb).toFixed(1) : null;
-            if ((p1.toLowerCase().includes("transit") || p2.toLowerCase().includes("transit")) && type) {
+            const direction = a.aspect_direction || null;
+            // Only include aspects where at least one point is a transit planet
+            if ((p1.includes("_transit") || p2.includes("_transit")) && type) {
+              const clean1 = p1.replace("_transit","").replace("_natal","");
+              const clean2 = p2.replace("_transit","").replace("_natal","");
               transitAspects.push({
-                planet1: PLANET_MAP[p1.replace(/_?[Tt]ransit/g,"").trim()] || p1,
-                planet2: PLANET_MAP[p2.replace(/_?[Tt]ransit/g,"").trim()] || p2,
+                planet1: PLANET_MAP[clean1] || clean1,
+                planet2: PLANET_MAP[clean2] || clean2,
                 type,
                 orb,
                 isTransit: true,
-                strength: a.strength ?? null,
-                applying: a.applying ?? null,
+                applying: direction === "applying" ? true : direction === "separating" ? false : null,
+                transiting_house: a.transiting_house || null,
               });
             }
           });
