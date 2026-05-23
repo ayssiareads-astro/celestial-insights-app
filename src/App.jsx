@@ -2140,12 +2140,17 @@ function NatalChartWheel({ houseCusps, chartPlanets, fullPlanets, report, planet
               </div>
               <button onClick={()=>setActiveTransitAspect(null)} style={{background:"none",border:"none",color:"#4a4440",cursor:"pointer",fontSize:14}}>✕</button>
             </div>
-            <div style={{fontFamily:"'Cinzel',serif",fontSize:8,color:"#5ab8d8",letterSpacing:".1em",marginBottom:8}}>TODAY'S TRANSIT · {transitDate}</div>
-            <p style={{fontFamily:"Georgia,serif",fontSize:12,color:"#d8c890",lineHeight:1.7,margin:0,fontStyle:"italic"}}>
-              {a.planet1} is currently making a {type} to your natal {a.planet2}.
-              {a.applying === true ? " This transit is still building — its peak influence is ahead." : a.applying === false ? " This transit has already peaked and is slowly releasing." : ""}
-              {a.transiting_house ? ` It is activating your ${a.transiting_house === 1 ? "1st" : a.transiting_house === 2 ? "2nd" : a.transiting_house === 3 ? "3rd" : `${a.transiting_house}th`} house.` : ""}
-            </p>
+            <div style={{fontFamily:"'Cinzel',serif",fontSize:8,color:"#5ab8d8",letterSpacing:".1em",marginBottom:8}}>
+              TODAY'S TRANSIT · {transitDate}
+              {a.transiting_house && <span style={{marginLeft:8,color:"#f5c842"}}>· {a.transiting_house === 1 ? "1st" : a.transiting_house === 2 ? "2nd" : a.transiting_house === 3 ? "3rd" : `${a.transiting_house}th`} House</span>}
+            </div>
+            {a.interpretation
+              ? <p style={{fontFamily:"Georgia,serif",fontSize:12,color:"#d8c890",lineHeight:1.75,margin:0}}>{a.interpretation}</p>
+              : <p style={{fontFamily:"Georgia,serif",fontSize:12,color:"#d8c890",lineHeight:1.75,margin:0,fontStyle:"italic"}}>
+                  {a.planet1} is currently making a {type} to your natal {a.planet2}.
+                  {a.applying === true ? " This transit is still building — its peak influence is ahead." : a.applying === false ? " This transit has peaked and is slowly releasing its energy." : ""}
+                </p>
+            }
           </div>
         );
       })()}
