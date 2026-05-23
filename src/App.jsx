@@ -1763,9 +1763,11 @@ function PaywallSection({ chartPlanets, onVerified }) {
   );
 }
 
-function NatalChartWheel({ houseCusps, chartPlanets, fullPlanets }) {
-  const cx = 200, cy = 200, r = 180;
-  const outerR = r, innerR = r * 0.72, planetR = r * 0.60, labelR = r * 0.82;
+function NatalChartWheel({ houseCusps, chartPlanets, fullPlanets, report, planetInHouse, getFact }) {
+  const [activePlanet, setActivePlanet] = React.useState(null);
+  const cx = 200, cy = 200;
+  const outerR = 178, zodiacInnerR = 142, houseR = 108, planetR = 124, houseNumR = 90;
+
   const signColors = {
     Aries:"#e8534a",Taurus:"#7cba6b",Gemini:"#f5c842",Cancer:"#7ab8d4",
     Leo:"#e8953a",Virgo:"#a8c87a",Libra:"#d4a0c8",Scorpio:"#8a5a9a",
@@ -1777,132 +1779,182 @@ function NatalChartWheel({ houseCusps, chartPlanets, fullPlanets }) {
   };
   const planetSymbols = {
     Sun:"☉",Moon:"☽",Mercury:"☿",Venus:"♀",Mars:"♂",Jupiter:"♃",
-    Saturn:"♄",Uranus:"⛢",Neptune:"♆",Pluto:"♇",Rising:"Asc",Chiron:"⚷"
+    Saturn:"♄",Uranus:"⛢",Neptune:"♆",Pluto:"♇",Chiron:"⚷"
   };
   const planetColors = {
     Sun:"#f5c842",Moon:"#c8d8f0",Mercury:"#a8c8a8",Venus:"#d4a0c8",
     Mars:"#e8534a",Jupiter:"#e8953a",Saturn:"#9a9a7a",Uranus:"#5ab8d8",
-    Neptune:"#9ab0d8",Pluto:"#8a5a9a",Rising:"#a8e060",Chiron:"#c8a878"
+    Neptune:"#9ab0d8",Pluto:"#8a5a9a",Chiron:"#c8a878"
   };
 
-  // Get ascending sign from houseCusps house 1
-  const ascSign = houseCusps.find(h => h.house === 1)?.sign || "Aries";
-  const ascIndex = signs.indexOf(ascSign);
+  // In astrology: ASC = 9 o'clock (180° in standard math)
+  // Houses go COUNTER-CLOCKWISE
+  // SVG: 0° = right, angles go CLOCKWISE
+  // So: svgAngle = 180 - astroAngle (to flip CCW to CW for SVG)
+  // House 1 starts at ASC (left = 180° SVG)
+  // Each house = 30°, going CCW in astrology = going CW in SVG when flipped
 
-  // Convert sign index to angle (Asc = left/9 o'clock = 180deg in SVG)
-  const signToAngle = (signName) => {
-    const idx = signs.indexOf(signName);
-    const offset = (idx - ascIndex + 12) % 12;
-    return 180 + offset * 30; // degrees, CCW from right
+  const astroToSVG = (astroDeg) => {
+    // astroDeg: 0 = ASC, increases CCW in astrology
+    // returns SVG angle where 0=right, increases CW
+    return 180 - astroDeg;
   };
 
-  const degToRad = (deg) => (deg * Math.PI) / 180;
-  const polarToXY = (angleDeg, radius) => {
-    const rad = degToRad(angleDeg);
+  const polarToXY = (svgAngleDeg, radius) => {
+    const rad = (svgAngleDeg * Math.PI) / 180;
     return { x: cx + radius * Math.cos(rad), y: cy + radius * Math.sin(rad) };
   };
 
-  // Draw zodiac wheel segments
+  // ASC sign
+  const ascSign = houseCusps.find(h => h.house === 1)?.sign || "Aries";
+  const ascSignIndex = signs.indexOf(ascSign);
+
+  // Each sign occupies 30° starting from ASC
+  // Sign at ASC (house 1 cusp) starts at 0° astro = 180° SVG
+  // Signs go CCW in astrology
+
+  // Zodiac ring: 12 segments, each 30°, CCW from ASC
   const zodiacSegments = signs.map((sign, i) => {
-    const startAngle = 180 + ((i - ascIndex + 12) % 12) * 30;
-    const endAngle = startAngle + 30;
-    const s1 = polarToXY(startAngle, outerR);
-    const e1 = polarToXY(endAngle, outerR);
-    const s2 = polarToXY(endAngle, innerR);
-    const e2 = polarToXY(startAngle, innerR);
-    const midAngle = startAngle + 15;
-    const lbl = polarToXY(midAngle, labelR);
+    const offset = (signs.indexOf(sign) - ascSignIndex + 12) % 12;
+    // astro: offset*30 to offset*30+30 (CCW)
+    // SVG: flip → start at 180 - offset*30 - 30, end at 180 - offset*30
+    const svgEnd = 180 - offset * 30;
+    const svgStart = svgEnd - 30;
+    const s1 = polarToXY(svgStart, outerR);
+    const e1 = polarToXY(svgEnd, outerR);
+    const s2 = polarToXY(svgEnd, zodiacInnerR);
+    const e2 = polarToXY(svgStart, zodiacInnerR);
+    const midSVG = svgStart + 15;
+    const lbl = polarToXY(midSVG, (outerR + zodiacInnerR) / 2);
     const col = signColors[sign] || "#f5c842";
+    const largeArc = 0;
     return (
       <g key={sign}>
         <path
-          d={`M ${s1.x} ${s1.y} A ${outerR} ${outerR} 0 0 1 ${e1.x} ${e1.y} L ${s2.x} ${s2.y} A ${innerR} ${innerR} 0 0 0 ${e2.x} ${e2.y} Z`}
-          fill={col} fillOpacity={0.15} stroke={col} strokeOpacity={0.4} strokeWidth={0.5}
+          d={`M ${s1.x} ${s1.y} A ${outerR} ${outerR} 0 ${largeArc} 1 ${e1.x} ${e1.y} L ${s2.x} ${s2.y} A ${zodiacInnerR} ${zodiacInnerR} 0 ${largeArc} 0 ${e2.x} ${e2.y} Z`}
+          fill={col} fillOpacity={0.18} stroke={col} strokeOpacity={0.5} strokeWidth={0.5}
         />
         <text x={lbl.x} y={lbl.y} textAnchor="middle" dominantBaseline="middle"
-          fontSize={10} fill={col} fontWeight="bold" style={{userSelect:"none"}}>
+          fontSize={11} fill={col} fontWeight="bold" style={{userSelect:"none"}}>
           {signSymbols[sign]}
         </text>
       </g>
     );
   });
 
-  // House lines
-  const houseLines = houseCusps.map((h) => {
-    const angle = signToAngle(h.sign);
-    const inner = polarToXY(angle, innerR * 0.35);
-    const outer = polarToXY(angle, innerR);
-    const lbl = polarToXY(angle - 14, innerR * 0.55);
-    const isAngular = [1,4,7,10].includes(h.house);
+  // House lines and numbers
+  // House n starts at n-1 signs from ASC (CCW)
+  const houseElements = Array.from({length:12}, (_,i) => {
+    const houseNum = i + 1;
+    // cusp angle in SVG: house 1 at 180°, each house 30° CW in SVG (CCW astro)
+    const cuspSVG = 180 - i * 30;
+    const p1 = polarToXY(cuspSVG, zodiacInnerR);
+    const p2 = polarToXY(cuspSVG, 18);
+    const isAngular = [1,4,7,10].includes(houseNum);
+    // House number label: midpoint of house sector
+    const midSVG = cuspSVG - 15; // middle of this house
+    const numPos = polarToXY(midSVG, houseNumR);
     return (
-      <g key={h.house}>
-        <line x1={inner.x} y1={inner.y} x2={outer.x} y2={outer.y}
-          stroke={isAngular?"rgba(245,200,66,0.6)":"rgba(255,200,50,0.2)"}
-          strokeWidth={isAngular?1.5:0.7}/>
-        <text x={lbl.x} y={lbl.y} textAnchor="middle" dominantBaseline="middle"
-          fontSize={7} fill="rgba(245,200,66,0.6)" fontFamily="Cinzel,serif" style={{userSelect:"none"}}>
-          {h.house}
+      <g key={houseNum}>
+        <line x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y}
+          stroke={isAngular?"rgba(245,200,66,0.7)":"rgba(255,200,50,0.18)"}
+          strokeWidth={isAngular?1.5:0.6}/>
+        <text x={numPos.x} y={numPos.y} textAnchor="middle" dominantBaseline="middle"
+          fontSize={8} fill={isAngular?"rgba(245,200,66,0.8)":"rgba(255,200,50,0.35)"}
+          fontFamily="Cinzel,serif" style={{userSelect:"none"}}>
+          {houseNum}
         </text>
       </g>
     );
   });
 
-  // Planet positions
-  const placedPlanets = [];
-  const planetNodes = fullPlanets
-    .filter(p => p.name !== "Midheaven" && planetSymbols[p.name])
-    .map((p, i) => {
-      const houseForPlanet = houseCusps.find(h => h.house === (p.house || 1));
-      const baseSign = houseForPlanet?.sign || p.sign;
-      let angle = signToAngle(baseSign) + 15;
-      // Spread planets in same house
-      const sameHouse = placedPlanets.filter(pp => pp.house === p.house);
-      angle += sameHouse.length * 12;
-      placedPlanets.push({ house: p.house, angle });
-      const pos = polarToXY(angle, planetR);
-      const col = planetColors[p.name] || "#f5c842";
-      return (
-        <g key={p.name}>
-          <circle cx={pos.x} cy={pos.y} r={10} fill="rgba(0,0,0,0.7)" stroke={col} strokeWidth={1}/>
-          <text x={pos.x} y={pos.y} textAnchor="middle" dominantBaseline="middle"
-            fontSize={p.name === "Rising" ? 6 : 10} fill={col} style={{userSelect:"none"}}>
-            {planetSymbols[p.name]}
-          </text>
-        </g>
-      );
-    });
+  // Planet placement
+  // Place each planet in its house at planetR
+  // Track positions per house to spread overlapping planets
+  const housePlanetCount = {};
+  const visiblePlanets = fullPlanets.filter(p => p.name !== "Midheaven" && planetSymbols[p.name]);
 
-  // Asc line
-  const ascLine1 = polarToXY(180, outerR);
-  const ascLine2 = polarToXY(180, innerR * 0.3);
+  const planetNodes = visiblePlanets.map((p) => {
+    const houseNum = p.house || 1;
+    if (!housePlanetCount[houseNum]) housePlanetCount[houseNum] = 0;
+    const idx = housePlanetCount[houseNum];
+    housePlanetCount[houseNum]++;
+
+    // House cusp in SVG = 180 - (houseNum-1)*30
+    // Planet placed in middle of house + spread offset
+    const houseStartSVG = 180 - (houseNum - 1) * 30;
+    const angle = houseStartSVG - 8 - idx * 14;
+    const pos = polarToXY(angle, planetR);
+    const col = planetColors[p.name] || "#f5c842";
+    const isActive = activePlanet === p.name;
+
+    return (
+      <g key={p.name} onClick={() => setActivePlanet(isActive ? null : p.name)}
+        style={{cursor:"pointer"}}>
+        <circle cx={pos.x} cy={pos.y} r={11}
+          fill={isActive?col:"rgba(0,0,0,0.8)"}
+          stroke={col} strokeWidth={isActive?2:1}
+          style={{filter:isActive?`drop-shadow(0 0 4px ${col})`:"none"}}/>
+        <text x={pos.x} y={pos.y} textAnchor="middle" dominantBaseline="middle"
+          fontSize={11} fill={isActive?"#000":col} style={{userSelect:"none"}}>
+          {planetSymbols[p.name]}
+        </text>
+      </g>
+    );
+  });
+
+  // Active planet info
+  const activePlanetData = activePlanet ? visiblePlanets.find(p => p.name === activePlanet) : null;
 
   return (
     <div style={{marginBottom:28}}>
       <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#f5c842",letterSpacing:".18em",marginBottom:12,textAlign:"center"}}>✦ YOUR NATAL CHART WHEEL ✦</div>
       <div style={{display:"flex",justifyContent:"center"}}>
-        <svg viewBox="0 0 400 400" width="100%" style={{maxWidth:380,borderRadius:16,background:"radial-gradient(circle,rgba(20,15,35,1),rgba(5,5,15,1))"}}>
-          {/* Outer border */}
-          <circle cx={cx} cy={cy} r={outerR-1} fill="none" stroke="rgba(245,200,66,0.3)" strokeWidth={1}/>
-          {/* Inner border */}
-          <circle cx={cx} cy={cy} r={innerR} fill="none" stroke="rgba(245,200,66,0.2)" strokeWidth={0.5}/>
-          {/* Chart background */}
-          <circle cx={cx} cy={cy} r={innerR-1} fill="rgba(10,8,20,0.95)"/>
-          {/* Inner circle */}
-          <circle cx={cx} cy={cy} r={innerR*0.38} fill="rgba(245,200,66,0.03)" stroke="rgba(245,200,66,0.15)" strokeWidth={0.5}/>
+        <svg viewBox="0 0 400 400" width="100%" style={{maxWidth:400,borderRadius:"50%",background:"radial-gradient(circle,rgba(18,12,32,1),rgba(4,4,12,1))"}}>
+          <circle cx={cx} cy={cy} r={outerR} fill="none" stroke="rgba(245,200,66,0.35)" strokeWidth={1}/>
+          <circle cx={cx} cy={cy} r={zodiacInnerR} fill="none" stroke="rgba(245,200,66,0.2)" strokeWidth={0.5}/>
+          <circle cx={cx} cy={cy} r={zodiacInnerR-1} fill="rgba(8,6,18,0.97)"/>
+          <circle cx={cx} cy={cy} r={20} fill="rgba(245,200,66,0.04)" stroke="rgba(245,200,66,0.12)" strokeWidth={0.5}/>
           {zodiacSegments}
-          {houseLines}
+          {houseElements}
           {planetNodes}
-          {/* ASC marker */}
-          <line x1={ascLine1.x} y1={ascLine1.y} x2={ascLine2.x} y2={ascLine2.y}
-            stroke="#a8e060" strokeWidth={2}/>
-          <text x={polarToXY(180, outerR+10).x} y={polarToXY(180, outerR+10).y}
-            textAnchor="middle" dominantBaseline="middle" fontSize={8} fill="#a8e060" fontWeight="bold">ASC</text>
+          {/* ASC/DSC axis */}
+          <line x1={polarToXY(180,outerR).x} y1={polarToXY(180,outerR).y}
+                x2={polarToXY(0,outerR).x} y2={polarToXY(0,outerR).y}
+                stroke="rgba(168,224,96,0.5)" strokeWidth={1} strokeDasharray="3,3"/>
+          <text x={polarToXY(180,outerR-12).x} y={polarToXY(180,outerR-12).y}
+            textAnchor="middle" dominantBaseline="middle" fontSize={7} fill="#a8e060" fontWeight="bold">ASC</text>
+          <text x={polarToXY(0,outerR-12).x} y={polarToXY(0,outerR-12).y}
+            textAnchor="middle" dominantBaseline="middle" fontSize={7} fill="#a8e060" fontWeight="bold">DSC</text>
         </svg>
       </div>
+
+      {/* Active planet popup */}
+      {activePlanetData && (
+        <div style={{marginTop:12,padding:"14px 16px",background:`rgba(0,0,0,0.6)`,border:`1px solid ${planetColors[activePlanetData.name]||"#f5c842"}44`,borderRadius:12,animation:"up 0.2s ease"}}>
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
+            <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:13,color:planetColors[activePlanetData.name]||"#f5c842"}}>
+              {planetSymbols[activePlanetData.name]} {activePlanetData.name} in {activePlanetData.sign}
+              {activePlanetData.house && <span style={{fontSize:10,color:"#f5c842",marginLeft:8}}>· {activePlanetData.house === 1 ? "1st" : activePlanetData.house === 2 ? "2nd" : activePlanetData.house === 3 ? "3rd" : `${activePlanetData.house}th`} House</span>}
+            </div>
+            <button onClick={()=>setActivePlanet(null)} style={{background:"none",border:"none",color:"#4a4440",cursor:"pointer",fontSize:14}}>✕</button>
+          </div>
+          <p style={{fontFamily:"Georgia,serif",fontSize:12,color:"#d8c890",lineHeight:1.7,margin:0}}>
+            {Array.isArray(report) ? (
+              report.find(s => {
+                const t = (s.title||"").toLowerCase();
+                return t.startsWith(activePlanetData.name.toLowerCase()) && t.includes(activePlanetData.sign.toLowerCase());
+              })?.text || getFact(activePlanetData.sign, activePlanetData.name)
+            ) : getFact(activePlanetData.sign, activePlanetData.name)}
+          </p>
+        </div>
+      )}
+
       {/* Legend */}
       <div style={{display:"flex",flexWrap:"wrap",gap:"6px 12px",justifyContent:"center",marginTop:10}}>
-        {fullPlanets.filter(p => p.name !== "Midheaven" && planetSymbols[p.name]).map(p => (
-          <div key={p.name} style={{display:"flex",alignItems:"center",gap:4}}>
+        {visiblePlanets.map(p => (
+          <div key={p.name} onClick={()=>setActivePlanet(activePlanet===p.name?null:p.name)}
+            style={{display:"flex",alignItems:"center",gap:4,cursor:"pointer",opacity:activePlanet&&activePlanet!==p.name?0.4:1,transition:"opacity 0.2s"}}>
             <span style={{fontSize:10,color:planetColors[p.name]||"#f5c842"}}>{planetSymbols[p.name]}</span>
             <span style={{fontFamily:"'Cinzel',serif",fontSize:7,color:"#6a6058",letterSpacing:".06em"}}>{p.name.toUpperCase()}</span>
           </div>
@@ -1985,7 +2037,7 @@ function BirthChartResults({ result, onReset, onUpgrade }) {
 
       {/* Natal Chart Wheel */}
       {houseCusps.length > 0 && fullPlanets.length > 0 && (
-        <NatalChartWheel houseCusps={houseCusps} chartPlanets={chartPlanets} fullPlanets={fullPlanets}/>
+        <NatalChartWheel houseCusps={houseCusps} chartPlanets={chartPlanets} fullPlanets={fullPlanets} report={report} planetInHouse={planetInHouse} getFact={getFact}/>
       )}
 
       {/* Planet / Sign / House table */}
