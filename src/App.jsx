@@ -1767,6 +1767,7 @@ function PaywallSection({ chartPlanets, onVerified }) {
 
 function NatalChartWheel({ houseCusps, chartPlanets, fullPlanets, report, planetInHouse, getFact, aspects = [], transitPlanets = [], transitAspects = [], transitDate = null }) {
   const [activePlanet, setActivePlanet] = React.useState(null);
+  const [activeAspect, setActiveAspect] = React.useState(null);
   const [showTransits, setShowTransits] = React.useState(true);
   const cx = 250, cy = 250;
   const outerR = 230, zodiacInnerR = 185, houseR = 108, planetR = 160, houseNumR = 120;
@@ -1926,11 +1927,11 @@ function NatalChartWheel({ houseCusps, chartPlanets, fullPlanets, report, planet
     trine:"#a8e060", sextile:"#5ab8d8", conjunction:"#f5c842",
     opposition:"#e8534a", square:"#e8953a"
   };
-  const aspectOpacity = { trine:0.7, sextile:0.55, conjunction:0.75, opposition:0.65, square:0.65 };
+  const aspectOpacity = { trine:0.45, sextile:0.35, conjunction:0.5, opposition:0.4, square:0.4 };
 
-  // Draw aspect lines — only major aspects, filter by strength
+  // Draw aspect lines — only in BIRTH CHART mode, clickable
   const majorAspects = ["trine","sextile","conjunction","opposition","square"];
-  const aspectLines = aspects
+  const aspectLines = !showTransits ? aspects
     .filter(a => majorAspects.includes((a.type||"").toLowerCase()))
     .filter(a => !a.strength || a.strength >= 2)
     .map((a, i) => {
@@ -1940,29 +1941,32 @@ function NatalChartWheel({ houseCusps, chartPlanets, fullPlanets, report, planet
       const type = (a.type||"").toLowerCase();
       const col = aspectColors[type] || "rgba(255,200,50,0.3)";
       const op = aspectOpacity[type] || 0.3;
-      const isActive = activePlanet && (a.planet1 === activePlanet || a.planet2 === activePlanet);
+      const isActive = activeAspect === i || (activePlanet && (a.planet1 === activePlanet || a.planet2 === activePlanet));
       return (
-        <line key={i}
-          x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y}
-          stroke={col} strokeOpacity={isActive ? op * 2.2 : op}
-          strokeWidth={isActive ? 2.5 : 1.5}
-          strokeDasharray={type === "sextile" ? "3,3" : type === "square" ? "4,2" : "none"}/>
+        <g key={i} onClick={() => { setActiveAspect(activeAspect === i ? null : i); setActivePlanet(null); }} style={{cursor:"pointer"}}>
+          <line x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y} stroke="transparent" strokeWidth={14}/>
+          <line x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y}
+            stroke={col} strokeOpacity={isActive ? Math.min(op * 2.2, 1) : op}
+            strokeWidth={isActive ? 3 : 1.5}
+            strokeDasharray={type === "sextile" ? "3,3" : type === "square" ? "4,2" : "none"}/>
+        </g>
       );
-    }).filter(Boolean);
+    }).filter(Boolean) : [];
 
   return (
     <div style={{marginBottom:28}}>
       <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#f5c842",letterSpacing:".18em",marginBottom:8,textAlign:"center"}}>✦ YOUR NATAL CHART WHEEL ✦</div>
       {houseCusps.length > 0 && (
-        <div style={{display:"flex",justifyContent:"center",alignItems:"center",gap:10,marginBottom:12}}>
-          <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:12,justifyContent:"center"}}>
+        <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:6,marginBottom:12}}>
+          <div style={{display:"flex",alignItems:"center",gap:10}}>
             <span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:!showTransits?"#f5c842":"#4a4440",letterSpacing:".1em",transition:"color 0.2s"}}>BIRTH CHART</span>
-            <div onClick={()=>setShowTransits(t=>!t)} style={{width:44,height:24,borderRadius:12,background:showTransits?"rgba(90,184,216,0.3)":"rgba(245,200,66,0.2)",border:`1px solid ${showTransits?"rgba(90,184,216,0.6)":"rgba(245,200,66,0.4)"}`,cursor:"pointer",position:"relative",transition:"all 0.3s",flexShrink:0}}>
+            <div onClick={()=>{setShowTransits(t=>!t);setActiveAspect(null);setActivePlanet(null);}} style={{width:44,height:24,borderRadius:12,background:showTransits?"rgba(90,184,216,0.3)":"rgba(245,200,66,0.2)",border:`1px solid ${showTransits?"rgba(90,184,216,0.6)":"rgba(245,200,66,0.4)"}`,cursor:"pointer",position:"relative",transition:"all 0.3s",flexShrink:0}}>
               <div style={{position:"absolute",top:3,left:showTransits?22:3,width:16,height:16,borderRadius:"50%",background:showTransits?"#5ab8d8":"#f5c842",transition:"left 0.3s, background 0.3s",boxShadow:`0 0 6px ${showTransits?"rgba(90,184,216,0.8)":"rgba(245,200,66,0.8)"}`}}/>
             </div>
             <span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:showTransits?"#5ab8d8":"#4a4440",letterSpacing:".1em",transition:"color 0.2s"}}>TODAY</span>
           </div>
-          <span style={{fontFamily:"Georgia,serif",fontSize:10,color:"#4a4440"}}>{transitDate}</span>
+          {!showTransits && <span style={{fontFamily:"Georgia,serif",fontSize:10,color:"#4a4440",fontStyle:"italic"}}>Tap any line to read the aspect</span>}
+          {transitDate && <span style={{fontFamily:"Georgia,serif",fontSize:10,color:"#4a4440"}}>{transitDate}</span>}
         </div>
       )}
       <div style={{display:"flex",justifyContent:"center"}}>
@@ -2087,6 +2091,32 @@ function NatalChartWheel({ houseCusps, chartPlanets, fullPlanets, report, planet
         ))}
       </div>
 
+      {/* Clicked aspect popup */}
+      {activeAspect !== null && !showTransits && (() => {
+        const filteredAspects = aspects.filter(a => majorAspects.includes((a.type||"").toLowerCase()) && (!a.strength || a.strength >= 2));
+        const a = filteredAspects[activeAspect];
+        if (!a) return null;
+        const type = (a.type||"").toLowerCase();
+        const col = aspectColors[type] || "#f5c842";
+        const reportText = getAspectReportText(report, a.planet1, a.planet2, a.type);
+        const contextText = getAspectContext(a);
+        const aspectSymbols = { trine:"△", sextile:"⚹", conjunction:"☌", opposition:"☍", square:"□" };
+        return (
+          <div style={{marginTop:12,padding:"14px 16px",background:`${col}12`,border:`1px solid ${col}44`,borderRadius:12,animation:"up 0.2s ease"}}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
+              <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:13,color:col}}>
+                {aspectSymbols[type]||"✦"} {a.planet1} {(a.type||"").toLowerCase()} {a.planet2}
+                {a.orb && <span style={{fontSize:9,color:"#4a4440",marginLeft:8}}>orb {parseFloat(a.orb).toFixed(1)}°</span>}
+              </div>
+              <button onClick={()=>setActiveAspect(null)} style={{background:"none",border:"none",color:"#4a4440",cursor:"pointer",fontSize:14}}>✕</button>
+            </div>
+            {reportText && <p style={{fontFamily:"Georgia,serif",fontSize:12,color:"#d8c890",lineHeight:1.7,margin:"0 0 8px"}}>{reportText}</p>}
+            {!reportText && <p style={{fontFamily:"Georgia,serif",fontSize:12,color:"#6a6058",lineHeight:1.7,margin:"0 0 8px",fontStyle:"italic"}}>No written interpretation for this aspect.</p>}
+            {contextText && <p style={{fontFamily:"Georgia,serif",fontSize:11,color:"#8a7a62",lineHeight:1.6,margin:0,fontStyle:"italic",borderTop:"1px solid rgba(255,200,50,0.08)",paddingTop:8}}>{contextText}</p>}
+          </div>
+        );
+      })()}
+
       {/* Transit key */}
       {transitPlanets.length > 0 && (
         <div style={{marginTop:8,display:"flex",alignItems:"center",justifyContent:"center",gap:8}}>
@@ -2201,86 +2231,7 @@ function BirthChartResults({ result, onReset, onUpgrade }) {
         <NatalChartWheel houseCusps={houseCusps} chartPlanets={chartPlanets} fullPlanets={fullPlanets} report={report} planetInHouse={planetInHouse} getFact={getFact} aspects={aspects} transitPlanets={transitPlanets} transitAspects={transitAspects} transitDate={transitDate}/>
       )}
 
-      {/* Planet / Sign / House table */}
-      <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#f5c842",letterSpacing:".18em",marginBottom:14,textAlign:"center"}}>✦ PLANETS IN SIGNS & HOUSES ✦</div>
-      <div style={{fontFamily:"Georgia,serif",fontSize:11,color:"#4a4440",textAlign:"center",marginBottom:14}}>Whole Sign House System · Tap any row to read</div>
 
-      <div style={{display:"flex",flexDirection:"column",gap:6,marginBottom:28}}>
-        {fullPlanets.filter(p => p.name !== "Midheaven" && p.name !== "Medium_Coeli").map((p, i) => {
-          const color = colors[p.sign] || "#f5c842";
-          const isOpen = openPlanet === i;
-
-          // Try to find API interpretation for this planet+sign from the report
-          const signAbbr = p.sign ? p.sign.slice(0,3) : "";
-          const apiText = Array.isArray(report) ? (
-            report.find(s => {
-              const t = (s.title || "").toLowerCase();
-              const planetLower = p.name.toLowerCase();
-              const signLower = p.sign.toLowerCase();
-              const signAbbrLower = signAbbr.toLowerCase();
-              return (
-                t.startsWith(planetLower) &&
-                (t.includes(signLower) || t.includes(signAbbrLower))
-              );
-            })?.text
-          ) : null;
-
-          // Get the correct Whole Sign house description using p.house and p.sign
-          const houseDesc = p.house && p.name
-            ? planetInHouse[p.name]?.[p.house] || null
-            : null;
-
-          // Final display: API sign text (or fallback) + correct house description
-          const signText = apiText || getFact(p.sign, p.name);
-          const displayText = houseDesc
-            ? signText + "\n\n" + houseDesc
-            : signText;
-
-          return (
-            <div key={i} onClick={() => setOpenPlanet(isOpen ? null : i)}
-              style={{borderRadius:12,overflow:"hidden",border:`1px solid ${isOpen?color+"66":"rgba(255,200,50,0.1)"}`,cursor:"pointer",transition:"all 0.2s",background:isOpen?`${color}08`:"rgba(255,200,50,0.02)"}}>
-              <div style={{display:"flex",alignItems:"center",padding:"12px 14px",gap:10}}>
-                {/* Planet */}
-                <div style={{display:"flex",alignItems:"center",gap:6,width:"30%",minWidth:0}}>
-                  <span style={{fontSize:16,flexShrink:0}}>{emojis[p.name]||"✦"}</span>
-                  <div>
-                    <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#6a6058",letterSpacing:".08em"}}>{p.name.toUpperCase()}</div>
-                    {p.retrograde && <div style={{fontFamily:"'Cinzel',serif",fontSize:7,color:"#ff9944",letterSpacing:".06em"}}>℞ RETROGRADE</div>}
-                  </div>
-                </div>
-                {/* Sign */}
-                <div style={{display:"flex",alignItems:"center",gap:4,width:"35%",minWidth:0}}>
-                  <span style={{fontSize:14}}>{emojis[p.sign]||""}</span>
-                  <span style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:12,color}}>{p.sign}</span>
-                </div>
-                {/* House */}
-                <div style={{flex:1,textAlign:"right"}}>
-                  {p.house && <span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,color:"#f5c842",background:"rgba(245,200,66,0.1)",border:"1px solid rgba(245,200,66,0.2)",borderRadius:6,padding:"3px 8px"}}>{houseLabel(p.house)}</span>}
-                </div>
-                <span style={{fontSize:9,color,opacity:0.5,flexShrink:0,transform:isOpen?"rotate(180deg)":"rotate(0deg)",transition:"transform 0.2s"}}>▼</span>
-              </div>
-              {isOpen && (
-                <div style={{padding:"0 14px 14px",animation:"up 0.2s ease"}}>
-                  {displayText.split("\n\n").map((para, pi) => (
-                    <p key={pi} style={{
-                      fontFamily:"Georgia,serif",
-                      fontSize:13,
-                      color: pi === 0 ? "#d8c890" : "#b8a878",
-                      lineHeight:1.8,
-                      margin: pi === 0 && displayText.includes("\n\n") ? "0 0 12px" : "0",
-                      paddingTop: pi > 0 ? 12 : 0,
-                      borderTop: pi > 0 ? "1px solid rgba(255,200,50,0.1)" : "none",
-                    }}>{para}</p>
-                  ))}
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Aspect wheel */}
-      <AspectWheel aspects={aspects} chartPlanets={chartPlanets} report={report}/>
     </div>
   );
 
