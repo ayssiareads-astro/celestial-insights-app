@@ -1007,43 +1007,45 @@ function BigThreeCard({ planet, sign }) {
   );
 }
 
+// ── Shared aspect helpers (used by both AspectWheel and NatalChartWheel) ──────
+const getAspectReportText = (report, p1, p2, type) => {
+  if (!Array.isArray(report)) return null;
+  const t = (type || "").toLowerCase();
+  const match = report.find(s => {
+    const title = (s.title || "").toLowerCase();
+    const hasBothPlanets = title.includes(p1.toLowerCase()) && title.includes(p2.toLowerCase());
+    const hasType = title.includes(t);
+    const isAspectSection = !title.includes("house") && !title.includes("ascendant") && !title.includes("medium");
+    return hasBothPlanets && hasType && isAspectSection;
+  });
+  return match?.text || null;
+};
+
+const getAspectContext = (aspect) => {
+  const lines = [];
+  if (aspect.strength != null) {
+    const s = parseFloat(aspect.strength);
+    if (s >= 8) lines.push("This is one of the strongest aspects in your chart — not a subtle background influence but a defining force that actively shapes how you move through the world.");
+    else if (s >= 5) lines.push("This is a moderately strong aspect — present and felt, surfacing most clearly under pressure or in relationships that genuinely matter to you.");
+    else if (s > 0) lines.push("This is a softer aspect — subtler than others, but real. You will notice it most in specific contexts rather than as a constant force.");
+  }
+  if (aspect.applying === true) lines.push("This aspect is still applying — it has not yet reached its peak. The energy described here is still building, and its full influence is ahead of you rather than behind.");
+  else if (aspect.applying === false) lines.push("This aspect is separating — it has already peaked and is slowly releasing. Its lessons are largely integrated into who you are, even when you do not consciously recognize them.");
+  if (aspect.reception) {
+    const r = aspect.reception;
+    if (r.reception_type === "mutual_pure" && r.reception_quality === "excellent") lines.push("These planets share a mutual reception — each in a sign that the other rules or exalts. This is rare: the two energies genuinely support each other at a structural level, not just on the surface.");
+    else if (r.reception_type === "mutual_pure") lines.push("These planets share a mutual reception, meaning they operate in each other's territory. There is a natural understanding between these two parts of you.");
+    else if (r.reception_type === "single" && r.reception_quality === "strong") lines.push("One of these planets is received by the other — operating in a sign that welcomes it. One energy is genuinely strengthening the other in this relationship.");
+  }
+  return lines.join(" ").trim();
+};
+
 // ── Aspect chips ─────────────────────────────────────────────────
 function AspectWheel({ aspects, chartPlanets, report }) {
   const [selected, setSelected] = useState(null);
 
   // Look up the API's written interpretation for this aspect from the report
-  const getReportText = (p1, p2, type) => {
-    if (!Array.isArray(report)) return null;
-    const t = (type || "").toLowerCase();
-    const match = report.find(s => {
-      const title = (s.title || "").toLowerCase();
-      const hasBothPlanets = title.includes(p1.toLowerCase()) && title.includes(p2.toLowerCase());
-      const hasType = title.includes(t);
-      const isAspectSection = !title.includes("house") && !title.includes("ascendant") && !title.includes("medium");
-      return hasBothPlanets && hasType && isAspectSection;
-    });
-    return match?.text || null;
-  };
-
-  // Build a dynamic context paragraph from enhanced API fields
-  const getAspectContext = (aspect) => {
-    const lines = [];
-    if (aspect.strength != null) {
-      const s = parseFloat(aspect.strength);
-      if (s >= 8) lines.push("This is one of the strongest aspects in your chart — not a subtle background influence but a defining force that actively shapes how you move through the world.");
-      else if (s >= 5) lines.push("This is a moderately strong aspect — present and felt, surfacing most clearly under pressure or in relationships that genuinely matter to you.");
-      else if (s > 0) lines.push("This is a softer aspect — subtler than others, but real. You will notice it most in specific contexts rather than as a constant force.");
-    }
-    if (aspect.applying === true) lines.push("This aspect is still applying — it has not yet reached its peak. The energy described here is still building, and its full influence is ahead of you rather than behind.");
-    else if (aspect.applying === false) lines.push("This aspect is separating — it has already peaked and is slowly releasing. Its lessons are largely integrated into who you are, even when you do not consciously recognize them.");
-    if (aspect.reception) {
-      const r = aspect.reception;
-      if (r.reception_type === "mutual_pure" && r.reception_quality === "excellent") lines.push("These planets share a mutual reception — each in a sign that the other rules or exalts. This is rare: the two energies genuinely support each other at a structural level, not just on the surface.");
-      else if (r.reception_type === "mutual_pure") lines.push("These planets share a mutual reception, meaning they operate in each other's territory. There is a natural understanding between these two parts of you.");
-      else if (r.reception_type === "single" && r.reception_quality === "strong") lines.push("One of these planets is received by the other — operating in a sign that welcomes it. One energy is genuinely strengthening the other in this relationship.");
-    }
-    return lines.join(" ").trim();
-  };
+  const getReportText = (p1, p2, type) => getAspectReportText(report, p1, p2, type);
 
   const getAspectMeaning = (p1, p2, type) => {
     const key = [p1, p2].sort().join("-") + "-" + (type||"").toLowerCase();
@@ -1765,8 +1767,8 @@ function PaywallSection({ chartPlanets, onVerified }) {
 
 function NatalChartWheel({ houseCusps, chartPlanets, fullPlanets, report, planetInHouse, getFact, aspects = [] }) {
   const [activePlanet, setActivePlanet] = React.useState(null);
-  const cx = 200, cy = 200;
-  const outerR = 178, zodiacInnerR = 142, houseR = 108, planetR = 124, houseNumR = 90;
+  const cx = 250, cy = 250;
+  const outerR = 230, zodiacInnerR = 185, houseR = 108, planetR = 160, houseNumR = 120;
 
   const signColors = {
     Aries:"#e8534a",Taurus:"#7cba6b",Gemini:"#f5c842",Cancer:"#7ab8d4",
@@ -1835,7 +1837,7 @@ function NatalChartWheel({ houseCusps, chartPlanets, fullPlanets, report, planet
           fill={col} fillOpacity={0.18} stroke={col} strokeOpacity={0.5} strokeWidth={0.5}
         />
         <text x={lbl.x} y={lbl.y} textAnchor="middle" dominantBaseline="middle"
-          fontSize={11} fill={col} fontWeight="bold" style={{userSelect:"none"}}>
+          fontSize={14} fill={col} fontWeight="bold" style={{userSelect:"none"}}>
           {signSymbols[sign]}
         </text>
       </g>
@@ -1951,11 +1953,11 @@ function NatalChartWheel({ houseCusps, chartPlanets, fullPlanets, report, planet
     <div style={{marginBottom:28}}>
       <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#f5c842",letterSpacing:".18em",marginBottom:12,textAlign:"center"}}>✦ YOUR NATAL CHART WHEEL ✦</div>
       <div style={{display:"flex",justifyContent:"center"}}>
-        <svg viewBox="0 0 400 400" width="100%" style={{maxWidth:400,borderRadius:"50%",background:"radial-gradient(circle,rgba(18,12,32,1),rgba(4,4,12,1))"}}>
+        <svg viewBox="0 0 500 500" width="100%" style={{maxWidth:500,borderRadius:"50%",background:"radial-gradient(circle,rgba(18,12,32,1),rgba(4,4,12,1))"}}>
           <circle cx={cx} cy={cy} r={outerR} fill="none" stroke="rgba(245,200,66,0.35)" strokeWidth={1}/>
           <circle cx={cx} cy={cy} r={zodiacInnerR} fill="none" stroke="rgba(245,200,66,0.2)" strokeWidth={0.5}/>
           <circle cx={cx} cy={cy} r={zodiacInnerR-1} fill="rgba(8,6,18,0.97)"/>
-          <circle cx={cx} cy={cy} r={20} fill="rgba(245,200,66,0.04)" stroke="rgba(245,200,66,0.12)" strokeWidth={0.5}/>
+          <circle cx={cx} cy={cy} r={25} fill="rgba(245,200,66,0.04)" stroke="rgba(245,200,66,0.12)" strokeWidth={0.5}/>
           {zodiacSegments}
           {houseElements}
           {aspectLines}
@@ -1991,9 +1993,9 @@ function NatalChartWheel({ houseCusps, chartPlanets, fullPlanets, report, planet
           </p>
           {/* Show aspects involving this planet */}
           {aspects.filter(a => (a.planet1 === activePlanet || a.planet2 === activePlanet) && majorAspects.includes((a.type||"").toLowerCase())).length > 0 && (
-            <div>
-              <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,color:"#f5c842",letterSpacing:".1em",marginBottom:6}}>KEY ASPECTS</div>
-              <div style={{display:"flex",flexDirection:"column",gap:4}}>
+            <div style={{marginTop:10}}>
+              <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,color:"#f5c842",letterSpacing:".1em",marginBottom:8}}>KEY ASPECTS</div>
+              <div style={{display:"flex",flexDirection:"column",gap:8}}>
                 {aspects
                   .filter(a => (a.planet1 === activePlanet || a.planet2 === activePlanet) && majorAspects.includes((a.type||"").toLowerCase()))
                   .slice(0,4)
@@ -2001,11 +2003,17 @@ function NatalChartWheel({ houseCusps, chartPlanets, fullPlanets, report, planet
                     const other = a.planet1 === activePlanet ? a.planet2 : a.planet1;
                     const type = (a.type||"").toLowerCase();
                     const col = aspectColors[type] || "#f5c842";
+                    const reportText = getAspectReportText(report, a.planet1, a.planet2, a.type);
+                    const contextText = getAspectContext(a);
                     return (
-                      <div key={i} style={{display:"flex",alignItems:"center",gap:6}}>
-                        <span style={{fontFamily:"'Cinzel',serif",fontSize:9,color:col,letterSpacing:".06em",textTransform:"capitalize"}}>{a.type}</span>
-                        <span style={{fontFamily:"Georgia,serif",fontSize:11,color:"#d8c890"}}>{other}</span>
-                        {a.orb && <span style={{fontFamily:"Georgia,serif",fontSize:9,color:"#4a4440"}}>orb {parseFloat(a.orb).toFixed(1)}°</span>}
+                      <div key={i} style={{borderTop:"1px solid rgba(255,200,50,0.08)",paddingTop:8}}>
+                        <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:4}}>
+                          <span style={{fontFamily:"'Cinzel',serif",fontSize:9,color:col,letterSpacing:".06em",textTransform:"capitalize"}}>{a.type}</span>
+                          <span style={{fontFamily:"'Cinzel',serif",fontSize:10,color:"#d8c890",fontWeight:700}}>{activePlanet} & {other}</span>
+                          {a.orb && <span style={{fontFamily:"Georgia,serif",fontSize:9,color:"#4a4440"}}>orb {parseFloat(a.orb).toFixed(1)}°</span>}
+                        </div>
+                        {reportText && <p style={{fontFamily:"Georgia,serif",fontSize:11,color:"#d8c890",lineHeight:1.65,margin:"0 0 4px"}}>{reportText}</p>}
+                        {contextText && <p style={{fontFamily:"Georgia,serif",fontSize:10,color:"#8a7a62",lineHeight:1.6,margin:0,fontStyle:"italic"}}>{contextText}</p>}
                       </div>
                     );
                   })}
