@@ -1768,6 +1768,7 @@ function PaywallSection({ chartPlanets, onVerified }) {
 function NatalChartWheel({ houseCusps, chartPlanets, fullPlanets, report, planetInHouse, getFact, aspects = [], transitPlanets = [], transitAspects = [], transitDate = null }) {
   const [activePlanet, setActivePlanet] = React.useState(null);
   const [activeAspect, setActiveAspect] = React.useState(null);
+  const [activeTransitAspect, setActiveTransitAspect] = React.useState(null);
   const [showTransits, setShowTransits] = React.useState(true);
   const cx = 250, cy = 250;
   const outerR = 230, zodiacInnerR = 185, houseR = 108, planetR = 160, houseNumR = 120;
@@ -1960,12 +1961,12 @@ function NatalChartWheel({ houseCusps, chartPlanets, fullPlanets, report, planet
         <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:6,marginBottom:12}}>
           <div style={{display:"flex",alignItems:"center",gap:10}}>
             <span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:!showTransits?"#f5c842":"#4a4440",letterSpacing:".1em",transition:"color 0.2s"}}>BIRTH CHART</span>
-            <div onClick={()=>{setShowTransits(t=>!t);setActiveAspect(null);setActivePlanet(null);}} style={{width:44,height:24,borderRadius:12,background:showTransits?"rgba(90,184,216,0.3)":"rgba(245,200,66,0.2)",border:`1px solid ${showTransits?"rgba(90,184,216,0.6)":"rgba(245,200,66,0.4)"}`,cursor:"pointer",position:"relative",transition:"all 0.3s",flexShrink:0}}>
+            <div onClick={()=>{setShowTransits(t=>!t);setActiveAspect(null);setActivePlanet(null);setActiveTransitAspect(null);}} style={{width:44,height:24,borderRadius:12,background:showTransits?"rgba(90,184,216,0.3)":"rgba(245,200,66,0.2)",border:`1px solid ${showTransits?"rgba(90,184,216,0.6)":"rgba(245,200,66,0.4)"}`,cursor:"pointer",position:"relative",transition:"all 0.3s",flexShrink:0}}>
               <div style={{position:"absolute",top:3,left:showTransits?22:3,width:16,height:16,borderRadius:"50%",background:showTransits?"#5ab8d8":"#f5c842",transition:"left 0.3s, background 0.3s",boxShadow:`0 0 6px ${showTransits?"rgba(90,184,216,0.8)":"rgba(245,200,66,0.8)"}`}}/>
             </div>
             <span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:showTransits?"#5ab8d8":"#4a4440",letterSpacing:".1em",transition:"color 0.2s"}}>TODAY</span>
           </div>
-          {!showTransits && <span style={{fontFamily:"Georgia,serif",fontSize:10,color:"#4a4440",fontStyle:"italic"}}>Tap any line to read the aspect</span>}
+          <span style={{fontFamily:"Georgia,serif",fontSize:10,color:"#4a4440",fontStyle:"italic"}}>Tap any line to read the aspect</span>
           {transitDate && <span style={{fontFamily:"Georgia,serif",fontSize:10,color:"#4a4440"}}>{transitDate}</span>}
         </div>
       )}
@@ -2012,11 +2013,15 @@ function NatalChartWheel({ houseCusps, chartPlanets, fullPlanets, report, planet
             const tPos = polarToXY(tAngle, (outerR + zodiacInnerR) / 2 - 8);
             const type = (a.type||"").toLowerCase();
             const col = aspectColors[type] || "#5ab8d8";
+            const isActive = activeTransitAspect === i;
             return (
-              <line key={"ta"+i}
-                x1={tPos.x} y1={tPos.y} x2={natalPos.x} y2={natalPos.y}
-                stroke={col} strokeOpacity={0.5} strokeWidth={1}
-                strokeDasharray="4,3"/>
+              <g key={"ta"+i} onClick={() => { setActiveTransitAspect(isActive ? null : i); setActivePlanet(null); }} style={{cursor:"pointer"}}>
+                <line x1={tPos.x} y1={tPos.y} x2={natalPos.x} y2={natalPos.y} stroke="transparent" strokeWidth={14}/>
+                <line x1={tPos.x} y1={tPos.y} x2={natalPos.x} y2={natalPos.y}
+                  stroke={col} strokeOpacity={isActive ? 0.9 : 0.5}
+                  strokeWidth={isActive ? 2.5 : 1}
+                  strokeDasharray="4,3"/>
+              </g>
             );
           }).filter(Boolean)}
           {/* ASC/DSC axis */}
@@ -2113,6 +2118,34 @@ function NatalChartWheel({ houseCusps, chartPlanets, fullPlanets, report, planet
             {reportText && <p style={{fontFamily:"Georgia,serif",fontSize:12,color:"#d8c890",lineHeight:1.7,margin:"0 0 8px"}}>{reportText}</p>}
             {!reportText && <p style={{fontFamily:"Georgia,serif",fontSize:12,color:"#6a6058",lineHeight:1.7,margin:"0 0 8px",fontStyle:"italic"}}>No written interpretation for this aspect.</p>}
             {contextText && <p style={{fontFamily:"Georgia,serif",fontSize:11,color:"#8a7a62",lineHeight:1.6,margin:0,fontStyle:"italic",borderTop:"1px solid rgba(255,200,50,0.08)",paddingTop:8}}>{contextText}</p>}
+          </div>
+        );
+      })()}
+
+      {/* Clicked transit aspect popup */}
+      {activeTransitAspect !== null && showTransits && (() => {
+        const a = transitAspects[activeTransitAspect];
+        if (!a) return null;
+        const type = (a.type||"").toLowerCase();
+        const col = aspectColors[type] || "#5ab8d8";
+        const aspectSymbols = { trine:"△", sextile:"⚹", conjunction:"☌", opposition:"☍", square:"□" };
+        return (
+          <div style={{marginTop:12,padding:"14px 16px",background:`rgba(90,184,216,0.08)`,border:`1px solid ${col}44`,borderRadius:12,animation:"up 0.2s ease"}}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
+              <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:13,color:col}}>
+                {aspectSymbols[type]||"✦"} {a.planet1} {type} {a.planet2}
+                {a.orb && <span style={{fontSize:9,color:"#4a4440",marginLeft:8}}>orb {parseFloat(a.orb).toFixed(1)}°</span>}
+                {a.applying === true && <span style={{fontFamily:"'Cinzel',serif",fontSize:7,color:"#a8e060",marginLeft:8,letterSpacing:".06em"}}>APPLYING</span>}
+                {a.applying === false && <span style={{fontFamily:"'Cinzel',serif",fontSize:7,color:"#f5c842",marginLeft:8,letterSpacing:".06em"}}>SEPARATING</span>}
+              </div>
+              <button onClick={()=>setActiveTransitAspect(null)} style={{background:"none",border:"none",color:"#4a4440",cursor:"pointer",fontSize:14}}>✕</button>
+            </div>
+            <div style={{fontFamily:"'Cinzel',serif",fontSize:8,color:"#5ab8d8",letterSpacing:".1em",marginBottom:8}}>TODAY'S TRANSIT · {transitDate}</div>
+            <p style={{fontFamily:"Georgia,serif",fontSize:12,color:"#d8c890",lineHeight:1.7,margin:0,fontStyle:"italic"}}>
+              {a.planet1} is currently making a {type} to your natal {a.planet2}.
+              {a.applying === true ? " This transit is still building — its peak influence is ahead." : a.applying === false ? " This transit has already peaked and is slowly releasing." : ""}
+              {a.transiting_house ? ` It is activating your ${a.transiting_house === 1 ? "1st" : a.transiting_house === 2 ? "2nd" : a.transiting_house === 3 ? "3rd" : `${a.transiting_house}th`} house.` : ""}
+            </p>
           </div>
         );
       })()}
