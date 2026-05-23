@@ -381,7 +381,7 @@ function ZodiacQuiz() {
   React.useEffect(() => { save("score", score); }, [score]);
   React.useEffect(() => { save("unlockedAvatars", unlockedAvatars); }, [unlockedAvatars]);
   // Clear answer state whenever question or level changes
-  React.useEffect(() => { setSelectedAnswer(null); setIsCorrect(null); setReactionGif(null); }, [questionIndex, level]);
+  React.useEffect(() => { setSelectedAnswer(null); setIsCorrect(null); }, [questionIndex, level]);
 
   const levelData = quizLevels[level - 1];
   const currentQuestion = levelData.questions[questionIndex];
@@ -410,7 +410,7 @@ function ZodiacQuiz() {
             setReactionGif(gifUrl);
             setGifCorrect(correct);
             // Auto-dismiss after 3 seconds
-            if (gifUrl) setTimeout(() => setReactionGif(null), 3000);
+            if (gifUrl) setTimeout(() => setReactionGif(null), 4000);
           }
           setGifLoading(false);
         })
@@ -940,7 +940,7 @@ function TermsContent(){return(<><DocP>Please read these Terms of Service carefu
 function PrivacyContent(){return(<><DocP>Your privacy matters to Arewewoke.</DocP><DocSection title="1. Information We Collect"><DocBullet items={["Email address and name when you subscribe","Payment information, processed securely by Stripe","Usage data to improve app performance","Subscription status to manage access to paid features"]}/></DocSection><DocSection title="2. How We Use Your Information"><DocBullet items={["To process and manage your subscription","To send receipts and billing communications","To improve app features","To respond to support requests"]}/><DocP>We do not sell, rent, share, or trade your personal information to third parties for marketing purposes.</DocP></DocSection><DocSection title="3. Your Rights"><DocP>You have the right to access, correct, or delete the personal data we hold about you. Contact us at celestial.insights.app@gmail.com.</DocP></DocSection><DocSection title="4. Contact"><DocP>celestial.insights.app@gmail.com</DocP></DocSection></>);}
 function CancellationContent(){return(<><DocSection title="One-Time Payment"><DocP>AreWeWoke now offers full birth chart readings as a one-time payment of $3.33. There is no subscription and no recurring billing.</DocP></DocSection><DocSection title="Refund Policy"><DocP>All payments are non-refundable once the birth chart reading has been delivered.</DocP></DocSection><DocSection title="Contact"><DocP>celestial.insights.app@gmail.com</DocP></DocSection></>);}
 function DisclaimerContent(){return(<><DocP>All astrological content on Arewewoke is provided strictly for entertainment and personal reflection.</DocP><DocSection title="Not Professional Advice"><DocP>Nothing on Arewewoke constitutes medical, psychological, financial, legal, or any other form of professional advice.</DocP></DocSection><DocSection title="Contact"><DocP>celestial.insights.app@gmail.com</DocP></DocSection></>);}
-function CreditsContent(){return(<><DocP>Arewewoke is created and operated by Ayssia Mason.</DocP><DocSection title="Brand"><DocP>Powered by Ayssia ✦</DocP></DocSection><DocSection title="Astrological Authors Referenced"><DocBullet items={["Steven Forrest — The Inner Sky, evolutionary astrology","Liz Greene — Saturn: A New Look at an Old Devil, psychological astrology","Robert Hand — Planets in Transit","Howard Sasportas — The Twelve Houses","Donna Cunningham — Moon and Venus placements","Isabel Hickey — Astrology: A Cosmic Science","Dane Rudhyar — An Astrological Mandala"]}/></DocSection><DocSection title="Contact"><DocP>celestia.insights.app@gmail.com</DocP></DocSection></>);}
+function CreditsContent(){return(<><DocP>Arewewoke is created and operated by Ayssia Mason.</DocP><DocSection title="Brand"><DocP>Powered by Ayssia ✦</DocP></DocSection><DocSection title="Astrological Data & Calculations"><DocBullet items={["Astrology API (astrology-api.io) — Birth chart calculations, planetary positions, house systems, and natal interpretations","GIPHY — Reaction GIFs in the Game tab"]}/></DocSection><DocSection title="Astrological Authors Referenced"><DocBullet items={["Steven Forrest — The Inner Sky, evolutionary astrology","Liz Greene — Saturn: A New Look at an Old Devil, psychological astrology","Robert Hand — Planets in Transit","Howard Sasportas — The Twelve Houses","Donna Cunningham — Moon and Venus placements","Isabel Hickey — Astrology: A Cosmic Science","Dane Rudhyar — An Astrological Mandala"]}/></DocSection><DocSection title="Contact"><DocP>celestia.insights.app@gmail.com</DocP></DocSection></>);}
 
 // ─── BIRTH CHART FEATURE ────────────────────────────────────────
 const CHART_PLANETS = ["Sun","Moon","Rising","Mercury","Venus","Mars","Jupiter","Saturn","Uranus","Neptune","Pluto"];
