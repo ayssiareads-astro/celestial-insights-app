@@ -81,7 +81,11 @@ export default async function handler(req, res) {
   const safeFetch = async (url, body, label) => {
     try {
       const r = await fetch(`${url}?_=${Date.now()}`, { method: "POST", headers, body: JSON.stringify(body) });
-      if (!r.ok) { console.warn(`${label} failed:`, r.status); return null; }
+      if (!r.ok) {
+        const errText = await r.text().catch(() => "");
+        console.warn(`${label} failed: ${r.status}`, errText.slice(0, 300));
+        return null;
+      }
       const json = await r.json();
       console.log(`${label} OK:`, JSON.stringify(json).slice(0, 300));
       return json;
@@ -239,7 +243,7 @@ export default async function handler(req, res) {
                 minute: now.getUTCMinutes(),
                 second: 0,
                 city: city.trim(),
-                ...(country_code ? { country_code: country_code.toUpperCase() } : { country_code: "US" }),
+                country_code: (country_code || "US").toUpperCase(),
               }
             },
             options: {
