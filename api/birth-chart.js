@@ -206,7 +206,7 @@ export default async function handler(req, res) {
         second: 0,
       };
 
-      const [natalData, reportData, enhancedData, transitResult] = await Promise.all([
+      const [natalData, reportData, enhancedData, transitResult, transitReportResult] = await Promise.all([
         Promise.resolve(natalDataForRising),
         safeFetch(
           "https://api.astrology-api.io/api/v3/analysis/natal-report",
@@ -254,6 +254,21 @@ export default async function handler(req, res) {
             },
           },
           "TransitSnapshot"
+        ),
+        safeFetch(
+          "https://api.astrology-api.io/api/v3/analysis/transit-report",
+          {
+            subject,
+            transit_time: {
+              date_range: {
+                start_date: { year: now.getUTCFullYear(), month: now.getUTCMonth() + 1, day: now.getUTCDate() },
+                end_date: { year: now.getUTCFullYear(), month: now.getUTCMonth() + 1, day: now.getUTCDate() },
+              }
+            },
+            orb: 2,
+            report_options: { tradition: "universal", language: "en" },
+          },
+          "TransitReport"
         ),
       ]);
       transitData = transitResult;
@@ -553,6 +568,42 @@ const houseLabel = correctHouse
     } catch (transitErr) {
       console.warn("Transit parsing error (non-fatal):", transitErr.message);
     }
+
+    // Parse transit report — written interpretations per transit aspect
+    let transitInterpretations = {};
+    try {
+      if (paid && transitReportResult) {
+        console.log("TransitReport OK:", JSON.stringify(transitReportResult).slice(0, 400));
+        const tr = transitReportResult?.data || transitReportResult;
+        const interps = tr?.interpretations || tr?.transits || tr?.aspects || [];
+        if (Array.isArray(interps)) {
+          interps.forEach(item => {
+            // Key by "TransitPlanet-NatalPlanet-type" e.g. "Sun-Mars-square"
+            const title = (item.title || item.transit || "").toLowerCase();
+            const text = item.text || item.interpretation || item.description || "";
+            if (title && text) {
+              transitInterpretations[title] = text;
+            }
+            // Also key by planet1+planet2+type if available
+            if (item.transit_planet && item.natal_planet && item.aspect_type) {
+              const key = `${item.transit_planet}-${item.natal_planet}-${item.aspect_type}`.toLowerCase();
+              transitInterpretations[key] = text;
+            }
+          });
+        }
+        console.log("Transit interpretations parsed:", Object.keys(transitInterpretations).length);
+      }
+    } catch (trErr) {
+      console.warn("Transit report parsing error (non-fatal):", trErr.message);
+    }
+
+    // Attach interpretations to transit aspects
+    transitAspects = transitAspects.map(a => {
+      const key1 = `${a.planet1}-${a.planet2}-${a.type}`.toLowerCase();
+      const key2 = `${a.planet2}-${a.planet1}-${a.type}`.toLowerCase();
+      const interp = transitInterpretations[key1] || transitInterpretations[key2] || null;
+      return interp ? { ...a, interpretation: interp } : a;
+    });
 
     res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
     res.setHeader("Pragma", "no-cache");
