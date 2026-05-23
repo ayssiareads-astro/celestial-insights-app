@@ -177,7 +177,13 @@ export default async function handler(req, res) {
     if (paid) {
       console.log("Paid — fetching full natal chart...");
 
-      const [natalData, reportData, enhancedData] = await Promise.all([
+      // Get today's date/time for transit snapshot
+      const now = new Date();
+      const transitTime = {
+        datetime: now.toISOString().slice(0, 16), // "YYYY-MM-DDTHH:MM"
+      };
+
+      const [natalData, reportData, enhancedData, transitData] = await Promise.all([
         Promise.resolve(natalDataForRising), // reuse already-fetched natal data
         safeFetch(
           "https://api.astrology-api.io/api/v3/analysis/natal-report",
@@ -199,6 +205,15 @@ export default async function handler(req, res) {
             },
           },
           "EnhancedAspects"
+        ),
+        safeFetch(
+          "https://api.astrology-api.io/api/v3/charts/transit",
+          {
+            subject,
+            transit_time: transitTime,
+            options: { house_system: "W", orb: 3 },
+          },
+          "TransitSnapshot"
         ),
       ]);
 
@@ -429,6 +444,83 @@ const houseLabel = correctHouse
       }
     }
 
+    // Parse transit snapshot
+    let transitPlanets = [];
+    let transitAspects = [];
+
+    if (paid && transitData) {
+      console.log("TransitSnapshot OK:", JSON.stringify(transitData).slice(0, 300));
+      const td = transitData?.chart_data || transitData?.data || transitData;
+
+      // Transit planet positions
+      const rawTransitPositions = td?.planetary_positions || td?.transit_positions || [];
+      if (Array.isArray(rawTransitPositions)) {
+        rawTransitPositions.forEach(p => {
+          // Transit planets are named like "Sun_transit" or have a transit flag
+          const rawName = p.name || "";
+          const isTransit = rawName.includes("transit") || p.is_transit === true;
+          const cleanName = rawName.replace("_transit", "").replace("Transit", "").trim();
+          const planetName = PLANET_MAP[cleanName] || cleanName;
+          const signFull = SIGN_MAP[p.sign] || p.sign;
+          if (isTransit && planetName && signFull) {
+            transitPlanets.push({
+              name: planetName,
+              sign: signFull,
+              house: p.house || null,
+              degree: p.degree ? parseFloat(p.degree).toFixed(1) : null,
+              retrograde: p.is_retrograde || false,
+            });
+          }
+        });
+      }
+
+      // If no transit-flagged planets, try top-level transit_positions
+      if (transitPlanets.length === 0) {
+        const altPositions = td?.transit?.positions || td?.transiting_planets || [];
+        if (Array.isArray(altPositions)) {
+          altPositions.forEach(p => {
+            const planetName = PLANET_MAP[p.name] || p.name;
+            const signFull = SIGN_MAP[p.sign] || p.sign;
+            if (planetName && signFull) {
+              transitPlanets.push({
+                name: planetName,
+                sign: signFull,
+                house: p.house || null,
+                degree: p.degree ? parseFloat(p.degree).toFixed(1) : null,
+                retrograde: p.is_retrograde || false,
+              });
+            }
+          });
+        }
+      }
+
+      // Transit aspects (transiting planets aspecting natal planets)
+      const rawTransitAspects = td?.aspects || td?.transit_aspects || [];
+      if (Array.isArray(rawTransitAspects)) {
+        rawTransitAspects.forEach(a => {
+          const p1 = a.point1 || a.planet1 || "";
+          const p2 = a.point2 || a.planet2 || "";
+          const type = a.aspect_type || a.aspect || "";
+          const orb = a.orb != null ? parseFloat(a.orb).toFixed(1) : null;
+          // Only include aspects involving at least one transit planet
+          if ((p1.includes("transit") || p2.includes("transit")) && type) {
+            transitAspects.push({
+              planet1: PLANET_MAP[p1.replace("_transit","").replace("Transit","")] || p1,
+              planet2: PLANET_MAP[p2.replace("_transit","").replace("Transit","")] || p2,
+              type,
+              orb,
+              isTransit: true,
+              strength: a.strength ?? null,
+              applying: a.applying ?? null,
+            });
+          }
+        });
+      }
+
+      console.log("Transit planets:", transitPlanets.length);
+      console.log("Transit aspects:", transitAspects.length);
+    }
+
     res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
     res.setHeader("Pragma", "no-cache");
     res.setHeader("Surrogate-Control", "no-store");
@@ -441,6 +533,9 @@ const houseLabel = correctHouse
       aspects,
       report,
       houseSignReadings,
+      transitPlanets,
+      transitAspects,
+      transitDate: new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }),
       chartSvg: null,
     });
 
