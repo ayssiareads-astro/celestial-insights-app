@@ -2370,12 +2370,14 @@ function NatalChartWheel({ houseCusps, chartPlanets, fullPlanets, report, planet
   };
   const planetSymbols = {
     Sun:"☉",Moon:"☽",Mercury:"☿",Venus:"♀",Mars:"♂",Jupiter:"♃",
-    Saturn:"♄",Uranus:"⛢",Neptune:"♆",Pluto:"♇",Chiron:"⚷"
+    Saturn:"♄",Uranus:"♅",Neptune:"♆",Pluto:"♇",Chiron:"⚷",
+    "North Node":"☊","South Node":"☋",Lilith:"⚸"
   };
   const planetColors = {
-    Sun:"#f5c842",Moon:"#c8d8f0",Mercury:"#a8c8a8",Venus:"#d4a0c8",
-    Mars:"#e8534a",Jupiter:"#e8953a",Saturn:"#9a9a7a",Uranus:"#5ab8d8",
-    Neptune:"#9ab0d8",Pluto:"#8a5a9a",Chiron:"#c8a878"
+    Sun:"#FFD700",Moon:"#E8F4FD",Mercury:"#90EE90",Venus:"#FFB6C1",
+    Mars:"#FF4444",Jupiter:"#FFA500",Saturn:"#DAA520",Uranus:"#00BFFF",
+    Neptune:"#7B68EE",Pluto:"#DA70D6",Chiron:"#F4A460",
+    "North Node":"#98FB98","South Node":"#DEB887",Lilith:"#FF69B4"
   };
 
   // In astrology: ASC = 9 o'clock (180° in standard math)
@@ -2482,12 +2484,12 @@ function NatalChartWheel({ houseCusps, chartPlanets, fullPlanets, report, planet
     return (
       <g key={p.name} onClick={() => setActivePlanet(isActive ? null : p.name)}
         style={{cursor:"pointer"}}>
-        <circle cx={pos.x} cy={pos.y} r={11}
-          fill={isActive?col:"rgba(0,0,0,0.8)"}
-          stroke={col} strokeWidth={isActive?2:1}
-          style={{filter:isActive?`drop-shadow(0 0 4px ${col})`:"none"}}/>
+        <circle cx={pos.x} cy={pos.y} r={13}
+          fill={isActive?col:"rgba(5,3,15,0.92)"}
+          stroke={col} strokeWidth={isActive?2.5:1.8}
+          style={{filter:`drop-shadow(0 0 ${isActive?6:3}px ${col}88)`}}/>
         <text x={pos.x} y={pos.y} textAnchor="middle" dominantBaseline="middle"
-          fontSize={11} fill={isActive?"#000":col} style={{userSelect:"none"}}>
+          fontSize={12} fill={isActive?"#000":col} fontWeight="bold" style={{userSelect:"none"}}>
           {planetSymbols[p.name]}
         </text>
       </g>
@@ -2576,10 +2578,11 @@ function NatalChartWheel({ houseCusps, chartPlanets, fullPlanets, report, planet
             const tcol = planetColors[tp.name] || "#5ab8d8";
             return (
               <g key={"t"+tp.name+i}>
-                <circle cx={tPos.x} cy={tPos.y} r={8} fill="rgba(0,0,20,0.9)"
-                  stroke="#5ab8d8" strokeWidth={1} strokeDasharray="2,1"/>
+                <circle cx={tPos.x} cy={tPos.y} r={10} fill="rgba(0,0,20,0.95)"
+                  stroke="#5ab8d8" strokeWidth={1.5} strokeDasharray="2,1"
+                  style={{filter:"drop-shadow(0 0 4px rgba(90,184,216,0.8))"}}/>
                 <text x={tPos.x} y={tPos.y} textAnchor="middle" dominantBaseline="middle"
-                  fontSize={9} fill="#5ab8d8" style={{userSelect:"none"}}>
+                  fontSize={10} fill="#7dd8f8" fontWeight="bold" style={{userSelect:"none"}}>
                   {planetSymbols[tp.name]||"•"}
                 </text>
               </g>
@@ -2765,7 +2768,7 @@ function NatalChartWheel({ houseCusps, chartPlanets, fullPlanets, report, planet
       })()}
 
       {/* Today's Energy Synopsis */}
-      {showTransits && transitAspects.length > 0 && (
+      {showTransits && transitPlanets.length > 0 && (
         <TodaysEnergy
           chartPlanets={chartPlanets}
           fullPlanets={fullPlanets}
