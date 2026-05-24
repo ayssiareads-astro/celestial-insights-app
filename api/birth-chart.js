@@ -191,6 +191,7 @@ export default async function handler(req, res) {
     let report = null;
     let houseSignReadings = {};
     let transitData = null;
+    let transitReportResult = null;
 
     if (paid) {
       console.log("Paid — fetching full natal chart...");
@@ -206,7 +207,7 @@ export default async function handler(req, res) {
         second: 0,
       };
 
-      const [natalData, reportData, enhancedData, transitResult, transitReportResult] = await Promise.all([
+      const [natalData, reportData, enhancedData, transitResult, transitReportData] = await Promise.all([
         Promise.resolve(natalDataForRising),
         safeFetch(
           "https://api.astrology-api.io/api/v3/analysis/natal-report",
@@ -272,6 +273,7 @@ export default async function handler(req, res) {
         ),
       ]);
       transitData = transitResult;
+      transitReportResult = transitReportData;
 
       if (natalData) {
         const cd = natalData?.chart_data || natalData?.data || natalData;
