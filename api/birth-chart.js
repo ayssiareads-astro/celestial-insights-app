@@ -575,25 +575,29 @@ const houseLabel = correctHouse
     let transitInterpretations = {};
     try {
       if (paid && transitReportResult) {
-        console.log("TransitReport OK:", JSON.stringify(transitReportResult).slice(0, 400));
+        console.log("TransitReport OK:", JSON.stringify(transitReportResult).slice(0, 300));
         const tr = transitReportResult?.data || transitReportResult;
-        const interps = tr?.interpretations || tr?.transits || tr?.aspects || [];
-        if (Array.isArray(interps)) {
-          interps.forEach(item => {
-            // Key by "TransitPlanet-NatalPlanet-type" e.g. "Sun-Mars-square"
-            const title = (item.title || item.transit || "").toLowerCase();
-            const text = item.text || item.interpretation || item.description || "";
-            if (title && text) {
-              transitInterpretations[title] = text;
-            }
-            // Also key by planet1+planet2+type if available
-            if (item.transit_planet && item.natal_planet && item.aspect_type) {
-              const key = `${item.transit_planet}-${item.natal_planet}-${item.aspect_type}`.toLowerCase();
+        // API returns { events: [{ transiting_planet, stationed_planet, aspect_type, interpretation, ... }] }
+        const events = tr?.events || tr?.interpretations || tr?.transits || [];
+        if (Array.isArray(events)) {
+          events.forEach(item => {
+            const p1 = item.transiting_planet || item.transit_planet || "";
+            const p2 = item.stationed_planet || item.natal_planet || "";
+            const type = (item.aspect_type || "").toLowerCase();
+            const text = item.interpretation || item.text || item.description || "";
+            if (p1 && p2 && type && text) {
+              // Store under multiple key formats for flexible lookup
+              const key = `${p1}-${p2}-${type}`.toLowerCase();
+              const keyRev = `${p2}-${p1}-${type}`.toLowerCase();
               transitInterpretations[key] = text;
+              transitInterpretations[keyRev] = text;
             }
           });
         }
         console.log("Transit interpretations parsed:", Object.keys(transitInterpretations).length);
+        if (Object.keys(transitInterpretations).length > 0) {
+          console.log("Sample keys:", Object.keys(transitInterpretations).slice(0, 5).join(", "));
+        }
       }
     } catch (trErr) {
       console.warn("Transit report parsing error (non-fatal):", trErr.message);
@@ -601,8 +605,9 @@ const houseLabel = correctHouse
 
     // Attach interpretations to transit aspects
     transitAspects = transitAspects.map(a => {
-      const key1 = `${a.planet1}-${a.planet2}-${a.type}`.toLowerCase();
-      const key2 = `${a.planet2}-${a.planet1}-${a.type}`.toLowerCase();
+      const type = (a.type||"").toLowerCase();
+      const key1 = `${a.planet1}-${a.planet2}-${type}`;
+      const key2 = `${a.planet2}-${a.planet1}-${type}`;
       const interp = transitInterpretations[key1] || transitInterpretations[key2] || null;
       return interp ? { ...a, interpretation: interp } : a;
     });
