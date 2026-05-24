@@ -611,6 +611,9 @@ const houseLabel = correctHouse
       const key1 = `${a.planet1}-${a.planet2}-${type}`;
       const key2 = `${a.planet2}-${a.planet1}-${type}`;
       const interp = transitInterpretations[key1] || transitInterpretations[key2] || null;
+      if (!interp) {
+        console.log(`No interp for: "${key1}" (available: ${Object.keys(transitInterpretations).slice(0,4).join(", ")})`);
+      }
       return interp ? { ...a, interpretation: interp } : a;
     });
 
