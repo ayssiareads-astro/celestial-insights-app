@@ -262,8 +262,8 @@ export default async function handler(req, res) {
             subject,
             transit_time: {
               date_range: {
-                start_date: { year: now.getUTCFullYear(), month: now.getUTCMonth() + 1, day: now.getUTCDate() },
-                end_date: { year: now.getUTCFullYear(), month: now.getUTCMonth() + 1, day: now.getUTCDate() },
+                start_date: { year: now.getUTCFullYear(), month: now.getUTCMonth() + 1, day: 1 },
+                end_date: { year: now.getUTCFullYear(), month: now.getUTCMonth() + 1, day: new Date(now.getUTCFullYear(), now.getUTCMonth() + 1, 0).getDate() },
               }
             },
             orb: 2,
@@ -583,10 +583,13 @@ const houseLabel = correctHouse
         }
         if (Array.isArray(events)) {
           events.forEach(item => {
-            const p1 = (item.transiting_planet || "").trim();
-            const p2 = (item.stationed_planet || "").trim();
+            const p1Raw = (item.transiting_planet || "").trim();
+            const p2Raw = (item.stationed_planet || "").trim();
             const type = (item.aspect_type || "").toLowerCase().trim();
             const text = (item.interpretation || "").trim();
+            // Translate raw names to display names
+            const p1 = PLANET_MAP[p1Raw] || p1Raw;
+            const p2 = PLANET_MAP[p2Raw] || p2Raw;
             if (p1 && p2 && type && text) {
               const key = `${p1}-${p2}-${type}`.toLowerCase();
               const keyRev = `${p2}-${p1}-${type}`.toLowerCase();
