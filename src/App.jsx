@@ -2163,6 +2163,100 @@ function PaywallSection({ chartPlanets, onVerified }) {
   );
 }
 
+// ── Transit Interpretation via Claude AI ─────────────────────────
+function TransitInterpretation({ aspect, houseNum, transitPlanets, fullPlanets, chartPlanets }) {
+  const [text, setText] = React.useState(null);
+  const [loading, setLoading] = React.useState(true);
+  const ordinals = ["","1st","2nd","3rd","4th","5th","6th","7th","8th","9th","10th","11th","12th"];
+
+  const houseThemes = {
+    1:"identity, self-expression, and physical presence",
+    2:"money, possessions, and self-worth",
+    3:"communication, learning, and local connections",
+    4:"home, family, and emotional foundations",
+    5:"creativity, romance, joy, and self-expression",
+    6:"daily routines, health, and work habits",
+    7:"partnerships, relationships, and one-on-one connections",
+    8:"transformation, shared resources, and deep psychology",
+    9:"philosophy, travel, beliefs, and higher learning",
+    10:"career, public reputation, and legacy",
+    11:"friends, community, groups, and future visions",
+    12:"spirituality, the unconscious, and hidden matters",
+  };
+
+  const aspectMeanings = {
+    conjunction:"merging with and intensifying",
+    trine:"flowing harmoniously with and supporting",
+    sextile:"opening opportunities through",
+    square:"creating productive tension with",
+    opposition:"pulling against and asking you to balance",
+  };
+
+  // Get the transiting planet's current sign
+  const getTransitingPlanet = () => {
+    const p1Transit = transitPlanets.find(tp => tp.name === aspect.planet1);
+    const p2Transit = transitPlanets.find(tp => tp.name === aspect.planet2);
+    const p1Natal = fullPlanets.find(p => p.name === aspect.planet1);
+    const p2Natal = fullPlanets.find(p => p.name === aspect.planet2);
+    if (p1Transit && (!p1Natal || p1Transit.sign !== p1Natal.sign)) return p1Transit;
+    if (p2Transit && (!p2Natal || p2Transit.sign !== p2Natal.sign)) return p2Transit;
+    return p1Transit || p2Transit;
+  };
+
+  const getNatalPlanet = () => {
+    const transitingName = getTransitingPlanet()?.name;
+    const natalName = aspect.planet1 === transitingName ? aspect.planet2 : aspect.planet1;
+    return fullPlanets.find(p => p.name === natalName) || { name: natalName, sign: "unknown", house: null };
+  };
+
+  React.useEffect(() => {
+    const tp = getTransitingPlanet();
+    const np = getNatalPlanet();
+    if (!tp || !np) { setLoading(false); return; }
+
+    const prompt = `You are an astrologer writing for AreWeWoke, an astrology app. Write a 2-3 sentence transit interpretation in a direct, personal, modern voice — no "one" language, speak directly to "you". Be specific to the exact house and planets involved.
+
+Transiting ${tp.name} in ${tp.sign} is making a ${aspect.type} to natal ${np.name} in ${np.sign} (natal ${np.house ? ordinals[np.house] + " house" : "chart"}).
+Transiting ${tp.name} is currently moving through the ${houseNum ? ordinals[houseNum] + " house" : "chart"} (${houseNum ? houseThemes[houseNum] : "your chart"}).
+The aspect is ${aspect.applying === true ? "applying — still building toward its peak" : aspect.applying === false ? "separating — already peaked and releasing" : "active"}.
+
+Write exactly 2-3 sentences. Be specific about what the ${houseNum ? ordinals[houseNum] + " house" : "affected area"} themes mean for this person right now. No house system mentions, no technical jargon. Just the lived experience.`;
+
+    fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 1000,
+        messages: [{ role: "user", content: prompt }],
+      }),
+    })
+      .then(r => r.json())
+      .then(data => {
+        const content = data?.content?.[0]?.text || "";
+        setText(content.trim());
+        setLoading(false);
+      })
+      .catch(() => {
+        // Fallback to library
+        const fallback = getTransitInterpretation(aspect.planet1, aspect.planet2, aspect.type);
+        setText(fallback || `${tp.name} is currently ${aspectMeanings[aspect.type] || "aspecting"} your natal ${np.name}. ${aspect.applying === true ? "This transit is still building — its peak influence is ahead." : "This transit has peaked and is slowly releasing."}`);
+        setLoading(false);
+      });
+  }, [aspect.planet1, aspect.planet2, aspect.type]);
+
+  if (loading) return (
+    <div style={{display:"flex",alignItems:"center",gap:8,padding:"8px 0"}}>
+      <div style={{width:6,height:6,borderRadius:"50%",background:"#5ab8d8",animation:"pu 1s ease 0s infinite"}}/>
+      <div style={{width:6,height:6,borderRadius:"50%",background:"#5ab8d8",animation:"pu 1s ease 0.2s infinite"}}/>
+      <div style={{width:6,height:6,borderRadius:"50%",background:"#5ab8d8",animation:"pu 1s ease 0.4s infinite"}}/>
+      <span style={{fontFamily:"Georgia,serif",fontSize:11,color:"#4a4440",fontStyle:"italic"}}>Reading the stars...</span>
+    </div>
+  );
+
+  return <p style={{fontFamily:"Georgia,serif",fontSize:12,color:"#d8c890",lineHeight:1.75,margin:0}}>{text}</p>;
+}
+
 function NatalChartWheel({ houseCusps, chartPlanets, fullPlanets, report, planetInHouse, getFact, aspects = [], transitPlanets = [], transitAspects = [], transitDate = null }) {
   const [activePlanet, setActivePlanet] = React.useState(null);
   const [activeAspect, setActiveAspect] = React.useState(null);
@@ -2527,6 +2621,29 @@ function NatalChartWheel({ houseCusps, chartPlanets, fullPlanets, report, planet
         const type = (a.type||"").toLowerCase();
         const col = aspectColors[type] || "#5ab8d8";
         const aspectSymbols = { trine:"△", sextile:"⚹", conjunction:"☌", opposition:"☍", square:"□" };
+
+        // Calculate correct Whole Sign house for the transiting planet
+        const getWholeSignHouse = () => {
+          const p1Transit = transitPlanets.find(tp => tp.name === a.planet1);
+          const p2Transit = transitPlanets.find(tp => tp.name === a.planet2);
+          const p1Natal = fullPlanets.find(p => p.name === a.planet1);
+          const p2Natal = fullPlanets.find(p => p.name === a.planet2);
+          let tpData = null;
+          if (p1Transit && (!p1Natal || p1Transit.sign !== p1Natal.sign)) tpData = p1Transit;
+          else if (p2Transit && (!p2Natal || p2Transit.sign !== p2Natal.sign)) tpData = p2Transit;
+          else tpData = p1Transit || p2Transit;
+          if (!tpData?.sign || !houseCusps.length) return null;
+          const ascSign = houseCusps.find(h => h.house === 1)?.sign;
+          if (!ascSign) return null;
+          const signList = ["Aries","Taurus","Gemini","Cancer","Leo","Virgo","Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"];
+          const ascIdx = signList.indexOf(ascSign);
+          const planetIdx = signList.indexOf(tpData.sign);
+          if (ascIdx === -1 || planetIdx === -1) return null;
+          return ((planetIdx - ascIdx + 12) % 12) + 1;
+        };
+        const houseNum = getWholeSignHouse();
+        const ordinals = ["","1st","2nd","3rd","4th","5th","6th","7th","8th","9th","10th","11th","12th"];
+
         return (
           <div style={{marginTop:12,padding:"14px 16px",background:`rgba(90,184,216,0.08)`,border:`1px solid ${col}44`,borderRadius:12,animation:"up 0.2s ease"}}>
             <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
@@ -2540,30 +2657,15 @@ function NatalChartWheel({ houseCusps, chartPlanets, fullPlanets, report, planet
             </div>
             <div style={{fontFamily:"'Cinzel',serif",fontSize:8,color:"#5ab8d8",letterSpacing:".1em",marginBottom:8}}>
               TODAY'S TRANSIT · {transitDate}
-              {(() => {
-                // Calculate Whole Sign house from transiting planet's sign
-                const tpData = transitPlanets.find(tp => tp.name === a.planet1 || tp.name === a.planet2);
-                if (!tpData?.sign || !houseCusps.length) return null;
-                const ascSign = houseCusps.find(h => h.house === 1)?.sign;
-                if (!ascSign) return null;
-                const signList = ["Aries","Taurus","Gemini","Cancer","Leo","Virgo","Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"];
-                const ascIdx = signList.indexOf(ascSign);
-                const planetIdx = signList.indexOf(tpData.sign);
-                if (ascIdx === -1 || planetIdx === -1) return null;
-                const houseNum = ((planetIdx - ascIdx + 12) % 12) + 1;
-                const ordinals = ["","1st","2nd","3rd","4th","5th","6th","7th","8th","9th","10th","11th","12th"];
-                return <span style={{marginLeft:8,color:"#f5c842"}}>· {ordinals[houseNum]} House</span>;
-              })()}
+              {houseNum && <span style={{marginLeft:8,color:"#f5c842"}}>· {ordinals[houseNum]} House</span>}
             </div>
-            {(() => {
-              const interp = a.interpretation || getTransitInterpretation(a.planet1, a.planet2, a.type);
-              return interp
-                ? <p style={{fontFamily:"Georgia,serif",fontSize:12,color:"#d8c890",lineHeight:1.75,margin:0}}>{interp}</p>
-                : <p style={{fontFamily:"Georgia,serif",fontSize:12,color:"#d8c890",lineHeight:1.75,margin:0,fontStyle:"italic"}}>
-                    {a.planet1} is currently making a {(a.type||"").toLowerCase()} to your natal {a.planet2}.
-                    {a.applying === true ? " This transit is still building — its peak influence is ahead." : a.applying === false ? " This transit has peaked and is slowly releasing its energy." : ""}
-                  </p>;
-            })()}
+            <TransitInterpretation
+              aspect={a}
+              houseNum={houseNum}
+              transitPlanets={transitPlanets}
+              fullPlanets={fullPlanets}
+              chartPlanets={chartPlanets}
+            />
           </div>
         );
       })()}
