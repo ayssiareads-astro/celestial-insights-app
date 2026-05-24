@@ -208,7 +208,7 @@ export default async function handler(req, res) {
         second: 0,
       };
 
-      const [natalData, reportData, enhancedData, transitResult, transitReportData] = await Promise.all([
+      const [natalData, reportData, enhancedData, transitResult, transitReportData, natalTransitsData] = await Promise.all([
         Promise.resolve(natalDataForRising),
         safeFetch(
           "https://api.astrology-api.io/api/v3/analysis/natal-report",
@@ -274,9 +274,42 @@ export default async function handler(req, res) {
           },
           "TransitReport"
         ),
+        safeFetch(
+          "https://api.astrology-api.io/api/v3/charts/natal-transits",
+          {
+            subject,
+            date_range: {
+              start_date: { year: now.getUTCFullYear(), month: now.getUTCMonth() + 1, day: now.getUTCDate() },
+              end_date: { year: now.getUTCFullYear(), month: now.getUTCMonth() + 1, day: now.getUTCDate() },
+            },
+            orb: 2,
+            house_system: "W",
+          },
+          "NatalTransits"
+        ),
       ]);
       transitData = transitResult;
       transitReportResult = transitReportData;
+
+      // Parse natal-transits for accurate Whole Sign house data
+      let natalTransits = [];
+      try {
+        const ntEvents = natalTransitsData?.events || natalTransitsData?.data?.events || [];
+        if (Array.isArray(ntEvents)) {
+          natalTransits = ntEvents.map(e => ({
+            transiting_planet: PLANET_MAP[e.transiting_planet] || e.transiting_planet,
+            stationed_planet: PLANET_MAP[e.stationed_planet] || e.stationed_planet,
+            aspect_type: e.aspect_type,
+            orb: e.orb,
+            aspect_direction: e.aspect_direction,
+            transiting_house: e.transiting_house,
+            natal_house: e.natal_house,
+          }));
+          console.log("NatalTransits parsed:", natalTransits.length, "events for today");
+        }
+      } catch (ntErr) {
+        console.warn("NatalTransits parse error (non-fatal):", ntErr.message);
+      }
 
       if (natalData) {
         const cd = natalData?.chart_data || natalData?.data || natalData;
@@ -626,6 +659,21 @@ const houseLabel = correctHouse
     res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
     res.setHeader("Pragma", "no-cache");
     res.setHeader("Surrogate-Control", "no-store");
+    // Attach correct Whole Sign houses to transit aspects from natal-transits data
+    if (natalTransits.length > 0) {
+      transitAspects = transitAspects.map(a => {
+        const match = natalTransits.find(nt =>
+          ((nt.transiting_planet === a.planet1 && nt.stationed_planet === a.planet2) ||
+           (nt.transiting_planet === a.planet2 && nt.stationed_planet === a.planet1)) &&
+          nt.aspect_type === a.type
+        );
+        if (match) {
+          return { ...a, transiting_house: match.transiting_house, natal_house: match.natal_house };
+        }
+        return a;
+      });
+    }
+
     return res.status(200).json({
       name: name || "Your",
       city,
@@ -637,6 +685,7 @@ const houseLabel = correctHouse
       houseSignReadings,
       transitPlanets,
       transitAspects,
+      natalTransits,
       transitDate: new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }),
       chartSvg: null,
     });
