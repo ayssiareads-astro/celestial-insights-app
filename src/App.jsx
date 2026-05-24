@@ -2163,6 +2163,100 @@ function PaywallSection({ chartPlanets, onVerified }) {
   );
 }
 
+// ── Today's Energy Synopsis via Claude AI ────────────────────────
+function TodaysEnergy({ chartPlanets, fullPlanets, transitAspects, transitPlanets, houseCusps, transitDate }) {
+  const [text, setText] = React.useState(null);
+  const [loading, setLoading] = React.useState(true);
+
+  const ordinals = ["","1st","2nd","3rd","4th","5th","6th","7th","8th","9th","10th","11th","12th"];
+  const houseThemes = {
+    1:"identity & self", 2:"money & worth", 3:"communication & mind",
+    4:"home & family", 5:"creativity & joy", 6:"health & daily work",
+    7:"partnerships", 8:"transformation & depth", 9:"beliefs & expansion",
+    10:"career & legacy", 11:"friends & community", 12:"spirituality & the unconscious",
+  };
+  const signList = ["Aries","Taurus","Gemini","Cancer","Leo","Virgo","Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"];
+
+  const getWholeSignHouse = (transitSign) => {
+    const ascSign = houseCusps.find(h => h.house === 1)?.sign;
+    if (!ascSign || !transitSign) return null;
+    const ascIdx = signList.indexOf(ascSign);
+    const planetIdx = signList.indexOf(transitSign);
+    if (ascIdx === -1 || planetIdx === -1) return null;
+    return ((planetIdx - ascIdx + 12) % 12) + 1;
+  };
+
+  React.useEffect(() => {
+    if (!transitAspects.length || !transitPlanets.length) { setLoading(false); return; }
+
+    // Build transit summary for the prompt
+    const aspectLines = transitAspects.slice(0, 8).map(a => {
+      const p1tp = transitPlanets.find(tp => tp.name === a.planet1);
+      const p2tp = transitPlanets.find(tp => tp.name === a.planet2);
+      const p1Natal = fullPlanets.find(p => p.name === a.planet1);
+      const p2Natal = fullPlanets.find(p => p.name === a.planet2);
+      let transitPlanet, natalPlanet;
+      if (p1tp && (!p1Natal || p1tp.sign !== p1Natal.sign)) {
+        transitPlanet = p1tp;
+        natalPlanet = { name: a.planet2, ...(fullPlanets.find(p => p.name === a.planet2) || {}) };
+      } else {
+        transitPlanet = p2tp;
+        natalPlanet = { name: a.planet1, ...(fullPlanets.find(p => p.name === a.planet1) || {}) };
+      }
+      if (!transitPlanet) return null;
+      const house = getWholeSignHouse(transitPlanet.sign);
+      const houseStr = house ? `${ordinals[house]} house (${houseThemes[house]})` : "";
+      const dir = a.applying === true ? "applying" : a.applying === false ? "separating" : "";
+      return `- ${transitPlanet.name} in ${transitPlanet.sign} ${a.type} natal ${natalPlanet.name}${natalPlanet.sign ? ` in ${natalPlanet.sign}` : ""}${houseStr ? `, activating ${houseStr}` : ""}${dir ? ` (${dir})` : ""}`;
+    }).filter(Boolean).join("\n");
+
+    const sun = chartPlanets["Sun"] || "";
+    const moon = chartPlanets["Moon"] || "";
+    const rising = chartPlanets["Rising"] || "";
+
+    const prompt = `You are an astrologer for AreWeWoke, a modern astrology app. Write a single paragraph (4-5 sentences) synthesizing today's overall energy for this person based on their active transits. Speak directly ("you", not "one"). Be specific to the actual houses and planets — no generic astrology speak. Capture the dominant theme or story the transits are telling together today. End with one sentence about what to lean into or be aware of.
+
+Chart: ${sun} Sun, ${moon} Moon, ${rising} Rising
+
+Today's active transits (${transitDate}):
+${aspectLines}
+
+Write one cohesive paragraph that reads like a personalized daily reading. Do not list the transits one by one — weave them into a unified story.`;
+
+    fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 1000,
+        messages: [{ role: "user", content: prompt }],
+      }),
+    })
+      .then(r => r.json())
+      .then(data => {
+        setText(data?.content?.[0]?.text?.trim() || null);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, [transitDate]);
+
+  return (
+    <div style={{marginTop:16,padding:"18px 16px",background:"linear-gradient(135deg,rgba(90,184,216,0.08),rgba(245,200,66,0.04))",border:"1px solid rgba(90,184,216,0.25)",borderRadius:14}}>
+      <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#5ab8d8",letterSpacing:".15em",marginBottom:10,textAlign:"center"}}>✦ TODAY'S ENERGY · {transitDate} ✦</div>
+      {loading ? (
+        <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:8,padding:"8px 0"}}>
+          <div style={{width:6,height:6,borderRadius:"50%",background:"#5ab8d8",animation:"pu 1s ease 0s infinite"}}/>
+          <div style={{width:6,height:6,borderRadius:"50%",background:"#5ab8d8",animation:"pu 1s ease 0.2s infinite"}}/>
+          <div style={{width:6,height:6,borderRadius:"50%",background:"#5ab8d8",animation:"pu 1s ease 0.4s infinite"}}/>
+          <span style={{fontFamily:"Georgia,serif",fontSize:11,color:"#4a4440",fontStyle:"italic"}}>Reading your cosmic weather...</span>
+        </div>
+      ) : text ? (
+        <p style={{fontFamily:"Georgia,serif",fontSize:13,color:"#d8c890",lineHeight:1.85,margin:0}}>{text}</p>
+      ) : null}
+    </div>
+  );
+}
+
 // ── Transit Interpretation via Claude AI ─────────────────────────
 function TransitInterpretation({ aspect, houseNum, transitPlanets, fullPlanets, chartPlanets }) {
   const [text, setText] = React.useState(null);
@@ -2669,6 +2763,18 @@ function NatalChartWheel({ houseCusps, chartPlanets, fullPlanets, report, planet
           </div>
         );
       })()}
+
+      {/* Today's Energy Synopsis */}
+      {showTransits && transitAspects.length > 0 && (
+        <TodaysEnergy
+          chartPlanets={chartPlanets}
+          fullPlanets={fullPlanets}
+          transitAspects={transitAspects}
+          transitPlanets={transitPlanets}
+          houseCusps={houseCusps}
+          transitDate={transitDate}
+        />
+      )}
 
       {/* Transit key */}
       {transitPlanets.length > 0 && (
