@@ -2223,18 +2223,14 @@ ${aspectLines}
 
 Write one cohesive paragraph that reads like a personalized daily reading. Do not list the transits one by one — weave them into a unified story.`;
 
-    fetch("https://api.anthropic.com/v1/messages", {
+    fetch("/api/claude-transit", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
-        max_tokens: 1000,
-        messages: [{ role: "user", content: prompt }],
-      }),
+      body: JSON.stringify({ prompt }),
     })
       .then(r => r.json())
       .then(data => {
-        setText(data?.content?.[0]?.text?.trim() || null);
+        setText(data?.text?.trim() || null);
         setLoading(false);
       })
       .catch(() => setLoading(false));
@@ -2316,19 +2312,14 @@ The aspect is ${aspect.applying === true ? "applying — still building toward i
 
 Write exactly 2-3 sentences. Be specific about what the ${houseNum ? ordinals[houseNum] + " house" : "affected area"} themes mean for this person right now. No house system mentions, no technical jargon. Just the lived experience.`;
 
-    fetch("https://api.anthropic.com/v1/messages", {
+    fetch("/api/claude-transit", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
-        max_tokens: 1000,
-        messages: [{ role: "user", content: prompt }],
-      }),
+      body: JSON.stringify({ prompt }),
     })
       .then(r => r.json())
       .then(data => {
-        const content = data?.content?.[0]?.text || "";
-        setText(content.trim());
+        setText((data?.text || "").trim());
         setLoading(false);
       })
       .catch(() => {
@@ -2355,6 +2346,7 @@ function NatalChartWheel({ houseCusps, chartPlanets, fullPlanets, report, planet
   const [activePlanet, setActivePlanet] = React.useState(null);
   const [activeAspect, setActiveAspect] = React.useState(null);
   const [activeTransitAspect, setActiveTransitAspect] = React.useState(null);
+  const [activeTransitPlanet, setActiveTransitPlanet] = React.useState(null);
   const [showTransits, setShowTransits] = React.useState(true);
   const cx = 250, cy = 250;
   const outerR = 230, zodiacInnerR = 185, houseR = 108, planetR = 160, houseNumR = 120;
@@ -2549,7 +2541,7 @@ function NatalChartWheel({ houseCusps, chartPlanets, fullPlanets, report, planet
         <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:6,marginBottom:12}}>
           <div style={{display:"flex",alignItems:"center",gap:10}}>
             <span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:!showTransits?"#f5c842":"#4a4440",letterSpacing:".1em",transition:"color 0.2s"}}>BIRTH CHART</span>
-            <div onClick={()=>{setShowTransits(t=>!t);setActiveAspect(null);setActivePlanet(null);setActiveTransitAspect(null);}} style={{width:44,height:24,borderRadius:12,background:showTransits?"rgba(90,184,216,0.3)":"rgba(245,200,66,0.2)",border:`1px solid ${showTransits?"rgba(90,184,216,0.6)":"rgba(245,200,66,0.4)"}`,cursor:"pointer",position:"relative",transition:"all 0.3s",flexShrink:0}}>
+            <div onClick={()=>{setShowTransits(t=>!t);setActiveAspect(null);setActivePlanet(null);setActiveTransitAspect(null);setActiveTransitPlanet(null);}} style={{width:44,height:24,borderRadius:12,background:showTransits?"rgba(90,184,216,0.3)":"rgba(245,200,66,0.2)",border:`1px solid ${showTransits?"rgba(90,184,216,0.6)":"rgba(245,200,66,0.4)"}`,cursor:"pointer",position:"relative",transition:"all 0.3s",flexShrink:0}}>
               <div style={{position:"absolute",top:3,left:showTransits?22:3,width:16,height:16,borderRadius:"50%",background:showTransits?"#5ab8d8":"#f5c842",transition:"left 0.3s, background 0.3s",boxShadow:`0 0 6px ${showTransits?"rgba(90,184,216,0.8)":"rgba(245,200,66,0.8)"}`}}/>
             </div>
             <span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:showTransits?"#5ab8d8":"#4a4440",letterSpacing:".1em",transition:"color 0.2s"}}>TODAY</span>
@@ -2577,10 +2569,10 @@ function NatalChartWheel({ houseCusps, chartPlanets, fullPlanets, report, planet
             const tPos = polarToXY(tAngle, (outerR + zodiacInnerR) / 2 - 8);
             const tcol = planetColors[tp.name] || "#5ab8d8";
             return (
-              <g key={"t"+tp.name+i}>
+              <g key={"t"+tp.name+i} onClick={() => setActiveTransitPlanet(activeTransitPlanet === tp.name ? null : tp.name)} style={{cursor:"pointer"}}>
                 <circle cx={tPos.x} cy={tPos.y} r={10} fill="rgba(0,0,20,0.95)"
-                  stroke="#5ab8d8" strokeWidth={1.5} strokeDasharray="2,1"
-                  style={{filter:"drop-shadow(0 0 4px rgba(90,184,216,0.8))"}}/>
+                  stroke={activeTransitPlanet===tp.name?"#fff":"#5ab8d8"} strokeWidth={activeTransitPlanet===tp.name?2.5:1.5} strokeDasharray="2,1"
+                  style={{filter:`drop-shadow(0 0 ${activeTransitPlanet===tp.name?8:4}px rgba(90,184,216,0.8))`}}/>
                 <text x={tPos.x} y={tPos.y} textAnchor="middle" dominantBaseline="middle"
                   fontSize={10} fill="#7dd8f8" fontWeight="bold" style={{userSelect:"none"}}>
                   {planetSymbols[tp.name]||"•"}
@@ -2778,6 +2770,35 @@ function NatalChartWheel({ houseCusps, chartPlanets, fullPlanets, report, planet
           transitDate={transitDate}
         />
       )}
+
+      {/* Clicked transit planet popup */}
+      {activeTransitPlanet && showTransits && (() => {
+        const tp = transitPlanets.find(p => p.name === activeTransitPlanet);
+        if (!tp) return null;
+        const signList = ["Aries","Taurus","Gemini","Cancer","Leo","Virgo","Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"];
+        const ascSign = houseCusps.find(h => h.house === 1)?.sign;
+        const ascIdx = signList.indexOf(ascSign);
+        const planetIdx = signList.indexOf(tp.sign);
+        const houseNum = ascIdx !== -1 && planetIdx !== -1 ? ((planetIdx - ascIdx + 12) % 12) + 1 : null;
+        const ordinals = ["","1st","2nd","3rd","4th","5th","6th","7th","8th","9th","10th","11th","12th"];
+        const col = planetColors[tp.name] || "#5ab8d8";
+        return (
+          <div style={{marginTop:12,padding:"14px 16px",background:`rgba(90,184,216,0.08)`,border:`1px solid ${col}44`,borderRadius:12,animation:"up 0.2s ease"}}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
+              <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:13,color:col}}>
+                {planetSymbols[tp.name]||"✦"} {tp.name} in {tp.sign}
+                {houseNum && <span style={{fontSize:10,color:"#5ab8d8",marginLeft:8}}>· {ordinals[houseNum]} House</span>}
+                {tp.retrograde && <span style={{fontFamily:"'Cinzel',serif",fontSize:8,color:"#ff9944",marginLeft:8}}>℞ RETROGRADE</span>}
+              </div>
+              <button onClick={()=>setActiveTransitPlanet(null)} style={{background:"none",border:"none",color:"#4a4440",cursor:"pointer",fontSize:14}}>✕</button>
+            </div>
+            <div style={{fontFamily:"'Cinzel',serif",fontSize:8,color:"#5ab8d8",letterSpacing:".1em",marginBottom:8}}>TRANSITING · {transitDate}</div>
+            <p style={{fontFamily:"Georgia,serif",fontSize:12,color:"#d8c890",lineHeight:1.7,margin:0,fontStyle:"italic"}}>
+              {tp.name} is currently moving through {tp.sign}{houseNum ? `, activating your ${ordinals[houseNum]} house` : ""}. Tap any dashed line connected to {tp.name} to read how this transit is affecting your natal chart.
+            </p>
+          </div>
+        );
+      })()}
 
       {/* Transit key */}
       {transitPlanets.length > 0 && (
