@@ -611,11 +611,11 @@ const houseLabel = correctHouse
     // Attach interpretations to transit aspects
     transitAspects = transitAspects.map(a => {
       const type = (a.type||"").toLowerCase();
-      const key1 = `${a.planet1}-${a.planet2}-${type}`;
-      const key2 = `${a.planet2}-${a.planet1}-${type}`;
+      const key1 = `${a.planet1}-${a.planet2}-${type}`.toLowerCase();
+      const key2 = `${a.planet2}-${a.planet1}-${type}`.toLowerCase();
       const interp = transitInterpretations[key1] || transitInterpretations[key2] || null;
       if (!interp) {
-        console.log(`No interp for: "${key1}" (available: ${Object.keys(transitInterpretations).slice(0,4).join(", ")})`);
+        console.log(`No interp for: "${key1}"`);
       }
       return interp ? { ...a, interpretation: interp } : a;
     });
