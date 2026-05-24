@@ -269,6 +269,7 @@ export default async function handler(req, res) {
               }
             },
             orb: 2,
+            house_system: "W",
             report_options: { tradition: "universal", language: "en" },
           },
           "TransitReport"
