@@ -446,7 +446,7 @@ function getTransitInterpretation(transitPlanet, natalPlanet, aspectType) {
   return transitInterpLib[key] || null;
 }
 
-
+const avatarData = [
   { sign:"Aries", symbol:"♈", color:"#FF3D00", glow:"#FF6D00", scifiClass:"Vanguard Striker", emoji:"🔥" },
   { sign:"Taurus", symbol:"♉", color:"#2E7D32", glow:"#00C853", scifiClass:"Titan Guardian", emoji:"🌿" },
   { sign:"Gemini", symbol:"♊", color:"#F9A825", glow:"#FFD600", scifiClass:"Dual-Core Phantom", emoji:"✨" },
