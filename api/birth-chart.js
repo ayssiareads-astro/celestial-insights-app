@@ -198,6 +198,7 @@ export default async function handler(req, res) {
 
       // Get today's date/time for transit snapshot
       const now = new Date();
+      console.log("Transit date being requested:", `${now.getUTCFullYear()}-${now.getUTCMonth()+1}-${now.getUTCDate()} ${now.getUTCHours()}:${now.getUTCMinutes()} UTC`);
       const transitTime = {
         year: now.getUTCFullYear(),
         month: now.getUTCMonth() + 1,
@@ -252,6 +253,7 @@ export default async function handler(req, res) {
               zodiac_type: "Tropic",
               active_points: ["Sun","Moon","Mercury","Venus","Mars","Jupiter","Saturn","Uranus","Neptune","Pluto"],
               precision: 2,
+              use_cache: false,
             },
           },
           "TransitSnapshot"
@@ -564,7 +566,7 @@ const houseLabel = correctHouse
           });
         }
 
-        console.log("Transit planets parsed:", transitPlanets.length);
+        console.log("Transit planets with signs:", transitPlanets.map(p => `${p.name}:${p.sign}`).join(", "));
         console.log("Transit aspects parsed:", transitAspects.length);
       }
     } catch (transitErr) {
