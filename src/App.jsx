@@ -434,16 +434,162 @@ const transitInterpLib = {
   "mars-chiron-square": "Tension between your drive to act and your deepest sense of inadequacy or wound. The hesitation is pointing toward the place that still needs care.",
   "mars-chiron-opposition": "External challenge is activating your oldest wound around action and worthiness. What feels like an attack is actually pointing toward where you still need to heal.",
 
-  // ── NORTH NODE TRANSITS ───────────────────────────────────────
+  // ── JUPITER TRANSITS ──────────────────────────────────────────
+  "jupiter-sun-conjunction": "Jupiter is conjuncting your natal Sun — one of the most expansive and fortunate transits in the 12-year cycle. Opportunities arrive with unusual ease. Your presence is larger, your confidence is genuine, and doors that were closed are opening. Receive it.",
+  "jupiter-sun-trine": "Jupiter is trining your natal Sun — a genuine expansion of identity and opportunity. You feel more like your best self. Good fortune flows from simply being who you are.",
+  "jupiter-sun-square": "Jupiter is squaring your natal Sun — growth is available but it requires more than optimism. The overreach is real. Channel the expansion into something with actual structure.",
+  "jupiter-sun-opposition": "Jupiter is opposing your natal Sun — opportunity and expansion come from outside, through others or circumstances. Something is being offered. Look carefully at what it actually requires.",
+  "jupiter-moon-conjunction": "Jupiter is conjuncting your natal Moon — emotional generosity and warmth are running at their peak. Your capacity to give and receive nourishment is genuinely expanded right now.",
+  "jupiter-moon-trine": "Jupiter is trining your natal Moon — emotional wellbeing and a sense of inner abundance flow easily. You feel at home in yourself and in the world.",
+  "jupiter-moon-square": "Jupiter is squaring your natal Moon — emotional excess or overreaction may surface. Your feelings are big right now. The bigness is real; the proportions may need calibration.",
+  "jupiter-moon-opposition": "Jupiter is opposing your natal Moon — emotional expansion comes from outside. Something or someone is asking you to feel more than you are used to feeling.",
+  "jupiter-mercury-conjunction": "Jupiter is conjuncting your natal Mercury — your mind expands naturally and ideas arrive with philosophical breadth. Big thinking, inspired communication. Give it a direction.",
+  "jupiter-mercury-trine": "Jupiter is trining your natal Mercury — your thinking is naturally reaching for the bigger picture. Ideas flow easily and communication carries genuine warmth and authority.",
+  "jupiter-mercury-square": "Jupiter is squaring your natal Mercury — your mind wants to overreach. The ideas are real; the execution needs more patience than this transit suggests.",
+  "jupiter-venus-conjunction": "Jupiter is conjuncting your natal Venus — one of the most genuinely pleasurable transits possible. Love, beauty, and abundance are available in abundance. Let yourself receive.",
+  "jupiter-venus-trine": "Jupiter is trining your natal Venus — love and abundance flow together naturally. Your generosity is returning to you. A good time to invest in beauty, relationship, and joy.",
+  "jupiter-venus-square": "Jupiter is squaring your natal Venus — overindulgence or excess in love or pleasure. The feeling is real; the proportions may need adjusting.",
+  "jupiter-mars-conjunction": "Jupiter is conjuncting your natal Mars — energy and optimism spike together dramatically. You feel capable of taking on anything. Pick what actually matters and go.",
+  "jupiter-mars-trine": "Jupiter is trining your natal Mars — drive and opportunity are working together perfectly. Bold action is genuinely supported right now.",
+  "jupiter-mars-square": "Jupiter is squaring your natal Mars — ambition is overextending. You are reaching further than your current resources support. The vision is real; the timeline needs adjustment.",
+  "jupiter-saturn-conjunction": "Jupiter is conjuncting your natal Saturn — expansion meets structure directly. A rare opportunity to build something that is both ambitious and sustainable.",
+  "jupiter-saturn-trine": "Jupiter is trining your natal Saturn — growth and discipline are working together beautifully. What you build now has genuine staying power.",
+  "jupiter-saturn-square": "Jupiter is squaring your natal Saturn — growth and restriction are in direct tension. The desire to expand is real; the structures currently in place are asking to be respected.",
+  "jupiter-jupiter-conjunction": "Jupiter returns to its natal position — your Jupiter return. A genuine renewal of optimism, opportunity, and belief in what is possible. This happens every 12 years. Take it seriously.",
+  "jupiter-uranus-conjunction": "Jupiter is conjuncting your natal Uranus — a genuinely revolutionary expansion. Breakthroughs arrive suddenly and with unusual force. What changes now changes everything.",
+  "jupiter-neptune-conjunction": "Jupiter is conjuncting your natal Neptune — spiritual vision and idealism are amplified to their peak. Inspiration is real and extraordinary. Guard against wishful thinking.",
+  "jupiter-pluto-conjunction": "Jupiter is conjuncting your natal Pluto — power and expansion meet directly. Transformation arrives on a genuinely large scale. This is one of the most significant transits for life change.",
+  "jupiter-chiron-conjunction": "Jupiter is conjuncting your natal Chiron — your wound is being offered expansion and healing on an unusually generous scale. The growth available here is real.",
+
+  // ── SATURN TRANSITS ───────────────────────────────────────────
+  "saturn-sun-conjunction": "Saturn is conjuncting your natal Sun — one of the most significant transits in the 29-year cycle. Reality, responsibility, and the demand to become more fully yourself are all landing at once. This is not punishment — it is the making of something real.",
+  "saturn-sun-trine": "Saturn is trining your natal Sun — discipline and identity are working together. What you build now is built to last. Authority comes naturally because you have genuinely earned it.",
+  "saturn-sun-square": "Saturn is squaring your natal Sun — external pressure or internal criticism is making your sense of self feel heavier than usual. The weight is building something. Stay with it.",
+  "saturn-sun-opposition": "Saturn is opposing your natal Sun — reality is pushing back against your identity. What feels like a ceiling may be a redirect. Pay careful attention to what is actually being asked.",
+  "saturn-moon-conjunction": "Saturn is conjuncting your natal Moon — emotional weight and responsibility settle in. Old limitations resurface. Be honest about what is actually yours to carry.",
+  "saturn-moon-trine": "Saturn is trining your natal Moon — emotional steadiness is your greatest asset right now. You can feel things and still function. That discipline earns deep trust.",
+  "saturn-moon-square": "Saturn is squaring your natal Moon — emotional restriction or heaviness passes through. You may feel older than your years. Let the feeling inform rather than define.",
+  "saturn-moon-opposition": "Saturn is opposing your natal Moon — your emotional needs are bumping against external structures or responsibilities. The limitation is real but so is your capacity to work within it.",
+  "saturn-mercury-conjunction": "Saturn is conjuncting your natal Mercury — your thinking becomes more disciplined and serious. Not inspired, but structurally solid. What you decide now is likely to stick.",
+  "saturn-mercury-trine": "Saturn is trining your natal Mercury — your mind is precise and unusually reliable. Good for long-term planning, legal matters, and any decision requiring rigorous thinking.",
+  "saturn-mercury-square": "Saturn is squaring your natal Mercury — mental heaviness or self-criticism. Your thinking is demanding more than you can currently deliver. Lower the bar slightly.",
+  "saturn-venus-conjunction": "Saturn is conjuncting your natal Venus — love and responsibility are meeting directly. Commitments feel more serious. This is a transit for long-term relationship decisions, not casual ones.",
+  "saturn-venus-trine": "Saturn is trining your natal Venus — love and commitment are aligned. What you build in your relationships now has genuine staying power.",
+  "saturn-venus-square": "Saturn is squaring your natal Venus — love feels constrained or serious. You may feel less lovable than usual. The weight is temporary; what it is building is not.",
+  "saturn-mars-conjunction": "Saturn is conjuncting your natal Mars — drive meets structure directly. The discipline required is real and so is what it is building. Frustration is the friction of something being forged.",
+  "saturn-mars-trine": "Saturn is trining your natal Mars — ambition and discipline are perfectly aligned. You can sustain effort over time without burning out. A powerful time for long-term projects.",
+  "saturn-mars-square": "Saturn is squaring your natal Mars — energy and restriction are in direct confrontation. You feel blocked or forced to slow down. What is being delayed is often being preserved.",
+  "saturn-jupiter-conjunction": "Saturn is conjuncting your natal Jupiter — your optimism is meeting reality directly. The dreams are being asked to prove themselves. What survives this transit is genuinely worth keeping.",
+  "saturn-saturn-conjunction": "Saturn returns to its natal position — your Saturn return. This happens around age 29-30 and again at 58-59. A profound reckoning with who you are and what you are actually building.",
+  "saturn-saturn-trine": "Saturn is trining its natal position — your structures and responsibilities are working together. The discipline you have built is paying dividends.",
+  "saturn-saturn-square": "Saturn is squaring its natal position — the structures of your life are being tested. What is genuinely solid will hold. What was built on convenience will not.",
+  "saturn-uranus-conjunction": "Saturn is conjuncting your natal Uranus — structure and revolution are meeting directly. The need to break free and the need for stability are in direct confrontation.",
+  "saturn-neptune-conjunction": "Saturn is conjuncting your natal Neptune — your dreams are meeting reality directly. Illusions dissolve. What remains after the fog lifts is more true and more useful.",
+  "saturn-pluto-conjunction": "Saturn is conjuncting your natal Pluto — one of the most transformative and demanding transits possible. Power, control, and structure are all being fundamentally renegotiated.",
+  "saturn-chiron-conjunction": "Saturn is conjuncting your natal Chiron — your deepest wound is being asked to become a genuine structure. The work is hard and the result is something that lasts.",
+
+  // ── URANUS TRANSITS ───────────────────────────────────────────
+  "uranus-sun-conjunction": "Uranus is conjuncting your natal Sun — a once-in-84-year transit (though most people experience it in their early 40s as the Uranus opposition). Your sense of identity is being fundamentally disrupted and liberated simultaneously. Who you thought you were is making room for who you actually are.",
+  "uranus-sun-trine": "Uranus is trining your natal Sun — originality and liberation flow freely. The unconventional path is the right one. Your individuality is being genuinely supported.",
+  "uranus-sun-square": "Uranus is squaring your natal Sun — disruption to your identity arrives from unexpected directions. The restlessness is pointing somewhere real. What wants to break free has been waiting.",
+  "uranus-sun-opposition": "Uranus is opposing your natal Sun — external disruption is forcing a fundamental reconsideration of who you are. The breakthrough lives on the other side of the resistance.",
+  "uranus-moon-conjunction": "Uranus is conjuncting your natal Moon — emotional disruption and liberation arrive together. Old patterns of feeling and responding are being electrified and replaced.",
+  "uranus-moon-trine": "Uranus is trining your natal Moon — emotional freedom flows easily. You feel surprisingly unhooked from things that usually bind you. That is the gift.",
+  "uranus-moon-square": "Uranus is squaring your natal Moon — emotional instability or sudden change in your inner world. The disruption is pointing toward a freedom that your emotional patterns have been preventing.",
+  "uranus-moon-opposition": "Uranus is opposing your natal Moon — external disruption is triggering your need for emotional independence. Something is changing whether you planned it or not.",
+  "uranus-mercury-conjunction": "Uranus is conjuncting your natal Mercury — a breakthrough transit for the mind. Sudden insights, reversals of thinking, and ideas that change everything arrive now. Write them down.",
+  "uranus-mercury-trine": "Uranus is trining your natal Mercury — original thinking comes effortlessly. Your mind is operating outside its usual tracks. Follow it.",
+  "uranus-mercury-square": "Uranus is squaring your natal Mercury — erratic and brilliant thinking in equal measure. Ground the best idea before chasing the next one.",
+  "uranus-venus-conjunction": "Uranus is conjuncting your natal Venus — your love life and values are being fundamentally disrupted and liberated. Attraction to the unconventional spikes dramatically.",
+  "uranus-venus-trine": "Uranus is trining your natal Venus — your love life and your need for freedom are perfectly aligned. You attract original people and unexpected beauty.",
+  "uranus-venus-square": "Uranus is squaring your natal Venus — restlessness in love. The desire for something new is bumping against what you have. The impulse is pointing somewhere real.",
+  "uranus-mars-conjunction": "Uranus is conjuncting your natal Mars — one of the most explosive transits possible. Sudden action, rebellion, or a breakthrough that changes your entire direction. Channel this consciously.",
+  "uranus-mars-trine": "Uranus is trining your natal Mars — originality and drive are working together. You act on the unconventional impulse and it works.",
+  "uranus-mars-square": "Uranus is squaring your natal Mars — impulsive and erratic energy. The urge to break free is real. Give it more thought than this transit naturally provides.",
+  "uranus-jupiter-conjunction": "Uranus is conjuncting your natal Jupiter — sudden and revolutionary expansion. What opens up now opens up fast and on a genuinely large scale.",
+  "uranus-saturn-conjunction": "Uranus is conjuncting your natal Saturn — your structures and foundations are being electrified and disrupted. What was fixed is being shown to be more flexible than you thought.",
+  "uranus-chiron-conjunction": "Uranus is conjuncting your natal Chiron — your deepest wound is being suddenly and radically disrupted. The healing available here is unconventional and genuine.",
+
+  // ── NEPTUNE TRANSITS ──────────────────────────────────────────
+  "neptune-sun-conjunction": "Neptune is conjuncting your natal Sun — a rare and profoundly disorienting transit. Your sense of self is dissolving at the edges. This is not loss — it is the removal of what was never truly you. Trust the process even when you cannot see the outcome.",
+  "neptune-sun-trine": "Neptune is trining your natal Sun — creativity, spirituality, and compassion flow directly from your sense of self. You are more inspiring than you know right now.",
+  "neptune-sun-square": "Neptune is squaring your natal Sun — confusion about who you are and what you want. The fog is real. Avoid major decisions until clarity returns. Let the dissolving happen.",
+  "neptune-sun-opposition": "Neptune is opposing your natal Sun — something you thought was solid about yourself is being gently dissolved. What remains after this transit is more honest.",
+  "neptune-moon-conjunction": "Neptune is conjuncting your natal Moon — your emotional world is at its most permeable and spiritually alive. Boundaries between self and other are thin. Extraordinary sensitivity and creative depth are available. Discernment is essential.",
+  "neptune-moon-trine": "Neptune is trining your natal Moon — emotional intuition and spiritual sensitivity are running high. Your capacity for compassion and creative feeling is genuinely expanded.",
+  "neptune-moon-square": "Neptune is squaring your natal Moon — emotional confusion or hypersensitivity. You may be absorbing others' feelings as your own. Ground yourself and distinguish what is actually yours.",
+  "neptune-moon-opposition": "Neptune is opposing your natal Moon — the dream and the emotional reality of your life are being distinguished from each other. The loss of illusion is also the arrival of something true.",
+  "neptune-mercury-conjunction": "Neptune is conjuncting your natal Mercury — your thinking becomes more intuitive, poetic, and visionary. Brilliant for creative work. Requires careful discernment in practical matters.",
+  "neptune-mercury-trine": "Neptune is trining your natal Mercury — your mind and imagination are in genuine dialogue. The poetic and intuitive impression is more reliable than it looks.",
+  "neptune-mercury-square": "Neptune is squaring your natal Mercury — confusion or wishful thinking in how you process information. Do not make irreversible decisions or sign anything important during this period.",
+  "neptune-venus-conjunction": "Neptune is conjuncting your natal Venus — the most romantically idealistic transit possible. Everything feels transcendent and beautiful. Guard against seeing what you want rather than what is.",
+  "neptune-venus-trine": "Neptune is trining your natal Venus — love, beauty, and spiritual sensitivity are flowing from a genuinely inspired place. Make art. Open your heart. Let beauty in.",
+  "neptune-venus-square": "Neptune is squaring your natal Venus — confusion or idealization in love. You may be in love with the idea of someone rather than the person. Beautiful and requiring discernment.",
+  "neptune-mars-conjunction": "Neptune is conjuncting your natal Mars — your drive and your imagination are deeply intertwined. Inspired action is possible. Scattered or misdirected action is equally possible. Stay anchored.",
+  "neptune-mars-trine": "Neptune is trining your natal Mars — your drive is being guided by something deeper than strategy. Inspired, intuitive action is available. Trust the pull.",
+  "neptune-mars-square": "Neptune is squaring your natal Mars — confusion about what to pursue or why. Your energy may feel scattered or used up on things that do not matter. Return to what is actually real.",
+  "neptune-jupiter-conjunction": "Neptune is conjuncting your natal Jupiter — your idealism and spiritual hunger are amplified to extraordinary levels. The vision is real. Make sure the foundation matches.",
+  "neptune-saturn-conjunction": "Neptune is conjuncting your natal Saturn — your structures and disciplines are being dissolved and reimagined. What felt fixed is becoming fluid. Trust the process.",
+  "neptune-chiron-conjunction": "Neptune is conjuncting your natal Chiron — your deepest wound is dissolving into something more compassionate and spiritually aware. The healing here is quiet and profound.",
+
+  // ── PLUTO TRANSITS ────────────────────────────────────────────
+  "pluto-sun-conjunction": "Pluto is conjuncting your natal Sun — one of the most transformative transits a person can experience. Your entire sense of identity is being taken apart and rebuilt from the inside. What survives this transit is the most genuinely you thing that exists.",
+  "pluto-sun-trine": "Pluto is trining your natal Sun — transformation and identity are working together powerfully. You have unusual access to the deeper patterns driving your life — and real power to work with them.",
+  "pluto-sun-square": "Pluto is squaring your natal Sun — power, control, and ego are in direct confrontation. Something wants to die so something truer can live. Do not force it and do not resist it.",
+  "pluto-sun-opposition": "Pluto is opposing your natal Sun — external forces are triggering your deepest psychological material. What feels like a power struggle is an invitation to transform at the level of identity.",
+  "pluto-moon-conjunction": "Pluto is conjuncting your natal Moon — your emotional world is being fundamentally transformed. Old feeling patterns that no longer serve you are being excavated and released. The intensity is real and so is the liberation on the other side.",
+  "pluto-moon-trine": "Pluto is trining your natal Moon — your emotional depth is an extraordinary asset right now. You can access the truest layers of your feeling without being overwhelmed.",
+  "pluto-moon-square": "Pluto is squaring your natal Moon — emotional power struggles or obsessive patterns surface. Something deep wants acknowledgment — honest recognition, not indulgence.",
+  "pluto-moon-opposition": "Pluto is opposing your natal Moon — external intensity is triggering your deepest emotional patterns. What you feel most strongly right now is connected to something older than today.",
+  "pluto-mercury-conjunction": "Pluto is conjuncting your natal Mercury — your mind is being fundamentally transformed. Old ways of thinking are being dismantled. What emerges is a more honest and penetrating intelligence.",
+  "pluto-mercury-trine": "Pluto is trining your natal Mercury — your mind has unusual access to what is actually happening beneath the surface. Insights about power, psychology, and hidden patterns come easily.",
+  "pluto-mercury-square": "Pluto is squaring your natal Mercury — obsessive or paranoid thinking may surface. Your mind is drilling for something real. Make sure the target is worth the excavation.",
+  "pluto-venus-conjunction": "Pluto is conjuncting your natal Venus — your experience of love and beauty is being fundamentally transformed. What you value, who you attract, and how you love are all being taken apart and rebuilt.",
+  "pluto-venus-trine": "Pluto is trining your natal Venus — your capacity for deep, transformative love is accessible and grounded. You can love with your whole self without being consumed by it.",
+  "pluto-venus-square": "Pluto is squaring your natal Venus — power dynamics in love surface. Jealousy, obsession, or the need to control what you desire. The intensity is pointing toward something real.",
+  "pluto-mars-conjunction": "Pluto is conjuncting your natal Mars — your drive is being fundamentally transformed. Obsessive focus and extraordinary power are available. Direct this consciously or it will direct you.",
+  "pluto-mars-trine": "Pluto is trining your natal Mars — transformative drive runs cleanly. You have access to a focused, powerful energy that can move mountains.",
+  "pluto-mars-square": "Pluto is squaring your natal Mars — power, control, and force are in direct confrontation. The struggle is demanding that you become more conscious of how you wield your energy.",
+  "pluto-jupiter-conjunction": "Pluto is conjuncting your natal Jupiter — your belief system and your relationship to expansion are being fundamentally transformed. What you thought was possible is being radically revised.",
+  "pluto-saturn-conjunction": "Pluto is conjuncting your natal Saturn — the foundations of your life are being torn down and rebuilt. This is one of the most structurally significant transits possible.",
+  "pluto-chiron-conjunction": "Pluto is conjuncting your natal Chiron — your deepest wound is being transformed at the most fundamental level. The intensity of this process matches the depth of the healing available.",
+
   "north node-sun-conjunction": "The transiting North Node is touching your natal Sun — a rare and meaningful alignment with your life's direction. Something about who you are is pointing directly toward your path forward.",
   "north node-moon-conjunction": "The transiting North Node activates your natal Moon — your emotional world is being drawn toward its higher purpose. What you feel most deeply is connected to where you are meant to go.",
   "north node-sun-opposition": "The transiting North Node is opposite your natal Sun — a push from your past patterns toward a new version of yourself. The resistance you feel is the old self defending its territory.",
   "north node-mars-opposition": "The transiting North Node is opposing your natal Mars — your drive and ambition are being redirected. What you have been chasing may need to be released in service of something more aligned.",
+  "north node-sun-sextile": "The transiting North Node opens a window of opportunity between your destiny path and your core identity. A small but real invitation to step more fully into who you are meant to become.",
+  "north node-sun-trine": "The transiting North Node is flowing harmoniously with your natal Sun — your sense of self and your life's direction are briefly aligned. Trust what feels like your truest self right now.",
+  "north node-sun-square": "The transiting North Node is creating tension between your comfort zone and your growth edge. Something about how you present yourself needs to evolve.",
+  "north node-moon-trine": "The transiting North Node flows with your natal Moon — your emotional instincts are pointing toward growth. Trust what you feel drawn toward.",
+  "north node-mars-conjunction": "The transiting North Node is activating your natal Mars — your drive is being pointed toward its highest expression. What you pursue right now has karmic significance.",
+  "north node-mars-square": "The transiting North Node is squaring your natal Mars — a tension between the direction you are headed and how you are trying to get there. Your drive needs recalibration.",
+  "north node-jupiter-conjunction": "The transiting North Node conjuncts natal Jupiter — a powerful alignment between your growth and your destiny. What expands you right now is genuinely aligned with your soul's direction.",
+  "north node-jupiter-square": "The transiting North Node squares natal Jupiter — your sense of abundance is being redirected toward your actual path rather than the comfortable one.",
+  "north node-saturn-conjunction": "The transiting North Node is conjuncting your natal Saturn — your life lessons and your destiny path are meeting directly. The discipline you have been building is exactly what your path forward requires.",
+  "north node-saturn-trine": "The transiting North Node flows with natal Saturn — the structures you have built are aligned with your soul's direction. What you have worked hard for is pointing you forward.",
+  "chiron-midheaven-conjunction": "Chiron is conjuncting your natal Midheaven — your deepest wound is surfacing in the context of your public life and career. What has felt like your greatest professional vulnerability is ready to become your most distinctive gift.",
+  "chiron-sun-conjunction": "Chiron is conjuncting your natal Sun — your deepest wound and your core identity are in direct conversation. Something about who you are is being asked to heal at the most fundamental level.",
+  "chiron-moon-conjunction": "Chiron is conjuncting your natal Moon — old emotional wounds are surfacing to be healed. This is not punishment; it is the emotional body asking for compassionate attention.",
+  "chiron-saturn-conjunction": "Chiron is conjuncting your natal Saturn — your deepest wound and your life's most demanding lesson are meeting directly. The healing available here creates a wisdom that nothing else could.",
+  "uranus-lilith-conjunction": "Uranus is conjuncting your natal Lilith — your wild, untamed nature is being electrified and liberated. The part of you that refuses to be controlled is being given full permission to exist.",
+  "uranus-pluto-opposition": "Uranus is opposing your natal Pluto — generational disruption is meeting generational transformation directly. The revolutionary change happening in the world is landing personally in your life right now.",
+  "uranus-pluto-square": "Uranus is squaring your natal Pluto — external disruption is forcing a confrontation with your deepest psychological patterns. The world is changing and asking you to change with it.",
+  "pluto-jupiter-sextile": "Pluto is sextiling your natal Jupiter — a subtle but real opening between transformation and expansion. Growth that comes from honestly confronting what needs to change is genuinely available.",
+  "pluto-jupiter-trine": "Pluto is trining your natal Jupiter — transformation and abundance are working together powerfully. What you rebuild after a period of breakdown arrives with unusual expansiveness.",
+  "mars-saturn-sextile": "Mars is sextiling your natal Saturn — a window opens where your drive and your discipline are briefly working together. Take the focused, deliberate action you have been postponing.",
+  "moon-neptune-trine": "The Moon is trining your natal Neptune — emotional intuition and spiritual sensitivity are flowing together naturally. Your impressions are more reliable than usual. Trust what you feel beneath the surface.",
+  "moon-neptune-sextile": "The Moon opens a brief window to your natal Neptune — emotional and spiritual sensitivity are heightened. Beauty, compassion, and creative feeling are more accessible than usual.",
+  "neptune-moon-opposition": "Neptune is opposing your natal Moon — the dream and the emotional reality of your life are being gently distinguished from each other. The loss of illusion here is also the arrival of something more true.",
+  "neptune-moon-trine": "Neptune is trining your natal Moon — your capacity for compassion, spiritual feeling, and emotional depth is flowing freely. Your intuition is running at its most reliable.",
 };
 
 function getTransitInterpretation(transitPlanet, natalPlanet, aspectType) {
-  const key = `${transitPlanet}-${natalPlanet}-${aspectType}`.toLowerCase();
-  return transitInterpLib[key] || null;
+  const type = (aspectType||"").toLowerCase();
+  // Try transiting-natal direction first, then reverse
+  const key1 = `${transitPlanet}-${natalPlanet}-${type}`.toLowerCase();
+  const key2 = `${natalPlanet}-${transitPlanet}-${type}`.toLowerCase();
+  return transitInterpLib[key1] || transitInterpLib[key2] || null;
 }
 
 const avatarData = [
@@ -2394,7 +2540,20 @@ function NatalChartWheel({ houseCusps, chartPlanets, fullPlanets, report, planet
             </div>
             <div style={{fontFamily:"'Cinzel',serif",fontSize:8,color:"#5ab8d8",letterSpacing:".1em",marginBottom:8}}>
               TODAY'S TRANSIT · {transitDate}
-              {a.transiting_house && <span style={{marginLeft:8,color:"#f5c842"}}>· {a.transiting_house === 1 ? "1st" : a.transiting_house === 2 ? "2nd" : a.transiting_house === 3 ? "3rd" : `${a.transiting_house}th`} House</span>}
+              {(() => {
+                // Calculate Whole Sign house from transiting planet's sign
+                const tpData = transitPlanets.find(tp => tp.name === a.planet1 || tp.name === a.planet2);
+                if (!tpData?.sign || !houseCusps.length) return null;
+                const ascSign = houseCusps.find(h => h.house === 1)?.sign;
+                if (!ascSign) return null;
+                const signList = ["Aries","Taurus","Gemini","Cancer","Leo","Virgo","Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"];
+                const ascIdx = signList.indexOf(ascSign);
+                const planetIdx = signList.indexOf(tpData.sign);
+                if (ascIdx === -1 || planetIdx === -1) return null;
+                const houseNum = ((planetIdx - ascIdx + 12) % 12) + 1;
+                const ordinals = ["","1st","2nd","3rd","4th","5th","6th","7th","8th","9th","10th","11th","12th"];
+                return <span style={{marginLeft:8,color:"#f5c842"}}>· {ordinals[houseNum]} House</span>;
+              })()}
             </div>
             {(() => {
               const interp = a.interpretation || getTransitInterpretation(a.planet1, a.planet2, a.type);
