@@ -575,29 +575,31 @@ const houseLabel = correctHouse
     let transitInterpretations = {};
     try {
       if (paid && transitReportResult) {
-        console.log("TransitReport OK:", JSON.stringify(transitReportResult).slice(0, 300));
         const tr = transitReportResult?.data || transitReportResult;
-        // API returns { events: [{ transiting_planet, stationed_planet, aspect_type, interpretation, ... }] }
-        const events = tr?.events || tr?.interpretations || tr?.transits || [];
+        const events = tr?.events || [];
+        console.log("TransitReport events count:", events.length);
+        if (events.length > 0) {
+          console.log("TransitReport sample event:", JSON.stringify(events[0]).slice(0, 200));
+        }
         if (Array.isArray(events)) {
           events.forEach(item => {
-            const p1 = item.transiting_planet || item.transit_planet || "";
-            const p2 = item.stationed_planet || item.natal_planet || "";
-            const type = (item.aspect_type || "").toLowerCase();
-            const text = item.interpretation || item.text || item.description || "";
+            const p1 = (item.transiting_planet || "").trim();
+            const p2 = (item.stationed_planet || "").trim();
+            const type = (item.aspect_type || "").toLowerCase().trim();
+            const text = (item.interpretation || "").trim();
             if (p1 && p2 && type && text) {
-              // Store under multiple key formats for flexible lookup
               const key = `${p1}-${p2}-${type}`.toLowerCase();
               const keyRev = `${p2}-${p1}-${type}`.toLowerCase();
-              transitInterpretations[key] = text;
-              transitInterpretations[keyRev] = text;
+              // Keep the longest/best interpretation if there are duplicates
+              if (!transitInterpretations[key] || text.length > transitInterpretations[key].length) {
+                transitInterpretations[key] = text;
+                transitInterpretations[keyRev] = text;
+              }
             }
           });
         }
         console.log("Transit interpretations parsed:", Object.keys(transitInterpretations).length);
-        if (Object.keys(transitInterpretations).length > 0) {
-          console.log("Sample keys:", Object.keys(transitInterpretations).slice(0, 5).join(", "));
-        }
+        console.log("Sample keys:", Object.keys(transitInterpretations).slice(0, 6).join(", "));
       }
     } catch (trErr) {
       console.warn("Transit report parsing error (non-fatal):", trErr.message);
