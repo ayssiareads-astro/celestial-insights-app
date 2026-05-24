@@ -578,8 +578,30 @@ const transitInterpLib = {
   "pluto-jupiter-sextile": "Pluto is sextiling your natal Jupiter — a subtle but real opening between transformation and expansion. Growth that comes from honestly confronting what needs to change is genuinely available.",
   "pluto-jupiter-trine": "Pluto is trining your natal Jupiter — transformation and abundance are working together powerfully. What you rebuild after a period of breakdown arrives with unusual expansiveness.",
   "mars-saturn-sextile": "Mars is sextiling your natal Saturn — a window opens where your drive and your discipline are briefly working together. Take the focused, deliberate action you have been postponing.",
-  "moon-neptune-sextile": "The Moon opens a brief window to your natal Neptune — emotional and spiritual sensitivity are heightened. Beauty, compassion, and creative feeling are more accessible than usual.",
-};
+  "neptune-jupiter-trine": "Neptune is trining your natal Jupiter — one of the most spiritually expansive transits possible. Your faith, vision, and sense of what is possible are all being quietly amplified. What you believe in right now is worth believing in.",
+  "neptune-jupiter-sextile": "Neptune is sextiling your natal Jupiter — a gentle opening between your spiritual awareness and your capacity for growth. Inspired ideas and meaningful opportunities arrive through intuition rather than effort.",
+  "neptune-jupiter-square": "Neptune is squaring your natal Jupiter — your optimism and your idealism are getting tangled together. The vision is real but it needs grounding. Watch for over-promising or chasing something that looks bigger than it is.",
+  "neptune-jupiter-conjunction": "Neptune is conjuncting your natal Jupiter — a rare and deeply idealistic transit. Your faith in what is possible expands dramatically. Extraordinary creative and spiritual vision is available — paired with a need for discernment.",
+  "neptune-jupiter-opposition": "Neptune is opposing your natal Jupiter — external idealism or someone else's vision is meeting your own. The dissolution of a belief that no longer serves you makes room for something more true.",
+  "neptune-saturn-trine": "Neptune is trining your natal Saturn — your spiritual awareness and your structures are in rare harmony. The discipline you have built is becoming more porous and alive. Something rigid is becoming wise.",
+  "neptune-saturn-square": "Neptune is squaring your natal Saturn — confusion and structure are in direct tension. Your foundations feel uncertain. This is not collapse — it is the dissolution of what was never truly solid.",
+  "neptune-uranus-trine": "Neptune is trining your natal Uranus — your spiritual sensitivity and your need for freedom are flowing together. Original, inspired, and quietly revolutionary energy is available.",
+  "neptune-uranus-sextile": "Neptune is sextiling your natal Uranus — a subtle opening between your intuition and your originality. Trust the unconventional impression that arrives quietly.",
+  "pluto-jupiter-opposition": "Pluto is opposing your natal Jupiter — a confrontation between transformation and expansion. Something you have believed in or relied on for growth is being fundamentally challenged. What survives is more honest.",
+  "pluto-jupiter-square": "Pluto is squaring your natal Jupiter — power and ambition are in direct confrontation with your capacity for growth. The obsessive drive to expand is meeting its shadow. Use this transit to purify your ambitions.",
+  "pluto-saturn-trine": "Pluto is trining your natal Saturn — transformation and structure are working together powerfully. What you rebuild now is built to last on genuinely solid foundations.",
+  "pluto-saturn-square": "Pluto is squaring your natal Saturn — the most structurally demanding transit possible. Your foundations are being taken apart and rebuilt from the ground up. The process is hard and the result is real.",
+  "pluto-uranus-square": "Pluto is squaring your natal Uranus — generational transformation is meeting your need for radical freedom. The revolution is personal now. What breaks open is what needed to.",
+  "pluto-uranus-trine": "Pluto is trining your natal Uranus — transformative power and originality are working together. You have access to a focused, revolutionary energy that can change the structures of your life.",
+  "jupiter-uranus-trine": "Jupiter is trining your natal Uranus — expansion and freedom are working together beautifully. A sudden opportunity or breakthrough arrives that feels both lucky and liberating.",
+  "jupiter-uranus-opposition": "Jupiter is opposing your natal Uranus — sudden expansion from outside disrupts your sense of direction. The disruption is the opportunity. Follow the unexpected opening.",
+  "jupiter-uranus-square": "Jupiter is squaring your natal Uranus — restless ambition and the urge for freedom are overreaching. The impulse toward change is real — the timing and target need calibration.",
+  "jupiter-neptune-trine": "Jupiter is trining your natal Neptune — faith, vision, and spiritual sensitivity are all flowing together. What you imagine right now has genuine creative force behind it.",
+  "jupiter-neptune-sextile": "Jupiter is sextiling your natal Neptune — a quiet opening between your capacity for growth and your spiritual awareness. Follow the inspired impression rather than the logical plan.",
+  "jupiter-neptune-square": "Jupiter is squaring your natal Neptune — idealism is overextending. You are seeing possibility through a spiritual or romantic lens that may not match reality. The vision is beautiful; verify the foundation.",
+  "jupiter-neptune-conjunction": "Jupiter is conjuncting your natal Neptune — the most expansively idealistic transit in the cycle. Your faith in the invisible is at its peak. Channel this into creative or spiritual work rather than practical decisions.",
+  "moon-chiron-conjunction": "The Moon is activating your natal Chiron — a moment of emotional tenderness around your oldest wound. What surfaces is not punishment but recognition. Let the feeling be what it is.",
+  "moon-uranus-trine": "The Moon is trining your natal Uranus — emotional freedom flows naturally. You feel surprisingly unattached to things that usually pull at you. That spaciousness is the gift.",
 
 function getTransitInterpretation(transitPlanet, natalPlanet, aspectType) {
   const type = (aspectType||"").toLowerCase();
@@ -2184,7 +2206,11 @@ function TodaysEnergy({ chartPlanets, fullPlanets, transitAspects, transitPlanet
   };
 
   React.useEffect(() => {
-    if (!transitAspects.length || !transitPlanets.length) { setLoading(false); return; }
+    if (!transitAspects.length || !transitPlanets.length) {
+      // Don't bail permanently — data may not be loaded yet
+      return;
+    }
+    setLoading(true);
 
     // Build transit summary for the prompt
     // Use natalTransits for accurate Whole Sign houses, fall back to calculated
@@ -2251,7 +2277,7 @@ Write one cohesive paragraph that reads like a personalized daily reading. Do no
         setLoading(false);
       })
       .catch(() => setLoading(false));
-  }, [transitDate]);
+  }, [transitDate, transitAspects.length, transitPlanets.length]);
 
   return (
     <div style={{marginTop:16,padding:"18px 16px",background:"linear-gradient(135deg,rgba(90,184,216,0.08),rgba(245,200,66,0.04))",border:"1px solid rgba(90,184,216,0.25)",borderRadius:14}}>
