@@ -578,10 +578,7 @@ const transitInterpLib = {
   "pluto-jupiter-sextile": "Pluto is sextiling your natal Jupiter — a subtle but real opening between transformation and expansion. Growth that comes from honestly confronting what needs to change is genuinely available.",
   "pluto-jupiter-trine": "Pluto is trining your natal Jupiter — transformation and abundance are working together powerfully. What you rebuild after a period of breakdown arrives with unusual expansiveness.",
   "mars-saturn-sextile": "Mars is sextiling your natal Saturn — a window opens where your drive and your discipline are briefly working together. Take the focused, deliberate action you have been postponing.",
-  "moon-neptune-trine": "The Moon is trining your natal Neptune — emotional intuition and spiritual sensitivity are flowing together naturally. Your impressions are more reliable than usual. Trust what you feel beneath the surface.",
   "moon-neptune-sextile": "The Moon opens a brief window to your natal Neptune — emotional and spiritual sensitivity are heightened. Beauty, compassion, and creative feeling are more accessible than usual.",
-  "neptune-moon-opposition": "Neptune is opposing your natal Moon — the dream and the emotional reality of your life are being gently distinguished from each other. The loss of illusion here is also the arrival of something more true.",
-  "neptune-moon-trine": "Neptune is trining your natal Moon — your capacity for compassion, spiritual feeling, and emotional depth is flowing freely. Your intuition is running at its most reliable.",
 };
 
 function getTransitInterpretation(transitPlanet, natalPlanet, aspectType) {
