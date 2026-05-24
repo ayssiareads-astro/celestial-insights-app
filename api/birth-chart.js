@@ -192,6 +192,7 @@ export default async function handler(req, res) {
     let houseSignReadings = {};
     let transitData = null;
     let transitReportResult = null;
+    let natalTransits = [];
 
     if (paid) {
       console.log("Paid — fetching full natal chart...");
@@ -292,7 +293,6 @@ export default async function handler(req, res) {
       transitReportResult = transitReportData;
 
       // Parse natal-transits for accurate Whole Sign house data
-      let natalTransits = [];
       try {
         const ntEvents = natalTransitsData?.events || natalTransitsData?.data?.events || [];
         if (Array.isArray(ntEvents)) {
