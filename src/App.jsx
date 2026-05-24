@@ -2161,7 +2161,7 @@ function PaywallSection({ chartPlanets, onVerified }) {
 }
 
 // ── Today's Energy Synopsis via Claude AI ────────────────────────
-function TodaysEnergy({ chartPlanets, fullPlanets, transitAspects, transitPlanets, houseCusps, transitDate }) {
+function TodaysEnergy({ chartPlanets, fullPlanets, transitAspects, transitPlanets, houseCusps, transitDate, natalTransits = [] }) {
   const [text, setText] = React.useState(null);
   const [loading, setLoading] = React.useState(true);
 
@@ -2187,24 +2187,44 @@ function TodaysEnergy({ chartPlanets, fullPlanets, transitAspects, transitPlanet
     if (!transitAspects.length || !transitPlanets.length) { setLoading(false); return; }
 
     // Build transit summary for the prompt
-    const aspectLines = transitAspects.slice(0, 8).map(a => {
+    // Use natalTransits for accurate Whole Sign houses, fall back to calculated
+    const aspectLines = transitAspects.slice(0, 10).map(a => {
       const p1tp = transitPlanets.find(tp => tp.name === a.planet1);
       const p2tp = transitPlanets.find(tp => tp.name === a.planet2);
       const p1Natal = fullPlanets.find(p => p.name === a.planet1);
       const p2Natal = fullPlanets.find(p => p.name === a.planet2);
-      let transitPlanet, natalPlanet;
+      let transitingPlanet, natalPlanet;
       if (p1tp && (!p1Natal || p1tp.sign !== p1Natal.sign)) {
-        transitPlanet = p1tp;
+        transitingPlanet = p1tp;
         natalPlanet = { name: a.planet2, ...(fullPlanets.find(p => p.name === a.planet2) || {}) };
       } else {
-        transitPlanet = p2tp;
+        transitingPlanet = p2tp;
         natalPlanet = { name: a.planet1, ...(fullPlanets.find(p => p.name === a.planet1) || {}) };
       }
-      if (!transitPlanet) return null;
-      const house = getWholeSignHouse(transitPlanet.sign);
-      const houseStr = house ? `${ordinals[house]} house (${houseThemes[house]})` : "";
-      const dir = a.applying === true ? "applying" : a.applying === false ? "separating" : "";
-      return `- ${transitPlanet.name} in ${transitPlanet.sign} ${a.type} natal ${natalPlanet.name}${natalPlanet.sign ? ` in ${natalPlanet.sign}` : ""}${houseStr ? `, activating ${houseStr}` : ""}${dir ? ` (${dir})` : ""}`;
+      if (!transitingPlanet) return null;
+
+      // Get house from natalTransits (Whole Sign) or fall back to calculation
+      let transitHouse = a.transiting_house;
+      let natalHouseNum = a.natal_house;
+      if (!transitHouse && natalTransits.length > 0) {
+        const match = natalTransits.find(nt =>
+          ((nt.transiting_planet === transitingPlanet.name && nt.stationed_planet === natalPlanet.name) ||
+           (nt.transiting_planet === natalPlanet.name && nt.stationed_planet === transitingPlanet.name)) &&
+          nt.aspect_type === a.type
+        );
+        if (match) {
+          transitHouse = match.transiting_house;
+          natalHouseNum = match.natal_house;
+        }
+      }
+      if (!transitHouse) {
+        transitHouse = getWholeSignHouse(transitingPlanet.sign);
+      }
+
+      const houseStr = transitHouse ? `${ordinals[transitHouse]} house (${houseThemes[transitHouse]})` : "";
+      const natalHouseStr = natalHouseNum ? `natal ${ordinals[natalHouseNum]} house` : "";
+      const dir = a.applying === true ? "applying" : a.applying === false ? "separating" : "active";
+      return `- Transiting ${transitingPlanet.name} in ${transitingPlanet.sign}${houseStr ? `, in your ${houseStr}` : ""}, making a ${a.type} to natal ${natalPlanet.name}${natalPlanet.sign ? ` in ${natalPlanet.sign}` : ""}${natalHouseStr ? ` (${natalHouseStr})` : ""} — ${dir}`;
     }).filter(Boolean).join("\n");
 
     const sun = chartPlanets["Sun"] || "";
@@ -2349,7 +2369,7 @@ Write exactly 2-3 sentences. Be specific about what the ${houseNum ? ordinals[ho
   return <p style={{fontFamily:"Georgia,serif",fontSize:12,color:"#d8c890",lineHeight:1.75,margin:0}}>{text}</p>;
 }
 
-function NatalChartWheel({ houseCusps, chartPlanets, fullPlanets, report, planetInHouse, getFact, aspects = [], transitPlanets = [], transitAspects = [], transitDate = null }) {
+function NatalChartWheel({ houseCusps, chartPlanets, fullPlanets, report, planetInHouse, getFact, aspects = [], transitPlanets = [], transitAspects = [], transitDate = null, natalTransits = [] }) {
   const [activePlanet, setActivePlanet] = React.useState(null);
   const [activeAspect, setActiveAspect] = React.useState(null);
   const [activeTransitAspect, setActiveTransitAspect] = React.useState(null);
@@ -2775,6 +2795,7 @@ function NatalChartWheel({ houseCusps, chartPlanets, fullPlanets, report, planet
           transitPlanets={transitPlanets}
           houseCusps={houseCusps}
           transitDate={transitDate}
+          natalTransits={natalTransits}
         />
       )}
 
@@ -2846,7 +2867,7 @@ function NatalChartWheel({ houseCusps, chartPlanets, fullPlanets, report, planet
 }
 
 function BirthChartResults({ result, onReset, onUpgrade }) {
-  const { name, city, planets: chartPlanets, chartPlanets: fullPlanets = [], houseCusps = [], aspects = [], report = null, transitPlanets = [], transitAspects = [], transitDate = null } = result;
+  const { name, city, planets: chartPlanets, chartPlanets: fullPlanets = [], houseCusps = [], aspects = [], report = null, transitPlanets = [], transitAspects = [], transitDate = null, natalTransits = [] } = result;
   const [memberVerified, setMemberVerified] = useState(() => {
     try { return localStorage.getItem("aww_subscribed") === "true"; } catch(e) { return false; }
   });
@@ -2918,7 +2939,7 @@ function BirthChartResults({ result, onReset, onUpgrade }) {
 
       {/* Natal Chart Wheel */}
       {houseCusps.length > 0 && fullPlanets.length > 0 && (
-        <NatalChartWheel houseCusps={houseCusps} chartPlanets={chartPlanets} fullPlanets={fullPlanets} report={report} planetInHouse={planetInHouse} getFact={getFact} aspects={aspects} transitPlanets={transitPlanets} transitAspects={transitAspects} transitDate={transitDate}/>
+        <NatalChartWheel houseCusps={houseCusps} chartPlanets={chartPlanets} fullPlanets={fullPlanets} report={report} planetInHouse={planetInHouse} getFact={getFact} aspects={aspects} transitPlanets={transitPlanets} transitAspects={transitAspects} transitDate={transitDate} natalTransits={natalTransits}/>
       )}
 
 
