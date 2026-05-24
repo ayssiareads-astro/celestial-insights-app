@@ -2316,11 +2316,16 @@ Write exactly 2-3 sentences. Be specific about what the ${houseNum ? ordinals[ho
     })
       .then(r => r.json())
       .then(data => {
-        setText((data?.text || "").trim());
+        const result = (data?.text || "").trim();
+        if (result) {
+          setText(result);
+        } else {
+          const fallback = getTransitInterpretation(aspect.planet1, aspect.planet2, aspect.type);
+          setText(fallback || `${tp.name} is currently ${aspectMeanings[aspect.type] || "aspecting"} your natal ${np.name}. ${aspect.applying === true ? "This transit is still building — its peak influence is ahead." : "This transit has peaked and is slowly releasing."}`);
+        }
         setLoading(false);
       })
       .catch(() => {
-        // Fallback to library
         const fallback = getTransitInterpretation(aspect.planet1, aspect.planet2, aspect.type);
         setText(fallback || `${tp.name} is currently ${aspectMeanings[aspect.type] || "aspecting"} your natal ${np.name}. ${aspect.applying === true ? "This transit is still building — its peak influence is ahead." : "This transit has peaked and is slowly releasing."}`);
         setLoading(false);
@@ -2335,6 +2340,11 @@ Write exactly 2-3 sentences. Be specific about what the ${houseNum ? ordinals[ho
       <span style={{fontFamily:"Georgia,serif",fontSize:11,color:"#4a4440",fontStyle:"italic"}}>Reading the stars...</span>
     </div>
   );
+
+  if (!text) {
+    const fallback = getTransitInterpretation(aspect.planet1, aspect.planet2, aspect.type);
+    return <p style={{fontFamily:"Georgia,serif",fontSize:12,color:"#d8c890",lineHeight:1.75,margin:0,fontStyle:"italic"}}>{fallback || `${aspect.planet1} is making a ${aspect.type} to your natal ${aspect.planet2}.`}</p>;
+  }
 
   return <p style={{fontFamily:"Georgia,serif",fontSize:12,color:"#d8c890",lineHeight:1.75,margin:0}}>{text}</p>;
 }
