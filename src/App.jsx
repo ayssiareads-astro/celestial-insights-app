@@ -2202,6 +2202,35 @@ function TodaysEnergy({ chartPlanets, fullPlanets, transitAspects, transitPlanet
     return ((planetIdx - ascIdx + 12) % 12) + 1;
   };
 
+  const [speaking, setSpeaking] = React.useState(false);
+
+  const speak = () => {
+    if (!text) return;
+    if (speaking) {
+      window.speechSynthesis.cancel();
+      setSpeaking(false);
+      return;
+    }
+    const utterance = new SpeechSynthesisUtterance(text);
+    // Pick a good voice — prefer a female English voice
+    const voices = window.speechSynthesis.getVoices();
+    const preferred = voices.find(v => v.name.includes("Samantha") || v.name.includes("Karen") || v.name.includes("Moira") || v.name.includes("Serena"))
+      || voices.find(v => v.lang === "en-US" && v.name.toLowerCase().includes("female"))
+      || voices.find(v => v.lang === "en-US")
+      || voices[0];
+    if (preferred) utterance.voice = preferred;
+    utterance.rate = 0.92;
+    utterance.pitch = 1.0;
+    utterance.onend = () => setSpeaking(false);
+    utterance.onerror = () => setSpeaking(false);
+    setSpeaking(true);
+    window.speechSynthesis.speak(utterance);
+  };
+
+  React.useEffect(() => {
+    return () => window.speechSynthesis?.cancel();
+  }, []);
+
   React.useEffect(() => {
     if (!transitAspects.length || !transitPlanets.length) {
       // Don't bail permanently — data may not be loaded yet
@@ -2226,23 +2255,9 @@ function TodaysEnergy({ chartPlanets, fullPlanets, transitAspects, transitPlanet
       }
       if (!transitingPlanet) return null;
 
-      // Get house from natalTransits (Whole Sign) or fall back to calculation
-      let transitHouse = a.transiting_house;
-      let natalHouseNum = a.natal_house;
-      if (!transitHouse && natalTransits.length > 0) {
-        const match = natalTransits.find(nt =>
-          ((nt.transiting_planet === transitingPlanet.name && nt.stationed_planet === natalPlanet.name) ||
-           (nt.transiting_planet === natalPlanet.name && nt.stationed_planet === transitingPlanet.name)) &&
-          nt.aspect_type === a.type
-        );
-        if (match) {
-          transitHouse = match.transiting_house;
-          natalHouseNum = match.natal_house;
-        }
-      }
-      if (!transitHouse) {
-        transitHouse = getWholeSignHouse(transitingPlanet.sign);
-      }
+      // Always calculate Whole Sign house ourselves — don't trust API's house numbers
+      const transitHouse = getWholeSignHouse(transitingPlanet.sign);
+      const natalHouseNum = natalPlanet.house || null;
 
       const houseStr = transitHouse ? `${ordinals[transitHouse]} house (${houseThemes[transitHouse]})` : "";
       const natalHouseStr = natalHouseNum ? `natal ${ordinals[natalHouseNum]} house` : "";
@@ -2256,12 +2271,14 @@ function TodaysEnergy({ chartPlanets, fullPlanets, transitAspects, transitPlanet
 
     const prompt = `You are an astrologer for AreWeWoke, a modern astrology app. Write a single paragraph (4-5 sentences) synthesizing today's overall energy for this person based on their active transits. Speak directly ("you", not "one"). Be specific to the actual houses and planets — no generic astrology speak. Capture the dominant theme or story the transits are telling together today. End with one sentence about what to lean into or be aware of.
 
-Chart: ${sun} Sun, ${moon} Moon, ${rising} Rising
+Chart: ${sun} Sun, ${moon} Moon, ${rising} Rising (Whole Sign houses — ${rising} = 1st house, each subsequent sign = next house in order)
+
+IMPORTANT: Use ONLY the house numbers listed below. Do not recalculate or reassign houses.
 
 Today's active transits (${transitDate}):
 ${aspectLines}
 
-Write one cohesive paragraph that reads like a personalized daily reading. Do not list the transits one by one — weave them into a unified story.`;
+Write one cohesive paragraph that reads like a personalized daily reading. Do not list the transits one by one — weave them into a unified story. Use only the house numbers explicitly stated above.`;
 
     fetch("/api/claude-transit", {
       method: "POST",
@@ -2278,7 +2295,14 @@ Write one cohesive paragraph that reads like a personalized daily reading. Do no
 
   return (
     <div style={{marginTop:16,padding:"18px 16px",background:"linear-gradient(135deg,rgba(90,184,216,0.08),rgba(245,200,66,0.04))",border:"1px solid rgba(90,184,216,0.25)",borderRadius:14}}>
-      <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#5ab8d8",letterSpacing:".15em",marginBottom:10,textAlign:"center"}}>✦ TODAY'S ENERGY · {transitDate} ✦</div>
+      <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:10,marginBottom:10}}>
+        <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#5ab8d8",letterSpacing:".15em"}}>✦ TODAY'S ENERGY · {transitDate} ✦</div>
+        {text && !loading && (
+          <button onClick={speak} style={{background:"none",border:`1px solid ${speaking?"#f5c842":"#5ab8d8"}`,borderRadius:20,padding:"3px 10px",cursor:"pointer",display:"flex",alignItems:"center",gap:5,color:speaking?"#f5c842":"#5ab8d8",fontFamily:"'Cinzel',serif",fontSize:8,letterSpacing:".05em"}}>
+            {speaking ? "◼ STOP" : "▶ LISTEN"}
+          </button>
+        )}
+      </div>
       {loading ? (
         <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:8,padding:"8px 0"}}>
           <div style={{width:6,height:6,borderRadius:"50%",background:"#5ab8d8",animation:"pu 1s ease 0s infinite"}}/>
