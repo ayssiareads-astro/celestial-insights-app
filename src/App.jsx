@@ -3029,8 +3029,24 @@ function BirthChartResults({ result, onReset, onUpgrade }) {
         : <PaywallSection chartPlanets={chartPlanets} onVerified={handleVerified} />
       }
 
-      <div style={{textAlign:"center",marginTop:12}}>
-        <button onClick={onReset} style={{background:"none",border:"none",color:"#4a4440",cursor:"pointer",fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,letterSpacing:".12em"}}>← READ A DIFFERENT CHART</button>
+      <div style={{textAlign:"center",marginTop:20,marginBottom:8}}>
+        <button onClick={onReset} style={{
+          background:"linear-gradient(135deg,rgba(245,200,66,0.12),rgba(90,184,216,0.08))",
+          border:"1px solid rgba(245,200,66,0.4)",
+          borderRadius:24,
+          color:"#f5c842",
+          cursor:"pointer",
+          fontFamily:"'Cinzel',serif",
+          fontWeight:700,
+          fontSize:11,
+          letterSpacing:".12em",
+          padding:"10px 22px",
+          display:"inline-flex",
+          alignItems:"center",
+          gap:8,
+        }}>
+          ✦ READ A DIFFERENT CHART
+        </button>
       </div>
     </div>
   );
@@ -3043,6 +3059,32 @@ function BirthChart() {
   const [pendingName, setPendingName] = useState("");
   const [step, setStep] = useState(0);
   const [form, setForm] = useState({ name:"", date:"", time:"", city:"", country_code:"US" });
+
+  // Load cached chart on mount
+  React.useEffect(() => {
+    try {
+      const cached = localStorage.getItem("aww_birth_chart_result");
+      const cachedForm = localStorage.getItem("aww_birth_chart_form");
+      if (cached && cachedForm) {
+        const parsed = JSON.parse(cached);
+        const parsedForm = JSON.parse(cachedForm);
+        // Only use cache if it has transit data (today's transits may be stale — re-fetch)
+        if (parsed?.planets && parsed?.name) {
+          setForm(parsedForm);
+          setResult(parsed);
+          setStage("results");
+          // Re-fetch in background to get fresh transit data
+          const isSubscribed = (() => { try { return localStorage.getItem("aww_subscribed") === "true"; } catch(e) { return false; } })();
+          fetchBirthChart({ ...parsedForm, paid: isSubscribed })
+            .then(fresh => {
+              setResult(fresh);
+              localStorage.setItem("aww_birth_chart_result", JSON.stringify(fresh));
+            })
+            .catch(() => {}); // silently fail — cached data still shows
+        }
+      }
+    } catch(e) {}
+  }, []);
 
   const fieldGroups = [
     [{ key:"name", label:"What is your name?", placeholder:"Your name", type:"text", hint:"Your cosmic identifier ✦" }],
@@ -3065,6 +3107,11 @@ function BirthChart() {
         const isSubscribed = (() => { try { return localStorage.getItem("aww_subscribed") === "true"; } catch(e) { return false; } })();
         const data = await fetchBirthChart({ ...form, paid: isSubscribed });
         setResult(data);
+        // Cache the result and form for next visit
+        try {
+          localStorage.setItem("aww_birth_chart_result", JSON.stringify(data));
+          localStorage.setItem("aww_birth_chart_form", JSON.stringify(form));
+        } catch(e) {}
         setStage("results");
       } catch (err) {
         setStage("form");
@@ -3075,7 +3122,13 @@ function BirthChart() {
     }
   };
 
-  const handleReset = () => { setStage("form"); setResult(null); setStep(0); setForm({ name:"", date:"", time:"", city:"", country_code:"US" }); };
+  const handleReset = () => {
+    try {
+      localStorage.removeItem("aww_birth_chart_result");
+      localStorage.removeItem("aww_birth_chart_form");
+    } catch(e) {}
+    setStage("form"); setResult(null); setStep(0); setForm({ name:"", date:"", time:"", city:"", country_code:"US" });
+  };
 
   const handleUpgrade = async () => {
     // Re-fetch with paid:true after membership verified
@@ -3083,6 +3136,10 @@ function BirthChart() {
     try {
       const data = await fetchBirthChart({ ...form, paid: true });
       setResult(data);
+      try {
+        localStorage.setItem("aww_birth_chart_result", JSON.stringify(data));
+        localStorage.setItem("aww_birth_chart_form", JSON.stringify(form));
+      } catch(e) {}
       setStage("results");
     } catch(err) {
       setStage("results"); // stay on results even if upgrade fetch fails
