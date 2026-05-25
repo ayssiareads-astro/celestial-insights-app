@@ -581,7 +581,6 @@ const transitInterpLib = {
   "neptune-jupiter-trine": "Neptune is trining your natal Jupiter — one of the most spiritually expansive transits possible. Your faith, vision, and sense of what is possible are all being quietly amplified. What you believe in right now is worth believing in.",
   "neptune-jupiter-sextile": "Neptune is sextiling your natal Jupiter — a gentle opening between your spiritual awareness and your capacity for growth. Inspired ideas and meaningful opportunities arrive through intuition rather than effort.",
   "neptune-jupiter-square": "Neptune is squaring your natal Jupiter — your optimism and your idealism are getting tangled together. The vision is real but it needs grounding. Watch for over-promising or chasing something that looks bigger than it is.",
-  "neptune-jupiter-conjunction": "Neptune is conjuncting your natal Jupiter — a rare and deeply idealistic transit. Your faith in what is possible expands dramatically. Extraordinary creative and spiritual vision is available — paired with a need for discernment.",
   "neptune-jupiter-opposition": "Neptune is opposing your natal Jupiter — external idealism or someone else's vision is meeting your own. The dissolution of a belief that no longer serves you makes room for something more true.",
   "neptune-saturn-trine": "Neptune is trining your natal Saturn — your spiritual awareness and your structures are in rare harmony. The discipline you have built is becoming more porous and alive. Something rigid is becoming wise.",
   "neptune-saturn-square": "Neptune is squaring your natal Saturn — confusion and structure are in direct tension. Your foundations feel uncertain. This is not collapse — it is the dissolution of what was never truly solid.",
@@ -599,9 +598,6 @@ const transitInterpLib = {
   "jupiter-neptune-trine": "Jupiter is trining your natal Neptune — faith, vision, and spiritual sensitivity are all flowing together. What you imagine right now has genuine creative force behind it.",
   "jupiter-neptune-sextile": "Jupiter is sextiling your natal Neptune — a quiet opening between your capacity for growth and your spiritual awareness. Follow the inspired impression rather than the logical plan.",
   "jupiter-neptune-square": "Jupiter is squaring your natal Neptune — idealism is overextending. You are seeing possibility through a spiritual or romantic lens that may not match reality. The vision is beautiful; verify the foundation.",
-  "jupiter-neptune-conjunction": "Jupiter is conjuncting your natal Neptune — the most expansively idealistic transit in the cycle. Your faith in the invisible is at its peak. Channel this into creative or spiritual work rather than practical decisions.",
-  "moon-chiron-conjunction": "The Moon is activating your natal Chiron — a moment of emotional tenderness around your oldest wound. What surfaces is not punishment but recognition. Let the feeling be what it is.",
-  "moon-uranus-trine": "The Moon is trining your natal Uranus — emotional freedom flows naturally. You feel surprisingly unattached to things that usually pull at you. That spaciousness is the gift.",
 
 function getTransitInterpretation(transitPlanet, natalPlanet, aspectType) {
   const type = (aspectType||"").toLowerCase();
