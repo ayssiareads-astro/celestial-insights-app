@@ -598,6 +598,7 @@ const transitInterpLib = {
   "jupiter-neptune-trine": "Jupiter is trining your natal Neptune — faith, vision, and spiritual sensitivity are all flowing together. What you imagine right now has genuine creative force behind it.",
   "jupiter-neptune-sextile": "Jupiter is sextiling your natal Neptune — a quiet opening between your capacity for growth and your spiritual awareness. Follow the inspired impression rather than the logical plan.",
   "jupiter-neptune-square": "Jupiter is squaring your natal Neptune — idealism is overextending. You are seeing possibility through a spiritual or romantic lens that may not match reality. The vision is beautiful; verify the foundation.",
+};
 
 function getTransitInterpretation(transitPlanet, natalPlanet, aspectType) {
   const type = (aspectType||"").toLowerCase();
