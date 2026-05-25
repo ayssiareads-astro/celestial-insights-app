@@ -3091,26 +3091,29 @@ function BirthChart() {
     try {
       const cached = localStorage.getItem("aww_birth_chart_result");
       const cachedForm = localStorage.getItem("aww_birth_chart_form");
+      const lastRefresh = localStorage.getItem("aww_transit_refresh_date");
+      const today = new Date().toDateString();
       if (cached && cachedForm) {
         const parsed = JSON.parse(cached);
         const parsedForm = JSON.parse(cachedForm);
-        // Accept cache if it has any meaningful data
-        if (parsed?.name && (parsed?.chartPlanets?.length > 0 || parsed?.planets)) {
+        if (parsed?.name) {
           setForm(parsedForm);
           setResult(parsed);
           setStage("results");
-          // Refresh transit data in background
-          const isSubscribed = (() => { try { return localStorage.getItem("aww_subscribed") === "true"; } catch(e) { return false; } })();
-          fetchBirthChart({ ...parsedForm, paid: isSubscribed })
-            .then(fresh => {
-              if (fresh?.name) {
-                setResult(fresh);
-                localStorage.setItem("aww_birth_chart_result", JSON.stringify(fresh));
-              }
-            })
-            .catch(() => {});
+          // Only refresh transits once per day
+          if (lastRefresh !== today) {
+            const isSubscribed = (() => { try { return localStorage.getItem("aww_subscribed") === "true"; } catch(e) { return false; } })();
+            fetchBirthChart({ ...parsedForm, paid: isSubscribed })
+              .then(fresh => {
+                if (fresh?.name) {
+                  setResult(fresh);
+                  localStorage.setItem("aww_birth_chart_result", JSON.stringify(fresh));
+                  localStorage.setItem("aww_transit_refresh_date", today);
+                }
+              })
+              .catch(() => {});
+          }
         } else {
-          // Bad cache — clear it
           localStorage.removeItem("aww_birth_chart_result");
           localStorage.removeItem("aww_birth_chart_form");
         }
