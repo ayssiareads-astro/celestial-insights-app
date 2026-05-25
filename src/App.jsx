@@ -3068,19 +3068,21 @@ function BirthChart() {
       if (cached && cachedForm) {
         const parsed = JSON.parse(cached);
         const parsedForm = JSON.parse(cachedForm);
-        // Only use cache if it has transit data (today's transits may be stale — re-fetch)
-        if (parsed?.planets && parsed?.name) {
+        // Validate cache has essential data
+        if (parsed?.name && parsed?.chartPlanets?.length > 0 && parsed?.houseCusps?.length > 0) {
           setForm(parsedForm);
           setResult(parsed);
           setStage("results");
-          // Re-fetch in background to get fresh transit data
+          // Refresh only transit data in background (keeps natal chart instant)
           const isSubscribed = (() => { try { return localStorage.getItem("aww_subscribed") === "true"; } catch(e) { return false; } })();
           fetchBirthChart({ ...parsedForm, paid: isSubscribed })
             .then(fresh => {
-              setResult(fresh);
-              localStorage.setItem("aww_birth_chart_result", JSON.stringify(fresh));
+              if (fresh?.chartPlanets?.length > 0) {
+                setResult(fresh);
+                localStorage.setItem("aww_birth_chart_result", JSON.stringify(fresh));
+              }
             })
-            .catch(() => {}); // silently fail — cached data still shows
+            .catch(() => {});
         }
       }
     } catch(e) {}
