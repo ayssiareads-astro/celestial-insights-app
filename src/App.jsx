@@ -2203,32 +2203,47 @@ function TodaysEnergy({ chartPlanets, fullPlanets, transitAspects, transitPlanet
   };
 
   const [speaking, setSpeaking] = React.useState(false);
+  const audioRef = React.useRef(null);
 
-  const speak = () => {
+  const speak = async () => {
     if (!text) return;
     if (speaking) {
-      window.speechSynthesis.cancel();
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
       setSpeaking(false);
       return;
     }
-    const utterance = new SpeechSynthesisUtterance(text);
-    // Pick a good voice — prefer a female English voice
-    const voices = window.speechSynthesis.getVoices();
-    const preferred = voices.find(v => v.name.includes("Samantha") || v.name.includes("Karen") || v.name.includes("Moira") || v.name.includes("Serena"))
-      || voices.find(v => v.lang === "en-US" && v.name.toLowerCase().includes("female"))
-      || voices.find(v => v.lang === "en-US")
-      || voices[0];
-    if (preferred) utterance.voice = preferred;
-    utterance.rate = 0.92;
-    utterance.pitch = 1.0;
-    utterance.onend = () => setSpeaking(false);
-    utterance.onerror = () => setSpeaking(false);
     setSpeaking(true);
-    window.speechSynthesis.speak(utterance);
+    try {
+      const res = await fetch("/api/tts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text }),
+      });
+      if (!res.ok) throw new Error("TTS failed");
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const audio = new Audio(url);
+      audioRef.current = audio;
+      audio.onended = () => { setSpeaking(false); URL.revokeObjectURL(url); };
+      audio.onerror = () => { setSpeaking(false); URL.revokeObjectURL(url); };
+      audio.play();
+    } catch (err) {
+      // Fallback to browser TTS
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 0.92;
+      utterance.onend = () => setSpeaking(false);
+      window.speechSynthesis.speak(utterance);
+    }
   };
 
   React.useEffect(() => {
-    return () => window.speechSynthesis?.cancel();
+    return () => {
+      if (audioRef.current) { audioRef.current.pause(); audioRef.current = null; }
+      window.speechSynthesis?.cancel();
+    };
   }, []);
 
   React.useEffect(() => {
