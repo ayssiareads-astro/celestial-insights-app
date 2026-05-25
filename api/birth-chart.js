@@ -255,6 +255,13 @@ export default async function handler(req, res) {
               active_points: ["Sun","Moon","Mercury","Venus","Mars","Jupiter","Saturn","Uranus","Neptune","Pluto"],
               precision: 2,
               use_cache: false,
+              active_aspects: [
+                { name: "conjunction", orb: 8 },
+                { name: "opposition", orb: 8 },
+                { name: "trine", orb: 6 },
+                { name: "square", orb: 6 },
+                { name: "sextile", orb: 4 },
+              ],
             },
           },
           "TransitSnapshot"
@@ -602,6 +609,31 @@ const houseLabel = correctHouse
 
         console.log("Transit planets with signs:", transitPlanets.map(p => `${p.name}:${p.sign}`).join(", "));
         console.log("Transit aspects parsed:", transitAspects.length);
+
+        // Supplement with natalTransits aspects that the snapshot missed (wider orbs)
+        if (natalTransits.length > 0) {
+          natalTransits.forEach(nt => {
+            const p1 = PLANET_MAP[nt.transiting_planet] || nt.transiting_planet;
+            const p2 = PLANET_MAP[nt.stationed_planet] || nt.stationed_planet;
+            // Check if this aspect is already in transitAspects
+            const exists = transitAspects.some(a =>
+              ((a.planet1 === p1 && a.planet2 === p2) || (a.planet1 === p2 && a.planet2 === p1)) &&
+              a.type === nt.aspect_type
+            );
+            if (!exists && nt.transiting_planet && nt.stationed_planet) {
+              transitAspects.push({
+                planet1: p1,
+                planet2: p2,
+                type: nt.aspect_type,
+                orb: nt.orb != null ? Math.abs(parseFloat(nt.orb)).toFixed(1) : null,
+                isTransit: true,
+                applying: nt.aspect_direction === "applying" ? true : nt.aspect_direction === "separating" ? false : null,
+                transiting_house: nt.transiting_house || null,
+              });
+            }
+          });
+          console.log("Transit aspects after natalTransits supplement:", transitAspects.length);
+        }
       }
     } catch (transitErr) {
       console.warn("Transit parsing error (non-fatal):", transitErr.message);
