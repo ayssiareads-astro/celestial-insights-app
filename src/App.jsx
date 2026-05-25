@@ -3054,11 +3054,37 @@ function BirthChartResults({ result, onReset, onUpgrade }) {
 }
 
 function BirthChart() {
-  const [stage, setStage] = useState("form");
-  const [result, setResult] = useState(null);
+  const getInitialStage = () => {
+    try {
+      const cached = localStorage.getItem("aww_birth_chart_result");
+      const cachedForm = localStorage.getItem("aww_birth_chart_form");
+      if (cached && cachedForm) {
+        const parsed = JSON.parse(cached);
+        if (parsed?.name) return "results";
+      }
+    } catch(e) {}
+    return "form";
+  };
+  const getInitialResult = () => {
+    try {
+      const cached = localStorage.getItem("aww_birth_chart_result");
+      if (cached) return JSON.parse(cached);
+    } catch(e) {}
+    return null;
+  };
+  const getInitialForm = () => {
+    try {
+      const cached = localStorage.getItem("aww_birth_chart_form");
+      if (cached) return JSON.parse(cached);
+    } catch(e) {}
+    return { name:"", date:"", time:"", city:"", country_code:"US" };
+  };
+
+  const [stage, setStage] = useState(getInitialStage);
+  const [result, setResult] = useState(getInitialResult);
   const [pendingName, setPendingName] = useState("");
   const [step, setStep] = useState(0);
-  const [form, setForm] = useState({ name:"", date:"", time:"", city:"", country_code:"US" });
+  const [form, setForm] = useState(getInitialForm);
 
   // Load cached chart on mount
   React.useEffect(() => {
@@ -3068,24 +3094,31 @@ function BirthChart() {
       if (cached && cachedForm) {
         const parsed = JSON.parse(cached);
         const parsedForm = JSON.parse(cachedForm);
-        // Validate cache has essential data
-        if (parsed?.name && parsed?.chartPlanets?.length > 0 && parsed?.houseCusps?.length > 0) {
+        // Accept cache if it has any meaningful data
+        if (parsed?.name && (parsed?.chartPlanets?.length > 0 || parsed?.planets)) {
           setForm(parsedForm);
           setResult(parsed);
           setStage("results");
-          // Refresh only transit data in background (keeps natal chart instant)
+          // Refresh transit data in background
           const isSubscribed = (() => { try { return localStorage.getItem("aww_subscribed") === "true"; } catch(e) { return false; } })();
           fetchBirthChart({ ...parsedForm, paid: isSubscribed })
             .then(fresh => {
-              if (fresh?.chartPlanets?.length > 0) {
+              if (fresh?.name) {
                 setResult(fresh);
                 localStorage.setItem("aww_birth_chart_result", JSON.stringify(fresh));
               }
             })
             .catch(() => {});
+        } else {
+          // Bad cache — clear it
+          localStorage.removeItem("aww_birth_chart_result");
+          localStorage.removeItem("aww_birth_chart_form");
         }
       }
-    } catch(e) {}
+    } catch(e) {
+      localStorage.removeItem("aww_birth_chart_result");
+      localStorage.removeItem("aww_birth_chart_form");
+    }
   }, []);
 
   const fieldGroups = [
