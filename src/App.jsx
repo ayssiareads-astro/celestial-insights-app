@@ -578,26 +578,22 @@ const transitInterpLib = {
   "pluto-jupiter-sextile": "Pluto is sextiling your natal Jupiter — a subtle but real opening between transformation and expansion. Growth that comes from honestly confronting what needs to change is genuinely available.",
   "pluto-jupiter-trine": "Pluto is trining your natal Jupiter — transformation and abundance are working together powerfully. What you rebuild after a period of breakdown arrives with unusual expansiveness.",
   "mars-saturn-sextile": "Mars is sextiling your natal Saturn — a window opens where your drive and your discipline are briefly working together. Take the focused, deliberate action you have been postponing.",
-  "neptune-jupiter-trine": "Neptune is trining your natal Jupiter — one of the most spiritually expansive transits possible. Your faith, vision, and sense of what is possible are all being quietly amplified. What you believe in right now is worth believing in.",
-  "neptune-jupiter-sextile": "Neptune is sextiling your natal Jupiter — a gentle opening between your spiritual awareness and your capacity for growth. Inspired ideas and meaningful opportunities arrive through intuition rather than effort.",
-  "neptune-jupiter-square": "Neptune is squaring your natal Jupiter — your optimism and your idealism are getting tangled together. The vision is real but it needs grounding. Watch for over-promising or chasing something that looks bigger than it is.",
-  "neptune-jupiter-opposition": "Neptune is opposing your natal Jupiter — external idealism or someone else's vision is meeting your own. The dissolution of a belief that no longer serves you makes room for something more true.",
-  "neptune-saturn-trine": "Neptune is trining your natal Saturn — your spiritual awareness and your structures are in rare harmony. The discipline you have built is becoming more porous and alive. Something rigid is becoming wise.",
-  "neptune-saturn-square": "Neptune is squaring your natal Saturn — confusion and structure are in direct tension. Your foundations feel uncertain. This is not collapse — it is the dissolution of what was never truly solid.",
-  "neptune-uranus-trine": "Neptune is trining your natal Uranus — your spiritual sensitivity and your need for freedom are flowing together. Original, inspired, and quietly revolutionary energy is available.",
-  "neptune-uranus-sextile": "Neptune is sextiling your natal Uranus — a subtle opening between your intuition and your originality. Trust the unconventional impression that arrives quietly.",
-  "pluto-jupiter-opposition": "Pluto is opposing your natal Jupiter — a confrontation between transformation and expansion. Something you have believed in or relied on for growth is being fundamentally challenged. What survives is more honest.",
-  "pluto-jupiter-square": "Pluto is squaring your natal Jupiter — power and ambition are in direct confrontation with your capacity for growth. The obsessive drive to expand is meeting its shadow. Use this transit to purify your ambitions.",
-  "pluto-saturn-trine": "Pluto is trining your natal Saturn — transformation and structure are working together powerfully. What you rebuild now is built to last on genuinely solid foundations.",
-  "pluto-saturn-square": "Pluto is squaring your natal Saturn — the most structurally demanding transit possible. Your foundations are being taken apart and rebuilt from the ground up. The process is hard and the result is real.",
-  "pluto-uranus-square": "Pluto is squaring your natal Uranus — generational transformation is meeting your need for radical freedom. The revolution is personal now. What breaks open is what needed to.",
-  "pluto-uranus-trine": "Pluto is trining your natal Uranus — transformative power and originality are working together. You have access to a focused, revolutionary energy that can change the structures of your life.",
-  "jupiter-uranus-trine": "Jupiter is trining your natal Uranus — expansion and freedom are working together beautifully. A sudden opportunity or breakthrough arrives that feels both lucky and liberating.",
-  "jupiter-uranus-opposition": "Jupiter is opposing your natal Uranus — sudden expansion from outside disrupts your sense of direction. The disruption is the opportunity. Follow the unexpected opening.",
-  "jupiter-uranus-square": "Jupiter is squaring your natal Uranus — restless ambition and the urge for freedom are overreaching. The impulse toward change is real — the timing and target need calibration.",
-  "jupiter-neptune-trine": "Jupiter is trining your natal Neptune — faith, vision, and spiritual sensitivity are all flowing together. What you imagine right now has genuine creative force behind it.",
-  "jupiter-neptune-sextile": "Jupiter is sextiling your natal Neptune — a quiet opening between your capacity for growth and your spiritual awareness. Follow the inspired impression rather than the logical plan.",
-  "jupiter-neptune-square": "Jupiter is squaring your natal Neptune — idealism is overextending. You are seeing possibility through a spiritual or romantic lens that may not match reality. The vision is beautiful; verify the foundation.",
+  "moon-neptune-sextile": "The Moon opens a brief window to your natal Neptune — emotional and spiritual sensitivity are heightened. Beauty, compassion, and creative feeling are more accessible than usual.",
+
+  // ── ADDITIONAL MISSING COMBINATIONS ──────────────────────────
+  "moon-jupiter-sextile": "The Moon opens a window of emotional expansion. Faith comes easily and your feelings carry an unusual warmth and generosity.",
+  "mars-venus-sextile": "Mars opens a window toward what you desire. A good time to pursue something or someone you genuinely want.",
+  "jupiter-venus-sextile": "Jupiter opens a quiet window of abundance in love and beauty. Small gestures of generosity carry unusual resonance right now.",
+  "uranus-mars-sextile": "Uranus opens a brief window of unconventional energy. A surprising action or unexpected direction pays off.",
+  "uranus-jupiter-trine": "Uranus is trining your natal Jupiter — expansion and freedom are working together beautifully. A sudden opportunity or breakthrough arrives that feels both lucky and liberating.",
+  "uranus-jupiter-sextile": "Uranus opens a quiet window of unexpected opportunity and growth. Follow the unconventional opening rather than the expected path.",
+  "uranus-jupiter-opposition": "Uranus is opposing your natal Jupiter — sudden disruption from outside meets your capacity for growth. The disruption is the opportunity. Follow the unexpected opening.",
+  "uranus-pluto-trine": "Uranus is trining your natal Pluto — generational disruption and transformation are working together. Revolutionary change arrives with unusual ease and depth.",
+  "uranus-pluto-sextile": "Uranus opens a subtle window between disruption and transformation. A small but real invitation to change something fundamental.",
+  "neptune-pluto-trine": "Neptune is trining your natal Pluto — spiritual sensitivity and transformative power are working together quietly. A subtle but real deepening of your connection to what lies beneath the surface.",
+  "neptune-pluto-sextile": "Neptune is sextiling your natal Pluto — a gentle opening between your intuition and your capacity for deep transformation. Trust the quiet pull toward something more true.",
+  "pluto-moon-sextile": "Pluto opens a quiet window of emotional depth and transformation. Something beneath the surface becomes accessible without being overwhelming.",
+  "venus-uranus-sextile": "Venus opens a window of unconventional attraction and unexpected beauty. Something surprising and genuinely appealing arrives.",
 };
 
 function getTransitInterpretation(transitPlanet, natalPlanet, aspectType) {
@@ -2180,7 +2176,7 @@ function PaywallSection({ chartPlanets, onVerified }) {
 }
 
 // ── Today's Energy Synopsis via Claude AI ────────────────────────
-function TodaysEnergy({ chartPlanets, fullPlanets, transitAspects, transitPlanets, houseCusps, transitDate, natalTransits = [] }) {
+function TodaysEnergy({ chartPlanets, fullPlanets, transitAspects, transitPlanets, houseCusps, transitDate }) {
   const [text, setText] = React.useState(null);
   const [loading, setLoading] = React.useState(true);
 
@@ -2202,82 +2198,28 @@ function TodaysEnergy({ chartPlanets, fullPlanets, transitAspects, transitPlanet
     return ((planetIdx - ascIdx + 12) % 12) + 1;
   };
 
-  const [speaking, setSpeaking] = React.useState(false);
-  const audioRef = React.useRef(null);
-
-  const speak = async () => {
-    if (!text) return;
-    if (speaking) {
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current = null;
-      }
-      setSpeaking(false);
-      return;
-    }
-    setSpeaking(true);
-    try {
-      const res = await fetch("/api/tts", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text }),
-      });
-      if (!res.ok) throw new Error("TTS failed");
-      const blob = await res.blob();
-      const url = URL.createObjectURL(blob);
-      const audio = new Audio(url);
-      audioRef.current = audio;
-      audio.onended = () => { setSpeaking(false); URL.revokeObjectURL(url); };
-      audio.onerror = () => { setSpeaking(false); URL.revokeObjectURL(url); };
-      audio.play();
-    } catch (err) {
-      // Fallback to browser TTS
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = 0.92;
-      utterance.onend = () => setSpeaking(false);
-      window.speechSynthesis.speak(utterance);
-    }
-  };
-
   React.useEffect(() => {
-    return () => {
-      if (audioRef.current) { audioRef.current.pause(); audioRef.current = null; }
-      window.speechSynthesis?.cancel();
-    };
-  }, []);
-
-  React.useEffect(() => {
-    if (!transitAspects.length || !transitPlanets.length) {
-      // Don't bail permanently — data may not be loaded yet
-      return;
-    }
-    setLoading(true);
+    if (!transitAspects.length || !transitPlanets.length) { setLoading(false); return; }
 
     // Build transit summary for the prompt
-    // Use natalTransits for accurate Whole Sign houses, fall back to calculated
-    const aspectLines = transitAspects.slice(0, 10).map(a => {
+    const aspectLines = transitAspects.slice(0, 8).map(a => {
       const p1tp = transitPlanets.find(tp => tp.name === a.planet1);
       const p2tp = transitPlanets.find(tp => tp.name === a.planet2);
       const p1Natal = fullPlanets.find(p => p.name === a.planet1);
       const p2Natal = fullPlanets.find(p => p.name === a.planet2);
-      let transitingPlanet, natalPlanet;
+      let transitPlanet, natalPlanet;
       if (p1tp && (!p1Natal || p1tp.sign !== p1Natal.sign)) {
-        transitingPlanet = p1tp;
+        transitPlanet = p1tp;
         natalPlanet = { name: a.planet2, ...(fullPlanets.find(p => p.name === a.planet2) || {}) };
       } else {
-        transitingPlanet = p2tp;
+        transitPlanet = p2tp;
         natalPlanet = { name: a.planet1, ...(fullPlanets.find(p => p.name === a.planet1) || {}) };
       }
-      if (!transitingPlanet) return null;
-
-      // Always calculate Whole Sign house ourselves — don't trust API's house numbers
-      const transitHouse = getWholeSignHouse(transitingPlanet.sign);
-      const natalHouseNum = natalPlanet.house || null;
-
-      const houseStr = transitHouse ? `${ordinals[transitHouse]} house (${houseThemes[transitHouse]})` : "";
-      const natalHouseStr = natalHouseNum ? `natal ${ordinals[natalHouseNum]} house` : "";
-      const dir = a.applying === true ? "applying" : a.applying === false ? "separating" : "active";
-      return `- Transiting ${transitingPlanet.name} in ${transitingPlanet.sign}${houseStr ? `, in your ${houseStr}` : ""}, making a ${a.type} to natal ${natalPlanet.name}${natalPlanet.sign ? ` in ${natalPlanet.sign}` : ""}${natalHouseStr ? ` (${natalHouseStr})` : ""} — ${dir}`;
+      if (!transitPlanet) return null;
+      const house = getWholeSignHouse(transitPlanet.sign);
+      const houseStr = house ? `${ordinals[house]} house (${houseThemes[house]})` : "";
+      const dir = a.applying === true ? "applying" : a.applying === false ? "separating" : "";
+      return `- ${transitPlanet.name} in ${transitPlanet.sign} ${a.type} natal ${natalPlanet.name}${natalPlanet.sign ? ` in ${natalPlanet.sign}` : ""}${houseStr ? `, activating ${houseStr}` : ""}${dir ? ` (${dir})` : ""}`;
     }).filter(Boolean).join("\n");
 
     const sun = chartPlanets["Sun"] || "";
@@ -2286,38 +2228,33 @@ function TodaysEnergy({ chartPlanets, fullPlanets, transitAspects, transitPlanet
 
     const prompt = `You are an astrologer for AreWeWoke, a modern astrology app. Write a single paragraph (4-5 sentences) synthesizing today's overall energy for this person based on their active transits. Speak directly ("you", not "one"). Be specific to the actual houses and planets — no generic astrology speak. Capture the dominant theme or story the transits are telling together today. End with one sentence about what to lean into or be aware of.
 
-Chart: ${sun} Sun, ${moon} Moon, ${rising} Rising (Whole Sign houses — ${rising} = 1st house, each subsequent sign = next house in order)
-
-IMPORTANT: Use ONLY the house numbers listed below. Do not recalculate or reassign houses.
+Chart: ${sun} Sun, ${moon} Moon, ${rising} Rising
 
 Today's active transits (${transitDate}):
 ${aspectLines}
 
-Write one cohesive paragraph that reads like a personalized daily reading. Do not list the transits one by one — weave them into a unified story. Use only the house numbers explicitly stated above.`;
+Write one cohesive paragraph that reads like a personalized daily reading. Do not list the transits one by one — weave them into a unified story.`;
 
-    fetch("/api/claude-transit", {
+    fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ prompt }),
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 1000,
+        messages: [{ role: "user", content: prompt }],
+      }),
     })
       .then(r => r.json())
       .then(data => {
-        setText(data?.text?.trim() || null);
+        setText(data?.content?.[0]?.text?.trim() || null);
         setLoading(false);
       })
       .catch(() => setLoading(false));
-  }, [transitDate, transitAspects.length, transitPlanets.length]);
+  }, [transitDate]);
 
   return (
     <div style={{marginTop:16,padding:"18px 16px",background:"linear-gradient(135deg,rgba(90,184,216,0.08),rgba(245,200,66,0.04))",border:"1px solid rgba(90,184,216,0.25)",borderRadius:14}}>
-      <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:10,marginBottom:10}}>
-        <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#5ab8d8",letterSpacing:".15em"}}>✦ TODAY'S ENERGY · {transitDate} ✦</div>
-        {text && !loading && (
-          <button onClick={speak} style={{background:"none",border:`1px solid ${speaking?"#f5c842":"#5ab8d8"}`,borderRadius:20,padding:"3px 10px",cursor:"pointer",display:"flex",alignItems:"center",gap:5,color:speaking?"#f5c842":"#5ab8d8",fontFamily:"'Cinzel',serif",fontSize:8,letterSpacing:".05em"}}>
-            {speaking ? "◼ STOP" : "▶ LISTEN"}
-          </button>
-        )}
-      </div>
+      <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#5ab8d8",letterSpacing:".15em",marginBottom:10,textAlign:"center"}}>✦ TODAY'S ENERGY · {transitDate} ✦</div>
       {loading ? (
         <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:8,padding:"8px 0"}}>
           <div style={{width:6,height:6,borderRadius:"50%",background:"#5ab8d8",animation:"pu 1s ease 0s infinite"}}/>
@@ -2391,23 +2328,23 @@ The aspect is ${aspect.applying === true ? "applying — still building toward i
 
 Write exactly 2-3 sentences. Be specific about what the ${houseNum ? ordinals[houseNum] + " house" : "affected area"} themes mean for this person right now. No house system mentions, no technical jargon. Just the lived experience.`;
 
-    fetch("/api/claude-transit", {
+    fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ prompt }),
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 1000,
+        messages: [{ role: "user", content: prompt }],
+      }),
     })
       .then(r => r.json())
       .then(data => {
-        const result = (data?.text || "").trim();
-        if (result) {
-          setText(result);
-        } else {
-          const fallback = getTransitInterpretation(aspect.planet1, aspect.planet2, aspect.type);
-          setText(fallback || `${tp.name} is currently ${aspectMeanings[aspect.type] || "aspecting"} your natal ${np.name}. ${aspect.applying === true ? "This transit is still building — its peak influence is ahead." : "This transit has peaked and is slowly releasing."}`);
-        }
+        const content = data?.content?.[0]?.text || "";
+        setText(content.trim());
         setLoading(false);
       })
       .catch(() => {
+        // Fallback to library
         const fallback = getTransitInterpretation(aspect.planet1, aspect.planet2, aspect.type);
         setText(fallback || `${tp.name} is currently ${aspectMeanings[aspect.type] || "aspecting"} your natal ${np.name}. ${aspect.applying === true ? "This transit is still building — its peak influence is ahead." : "This transit has peaked and is slowly releasing."}`);
         setLoading(false);
@@ -2423,19 +2360,13 @@ Write exactly 2-3 sentences. Be specific about what the ${houseNum ? ordinals[ho
     </div>
   );
 
-  if (!text) {
-    const fallback = getTransitInterpretation(aspect.planet1, aspect.planet2, aspect.type);
-    return <p style={{fontFamily:"Georgia,serif",fontSize:12,color:"#d8c890",lineHeight:1.75,margin:0,fontStyle:"italic"}}>{fallback || `${aspect.planet1} is making a ${aspect.type} to your natal ${aspect.planet2}.`}</p>;
-  }
-
   return <p style={{fontFamily:"Georgia,serif",fontSize:12,color:"#d8c890",lineHeight:1.75,margin:0}}>{text}</p>;
 }
 
-function NatalChartWheel({ houseCusps, chartPlanets, fullPlanets, report, planetInHouse, getFact, aspects = [], transitPlanets = [], transitAspects = [], transitDate = null, natalTransits = [] }) {
+function NatalChartWheel({ houseCusps, chartPlanets, fullPlanets, report, planetInHouse, getFact, aspects = [], transitPlanets = [], transitAspects = [], transitDate = null }) {
   const [activePlanet, setActivePlanet] = React.useState(null);
   const [activeAspect, setActiveAspect] = React.useState(null);
   const [activeTransitAspect, setActiveTransitAspect] = React.useState(null);
-  const [activeTransitPlanet, setActiveTransitPlanet] = React.useState(null);
   const [showTransits, setShowTransits] = React.useState(true);
   const cx = 250, cy = 250;
   const outerR = 230, zodiacInnerR = 185, houseR = 108, planetR = 160, houseNumR = 120;
@@ -2451,14 +2382,12 @@ function NatalChartWheel({ houseCusps, chartPlanets, fullPlanets, report, planet
   };
   const planetSymbols = {
     Sun:"☉",Moon:"☽",Mercury:"☿",Venus:"♀",Mars:"♂",Jupiter:"♃",
-    Saturn:"♄",Uranus:"♅",Neptune:"♆",Pluto:"♇",Chiron:"⚷",
-    "North Node":"☊","South Node":"☋",Lilith:"⚸"
+    Saturn:"♄",Uranus:"⛢",Neptune:"♆",Pluto:"♇",Chiron:"⚷"
   };
   const planetColors = {
-    Sun:"#FFD700",Moon:"#E8F4FD",Mercury:"#90EE90",Venus:"#FFB6C1",
-    Mars:"#FF4444",Jupiter:"#FFA500",Saturn:"#DAA520",Uranus:"#00BFFF",
-    Neptune:"#7B68EE",Pluto:"#DA70D6",Chiron:"#F4A460",
-    "North Node":"#98FB98","South Node":"#DEB887",Lilith:"#FF69B4"
+    Sun:"#f5c842",Moon:"#c8d8f0",Mercury:"#a8c8a8",Venus:"#d4a0c8",
+    Mars:"#e8534a",Jupiter:"#e8953a",Saturn:"#9a9a7a",Uranus:"#5ab8d8",
+    Neptune:"#9ab0d8",Pluto:"#8a5a9a",Chiron:"#c8a878"
   };
 
   // In astrology: ASC = 9 o'clock (180° in standard math)
@@ -2565,12 +2494,12 @@ function NatalChartWheel({ houseCusps, chartPlanets, fullPlanets, report, planet
     return (
       <g key={p.name} onClick={() => setActivePlanet(isActive ? null : p.name)}
         style={{cursor:"pointer"}}>
-        <circle cx={pos.x} cy={pos.y} r={13}
-          fill={isActive?col:"rgba(5,3,15,0.92)"}
-          stroke={col} strokeWidth={isActive?2.5:1.8}
-          style={{filter:`drop-shadow(0 0 ${isActive?6:3}px ${col}88)`}}/>
+        <circle cx={pos.x} cy={pos.y} r={11}
+          fill={isActive?col:"rgba(0,0,0,0.8)"}
+          stroke={col} strokeWidth={isActive?2:1}
+          style={{filter:isActive?`drop-shadow(0 0 4px ${col})`:"none"}}/>
         <text x={pos.x} y={pos.y} textAnchor="middle" dominantBaseline="middle"
-          fontSize={12} fill={isActive?"#000":col} fontWeight="bold" style={{userSelect:"none"}}>
+          fontSize={11} fill={isActive?"#000":col} style={{userSelect:"none"}}>
           {planetSymbols[p.name]}
         </text>
       </g>
@@ -2630,7 +2559,7 @@ function NatalChartWheel({ houseCusps, chartPlanets, fullPlanets, report, planet
         <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:6,marginBottom:12}}>
           <div style={{display:"flex",alignItems:"center",gap:10}}>
             <span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:!showTransits?"#f5c842":"#4a4440",letterSpacing:".1em",transition:"color 0.2s"}}>BIRTH CHART</span>
-            <div onClick={()=>{setShowTransits(t=>!t);setActiveAspect(null);setActivePlanet(null);setActiveTransitAspect(null);setActiveTransitPlanet(null);}} style={{width:44,height:24,borderRadius:12,background:showTransits?"rgba(90,184,216,0.3)":"rgba(245,200,66,0.2)",border:`1px solid ${showTransits?"rgba(90,184,216,0.6)":"rgba(245,200,66,0.4)"}`,cursor:"pointer",position:"relative",transition:"all 0.3s",flexShrink:0}}>
+            <div onClick={()=>{setShowTransits(t=>!t);setActiveAspect(null);setActivePlanet(null);setActiveTransitAspect(null);}} style={{width:44,height:24,borderRadius:12,background:showTransits?"rgba(90,184,216,0.3)":"rgba(245,200,66,0.2)",border:`1px solid ${showTransits?"rgba(90,184,216,0.6)":"rgba(245,200,66,0.4)"}`,cursor:"pointer",position:"relative",transition:"all 0.3s",flexShrink:0}}>
               <div style={{position:"absolute",top:3,left:showTransits?22:3,width:16,height:16,borderRadius:"50%",background:showTransits?"#5ab8d8":"#f5c842",transition:"left 0.3s, background 0.3s",boxShadow:`0 0 6px ${showTransits?"rgba(90,184,216,0.8)":"rgba(245,200,66,0.8)"}`}}/>
             </div>
             <span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:showTransits?"#5ab8d8":"#4a4440",letterSpacing:".1em",transition:"color 0.2s"}}>TODAY</span>
@@ -2658,12 +2587,11 @@ function NatalChartWheel({ houseCusps, chartPlanets, fullPlanets, report, planet
             const tPos = polarToXY(tAngle, (outerR + zodiacInnerR) / 2 - 8);
             const tcol = planetColors[tp.name] || "#5ab8d8";
             return (
-              <g key={"t"+tp.name+i} onClick={() => setActiveTransitPlanet(activeTransitPlanet === tp.name ? null : tp.name)} style={{cursor:"pointer"}}>
-                <circle cx={tPos.x} cy={tPos.y} r={10} fill="rgba(0,0,20,0.95)"
-                  stroke={activeTransitPlanet===tp.name?"#fff":"#5ab8d8"} strokeWidth={activeTransitPlanet===tp.name?2.5:1.5} strokeDasharray="2,1"
-                  style={{filter:`drop-shadow(0 0 ${activeTransitPlanet===tp.name?8:4}px rgba(90,184,216,0.8))`}}/>
+              <g key={"t"+tp.name+i}>
+                <circle cx={tPos.x} cy={tPos.y} r={8} fill="rgba(0,0,20,0.9)"
+                  stroke="#5ab8d8" strokeWidth={1} strokeDasharray="2,1"/>
                 <text x={tPos.x} y={tPos.y} textAnchor="middle" dominantBaseline="middle"
-                  fontSize={10} fill="#7dd8f8" fontWeight="bold" style={{userSelect:"none"}}>
+                  fontSize={9} fill="#5ab8d8" style={{userSelect:"none"}}>
                   {planetSymbols[tp.name]||"•"}
                 </text>
               </g>
@@ -2849,7 +2777,7 @@ function NatalChartWheel({ houseCusps, chartPlanets, fullPlanets, report, planet
       })()}
 
       {/* Today's Energy Synopsis */}
-      {showTransits && transitPlanets.length > 0 && (
+      {showTransits && transitAspects.length > 0 && (
         <TodaysEnergy
           chartPlanets={chartPlanets}
           fullPlanets={fullPlanets}
@@ -2857,38 +2785,8 @@ function NatalChartWheel({ houseCusps, chartPlanets, fullPlanets, report, planet
           transitPlanets={transitPlanets}
           houseCusps={houseCusps}
           transitDate={transitDate}
-          natalTransits={natalTransits}
         />
       )}
-
-      {/* Clicked transit planet popup */}
-      {activeTransitPlanet && showTransits && (() => {
-        const tp = transitPlanets.find(p => p.name === activeTransitPlanet);
-        if (!tp) return null;
-        const signList = ["Aries","Taurus","Gemini","Cancer","Leo","Virgo","Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"];
-        const ascSign = houseCusps.find(h => h.house === 1)?.sign;
-        const ascIdx = signList.indexOf(ascSign);
-        const planetIdx = signList.indexOf(tp.sign);
-        const houseNum = ascIdx !== -1 && planetIdx !== -1 ? ((planetIdx - ascIdx + 12) % 12) + 1 : null;
-        const ordinals = ["","1st","2nd","3rd","4th","5th","6th","7th","8th","9th","10th","11th","12th"];
-        const col = planetColors[tp.name] || "#5ab8d8";
-        return (
-          <div style={{marginTop:12,padding:"14px 16px",background:`rgba(90,184,216,0.08)`,border:`1px solid ${col}44`,borderRadius:12,animation:"up 0.2s ease"}}>
-            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
-              <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:13,color:col}}>
-                {planetSymbols[tp.name]||"✦"} {tp.name} in {tp.sign}
-                {houseNum && <span style={{fontSize:10,color:"#5ab8d8",marginLeft:8}}>· {ordinals[houseNum]} House</span>}
-                {tp.retrograde && <span style={{fontFamily:"'Cinzel',serif",fontSize:8,color:"#ff9944",marginLeft:8}}>℞ RETROGRADE</span>}
-              </div>
-              <button onClick={()=>setActiveTransitPlanet(null)} style={{background:"none",border:"none",color:"#4a4440",cursor:"pointer",fontSize:14}}>✕</button>
-            </div>
-            <div style={{fontFamily:"'Cinzel',serif",fontSize:8,color:"#5ab8d8",letterSpacing:".1em",marginBottom:8}}>TRANSITING · {transitDate}</div>
-            <p style={{fontFamily:"Georgia,serif",fontSize:12,color:"#d8c890",lineHeight:1.7,margin:0,fontStyle:"italic"}}>
-              {tp.name} is currently moving through {tp.sign}{houseNum ? `, activating your ${ordinals[houseNum]} house` : ""}. Tap any dashed line connected to {tp.name} to read how this transit is affecting your natal chart.
-            </p>
-          </div>
-        );
-      })()}
 
       {/* Transit key */}
       {transitPlanets.length > 0 && (
@@ -2929,7 +2827,7 @@ function NatalChartWheel({ houseCusps, chartPlanets, fullPlanets, report, planet
 }
 
 function BirthChartResults({ result, onReset, onUpgrade }) {
-  const { name, city, planets: chartPlanets, chartPlanets: fullPlanets = [], houseCusps = [], aspects = [], report = null, transitPlanets = [], transitAspects = [], transitDate = null, natalTransits = [] } = result;
+  const { name, city, planets: chartPlanets, chartPlanets: fullPlanets = [], houseCusps = [], aspects = [], report = null, transitPlanets = [], transitAspects = [], transitDate = null } = result;
   const [memberVerified, setMemberVerified] = useState(() => {
     try { return localStorage.getItem("aww_subscribed") === "true"; } catch(e) { return false; }
   });
@@ -3001,7 +2899,7 @@ function BirthChartResults({ result, onReset, onUpgrade }) {
 
       {/* Natal Chart Wheel */}
       {houseCusps.length > 0 && fullPlanets.length > 0 && (
-        <NatalChartWheel houseCusps={houseCusps} chartPlanets={chartPlanets} fullPlanets={fullPlanets} report={report} planetInHouse={planetInHouse} getFact={getFact} aspects={aspects} transitPlanets={transitPlanets} transitAspects={transitAspects} transitDate={transitDate} natalTransits={natalTransits}/>
+        <NatalChartWheel houseCusps={houseCusps} chartPlanets={chartPlanets} fullPlanets={fullPlanets} report={report} planetInHouse={planetInHouse} getFact={getFact} aspects={aspects} transitPlanets={transitPlanets} transitAspects={transitAspects} transitDate={transitDate}/>
       )}
 
 
@@ -3044,24 +2942,8 @@ function BirthChartResults({ result, onReset, onUpgrade }) {
         : <PaywallSection chartPlanets={chartPlanets} onVerified={handleVerified} />
       }
 
-      <div style={{textAlign:"center",marginTop:20,marginBottom:8}}>
-        <button onClick={onReset} style={{
-          background:"linear-gradient(135deg,rgba(245,200,66,0.12),rgba(90,184,216,0.08))",
-          border:"1px solid rgba(245,200,66,0.4)",
-          borderRadius:24,
-          color:"#f5c842",
-          cursor:"pointer",
-          fontFamily:"'Cinzel',serif",
-          fontWeight:700,
-          fontSize:11,
-          letterSpacing:".12em",
-          padding:"10px 22px",
-          display:"inline-flex",
-          alignItems:"center",
-          gap:8,
-        }}>
-          ✦ READ A DIFFERENT CHART
-        </button>
+      <div style={{textAlign:"center",marginTop:12}}>
+        <button onClick={onReset} style={{background:"none",border:"none",color:"#4a4440",cursor:"pointer",fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,letterSpacing:".12em"}}>← READ A DIFFERENT CHART</button>
       </div>
     </div>
   );
@@ -3069,75 +2951,11 @@ function BirthChartResults({ result, onReset, onUpgrade }) {
 }
 
 function BirthChart() {
-  const getInitialStage = () => {
-    try {
-      const cached = localStorage.getItem("aww_birth_chart_result");
-      const cachedForm = localStorage.getItem("aww_birth_chart_form");
-      if (cached && cachedForm) {
-        const parsed = JSON.parse(cached);
-        if (parsed?.name) return "results";
-      }
-    } catch(e) {}
-    return "form";
-  };
-  const getInitialResult = () => {
-    try {
-      const cached = localStorage.getItem("aww_birth_chart_result");
-      if (cached) return JSON.parse(cached);
-    } catch(e) {}
-    return null;
-  };
-  const getInitialForm = () => {
-    try {
-      const cached = localStorage.getItem("aww_birth_chart_form");
-      if (cached) return JSON.parse(cached);
-    } catch(e) {}
-    return { name:"", date:"", time:"", city:"", country_code:"US" };
-  };
-
-  const [stage, setStage] = useState(getInitialStage);
-  const [result, setResult] = useState(getInitialResult);
+  const [stage, setStage] = useState("form");
+  const [result, setResult] = useState(null);
   const [pendingName, setPendingName] = useState("");
   const [step, setStep] = useState(0);
-  const [form, setForm] = useState(getInitialForm);
-
-  // Load cached chart on mount
-  React.useEffect(() => {
-    try {
-      const cached = localStorage.getItem("aww_birth_chart_result");
-      const cachedForm = localStorage.getItem("aww_birth_chart_form");
-      const lastRefresh = localStorage.getItem("aww_transit_refresh_date");
-      const today = new Date().toDateString();
-      if (cached && cachedForm) {
-        const parsed = JSON.parse(cached);
-        const parsedForm = JSON.parse(cachedForm);
-        if (parsed?.name) {
-          setForm(parsedForm);
-          setResult(parsed);
-          setStage("results");
-          // Only refresh transits once per day
-          if (lastRefresh !== today) {
-            const isSubscribed = (() => { try { return localStorage.getItem("aww_subscribed") === "true"; } catch(e) { return false; } })();
-            fetchBirthChart({ ...parsedForm, paid: isSubscribed })
-              .then(fresh => {
-                if (fresh?.name) {
-                  setResult(fresh);
-                  localStorage.setItem("aww_birth_chart_result", JSON.stringify(fresh));
-                  localStorage.setItem("aww_transit_refresh_date", today);
-                }
-              })
-              .catch(() => {});
-          }
-        } else {
-          localStorage.removeItem("aww_birth_chart_result");
-          localStorage.removeItem("aww_birth_chart_form");
-        }
-      }
-    } catch(e) {
-      localStorage.removeItem("aww_birth_chart_result");
-      localStorage.removeItem("aww_birth_chart_form");
-    }
-  }, []);
+  const [form, setForm] = useState({ name:"", date:"", time:"", city:"", country_code:"US" });
 
   const fieldGroups = [
     [{ key:"name", label:"What is your name?", placeholder:"Your name", type:"text", hint:"Your cosmic identifier ✦" }],
@@ -3160,11 +2978,6 @@ function BirthChart() {
         const isSubscribed = (() => { try { return localStorage.getItem("aww_subscribed") === "true"; } catch(e) { return false; } })();
         const data = await fetchBirthChart({ ...form, paid: isSubscribed });
         setResult(data);
-        // Cache the result and form for next visit
-        try {
-          localStorage.setItem("aww_birth_chart_result", JSON.stringify(data));
-          localStorage.setItem("aww_birth_chart_form", JSON.stringify(form));
-        } catch(e) {}
         setStage("results");
       } catch (err) {
         setStage("form");
@@ -3175,13 +2988,7 @@ function BirthChart() {
     }
   };
 
-  const handleReset = () => {
-    try {
-      localStorage.removeItem("aww_birth_chart_result");
-      localStorage.removeItem("aww_birth_chart_form");
-    } catch(e) {}
-    setStage("form"); setResult(null); setStep(0); setForm({ name:"", date:"", time:"", city:"", country_code:"US" });
-  };
+  const handleReset = () => { setStage("form"); setResult(null); setStep(0); setForm({ name:"", date:"", time:"", city:"", country_code:"US" }); };
 
   const handleUpgrade = async () => {
     // Re-fetch with paid:true after membership verified
@@ -3189,10 +2996,6 @@ function BirthChart() {
     try {
       const data = await fetchBirthChart({ ...form, paid: true });
       setResult(data);
-      try {
-        localStorage.setItem("aww_birth_chart_result", JSON.stringify(data));
-        localStorage.setItem("aww_birth_chart_form", JSON.stringify(form));
-      } catch(e) {}
       setStage("results");
     } catch(err) {
       setStage("results"); // stay on results even if upgrade fetch fails
