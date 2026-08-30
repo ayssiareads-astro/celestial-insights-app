@@ -1,5 +1,7 @@
 // api/check-subscription.js
 
+const OWNER_EMAILS = ["ayssia.mason@gmail.com", "celestial.insights.app@gmail.com"];
+
 async function stripeRequest(path, secretKey) {
   const response = await fetch(`https://api.stripe.com${path}`, {
     method: "GET",
@@ -21,6 +23,11 @@ export default async function handler(req, res) {
   const email = (req.query.email || "").toLowerCase().trim();
   if (!email || !email.includes("@")) {
     return res.status(400).json({ error: "Valid email required" });
+  }
+
+  // Owner always has full access
+  if (OWNER_EMAILS.includes(email)) {
+    return res.status(200).json({ active: true, status: "owner", trialEnd: null, currentPeriodEnd: null });
   }
 
   const secretKey = process.env.STRIPE_SECRET_KEY;
