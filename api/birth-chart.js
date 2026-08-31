@@ -272,8 +272,11 @@ export default async function handler(req, res) {
             subject,
             transit_time: {
               date_range: {
-                start_date: { year: now.getUTCFullYear(), month: now.getUTCMonth() + 1, day: Math.max(1, now.getUTCDate() - 3) },
-                end_date: { year: now.getUTCFullYear(), month: now.getUTCMonth() + 1, day: Math.min(new Date(now.getUTCFullYear(), now.getUTCMonth() + 1, 0).getDate(), now.getUTCDate() + 7) },
+                start_date: { year: now.getUTCFullYear(), month: now.getUTCMonth() + 1, day: now.getUTCDate() },
+                end_date: (() => {
+                  const end = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 7));
+                  return { year: end.getUTCFullYear(), month: end.getUTCMonth() + 1, day: end.getUTCDate() };
+                })(),
               }
             },
             orb: 2,
