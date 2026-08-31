@@ -578,22 +578,6 @@ const transitInterpLib = {
   "pluto-jupiter-sextile": "Pluto is sextiling your natal Jupiter — a subtle but real opening between transformation and expansion. Growth that comes from honestly confronting what needs to change is genuinely available.",
   "pluto-jupiter-trine": "Pluto is trining your natal Jupiter — transformation and abundance are working together powerfully. What you rebuild after a period of breakdown arrives with unusual expansiveness.",
   "mars-saturn-sextile": "Mars is sextiling your natal Saturn — a window opens where your drive and your discipline are briefly working together. Take the focused, deliberate action you have been postponing.",
-  "moon-neptune-sextile": "The Moon opens a brief window to your natal Neptune — emotional and spiritual sensitivity are heightened. Beauty, compassion, and creative feeling are more accessible than usual.",
-
-  // ── ADDITIONAL MISSING COMBINATIONS ──────────────────────────
-  "moon-jupiter-sextile": "The Moon opens a window of emotional expansion. Faith comes easily and your feelings carry an unusual warmth and generosity.",
-  "mars-venus-sextile": "Mars opens a window toward what you desire. A good time to pursue something or someone you genuinely want.",
-  "jupiter-venus-sextile": "Jupiter opens a quiet window of abundance in love and beauty. Small gestures of generosity carry unusual resonance right now.",
-  "uranus-mars-sextile": "Uranus opens a brief window of unconventional energy. A surprising action or unexpected direction pays off.",
-  "uranus-jupiter-trine": "Uranus is trining your natal Jupiter — expansion and freedom are working together beautifully. A sudden opportunity or breakthrough arrives that feels both lucky and liberating.",
-  "uranus-jupiter-sextile": "Uranus opens a quiet window of unexpected opportunity and growth. Follow the unconventional opening rather than the expected path.",
-  "uranus-jupiter-opposition": "Uranus is opposing your natal Jupiter — sudden disruption from outside meets your capacity for growth. The disruption is the opportunity. Follow the unexpected opening.",
-  "uranus-pluto-trine": "Uranus is trining your natal Pluto — generational disruption and transformation are working together. Revolutionary change arrives with unusual ease and depth.",
-  "uranus-pluto-sextile": "Uranus opens a subtle window between disruption and transformation. A small but real invitation to change something fundamental.",
-  "neptune-pluto-trine": "Neptune is trining your natal Pluto — spiritual sensitivity and transformative power are working together quietly. A subtle but real deepening of your connection to what lies beneath the surface.",
-  "neptune-pluto-sextile": "Neptune is sextiling your natal Pluto — a gentle opening between your intuition and your capacity for deep transformation. Trust the quiet pull toward something more true.",
-  "pluto-moon-sextile": "Pluto opens a quiet window of emotional depth and transformation. Something beneath the surface becomes accessible without being overwhelming.",
-  "venus-uranus-sextile": "Venus opens a window of unconventional attraction and unexpected beauty. Something surprising and genuinely appealing arrives.",
 };
 
 function getTransitInterpretation(transitPlanet, natalPlanet, aspectType) {
@@ -2199,7 +2183,8 @@ function TodaysEnergy({ chartPlanets, fullPlanets, transitAspects, transitPlanet
   };
 
   React.useEffect(() => {
-    if (!transitAspects.length || !transitPlanets.length) { setLoading(false); return; }
+    if (!transitAspects.length || !transitPlanets.length) return; // don't bail permanently
+    setLoading(true);
 
     // Build transit summary for the prompt
     const aspectLines = transitAspects.slice(0, 8).map(a => {
@@ -2219,7 +2204,7 @@ function TodaysEnergy({ chartPlanets, fullPlanets, transitAspects, transitPlanet
       const house = getWholeSignHouse(transitPlanet.sign);
       const houseStr = house ? `${ordinals[house]} house (${houseThemes[house]})` : "";
       const dir = a.applying === true ? "applying" : a.applying === false ? "separating" : "";
-      return `- ${transitPlanet.name} in ${transitPlanet.sign} ${a.type} natal ${natalPlanet.name}${natalPlanet.sign ? ` in ${natalPlanet.sign}` : ""}${houseStr ? `, activating ${houseStr}` : ""}${dir ? ` (${dir})` : ""}`;
+      return `- Transiting ${transitPlanet.name} in ${transitPlanet.sign}${houseStr ? `, in your ${houseStr}` : ""}, making a ${a.type} to natal ${natalPlanet.name}${natalPlanet.sign ? ` in ${natalPlanet.sign}` : ""}${dir ? ` (${dir})` : ""}`;
     }).filter(Boolean).join("\n");
 
     const sun = chartPlanets["Sun"] || "";
@@ -2235,22 +2220,19 @@ ${aspectLines}
 
 Write one cohesive paragraph that reads like a personalized daily reading. Do not list the transits one by one — weave them into a unified story.`;
 
-    fetch("https://api.anthropic.com/v1/messages", {
+    fetch("/api/claude-transit", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
-        max_tokens: 1000,
-        messages: [{ role: "user", content: prompt }],
-      }),
+      body: JSON.stringify({ prompt }),
     })
       .then(r => r.json())
       .then(data => {
-        setText(data?.content?.[0]?.text?.trim() || null);
+        const result = (data?.text || "").trim();
+        setText(result || null);
         setLoading(false);
       })
       .catch(() => setLoading(false));
-  }, [transitDate]);
+  }, [transitDate, transitAspects.length, transitPlanets.length]);
 
   return (
     <div style={{marginTop:16,padding:"18px 16px",background:"linear-gradient(135deg,rgba(90,184,216,0.08),rgba(245,200,66,0.04))",border:"1px solid rgba(90,184,216,0.25)",borderRadius:14}}>
@@ -2328,23 +2310,23 @@ The aspect is ${aspect.applying === true ? "applying — still building toward i
 
 Write exactly 2-3 sentences. Be specific about what the ${houseNum ? ordinals[houseNum] + " house" : "affected area"} themes mean for this person right now. No house system mentions, no technical jargon. Just the lived experience.`;
 
-    fetch("https://api.anthropic.com/v1/messages", {
+    fetch("/api/claude-transit", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
-        max_tokens: 1000,
-        messages: [{ role: "user", content: prompt }],
-      }),
+      body: JSON.stringify({ prompt }),
     })
       .then(r => r.json())
       .then(data => {
-        const content = data?.content?.[0]?.text || "";
-        setText(content.trim());
+        const result = (data?.text || "").trim();
+        if (result) {
+          setText(result);
+        } else {
+          const fallback = getTransitInterpretation(aspect.planet1, aspect.planet2, aspect.type);
+          setText(fallback || `${tp.name} is currently ${aspectMeanings[aspect.type] || "aspecting"} your natal ${np.name}.`);
+        }
         setLoading(false);
       })
       .catch(() => {
-        // Fallback to library
         const fallback = getTransitInterpretation(aspect.planet1, aspect.planet2, aspect.type);
         setText(fallback || `${tp.name} is currently ${aspectMeanings[aspect.type] || "aspecting"} your natal ${np.name}. ${aspect.applying === true ? "This transit is still building — its peak influence is ahead." : "This transit has peaked and is slowly releasing."}`);
         setLoading(false);
