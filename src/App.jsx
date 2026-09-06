@@ -4076,7 +4076,6 @@ function ZodiacStories({ onGetReading }) {
   const [active, setActive] = React.useState(null);
   const [showCTA, setShowCTA] = React.useState(false);
   const [ctaVisible, setCtaVisible] = React.useState(false);
-  const activeStory = active ? stories.find(s => s.videoId === active) : null;
 
   const stories = [
     {
@@ -4108,14 +4107,15 @@ function ZodiacStories({ onGetReading }) {
     },
   ];
 
+  const currentStory = stories.find(s => s.videoId === active);
+
   const openVideo = (videoId) => {
     setActive(videoId);
     setShowCTA(false);
     setCtaVisible(false);
-    // YouTube Shorts are typically 15-60s. We'll show CTA after 45s
     setTimeout(() => {
       setShowCTA(true);
-      setTimeout(() => setCtaVisible(true), 100); // fade in
+      setTimeout(() => setCtaVisible(true), 100);
     }, 45000);
   };
 
@@ -4129,8 +4129,6 @@ function ZodiacStories({ onGetReading }) {
     closeVideo();
     if (onGetReading) onGetReading();
   };
-
-  const currentStory = stories.find(s => s.videoId === active);
 
   return (
     <div style={{animation:"up .5s ease"}}>
