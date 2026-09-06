@@ -2163,6 +2163,46 @@ function PaywallSection({ chartPlanets, onVerified }) {
 function TodaysEnergy({ chartPlanets, fullPlanets, transitAspects, transitPlanets, houseCusps, transitDate }) {
   const [text, setText] = React.useState(null);
   const [loading, setLoading] = React.useState(true);
+  const [speaking, setSpeaking] = React.useState(false);
+  const audioRef = React.useRef(null);
+
+  const speak = async () => {
+    if (!text) return;
+    if (speaking) {
+      if (audioRef.current) { audioRef.current.pause(); audioRef.current = null; }
+      setSpeaking(false);
+      return;
+    }
+    setSpeaking(true);
+    try {
+      const res = await fetch("/api/tts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text }),
+      });
+      if (!res.ok) throw new Error("TTS failed");
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const audio = new Audio(url);
+      audioRef.current = audio;
+      audio.onended = () => { setSpeaking(false); URL.revokeObjectURL(url); };
+      audio.onerror = () => { setSpeaking(false); URL.revokeObjectURL(url); };
+      audio.play();
+    } catch {
+      // Fallback to browser TTS
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 0.92;
+      utterance.onend = () => setSpeaking(false);
+      window.speechSynthesis.speak(utterance);
+    }
+  };
+
+  React.useEffect(() => {
+    return () => {
+      if (audioRef.current) { audioRef.current.pause(); audioRef.current = null; }
+      window.speechSynthesis?.cancel();
+    };
+  }, []);
 
   const ordinals = ["","1st","2nd","3rd","4th","5th","6th","7th","8th","9th","10th","11th","12th"];
   const houseThemes = {
@@ -2236,7 +2276,14 @@ Write one cohesive paragraph that reads like a personalized daily reading. Do no
 
   return (
     <div style={{marginTop:16,padding:"18px 16px",background:"linear-gradient(135deg,rgba(90,184,216,0.08),rgba(245,200,66,0.04))",border:"1px solid rgba(90,184,216,0.25)",borderRadius:14}}>
-      <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#5ab8d8",letterSpacing:".15em",marginBottom:10,textAlign:"center"}}>✦ TODAY'S ENERGY · {transitDate} ✦</div>
+      <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:10,marginBottom:10}}>
+        <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#5ab8d8",letterSpacing:".15em"}}>✦ TODAY'S ENERGY · {transitDate} ✦</div>
+        {text && !loading && (
+          <button onClick={speak} style={{background:"none",border:`1px solid ${speaking?"#f5c842":"#5ab8d8"}`,borderRadius:20,padding:"3px 10px",cursor:"pointer",display:"flex",alignItems:"center",gap:5,color:speaking?"#f5c842":"#5ab8d8",fontFamily:"'Cinzel',serif",fontSize:8,letterSpacing:".05em"}}>
+            {speaking ? "◼ STOP" : "▶ LISTEN"}
+          </button>
+        )}
+      </div>
       {loading ? (
         <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:8,padding:"8px 0"}}>
           <div style={{width:6,height:6,borderRadius:"50%",background:"#5ab8d8",animation:"pu 1s ease 0s infinite"}}/>
@@ -3897,6 +3944,96 @@ function PlanetExplainer() {
 }
 
 // ─── MAIN APP ───────────────────────────────────────────────────
+// ── Zodiac Stories ────────────────────────────────────────────
+function ZodiacStories() {
+  const [active, setActive] = React.useState(null);
+
+  const stories = [
+    {
+      sign: "Sagittarius",
+      symbol: "♐",
+      color: "#9B59B6",
+      title: "Sagittarius: The Explorer",
+      desc: "Story Time",
+      videoId: "5oxU_jZpf84",
+      thumbnail: "https://img.youtube.com/vi/5oxU_jZpf84/hqdefault.jpg",
+    },
+    {
+      sign: "Capricorn",
+      symbol: "♑",
+      color: "#5D8AA8",
+      title: "The Story of Capricorn",
+      desc: "Crazy Capricorn Story",
+      videoId: "iIbHJPd6Kas",
+      thumbnail: "https://img.youtube.com/vi/iIbHJPd6Kas/hqdefault.jpg",
+    },
+    {
+      sign: "Leo Rising",
+      symbol: "♌",
+      color: "#F5C842",
+      title: "Taurus starring me",
+      desc: "Patient. Grounded. Still Evolving.",
+      videoId: "fIc-sg2FtqU",
+      thumbnail: "https://img.youtube.com/vi/fIc-sg2FtqU/hqdefault.jpg",
+    },
+  ];
+
+  return (
+    <div style={{animation:"up .5s ease"}}>
+      <div style={{textAlign:"center",marginBottom:28}}>
+        <div style={{fontSize:40,marginBottom:10}}>🎬</div>
+        <h2 style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:24,color:"#f5c842",margin:"0 0 8px"}}>Zodiac Stories</h2>
+        <p style={{fontFamily:"Georgia,serif",color:"#a8e060",fontSize:14,margin:0,lineHeight:1.7}}>Real stories. Real signs. Written & cast by Ayssia Mason.</p>
+      </div>
+
+      {/* Video grid */}
+      <div style={{display:"flex",flexDirection:"column",gap:20}}>
+        {stories.map(s => (
+          <div key={s.sign} style={{borderRadius:16,overflow:"hidden",border:`1px solid ${s.color}44`,background:"rgba(0,0,0,0.4)"}}>
+            {active === s.videoId ? (
+              <div style={{position:"relative",paddingTop:"177.77%",background:"#000"}}>
+                <iframe
+                  src={`https://www.youtube.com/embed/${s.videoId}?autoplay=1&rel=0`}
+                  style={{position:"absolute",top:0,left:0,width:"100%",height:"100%",border:"none"}}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+                <button onClick={()=>setActive(null)} style={{position:"absolute",top:10,right:10,background:"rgba(0,0,0,0.7)",border:"none",color:"#fff",borderRadius:"50%",width:32,height:32,cursor:"pointer",fontSize:16,zIndex:10}}>✕</button>
+              </div>
+            ) : (
+              <div onClick={()=>setActive(s.videoId)} style={{cursor:"pointer",position:"relative"}}>
+                <img
+                  src={s.thumbnail}
+                  alt={s.title}
+                  style={{width:"100%",display:"block",aspectRatio:"16/9",objectFit:"cover"}}
+                  onError={e => { e.target.style.display="none"; }}
+                />
+                {/* Play button overlay */}
+                <div style={{position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",background:"linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.6))"}}>
+                  <div style={{width:60,height:60,borderRadius:"50%",background:"rgba(255,255,255,0.9)",display:"flex",alignItems:"center",justifyContent:"center",marginBottom:12,boxShadow:"0 4px 20px rgba(0,0,0,0.5)"}}>
+                    <span style={{fontSize:24,marginLeft:4}}>▶</span>
+                  </div>
+                  <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:18,color:"#fff",textShadow:"0 2px 8px rgba(0,0,0,0.8)"}}>{s.symbol} {s.sign}</div>
+                  <div style={{fontFamily:"Georgia,serif",fontSize:12,color:"#ddd",marginTop:4,textShadow:"0 1px 4px rgba(0,0,0,0.8)"}}>{s.desc}</div>
+                </div>
+              </div>
+            )}
+            <div style={{padding:"12px 16px",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+              <div>
+                <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:13,color:s.color}}>{s.title}</div>
+                <div style={{fontFamily:"Georgia,serif",fontSize:11,color:"#888",marginTop:2}}>@ayssiamason2704 · YouTube Shorts</div>
+              </div>
+              <a href={`https://youtube.com/shorts/${s.videoId}`} target="_blank" rel="noopener noreferrer" style={{color:"#f5c842",fontFamily:"'Cinzel',serif",fontSize:10,letterSpacing:".08em",textDecoration:"none",border:"1px solid #f5c84244",borderRadius:20,padding:"4px 10px"}}>SHARE</a>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div style={{textAlign:"center",marginTop:24,fontFamily:"Georgia,serif",fontSize:12,color:"#5a5048"}}>More stories coming soon ✦</div>
+    </div>
+  );
+}
+
 export default function AstrologyApp() {
   const [topTab, setTopTab] = useState("facts");
 
@@ -3925,6 +4062,7 @@ export default function AstrologyApp() {
     {label:"🔮 Game",key:"guess"},
     {label:"🌌 Get A Reading",key:"birthchart"},
     {label:"🌟 Celebrity",key:"celebrity"},
+    {label:"🎬 Stories",key:"stories"},
     {label:"📲 Get The App",key:"install"},
   ];
 
@@ -3947,6 +4085,7 @@ export default function AstrologyApp() {
         {topTab==="birthchart" && <BirthChart />}
         {topTab==="celebrity" && <CelebrityConnection />}
         {topTab==="community" && <Community />}
+        {topTab==="stories" && <ZodiacStories />}
         <div style={{display:topTab==="guess"?"block":"none"}}><ZodiacQuiz /></div>
 
         {topTab==="install" && (
