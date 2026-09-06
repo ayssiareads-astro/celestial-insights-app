@@ -4117,6 +4117,16 @@ function ZodiacStories({ onGetReading }) {
     setShowCTA(false);
     setCtaVisible(false);
     if (ctaTimerRef.current) clearTimeout(ctaTimerRef.current);
+    // Show CTA at 59 seconds
+    ctaTimerRef.current = setTimeout(() => {
+      setShowCTA(true);
+      setTimeout(() => setCtaVisible(true), 100);
+      // Auto-dismiss after 10 seconds
+      ctaTimerRef.current = setTimeout(() => {
+        setShowCTA(false);
+        setCtaVisible(false);
+      }, 10000);
+    }, 59000);
   };
 
   const closeVideo = () => {
@@ -4126,72 +4136,9 @@ function ZodiacStories({ onGetReading }) {
     if (ctaTimerRef.current) clearTimeout(ctaTimerRef.current);
   };
 
-  const triggerCTA = React.useCallback(() => {
-    setShowCTA(true);
-    setTimeout(() => setCtaVisible(true), 100);
-    if (ctaTimerRef.current) clearTimeout(ctaTimerRef.current);
-    ctaTimerRef.current = setTimeout(() => {
-      setShowCTA(false);
-      setCtaVisible(false);
-    }, 10000);
-  }, []);
-
-  // YouTube IFrame API + postMessage listener
   React.useEffect(() => {
-    if (!active) return;
-
-    const handleMessage = (e) => {
-      try {
-        const data = typeof e.data === "string" ? JSON.parse(e.data) : e.data;
-        if (data?.event === "onStateChange" && data?.info === 0) triggerCTA();
-        if (data?.event === "infoDelivery" && data?.info?.playerState === 0) triggerCTA();
-      } catch {}
-    };
-
-    window.addEventListener("message", handleMessage);
-
-    // Fallback: poll the iframe for video end using YouTube API
-    let pollInterval = null;
-    const sendGetDuration = () => {
-      try {
-        iframeRef.current?.contentWindow?.postMessage(
-          JSON.stringify({ event: "command", func: "getDuration", args: [] }), "*"
-        );
-      } catch {}
-    };
-
-    // Start polling after 5s to get duration, then track position
-    const setupPoll = setTimeout(() => {
-      sendGetDuration();
-      pollInterval = setInterval(() => {
-        try {
-          iframeRef.current?.contentWindow?.postMessage(
-            JSON.stringify({ event: "command", func: "getCurrentTime", args: [] }), "*"
-          );
-        } catch {}
-      }, 1000);
-    }, 5000);
-
-    // Handle getCurrentTime / getDuration responses
-    const handlePollResponse = (e) => {
-      try {
-        const data = typeof e.data === "string" ? JSON.parse(e.data) : e.data;
-        if (data?.info?.currentTime != null && data?.info?.duration != null) {
-          const remaining = data.info.duration - data.info.currentTime;
-          if (remaining < 1 && data.info.currentTime > 2) triggerCTA();
-        }
-      } catch {}
-    };
-    window.addEventListener("message", handlePollResponse);
-
-    return () => {
-      window.removeEventListener("message", handleMessage);
-      window.removeEventListener("message", handlePollResponse);
-      clearTimeout(setupPoll);
-      if (pollInterval) clearInterval(pollInterval);
-      if (ctaTimerRef.current) clearTimeout(ctaTimerRef.current);
-    };
-  }, [active, triggerCTA]);
+    return () => { if (ctaTimerRef.current) clearTimeout(ctaTimerRef.current); };
+  }, []);
 
   const handleGetReading = () => {
     closeVideo();
