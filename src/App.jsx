@@ -4086,6 +4086,7 @@ function ZodiacStories({ onGetReading }) {
       desc: "Story Time",
       videoId: "5oxU_jZpf84",
       thumbnail: "https://img.youtube.com/vi/5oxU_jZpf84/hqdefault.jpg",
+      ctaAt: 75000, // 1:15
     },
     {
       sign: "Capricorn",
@@ -4095,6 +4096,7 @@ function ZodiacStories({ onGetReading }) {
       desc: "Crazy Capricorn",
       videoId: "iIbHJPd6Kas",
       thumbnail: "https://img.youtube.com/vi/iIbHJPd6Kas/hqdefault.jpg",
+      ctaAt: 81000, // 1:21
     },
     {
       sign: "Leo Rising",
@@ -4104,6 +4106,7 @@ function ZodiacStories({ onGetReading }) {
       desc: "Patient. Grounded.",
       videoId: "fIc-sg2FtqU",
       thumbnail: "https://img.youtube.com/vi/fIc-sg2FtqU/hqdefault.jpg",
+      ctaAt: 114000, // 1:54
     },
   ];
 
@@ -4117,16 +4120,16 @@ function ZodiacStories({ onGetReading }) {
     setShowCTA(false);
     setCtaVisible(false);
     if (ctaTimerRef.current) clearTimeout(ctaTimerRef.current);
-    // Show CTA at 59 seconds
+    const story = stories.find(s => s.videoId === videoId);
+    const delay = story?.ctaAt || 59000;
     ctaTimerRef.current = setTimeout(() => {
       setShowCTA(true);
       setTimeout(() => setCtaVisible(true), 100);
-      // Auto-dismiss after 10 seconds
       ctaTimerRef.current = setTimeout(() => {
         setShowCTA(false);
         setCtaVisible(false);
       }, 10000);
-    }, 59000);
+    }, delay);
   };
 
   const closeVideo = () => {
