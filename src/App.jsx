@@ -2459,10 +2459,12 @@ function NatalChartWheel({ houseCusps, chartPlanets, fullPlanets, report, planet
   const cx = 250, cy = 250;
   const outerR = 230, zodiacInnerR = 185, houseR = 108, planetR = 160, houseNumR = 120;
 
+  // Gold/black ornate palette — every sign reads in gold, not pastel, to match the AreWeWoke poster aesthetic
+  const GOLD = "#f5c842", GOLD_BRIGHT = "#ffd95a", LIME = "#a8e060";
   const signColors = {
-    Aries:"#e8534a",Taurus:"#7cba6b",Gemini:"#f5c842",Cancer:"#7ab8d4",
-    Leo:"#e8953a",Virgo:"#a8c87a",Libra:"#d4a0c8",Scorpio:"#8a5a9a",
-    Sagittarius:"#e8843a",Capricorn:"#7a8a9a",Aquarius:"#5ab8d8",Pisces:"#9ab0d8"
+    Aries:GOLD,Taurus:GOLD,Gemini:GOLD,Cancer:GOLD,
+    Leo:GOLD,Virgo:GOLD,Libra:GOLD,Scorpio:GOLD,
+    Sagittarius:GOLD,Capricorn:GOLD,Aquarius:GOLD,Pisces:GOLD
   };
   const signSymbols = {
     Aries:"♈",Taurus:"♉",Gemini:"♊",Cancer:"♋",Leo:"♌",Virgo:"♍",
@@ -2517,16 +2519,16 @@ function NatalChartWheel({ houseCusps, chartPlanets, fullPlanets, report, planet
     const e2 = polarToXY(svgStart, zodiacInnerR);
     const midSVG = svgStart + 15;
     const lbl = polarToXY(midSVG, (outerR + zodiacInnerR) / 2);
-    const col = signColors[sign] || "#f5c842";
+    const col = signColors[sign] || GOLD;
     const largeArc = 0;
     return (
       <g key={sign}>
         <path
           d={`M ${s1.x} ${s1.y} A ${outerR} ${outerR} 0 ${largeArc} 1 ${e1.x} ${e1.y} L ${s2.x} ${s2.y} A ${zodiacInnerR} ${zodiacInnerR} 0 ${largeArc} 0 ${e2.x} ${e2.y} Z`}
-          fill={col} fillOpacity={0.18} stroke={col} strokeOpacity={0.5} strokeWidth={0.5}
+          fill="rgba(0,0,0,0.55)" stroke={col} strokeOpacity={0.45} strokeWidth={0.75}
         />
         <text x={lbl.x} y={lbl.y} textAnchor="middle" dominantBaseline="middle"
-          fontSize={14} fill={col} fontWeight="bold" style={{userSelect:"none"}}>
+          fontSize={15} fill={col} fontWeight="bold" style={{userSelect:"none",filter:`drop-shadow(0 0 3px ${col}99)`}}>
           {signSymbols[sign]}
         </text>
       </g>
@@ -2656,12 +2658,15 @@ function NatalChartWheel({ houseCusps, chartPlanets, fullPlanets, report, planet
           {transitDate && <span style={{fontFamily:"Georgia,serif",fontSize:10,color:"#4a4440"}}>{transitDate}</span>}
         </div>
       )}
-      <div style={{display:"flex",justifyContent:"center"}}>
-        <svg viewBox="0 0 500 500" width="100%" style={{maxWidth:500,borderRadius:"50%",background:"radial-gradient(circle,rgba(18,12,32,1),rgba(4,4,12,1))"}}>
-          <circle cx={cx} cy={cy} r={outerR} fill="none" stroke="rgba(245,200,66,0.35)" strokeWidth={1}/>
-          <circle cx={cx} cy={cy} r={zodiacInnerR} fill="none" stroke="rgba(245,200,66,0.2)" strokeWidth={0.5}/>
-          <circle cx={cx} cy={cy} r={zodiacInnerR-1} fill="rgba(8,6,18,0.97)"/>
-          <circle cx={cx} cy={cy} r={25} fill="rgba(245,200,66,0.04)" stroke="rgba(245,200,66,0.12)" strokeWidth={0.5}/>
+      <div style={{display:"flex",justifyContent:"center",position:"relative"}}>
+        <div style={{position:"absolute",inset:0,background:"radial-gradient(circle, rgba(245,200,66,0.10) 0%, transparent 65%)",pointerEvents:"none"}}/>
+        <svg viewBox="0 0 500 500" width="100%" style={{maxWidth:500,borderRadius:"50%",background:"radial-gradient(circle,#0a0a0a,#000000)",filter:"drop-shadow(0 0 22px rgba(245,200,66,0.18))"}}>
+          <circle cx={cx} cy={cy} r={outerR} fill="none" stroke={GOLD} strokeOpacity={0.85} strokeWidth={2} style={{filter:"drop-shadow(0 0 4px rgba(245,200,66,0.7))"}}/>
+          <circle cx={cx} cy={cy} r={zodiacInnerR} fill="none" stroke={GOLD} strokeOpacity={0.5} strokeWidth={1}/>
+          <circle cx={cx} cy={cy} r={zodiacInnerR-1} fill="#000"/>
+          <circle cx={cx} cy={cy} r={38} fill="rgba(0,0,0,0.9)" stroke={GOLD} strokeOpacity={0.5} strokeWidth={1}/>
+          <text x={cx} y={cy-4} textAnchor="middle" dominantBaseline="middle" fontSize={9} fontFamily="'Cinzel',serif" fontWeight="900" fill={GOLD_BRIGHT} style={{userSelect:"none",letterSpacing:"1px"}}>✦ NATAL ✦</text>
+          <text x={cx} y={cy+10} textAnchor="middle" dominantBaseline="middle" fontSize={6.5} fontFamily="'Cinzel',serif" fill={LIME} style={{userSelect:"none",letterSpacing:"1.5px"}}>AREWEWOKE.COM</text>
           {zodiacSegments}
           {houseElements}
           {aspectLines}
