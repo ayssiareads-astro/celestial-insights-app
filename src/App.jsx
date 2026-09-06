@@ -1226,14 +1226,59 @@ const dailyHoroscopes = {
 function DailyHoroscope() {
   const [selectedSign, setSelectedSign] = useState(null);
   const [revealed, setRevealed] = useState(false);
-  const todayIndex = new Date().getDay(); // 0=Sun, 1=Mon ... 6=Sat
-  const today = new Date().toLocaleDateString("en-US", { weekday:"long", month:"long", day:"numeric" });
+  const [horoscope, setHoroscope] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const today = new Date().toLocaleDateString("en-US", { weekday:"long", month:"long", day:"numeric", year:"numeric" });
   const accent = selectedSign ? colors[selectedSign] : "#e8a800";
-  const horoscope = selectedSign ? dailyHoroscopes[selectedSign]?.[todayIndex] : null;
 
   const handleSelectSign = (s) => {
     setSelectedSign(s);
     setRevealed(false);
+    setHoroscope(null);
+  };
+
+  const handleReveal = async () => {
+    setRevealed(true);
+    setLoading(true);
+
+    // Get today's planetary positions to inform the horoscope
+    const now = new Date();
+    const dateStr = now.toLocaleDateString("en-US", { month:"long", day:"numeric", year:"numeric" });
+
+    const prompt = `You are an astrologer writing a daily horoscope for AreWeWoke, a modern astrology app. Write a personalized daily horoscope for ${selectedSign} for ${dateStr}.
+
+Today's key planetary positions (${dateStr}):
+- Sun in Virgo (precision, health, service, analysis)
+- Moon in Cancer (emotional depth, home, intuition)
+- Mercury in Virgo (sharp mind, details, communication)
+- Venus in Libra (relationships, balance, beauty, diplomacy)
+- Mars in Cancer (emotional drive, protective instincts)
+- Jupiter in Leo (confidence, creativity, generosity)
+- Saturn in Aries retrograde (reviewing self-assertion and initiative)
+- Uranus in Gemini (sudden shifts in communication, ideas)
+- Neptune in Aries retrograde (dissolving identity illusions)
+- Pluto in Aquarius retrograde (collective transformation)
+
+Write 3-4 sentences directly to a ${selectedSign}. Be specific about how today's transiting planets interact with ${selectedSign}'s natural energy and themes. Speak directly ("you"), be grounded and specific, avoid generic platitudes. End with one clear actionable insight for today.`;
+
+    try {
+      const res = await fetch("/api/claude-transit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt }),
+      });
+      const data = await res.json();
+      const text = (data?.text || "").trim();
+      setHoroscope(text || getFallbackHoroscope(selectedSign));
+    } catch {
+      setHoroscope(getFallbackHoroscope(selectedSign));
+    }
+    setLoading(false);
+  };
+
+  const getFallbackHoroscope = (sign) => {
+    const todayIndex = new Date().getDay();
+    return dailyHoroscopes[sign]?.[todayIndex] || "The stars are aligning in your favor today. Trust your instincts and move forward with intention.";
   };
 
   return (
@@ -1256,18 +1301,32 @@ function DailyHoroscope() {
       </div>
       {selectedSign && !revealed && (
         <div style={{textAlign:"center",marginBottom:20,animation:"up .4s ease"}}>
-          <button className="rb" style={{"--a":accent}} onClick={()=>setRevealed(true)}>✦ REVEAL MY HOROSCOPE</button>
+          <button className="rb" style={{"--a":accent}} onClick={handleReveal}>✦ REVEAL MY HOROSCOPE</button>
         </div>
       )}
-      {selectedSign && revealed && horoscope && (
+      {selectedSign && revealed && (
         <div style={{animation:"up .4s ease"}}>
           <div className="fc" style={{"--a":accent,marginBottom:16}}>
             <div style={{position:"absolute",top:14,right:16,fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,letterSpacing:".12em",color:accent,opacity:.7}}>{today.toUpperCase()}</div>
             <div style={{fontSize:28,marginBottom:8,textAlign:"center"}}>{emojis[selectedSign]}</div>
             <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,letterSpacing:".18em",color:accent,textAlign:"center",marginBottom:16}}>{selectedSign.toUpperCase()}</div>
-            <p style={{fontFamily:"Georgia,serif",fontSize:"clamp(15px,3vw,18px)",lineHeight:1.85,margin:0,color:"#f5f0e0"}}>{horoscope}</p>
+            {loading ? (
+              <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:8,padding:"12px 0"}}>
+                <div style={{width:6,height:6,borderRadius:"50%",background:accent,animation:"pu 1s ease 0s infinite"}}/>
+                <div style={{width:6,height:6,borderRadius:"50%",background:accent,animation:"pu 1s ease 0.2s infinite"}}/>
+                <div style={{width:6,height:6,borderRadius:"50%",background:accent,animation:"pu 1s ease 0.4s infinite"}}/>
+                <span style={{fontFamily:"Georgia,serif",fontSize:12,color:"#888",fontStyle:"italic"}}>Reading the stars...</span>
+              </div>
+            ) : (
+              <p style={{fontFamily:"Georgia,serif",fontSize:"clamp(15px,3vw,18px)",lineHeight:1.85,margin:0,color:"#f5f0e0"}}>{horoscope}</p>
+            )}
           </div>
-          <div style={{textAlign:"center"}}><span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,letterSpacing:".18em",color:accent,opacity:.6}}>✦ AREWEWOKE ✦</span></div>
+          {!loading && (
+            <div style={{textAlign:"center",display:"flex",gap:12,justifyContent:"center",alignItems:"center"}}>
+              <span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:8,letterSpacing:".18em",color:accent,opacity:.6}}>✦ AREWEWOKE ✦</span>
+              <button onClick={()=>{setHoroscope(null);handleReveal();}} style={{background:"none",border:`1px solid ${accent}44`,borderRadius:20,padding:"3px 10px",cursor:"pointer",color:accent,fontFamily:"'Cinzel',serif",fontSize:8,letterSpacing:".05em"}}>↻ REFRESH</button>
+            </div>
+          )}
         </div>
       )}
       {!selectedSign && (
