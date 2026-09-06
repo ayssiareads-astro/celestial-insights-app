@@ -2923,7 +2923,449 @@ function NatalChartWheel({ name, houseCusps, chartPlanets, fullPlanets, report, 
   );
 }
 
-function AreWeWokeBirthChartWheel({ name, chartPlanets = {}, fullPlanets = [] }) {
+function AreWeWokeBirthChartWheel({ name, chartPlanets = {}, fullPlanets = [], houseCusps = [], aspects = [], transitPlanets = [], transitAspects = [], transitDate = null, report = null, getFact = () => "" }) {
+  const [activePlanet, setActivePlanet] = React.useState(null);
+  const [activeAspect, setActiveAspect] = React.useState(null);
+  const [activeTransitAspect, setActiveTransitAspect] = React.useState(null);
+  const [showTransits, setShowTransits] = React.useState(true);
+
+  const displayName = (name || "Your").replace(/['']s$/i,"").trim();
+  const nameShort = displayName.length > 10 ? displayName.split(" ")[0] : displayName;
+
+  // ── SVG canvas ──────────────────────────────────────────────
+  const W = 500, H = 500, cx = 250, cy = 250;
+  const outerR   = 230;   // outer gold ring
+  const zodiacR  = 184;   // inner edge of zodiac illustrated band
+  const houseR   = 140;   // inner chart area outer edge (planet ring)
+  const planetR  = 118;   // where natal planets sit
+  const houseNumR= 128;   // where house numbers sit
+  const innerR   = 64;    // center circle edge
+
+  // ── Helpers ─────────────────────────────────────────────────
+  // ASC = left (180° SVG). Houses go CCW in astrology = CW in SVG after flip.
+  const astroToSVG = deg => 180 - deg;
+  const polarToXY = (svgDeg, r) => ({
+    x: cx + r * Math.cos(svgDeg * Math.PI / 180),
+    y: cy + r * Math.sin(svgDeg * Math.PI / 180),
+  });
+
+  const ascSign      = houseCusps.find(h => h.house === 1)?.sign || "Aries";
+  const ascSignIndex = signs.indexOf(ascSign);
+
+  // ── Illustrated zodiac arts (outer ring) ────────────────────
+  const zodiacIllustrations = {
+    Aries:      (x,y) => <g transform={`translate(${x},${y})`}><ellipse cx="0" cy="-2" rx="6" ry="7.5" fill="none" stroke="#f5c842" strokeWidth="1.1"/><path d="M0,-9.5 Q-5,-15 -9,-12 M0,-9.5 Q5,-15 9,-12" stroke="#f5c842" strokeWidth="1" fill="none"/></g>,
+    Taurus:     (x,y) => <g transform={`translate(${x},${y})`}><circle cx="0" cy="2" r="6.5" fill="none" stroke="#f5c842" strokeWidth="1.1"/><path d="M-6.5,-3 Q0,-9 6.5,-3" stroke="#f5c842" strokeWidth="1" fill="none"/><path d="M-3.5,-6.5 Q-6,-12 -9,-10 M3.5,-6.5 Q6,-12 9,-10" stroke="#f5c842" strokeWidth="0.9" fill="none"/></g>,
+    Gemini:     (x,y) => <g transform={`translate(${x},${y})`}><line x1="-4.5" y1="-8.5" x2="-4.5" y2="8.5" stroke="#f5c842" strokeWidth="1.2"/><line x1="4.5" y1="-8.5" x2="4.5" y2="8.5" stroke="#f5c842" strokeWidth="1.2"/><line x1="-4.5" y1="-2.5" x2="4.5" y2="-2.5" stroke="#f5c842" strokeWidth="0.9"/><line x1="-4.5" y1="2.5" x2="4.5" y2="2.5" stroke="#f5c842" strokeWidth="0.9"/><path d="M-9,-8.5 Q0,-12.5 9,-8.5 M-9,8.5 Q0,12.5 9,8.5" stroke="#f5c842" strokeWidth="0.9" fill="none"/></g>,
+    Cancer:     (x,y) => <g transform={`translate(${x},${y})`}><path d="M-7.5,0 Q-7.5,-9 0,-9 Q7.5,-9 7.5,0 Q7.5,7 3,10 Q0,11.5 -3,10 Q-7.5,7 -7.5,0Z" fill="none" stroke="#f5c842" strokeWidth="1.1"/><circle cx="-2.5" cy="-2" r="2.2" fill="none" stroke="#f5c842" strokeWidth="0.9"/><circle cx="2.5" cy="-2" r="2.2" fill="none" stroke="#f5c842" strokeWidth="0.9"/></g>,
+    Leo:        (x,y) => <g transform={`translate(${x},${y})`}><circle cx="0" cy="3.5" r="5.5" fill="none" stroke="#f5c842" strokeWidth="1.1"/><path d="M0,-2 Q0,-8.5 -4,-11 Q-9,-13 -9.5,-9.5 Q-10,-6 -6.5,-4" stroke="#f5c842" strokeWidth="1" fill="none"/><path d="M-2.5,7 Q-4,12 -1,13 Q2,14 4,12 Q7,10 5,7" stroke="#f5c842" strokeWidth="0.9" fill="none"/></g>,
+    Virgo:      (x,y) => <g transform={`translate(${x},${y})`}><path d="M-6.5,-8 L-6.5,5.5 M-6.5,-1 Q-2,2.5 2,-1 Q5.5,-4.5 2,-8.5 Q-1.5,-12 -6.5,-9" stroke="#f5c842" strokeWidth="1.1" fill="none"/><path d="M2,5.5 L2,-8.5 M2,-1 Q6,2.5 9.5,-1 L9.5,5.5" stroke="#f5c842" strokeWidth="1.1" fill="none"/><path d="M7.5,5.5 Q10.5,9.5 12.5,7" stroke="#f5c842" strokeWidth="1" fill="none"/></g>,
+    Libra:      (x,y) => <g transform={`translate(${x},${y})`}><line x1="-9.5" y1="5" x2="9.5" y2="5" stroke="#f5c842" strokeWidth="1.4"/><line x1="0" y1="5" x2="0" y2="-7" stroke="#f5c842" strokeWidth="1.1"/><line x1="-7.5" y1="-7" x2="7.5" y2="-7" stroke="#f5c842" strokeWidth="1.1"/><path d="M-7.5,-1.5 Q0,-7.5 7.5,-1.5" stroke="#f5c842" strokeWidth="0.9" fill="none"/></g>,
+    Scorpio:    (x,y) => <g transform={`translate(${x},${y})`}><path d="M-7.5,-8 L-7.5,4 M-7.5,-2 Q-2,4 3.5,-2 Q9,-8 3.5,-13 Q-2,-18 -7.5,-13" stroke="#f5c842" strokeWidth="1.1" fill="none"/><path d="M3.5,4 L3.5,-13 M3.5,4 L3.5,8.5 Q5.5,13 9,11 L12,14" stroke="#f5c842" strokeWidth="1.1" fill="none"/></g>,
+    Sagittarius:(x,y) => <g transform={`translate(${x},${y})`}><line x1="-9" y1="9" x2="9" y2="-9" stroke="#f5c842" strokeWidth="1.4"/><path d="M1,-9 L9,-9 L9,-1" stroke="#f5c842" strokeWidth="1.2" fill="none"/><path d="M-12,6 L-9,9 L-6,6 M-9,9 L-9,3" stroke="#f5c842" strokeWidth="1" fill="none"/></g>,
+    Capricorn:  (x,y) => <g transform={`translate(${x},${y})`}><path d="M-7.5,0.5 Q-7.5,-8.5 -1,-8.5 Q5.5,-8.5 5.5,0.5 Q5.5,7.5 -1,9.5" stroke="#f5c842" strokeWidth="1.1" fill="none"/><path d="M3.5,3.5 Q9,-2 11.5,1 Q14,4 12.5,8.5 Q11,13 5.5,14 Q0,15 -1,9.5" stroke="#f5c842" strokeWidth="1.1" fill="none"/><path d="M-1,9.5 Q-4.5,17 1,18 Q6.5,19 7.5,14" stroke="#f5c842" strokeWidth="0.9" fill="none"/></g>,
+    Aquarius:   (x,y) => <g transform={`translate(${x},${y})`}><path d="M-10,-3 Q-6,-8 -2,-3 Q2,2 6,-3 Q10,-8 14,-3" stroke="#f5c842" strokeWidth="1.3" fill="none"/><path d="M-10,4 Q-6,-1 -2,4 Q2,9 6,4 Q10,-1 14,4" stroke="#f5c842" strokeWidth="1.3" fill="none"/></g>,
+    Pisces:     (x,y) => <g transform={`translate(${x},${y})`}><path d="M-5,-9 Q-11,-2 -11,5.5 Q-11,12 -5,9" stroke="#f5c842" strokeWidth="1.2" fill="none"/><path d="M5,-9 Q11,-2 11,5.5 Q11,12 5,9" stroke="#f5c842" strokeWidth="1.2" fill="none"/><line x1="-11" y1="-0.5" x2="11" y2="-0.5" stroke="#f5c842" strokeWidth="0.9"/></g>,
+  };
+
+  // ── Planet colors & symbols ──────────────────────────────────
+  const planetSymbols = { Sun:"☉",Moon:"☽",Mercury:"☿",Venus:"♀",Mars:"♂",Jupiter:"♃",Saturn:"♄",Uranus:"⛢",Neptune:"♆",Pluto:"♇",Chiron:"⚷" };
+  const planetColors  = { Sun:"#f5c842",Moon:"#e8dfc0",Mercury:"#b8d898",Venus:"#e8b8d0",Mars:"#e87060",Jupiter:"#e8b060",Saturn:"#c8c898",Uranus:"#88d8e8",Neptune:"#a8b8e8",Pluto:"#c098c8",Chiron:"#d8b888" };
+  const aspectColors  = { trine:"#a8e060",sextile:"#88c8e8",conjunction:"#f5c842",opposition:"#e87060",square:"#e8a040" };
+  const aspectOpacity = { trine:0.5,sextile:0.4,conjunction:0.6,opposition:0.45,square:0.45 };
+  const majorAspects  = ["trine","sextile","conjunction","opposition","square"];
+
+  // ── Zodiac ring (illustrated outer band) ────────────────────
+  const zodiacSegments = signs.map((sign, i) => {
+    const offset      = (signs.indexOf(sign) - ascSignIndex + 12) % 12;
+    const svgEnd      = 180 - offset * 30;
+    const svgStart    = svgEnd - 30;
+    const midSVG      = svgStart + 15;
+    const s1 = polarToXY(svgStart, outerR);
+    const e1 = polarToXY(svgEnd,   outerR);
+    const s2 = polarToXY(svgEnd,   zodiacR);
+    const e2 = polarToXY(svgStart, zodiacR);
+    const ic = polarToXY(midSVG, (outerR + zodiacR) / 2);
+    // divider line at svgStart
+    const dl1 = polarToXY(svgStart, zodiacR);
+    const dl2 = polarToXY(svgStart, outerR);
+    return (
+      <g key={sign}>
+        <path d={`M ${s1.x} ${s1.y} A ${outerR} ${outerR} 0 0 1 ${e1.x} ${e1.y} L ${s2.x} ${s2.y} A ${zodiacR} ${zodiacR} 0 0 0 ${e2.x} ${e2.y} Z`}
+          fill="rgba(245,200,66,0.05)" stroke="none"/>
+        <line x1={dl1.x} y1={dl1.y} x2={dl2.x} y2={dl2.y} stroke="rgba(245,200,66,0.35)" strokeWidth="0.7"/>
+        {zodiacIllustrations[sign] && zodiacIllustrations[sign](ic.x, ic.y)}
+      </g>
+    );
+  });
+
+  // ── House lines (real geometry from houseCusps) ──────────────
+  const houseElements = Array.from({length:12}, (_, i) => {
+    const houseNum   = i + 1;
+    const cuspSVG    = 180 - i * 30;
+    const p1         = polarToXY(cuspSVG, zodiacR);
+    const p2         = polarToXY(cuspSVG, innerR + 4);
+    const isAngular  = [1,4,7,10].includes(houseNum);
+    const midSVG     = cuspSVG - 15;
+    const numPos     = polarToXY(midSVG, houseNumR);
+    return (
+      <g key={houseNum}>
+        <line x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y}
+          stroke={isAngular?"rgba(245,200,66,0.7)":"rgba(245,200,66,0.18)"}
+          strokeWidth={isAngular?1.4:0.5}/>
+        <text x={numPos.x} y={numPos.y} textAnchor="middle" dominantBaseline="middle"
+          fontSize={7.5} fill={isAngular?"rgba(245,200,66,0.85)":"rgba(245,200,66,0.28)"}
+          fontFamily="Cinzel,serif" style={{userSelect:"none"}}>{houseNum}</text>
+      </g>
+    );
+  });
+
+  // ── Natal planet nodes (real degree-based positions) ─────────
+  const housePlanetCount  = {};
+  const visiblePlanets    = fullPlanets.filter(p => p.name !== "Midheaven" && planetSymbols[p.name]);
+
+  // Position map (built twice so aspect lines and planet nodes share exact coords)
+  const buildPlanetPositionMap = () => {
+    const count = {};
+    const map   = {};
+    visiblePlanets.forEach(p => {
+      const houseNum = p.house || 1;
+      if (!count[houseNum]) count[houseNum] = 0;
+      const idx         = count[houseNum]++;
+      const houseStartSVG = 180 - (houseNum - 1) * 30;
+      // Use actual degree within sign for fine placement (30° per house)
+      const degInHouse  = Math.min(p.degree || 15, 29);
+      const fineOffset  = (degInHouse / 30) * 22; // spread up to 22° within house slice
+      const angle       = houseStartSVG - 4 - fineOffset - idx * 13;
+      map[p.name]       = polarToXY(angle, planetR);
+    });
+    return map;
+  };
+  const planetPositionMap = buildPlanetPositionMap();
+
+  const planetNodes = visiblePlanets.map(p => {
+    const pos     = planetPositionMap[p.name];
+    if (!pos) return null;
+    const col     = planetColors[p.name] || "#f5c842";
+    const isActive= activePlanet === p.name;
+    return (
+      <g key={p.name} onClick={() => setActivePlanet(isActive ? null : p.name)} style={{cursor:"pointer"}}>
+        <circle cx={pos.x} cy={pos.y} r={12}
+          fill={isActive ? col : "#000"}
+          stroke={col} strokeWidth={isActive ? 2 : 1.5}
+          style={{filter: isActive ? `drop-shadow(0 0 5px ${col})` : `drop-shadow(0 0 2px ${col}88)`}}/>
+        <text x={pos.x} y={pos.y} textAnchor="middle" dominantBaseline="middle"
+          fontSize={11} fill={isActive ? "#000" : col} style={{userSelect:"none"}}>
+          {planetSymbols[p.name]}
+        </text>
+      </g>
+    );
+  }).filter(Boolean);
+
+  // ── Natal aspect lines ───────────────────────────────────────
+  const aspectLines = !showTransits ? aspects
+    .filter(a => majorAspects.includes((a.type||"").toLowerCase()))
+    .filter(a => !a.strength || a.strength >= 2)
+    .map((a, i) => {
+      const p1  = planetPositionMap[a.planet1];
+      const p2  = planetPositionMap[a.planet2];
+      if (!p1 || !p2) return null;
+      const type= (a.type||"").toLowerCase();
+      const col = aspectColors[type] || "rgba(245,200,66,0.3)";
+      const op  = aspectOpacity[type] || 0.3;
+      const isActive = activeAspect === i || (activePlanet && (a.planet1 === activePlanet || a.planet2 === activePlanet));
+      return (
+        <g key={i} onClick={() => { setActiveAspect(activeAspect === i ? null : i); setActivePlanet(null); }} style={{cursor:"pointer"}}>
+          <line x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y} stroke="transparent" strokeWidth={14}/>
+          <line x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y}
+            stroke={col} strokeOpacity={isActive ? Math.min(op*2.2,1) : op}
+            strokeWidth={isActive ? 2.5 : 1.2}
+            strokeDasharray={type==="sextile"?"3,3":type==="square"?"4,2":"none"}/>
+        </g>
+      );
+    }).filter(Boolean) : [];
+
+  // ── Transit planet positions on zodiac ring ──────────────────
+  const transitPositionMap = {};
+  const transitNodes = showTransits ? transitPlanets.map((tp, i) => {
+    const tSignIndex = signs.indexOf(tp.sign);
+    const tOffset    = (tSignIndex - ascSignIndex + 12) % 12;
+    const degInSign  = parseFloat(tp.degree || 15);
+    const tAngle     = 180 - tOffset * 30 - (degInSign / 30) * 30;
+    const tPos       = polarToXY(tAngle, (outerR + zodiacR) / 2 - 4);
+    transitPositionMap[tp.name] = tPos;
+    const tcol = planetColors[tp.name] || "#f5c842";
+    return (
+      <g key={"t"+tp.name+i}>
+        <circle cx={tPos.x} cy={tPos.y} r={9} fill="rgba(0,0,0,0.92)"
+          stroke="#f5c842" strokeWidth="1" strokeDasharray="2,1.5"/>
+        <text x={tPos.x} y={tPos.y} textAnchor="middle" dominantBaseline="middle"
+          fontSize={9} fill={tcol} style={{userSelect:"none"}}>
+          {planetSymbols[tp.name]||"•"}
+        </text>
+      </g>
+    );
+  }) : [];
+
+  // ── Transit aspect lines ─────────────────────────────────────
+  const transitAspectLines = showTransits ? transitAspects.map((a, i) => {
+    const natalPos = planetPositionMap[a.planet1] || planetPositionMap[a.planet2];
+    const tpName   = transitPlanets.find(tp => tp.name === a.planet1 || tp.name === a.planet2)?.name;
+    const tPos     = transitPositionMap[tpName];
+    if (!natalPos || !tPos) return null;
+    const type     = (a.type||"").toLowerCase();
+    const col      = aspectColors[type] || "#f5c842";
+    const isActive = activeTransitAspect === i;
+    return (
+      <g key={"ta"+i} onClick={() => { setActiveTransitAspect(isActive ? null : i); setActivePlanet(null); }} style={{cursor:"pointer"}}>
+        <line x1={tPos.x} y1={tPos.y} x2={natalPos.x} y2={natalPos.y} stroke="transparent" strokeWidth={14}/>
+        <line x1={tPos.x} y1={tPos.y} x2={natalPos.x} y2={natalPos.y}
+          stroke={col} strokeOpacity={isActive?0.9:0.45}
+          strokeWidth={isActive?2.5:1} strokeDasharray="4,3"/>
+      </g>
+    );
+  }).filter(Boolean) : [];
+
+  // ── Active panel data ────────────────────────────────────────
+  const activePlanetData = activePlanet ? visiblePlanets.find(p => p.name === activePlanet) : null;
+
+  return (
+    <div style={{marginBottom:28}}>
+      {/* Toggle */}
+      {houseCusps.length > 0 && (
+        <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:6,marginBottom:16}}>
+          <div style={{display:"flex",alignItems:"center",gap:10}}>
+            <span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:!showTransits?"#f5c842":"rgba(245,200,66,0.3)",letterSpacing:".1em",transition:"color 0.2s"}}>BIRTH CHART</span>
+            <div onClick={()=>{setShowTransits(t=>!t);setActiveAspect(null);setActivePlanet(null);setActiveTransitAspect(null);}}
+              style={{width:44,height:24,borderRadius:12,background:"rgba(245,200,66,0.1)",border:"1px solid rgba(245,200,66,0.5)",cursor:"pointer",position:"relative",transition:"all 0.3s",flexShrink:0}}>
+              <div style={{position:"absolute",top:3,left:showTransits?22:3,width:16,height:16,borderRadius:"50%",background:"#f5c842",transition:"left 0.3s",boxShadow:"0 0 6px rgba(245,200,66,0.8)"}}/>
+            </div>
+            <span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:showTransits?"#f5c842":"rgba(245,200,66,0.3)",letterSpacing:".1em",transition:"color 0.2s"}}>TODAY</span>
+          </div>
+          <span style={{fontFamily:"Georgia,serif",fontSize:10,color:"rgba(245,200,66,0.4)",fontStyle:"italic"}}>Tap any line to read the aspect</span>
+          {transitDate && <span style={{fontFamily:"Georgia,serif",fontSize:10,color:"rgba(245,200,66,0.4)"}}>{transitDate}</span>}
+        </div>
+      )}
+
+      {/* Gold ornate shell + real chart inside */}
+      <div style={{position:"relative"}}>
+        <div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse at center,rgba(245,200,66,0.07) 0%,transparent 70%)",borderRadius:28,pointerEvents:"none"}}/>
+        <div style={{background:"#000",borderRadius:28,overflow:"hidden",border:"1px solid rgba(245,200,66,0.35)",boxShadow:"0 0 80px rgba(245,200,66,0.15),inset 0 0 60px rgba(0,0,0,0.9)"}}>
+          <div style={{height:4,background:"linear-gradient(90deg,transparent,rgba(245,200,66,0.4),#f5c842,rgba(245,200,66,0.4),transparent)"}}/>
+          <div style={{padding:"28px 16px 20px",position:"relative"}}>
+            {/* Corner sun */}
+            <svg style={{position:"absolute",top:12,left:12,opacity:.5}} width="50" height="50" viewBox="0 0 48 48">
+              <circle cx="24" cy="24" r="8" fill="none" stroke="#f5c842" strokeWidth="1.2"/>
+              <path d="M24 4 L24 12 M24 36 L24 44 M4 24 L12 24 M36 24 L44 24 M9 9 L15 15 M33 33 L39 39 M39 9 L33 15 M15 33 L9 39" stroke="#f5c842" strokeWidth="1" strokeLinecap="round"/>
+              <circle cx="24" cy="24" r="4" fill="#f5c842" opacity=".55"/>
+            </svg>
+            {/* Corner moon */}
+            <svg style={{position:"absolute",top:12,right:12,opacity:.5}} width="40" height="50" viewBox="0 0 40 48">
+              <path d="M28 6 Q10 12 10 24 Q10 36 28 42 Q16 40 12 30 Q8 18 28 6Z" fill="#f5c842" opacity=".5"/>
+              <circle cx="32" cy="10" r="2" fill="#f5c842" opacity=".6"/>
+              <circle cx="36" cy="20" r="1.5" fill="#f5c842" opacity=".4"/>
+            </svg>
+
+            {/* THE CHART SVG */}
+            <svg viewBox={`0 0 ${W} ${H}`} width="100%" style={{maxWidth:500,display:"block",margin:"0 auto"}}>
+              <defs>
+                <radialGradient id="awwBg" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stopColor="#0a0800"/>
+                  <stop offset="100%" stopColor="#000"/>
+                </radialGradient>
+                <filter id="awwGlow">
+                  <feGaussianBlur stdDeviation="1.8" result="blur"/>
+                  <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                </filter>
+              </defs>
+              <circle cx={cx} cy={cy} r={245} fill="url(#awwBg)"/>
+              {/* Star field */}
+              {[...Array(38)].map((_,i)=>{
+                const angle=(i*137.5)*(Math.PI/180), r=35+(i*9%180);
+                return <circle key={i} cx={cx+r*Math.cos(angle)} cy={cy+r*Math.sin(angle)} r={(i%3)*0.3+0.3} fill="#f5c842" opacity={(i%5)*0.04+0.07}/>;
+              })}
+              {/* Outer gold ring */}
+              <circle cx={cx} cy={cy} r={outerR} fill="none" stroke="rgba(245,200,66,0.75)" strokeWidth="2.8" filter="url(#awwGlow)"/>
+              <circle cx={cx} cy={cy} r={outerR-6} fill="none" stroke="rgba(245,200,66,0.22)" strokeWidth="0.7"/>
+              {/* Zodiac inner boundary */}
+              <circle cx={cx} cy={cy} r={zodiacR} fill="none" stroke="rgba(245,200,66,0.55)" strokeWidth="1.4"/>
+              <circle cx={cx} cy={cy} r={zodiacR-1} fill="none" stroke="rgba(245,200,66,0.12)" strokeWidth="0.5"/>
+              {/* Inner chart field */}
+              <circle cx={cx} cy={cy} r={zodiacR-2} fill="rgba(0,0,0,0.97)"/>
+              {/* Illustrated zodiac ring */}
+              {zodiacSegments}
+              {/* House lines */}
+              {houseElements}
+              {/* ASC/DSC axis */}
+              <line x1={polarToXY(180,outerR).x} y1={polarToXY(180,outerR).y} x2={polarToXY(0,outerR).x} y2={polarToXY(0,outerR).y} stroke="rgba(245,200,66,0.35)" strokeWidth="1" strokeDasharray="3,3"/>
+              <text x={polarToXY(180,outerR-16).x} y={polarToXY(180,outerR-16).y} textAnchor="middle" dominantBaseline="middle" fontSize={7} fill="rgba(245,200,66,0.75)" fontFamily="Cinzel,serif" fontWeight="bold">ASC</text>
+              <text x={polarToXY(0,outerR-16).x} y={polarToXY(0,outerR-16).y} textAnchor="middle" dominantBaseline="middle" fontSize={7} fill="rgba(245,200,66,0.75)" fontFamily="Cinzel,serif" fontWeight="bold">DSC</text>
+              {/* Aspect lines */}
+              {aspectLines}
+              {/* Transit aspect lines */}
+              {transitAspectLines}
+              {/* Natal planets */}
+              {planetNodes}
+              {/* Transit planets on zodiac ring */}
+              {transitNodes}
+              {/* Center circle */}
+              <circle cx={cx} cy={cy} r={innerR} fill="#000" stroke="rgba(245,200,66,0.35)" strokeWidth="1.2"/>
+              <circle cx={cx} cy={cy} r={innerR-6} fill="none" stroke="rgba(245,200,66,0.12)" strokeWidth="0.6"/>
+              {/* Cardinal star points */}
+              {[0,90,180,270].map(a=>{
+                const p=polarToXY(a, innerR);
+                return <polygon key={a} points={`${p.x},${p.y-5} ${p.x+1.5},${p.y-1.5} ${p.x+5},${p.y} ${p.x+1.5},${p.y+1.5} ${p.x},${p.y+5} ${p.x-1.5},${p.y+1.5} ${p.x-5},${p.y} ${p.x-1.5},${p.y-1.5}`} fill="#f5c842" opacity="0.65"/>;
+              })}
+              {/* Crescent moon in center */}
+              <path d={`M ${cx-8} ${cy-22} Q${cx-19} ${cy-15} ${cx-19} ${cy-6} Q${cx-19} ${cy+3} ${cx-8} ${cy+5} Q${cx-24} ${cy+2} ${cx-24} ${cy-10} Q${cx-24} ${cy-22} ${cx-8} ${cy-22}Z`} fill="#f5c842" opacity="0.42"/>
+              {/* Name */}
+              <text x={cx} y={cy-5} textAnchor="middle" dominantBaseline="middle"
+                fontFamily="'Cinzel',serif" fontWeight="900"
+                fontSize={nameShort.length > 9 ? 11 : nameShort.length > 6 ? 13 : 16}
+                fill="#f5c842" letterSpacing="0.04em" filter="url(#awwGlow)">
+                {nameShort.toUpperCase()}{nameShort.slice(-1).toLowerCase()==="s"?"'":"'S"}
+              </text>
+              <text x={cx} y={cy+12} textAnchor="middle" dominantBaseline="middle"
+                fontFamily="'Cinzel',serif" fontWeight="700" fontSize="8" fill="rgba(245,200,66,0.65)" letterSpacing="0.1em">BIRTH CHART</text>
+              <line x1={cx-26} y1={cy+21} x2={cx+26} y2={cy+21} stroke="rgba(245,200,66,0.3)" strokeWidth="0.6"/>
+              <text x={cx} y={cy+29} textAnchor="middle" dominantBaseline="middle"
+                fontFamily="'Cinzel',serif" fontSize="5.5" fill="rgba(245,200,66,0.38)" letterSpacing="0.1em">AREWEWOKE.COM</text>
+            </svg>
+          </div>
+          <div style={{height:4,background:"linear-gradient(90deg,transparent,rgba(245,200,66,0.4),#f5c842,rgba(245,200,66,0.4),transparent)"}}/>
+        </div>
+      </div>
+
+      {/* Active planet popup */}
+      {activePlanetData && (
+        <div style={{marginTop:12,padding:"14px 16px",background:"rgba(0,0,0,0.7)",border:`1px solid ${planetColors[activePlanetData.name]||"#f5c842"}55`,borderRadius:14,animation:"up 0.2s ease"}}>
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
+            <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:13,color:planetColors[activePlanetData.name]||"#f5c842"}}>
+              {planetSymbols[activePlanetData.name]} {activePlanetData.name} in {activePlanetData.sign}
+              {activePlanetData.house && <span style={{fontSize:10,color:"#f5c842",marginLeft:8}}>· {["","1st","2nd","3rd","4th","5th","6th","7th","8th","9th","10th","11th","12th"][activePlanetData.house]} House</span>}
+            </div>
+            <button onClick={()=>setActivePlanet(null)} style={{background:"none",border:"none",color:"#4a4440",cursor:"pointer",fontSize:14}}>✕</button>
+          </div>
+          <p style={{fontFamily:"Georgia,serif",fontSize:12,color:"#d8c890",lineHeight:1.7,margin:"0 0 10px"}}>
+            {Array.isArray(report) ? (
+              report.find(s => {
+                const t=(s.title||"").toLowerCase();
+                return t.startsWith(activePlanetData.name.toLowerCase()) && t.includes(activePlanetData.sign.toLowerCase());
+              })?.text || getFact(activePlanetData.sign, activePlanetData.name)
+            ) : getFact(activePlanetData.sign, activePlanetData.name)}
+          </p>
+          {aspects.filter(a=>(a.planet1===activePlanet||a.planet2===activePlanet)&&majorAspects.includes((a.type||"").toLowerCase())).slice(0,4).map((a,i)=>{
+            const other=a.planet1===activePlanet?a.planet2:a.planet1;
+            const type=(a.type||"").toLowerCase();
+            const col=aspectColors[type]||"#f5c842";
+            return (
+              <div key={i} style={{borderTop:"1px solid rgba(255,200,50,0.08)",paddingTop:8,marginTop:4}}>
+                <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:3}}>
+                  <span style={{fontFamily:"'Cinzel',serif",fontSize:9,color:col,textTransform:"capitalize"}}>{a.type}</span>
+                  <span style={{fontFamily:"'Cinzel',serif",fontSize:10,color:"#d8c890",fontWeight:700}}>{activePlanet} & {other}</span>
+                  {a.orb && <span style={{fontFamily:"Georgia,serif",fontSize:9,color:"#4a4440"}}>orb {parseFloat(a.orb).toFixed(1)}°</span>}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Clicked natal aspect popup */}
+      {activeAspect !== null && !showTransits && (() => {
+        const a = aspects[activeAspect]; if (!a) return null;
+        const type=(a.type||"").toLowerCase();
+        const col=aspectColors[type]||"#f5c842";
+        const reportText = getAspectReportText(report, a.planet1, a.planet2, a.type);
+        const contextText = getAspectContext(a);
+        return (
+          <div style={{marginTop:12,padding:"14px 16px",background:`rgba(0,0,0,0.7)`,border:`1px solid ${col}44`,borderRadius:14,animation:"up 0.2s ease"}}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
+              <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:13,color:col}}>{a.planet1} {a.type} {a.planet2}{a.orb&&<span style={{fontSize:9,color:"#4a4440",marginLeft:8}}>orb {parseFloat(a.orb).toFixed(1)}°</span>}</div>
+              <button onClick={()=>setActiveAspect(null)} style={{background:"none",border:"none",color:"#4a4440",cursor:"pointer",fontSize:14}}>✕</button>
+            </div>
+            {reportText && <p style={{fontFamily:"Georgia,serif",fontSize:12,color:"#d8c890",lineHeight:1.7,margin:"0 0 8px"}}>{reportText}</p>}
+            {contextText && <p style={{fontFamily:"Georgia,serif",fontSize:11,color:"#8a7a62",lineHeight:1.6,margin:0,fontStyle:"italic"}}>{contextText}</p>}
+          </div>
+        );
+      })()}
+
+      {/* Clicked transit aspect popup */}
+      {activeTransitAspect !== null && showTransits && (() => {
+        const a = transitAspects[activeTransitAspect]; if (!a) return null;
+        const type=(a.type||"").toLowerCase();
+        const col=aspectColors[type]||"#f5c842";
+        const getWholeSignHouse = () => {
+          const tpData = transitPlanets.find(tp=>tp.name===a.planet1||tp.name===a.planet2);
+          if (!tpData?.sign||!houseCusps.length) return null;
+          const asc = houseCusps.find(h=>h.house===1)?.sign;
+          if (!asc) return null;
+          const sl=["Aries","Taurus","Gemini","Cancer","Leo","Virgo","Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"];
+          return ((sl.indexOf(tpData.sign)-sl.indexOf(asc)+12)%12)+1;
+        };
+        const houseNum=getWholeSignHouse();
+        const ordinals=["","1st","2nd","3rd","4th","5th","6th","7th","8th","9th","10th","11th","12th"];
+        return (
+          <div style={{marginTop:12,padding:"14px 16px",background:"rgba(245,200,66,0.06)",border:`1px solid ${col}44`,borderRadius:14,animation:"up 0.2s ease"}}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
+              <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:13,color:col}}>
+                {a.planet1} {a.type} {a.planet2}
+                {a.orb&&<span style={{fontSize:9,color:"#4a4440",marginLeft:8}}>orb {parseFloat(a.orb).toFixed(1)}°</span>}
+                {a.applying===true&&<span style={{fontFamily:"'Cinzel',serif",fontSize:7,color:"#a8e060",marginLeft:8,letterSpacing:".06em"}}>APPLYING</span>}
+                {a.applying===false&&<span style={{fontFamily:"'Cinzel',serif",fontSize:7,color:"#f5c842",marginLeft:8,letterSpacing:".06em"}}>SEPARATING</span>}
+              </div>
+              <button onClick={()=>setActiveTransitAspect(null)} style={{background:"none",border:"none",color:"#4a4440",cursor:"pointer",fontSize:14}}>✕</button>
+            </div>
+            <div style={{fontFamily:"'Cinzel',serif",fontSize:8,color:"rgba(245,200,66,0.6)",letterSpacing:".1em",marginBottom:8}}>
+              TODAY'S TRANSIT · {transitDate}{houseNum&&<span style={{marginLeft:8}}>· {ordinals[houseNum]} House</span>}
+            </div>
+            <TransitInterpretation aspect={a} houseNum={houseNum} transitPlanets={transitPlanets} fullPlanets={fullPlanets} chartPlanets={chartPlanets}/>
+          </div>
+        );
+      })()}
+
+      {/* Today's Energy */}
+      {showTransits && transitAspects.length > 0 && (
+        <TodaysEnergy chartPlanets={chartPlanets} fullPlanets={fullPlanets} transitAspects={transitAspects} transitPlanets={transitPlanets} houseCusps={houseCusps} transitDate={transitDate}/>
+      )}
+
+      {/* Transit key */}
+      {transitPlanets.length > 0 && (
+        <div style={{marginTop:8,display:"flex",alignItems:"center",justifyContent:"center",gap:8}}>
+          <div style={{width:16,height:1,borderTop:"2px dashed rgba(245,200,66,0.5)"}}/>
+          <span style={{fontFamily:"'Cinzel',serif",fontSize:7,color:"rgba(245,200,66,0.5)",letterSpacing:".08em"}}>TRANSITING PLANETS (TODAY)</span>
+          <div style={{width:16,height:1,borderTop:"2px dashed rgba(245,200,66,0.5)"}}/>
+        </div>
+      )}
+
+      {/* Today's active transits list */}
+      {showTransits && transitAspects.length > 0 && (
+        <div style={{marginTop:14,padding:"14px 16px",background:"rgba(245,200,66,0.04)",border:"1px solid rgba(245,200,66,0.2)",borderRadius:12}}>
+          <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"rgba(245,200,66,0.8)",letterSpacing:".12em",marginBottom:10,textAlign:"center"}}>✦ TODAY'S ACTIVE TRANSITS · {transitDate} ✦</div>
+          <div style={{display:"flex",flexDirection:"column",gap:8}}>
+            {transitAspects.slice(0,6).map((a,i)=>{
+              const type=(a.type||"").toLowerCase();
+              const col=aspectColors[type]||"rgba(245,200,66,0.6)";
+              return (
+                <div key={i} style={{display:"flex",alignItems:"flex-start",gap:8,paddingBottom:8,borderBottom:i<Math.min(transitAspects.length,6)-1?"1px solid rgba(245,200,66,0.08)":"none"}}>
+                  <span style={{fontFamily:"'Cinzel',serif",fontSize:9,color:col,textTransform:"capitalize",minWidth:70,paddingTop:1}}>{a.type}</span>
+                  <div style={{flex:1}}>
+                    <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,color:"#d8c890",marginBottom:2}}>
+                      {a.planet1} → {a.planet2}
+                      {a.orb&&<span style={{fontFamily:"Georgia,serif",fontSize:9,color:"#4a4440",fontWeight:400,marginLeft:6}}>orb {a.orb}°</span>}
+                      {a.applying===true&&<span style={{fontFamily:"'Cinzel',serif",fontSize:7,color:"#a8e060",marginLeft:6,letterSpacing:".06em"}}>APPLYING</span>}
+                      {a.applying===false&&<span style={{fontFamily:"'Cinzel',serif",fontSize:7,color:"rgba(245,200,66,0.7)",marginLeft:6,letterSpacing:".06em"}}>SEPARATING</span>}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
   const displayName = (name || "Your").replace(/['']s$/i,"").trim();
   const zodiacIllustrations = {
     Aries:    { art: <><ellipse cx="50" cy="44" rx="10" ry="13" fill="none" stroke="#f5c842" strokeWidth="1.5"/><path d="M50 31 Q44 22 38 26 M50 31 Q56 22 62 26" stroke="#f5c842" strokeWidth="1.5" fill="none"/><path d="M43 50 Q50 58 57 50" stroke="#f5c842" strokeWidth="1" fill="none"/></> },
@@ -3346,7 +3788,18 @@ function BirthChartResults({ result, onReset, onUpgrade }) {
         <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:"clamp(30px,8vw,44px)",color:"#f5c842",textShadow:"0 0 24px rgba(245,200,66,0.5)"}}>BIRTH CHART</div>
         <div style={{fontFamily:"Georgia,serif",fontSize:12,color:"#8a7a62",marginTop:4}}>A map of your energy, your purpose, your power.</div>
       </div>
-      <AreWeWokeBirthChartWheel name={name} chartPlanets={chartPlanets} fullPlanets={fullPlanets} />
+      <AreWeWokeBirthChartWheel
+        name={name}
+        chartPlanets={chartPlanets}
+        fullPlanets={fullPlanets}
+        houseCusps={houseCusps}
+        aspects={aspects}
+        transitPlanets={transitPlanets}
+        transitAspects={transitAspects}
+        transitDate={transitDate}
+        report={report}
+        getFact={getFact}
+      />
 
 
       {/* Free: Big Three signs only */}
