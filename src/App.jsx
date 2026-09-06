@@ -4110,6 +4110,7 @@ function ZodiacStories({ onGetReading }) {
   const currentStory = stories.find(s => s.videoId === active);
 
   const ctaTimerRef = React.useRef(null);
+  const iframeRef = React.useRef(null);
 
   const openVideo = (videoId) => {
     setActive(videoId);
@@ -4125,29 +4126,72 @@ function ZodiacStories({ onGetReading }) {
     if (ctaTimerRef.current) clearTimeout(ctaTimerRef.current);
   };
 
-  // Listen for YouTube postMessage when video ends
+  const triggerCTA = React.useCallback(() => {
+    setShowCTA(true);
+    setTimeout(() => setCtaVisible(true), 100);
+    if (ctaTimerRef.current) clearTimeout(ctaTimerRef.current);
+    ctaTimerRef.current = setTimeout(() => {
+      setShowCTA(false);
+      setCtaVisible(false);
+    }, 10000);
+  }, []);
+
+  // YouTube IFrame API + postMessage listener
   React.useEffect(() => {
+    if (!active) return;
+
     const handleMessage = (e) => {
       try {
         const data = typeof e.data === "string" ? JSON.parse(e.data) : e.data;
-        // YouTube sends event=1 for ended
-        if (data?.event === "onStateChange" && data?.info === 0) {
-          setShowCTA(true);
-          setTimeout(() => setCtaVisible(true), 100);
-          // Auto-dismiss after 10 seconds
-          ctaTimerRef.current = setTimeout(() => {
-            setShowCTA(false);
-            setCtaVisible(false);
-          }, 10000);
+        if (data?.event === "onStateChange" && data?.info === 0) triggerCTA();
+        if (data?.event === "infoDelivery" && data?.info?.playerState === 0) triggerCTA();
+      } catch {}
+    };
+
+    window.addEventListener("message", handleMessage);
+
+    // Fallback: poll the iframe for video end using YouTube API
+    let pollInterval = null;
+    const sendGetDuration = () => {
+      try {
+        iframeRef.current?.contentWindow?.postMessage(
+          JSON.stringify({ event: "command", func: "getDuration", args: [] }), "*"
+        );
+      } catch {}
+    };
+
+    // Start polling after 5s to get duration, then track position
+    const setupPoll = setTimeout(() => {
+      sendGetDuration();
+      pollInterval = setInterval(() => {
+        try {
+          iframeRef.current?.contentWindow?.postMessage(
+            JSON.stringify({ event: "command", func: "getCurrentTime", args: [] }), "*"
+          );
+        } catch {}
+      }, 1000);
+    }, 5000);
+
+    // Handle getCurrentTime / getDuration responses
+    const handlePollResponse = (e) => {
+      try {
+        const data = typeof e.data === "string" ? JSON.parse(e.data) : e.data;
+        if (data?.info?.currentTime != null && data?.info?.duration != null) {
+          const remaining = data.info.duration - data.info.currentTime;
+          if (remaining < 1 && data.info.currentTime > 2) triggerCTA();
         }
       } catch {}
     };
-    window.addEventListener("message", handleMessage);
+    window.addEventListener("message", handlePollResponse);
+
     return () => {
       window.removeEventListener("message", handleMessage);
+      window.removeEventListener("message", handlePollResponse);
+      clearTimeout(setupPoll);
+      if (pollInterval) clearInterval(pollInterval);
       if (ctaTimerRef.current) clearTimeout(ctaTimerRef.current);
     };
-  }, []);
+  }, [active, triggerCTA]);
 
   const handleGetReading = () => {
     closeVideo();
@@ -4197,7 +4241,8 @@ function ZodiacStories({ onGetReading }) {
           {/* Video */}
           <div style={{width:"100%",maxWidth:400,paddingTop:"177.77%",position:"relative"}}>
             <iframe
-              src={`https://www.youtube.com/embed/${active}?autoplay=1&rel=0&enablejsapi=1`}
+              ref={iframeRef}
+              src={`https://www.youtube.com/embed/${active}?autoplay=1&rel=0&enablejsapi=1&origin=${encodeURIComponent(window.location.origin)}`}
               style={{position:"absolute",top:0,left:0,width:"100%",height:"100%",border:"none",borderRadius:12}}
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
