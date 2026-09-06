@@ -3953,7 +3953,7 @@ function ZodiacStories() {
       sign: "Sagittarius",
       symbol: "♐",
       color: "#9B59B6",
-      title: "Sagittarius: The Explorer",
+      title: "The Explorer",
       desc: "Story Time",
       videoId: "5oxU_jZpf84",
       thumbnail: "https://img.youtube.com/vi/5oxU_jZpf84/hqdefault.jpg",
@@ -3962,8 +3962,8 @@ function ZodiacStories() {
       sign: "Capricorn",
       symbol: "♑",
       color: "#5D8AA8",
-      title: "The Story of Capricorn",
-      desc: "Crazy Capricorn Story",
+      title: "The Story",
+      desc: "Crazy Capricorn",
       videoId: "iIbHJPd6Kas",
       thumbnail: "https://img.youtube.com/vi/iIbHJPd6Kas/hqdefault.jpg",
     },
@@ -3971,8 +3971,8 @@ function ZodiacStories() {
       sign: "Leo Rising",
       symbol: "♌",
       color: "#F5C842",
-      title: "Taurus starring me",
-      desc: "Patient. Grounded. Still Evolving.",
+      title: "Starring Me",
+      desc: "Patient. Grounded.",
       videoId: "fIc-sg2FtqU",
       thumbnail: "https://img.youtube.com/vi/fIc-sg2FtqU/hqdefault.jpg",
     },
@@ -3980,62 +3980,61 @@ function ZodiacStories() {
 
   return (
     <div style={{animation:"up .5s ease"}}>
-      <div style={{textAlign:"center",marginBottom:28}}>
-        <div style={{fontSize:40,marginBottom:10}}>🎬</div>
-        <h2 style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:24,color:"#f5c842",margin:"0 0 8px"}}>Zodiac Stories</h2>
-        <p style={{fontFamily:"Georgia,serif",color:"#a8e060",fontSize:14,margin:0,lineHeight:1.7}}>Real stories. Real signs. Written & cast by Ayssia Mason.</p>
+      <div style={{textAlign:"center",marginBottom:20}}>
+        <div style={{fontSize:36,marginBottom:8}}>🎬</div>
+        <h2 style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:22,color:"#f5c842",margin:"0 0 6px"}}>Zodiac Stories</h2>
+        <p style={{fontFamily:"Georgia,serif",color:"#a8e060",fontSize:13,margin:0}}>Written & cast by Ayssia Mason</p>
       </div>
 
-      {/* Video grid */}
-      <div style={{display:"flex",flexDirection:"column",gap:20}}>
+      {/* Horizontal scroll row */}
+      <div style={{display:"flex",gap:12,overflowX:"auto",paddingBottom:12,scrollSnapType:"x mandatory",WebkitOverflowScrolling:"touch",msOverflowStyle:"none",scrollbarWidth:"none"}}>
         {stories.map(s => (
-          <div key={s.sign} style={{borderRadius:16,overflow:"hidden",border:`1px solid ${s.color}44`,background:"rgba(0,0,0,0.4)"}}>
-            {active === s.videoId ? (
-              <div style={{position:"relative",paddingTop:"177.77%",background:"#000"}}>
-                <iframe
-                  src={`https://www.youtube.com/embed/${s.videoId}?autoplay=1&rel=0`}
-                  style={{position:"absolute",top:0,left:0,width:"100%",height:"100%",border:"none"}}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                />
-                <button onClick={()=>setActive(null)} style={{position:"absolute",top:10,right:10,background:"rgba(0,0,0,0.7)",border:"none",color:"#fff",borderRadius:"50%",width:32,height:32,cursor:"pointer",fontSize:16,zIndex:10}}>✕</button>
-              </div>
-            ) : (
-              <div onClick={()=>setActive(s.videoId)} style={{cursor:"pointer",position:"relative"}}>
-                <img
-                  src={s.thumbnail}
-                  alt={s.title}
-                  style={{width:"100%",display:"block",aspectRatio:"16/9",objectFit:"cover"}}
-                  onError={e => { e.target.style.display="none"; }}
-                />
-                {/* Play button overlay */}
-                <div style={{position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",background:"linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.6))"}}>
-                  <div style={{width:60,height:60,borderRadius:"50%",background:"rgba(255,255,255,0.9)",display:"flex",alignItems:"center",justifyContent:"center",marginBottom:12,boxShadow:"0 4px 20px rgba(0,0,0,0.5)"}}>
-                    <span style={{fontSize:24,marginLeft:4}}>▶</span>
-                  </div>
-                  <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:18,color:"#fff",textShadow:"0 2px 8px rgba(0,0,0,0.8)"}}>{s.symbol} {s.sign}</div>
-                  <div style={{fontFamily:"Georgia,serif",fontSize:12,color:"#ddd",marginTop:4,textShadow:"0 1px 4px rgba(0,0,0,0.8)"}}>{s.desc}</div>
+          <div key={s.sign} onClick={()=>setActive(s.videoId)} style={{flex:"0 0 160px",borderRadius:16,overflow:"hidden",border:`2px solid ${s.color}66`,background:"rgba(0,0,0,0.5)",cursor:"pointer",scrollSnapAlign:"start",transition:"transform 0.2s",position:"relative"}} >
+            {/* Portrait thumbnail */}
+            <div style={{position:"relative",paddingTop:"177%",background:"#111"}}>
+              <img src={s.thumbnail} alt={s.sign} style={{position:"absolute",top:0,left:0,width:"100%",height:"100%",objectFit:"cover"}} onError={e=>{e.target.style.background="#222";e.target.style.display="none";}}/>
+              <div style={{position:"absolute",inset:0,background:"linear-gradient(to bottom,rgba(0,0,0,0.1),rgba(0,0,0,0.7))",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
+                <div style={{width:44,height:44,borderRadius:"50%",background:"rgba(255,255,255,0.85)",display:"flex",alignItems:"center",justifyContent:"center",marginBottom:8}}>
+                  <span style={{fontSize:18,marginLeft:3}}>▶</span>
                 </div>
+                <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:13,color:"#fff",textShadow:"0 2px 6px rgba(0,0,0,0.9)",textAlign:"center"}}>{s.symbol} {s.sign}</div>
               </div>
-            )}
-            <div style={{padding:"12px 16px",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
-              <div>
-                <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:13,color:s.color}}>{s.title}</div>
-                <div style={{fontFamily:"Georgia,serif",fontSize:11,color:"#888",marginTop:2}}>@ayssiamason2704 · YouTube Shorts</div>
-              </div>
-              <a href={`https://youtube.com/shorts/${s.videoId}`} target="_blank" rel="noopener noreferrer" style={{color:"#f5c842",fontFamily:"'Cinzel',serif",fontSize:10,letterSpacing:".08em",textDecoration:"none",border:"1px solid #f5c84244",borderRadius:20,padding:"4px 10px"}}>SHARE</a>
+            </div>
+            <div style={{padding:"8px 10px"}}>
+              <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:11,color:s.color}}>{s.title}</div>
+              <div style={{fontFamily:"Georgia,serif",fontSize:10,color:"#888",marginTop:2}}>{s.desc}</div>
             </div>
           </div>
         ))}
+
+        {/* Coming soon card */}
+        <div style={{flex:"0 0 160px",borderRadius:16,border:"2px dashed rgba(255,200,50,0.2)",background:"rgba(255,200,50,0.03)",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",minHeight:285,scrollSnapAlign:"start",padding:12,textAlign:"center"}}>
+          <div style={{fontSize:28,marginBottom:8}}>✨</div>
+          <div style={{fontFamily:"'Cinzel',serif",fontSize:11,color:"#5a5048",lineHeight:1.5}}>More signs<br/>coming soon</div>
+        </div>
       </div>
 
-      <div style={{textAlign:"center",marginTop:24,fontFamily:"Georgia,serif",fontSize:12,color:"#5a5048"}}>More stories coming soon ✦</div>
+      {/* Full screen video modal */}
+      {active && (
+        <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.95)",zIndex:9999,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
+          <button onClick={()=>setActive(null)} style={{position:"absolute",top:20,right:20,background:"rgba(255,255,255,0.15)",border:"none",color:"#fff",borderRadius:"50%",width:40,height:40,cursor:"pointer",fontSize:18,zIndex:10}}>✕</button>
+          <div style={{width:"100%",maxWidth:400,paddingTop:"177.77%",position:"relative"}}>
+            <iframe
+              src={`https://www.youtube.com/embed/${active}?autoplay=1&rel=0`}
+              style={{position:"absolute",top:0,left:0,width:"100%",height:"100%",border:"none",borderRadius:12}}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
+          <a href={`https://youtube.com/shorts/${active}`} target="_blank" rel="noopener noreferrer" style={{marginTop:16,color:"#f5c842",fontFamily:"'Cinzel',serif",fontSize:11,letterSpacing:".08em",textDecoration:"none",border:"1px solid #f5c84244",borderRadius:20,padding:"6px 16px"}}>OPEN IN YOUTUBE</a>
+        </div>
+      )}
     </div>
   );
 }
 
 export default function AstrologyApp() {
-  const [topTab, setTopTab] = useState("facts");
+  const [topTab, setTopTab] = useState("stories");
 
   const [mode, setMode] = useState("home");
   const [selectedSign, setSelectedSign] = useState(null);
@@ -4056,13 +4055,13 @@ export default function AstrologyApp() {
   };
 
   const tabs = [
-    {label:"✦ Fun Facts",key:"facts"},
+    {label:"🎬 Stories",key:"stories"},
     {label:"💬 Community",key:"community"},
     {label:"🌠 Horoscope",key:"horoscope"},
     {label:"🔮 Game",key:"guess"},
     {label:"🌌 Get A Reading",key:"birthchart"},
     {label:"🌟 Celebrity",key:"celebrity"},
-    {label:"🎬 Stories",key:"stories"},
+    {label:"✦ Fun Facts",key:"facts"},
     {label:"📲 Get The App",key:"install"},
   ];
 
