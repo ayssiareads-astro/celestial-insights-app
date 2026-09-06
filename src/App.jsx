@@ -2940,11 +2940,17 @@ function AreWeWokeBirthChartWheel({ name, chartPlanets = {}, fullPlanets = [] })
     Pisces:   { art: <><path d="M42 28 Q34 38 34 50 Q34 62 42 70" stroke="#f5c842" strokeWidth="1.5" fill="none"/><path d="M58 28 Q66 38 66 50 Q66 62 58 70" stroke="#f5c842" strokeWidth="1.5" fill="none"/><line x1="34" y1="49" x2="66" y2="49" stroke="#f5c842" strokeWidth="1.2"/></> },
   };
   const signOrder = ["Aries","Taurus","Gemini","Cancer","Leo","Virgo","Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"];
+  // Rotate so the person's actual Rising sign leads the wheel, instead of a fixed Aries-first order
+  const risingSign = chartPlanets.Rising;
+  const risingIdx = risingSign ? signOrder.indexOf(risingSign) : -1;
+  const wheelSignOrder = risingIdx > 0
+    ? [...signOrder.slice(risingIdx), ...signOrder.slice(0, risingIdx)]
+    : signOrder;
   const W = 400, H = 400, cx2 = 200, cy2 = 200;
   const outerRing = 185, innerRing = 130, labelR = 158, iconR = 107;
 
   // ── Presentation-only data layer: highlight Big Three, small glyphs for other planets. No lines, no house math. ──
-  const planetSymbols = { Sun:"☉",Moon:"☽",Mercury:"☿",Venus:"♀",Mars:"♂",Jupiter:"♃",Saturn:"♄" };
+  const planetSymbols = { Sun:"☉",Moon:"☽",Mercury:"☿",Venus:"♀",Mars:"♂",Jupiter:"♃",Saturn:"♄",Uranus:"⛢",Neptune:"♆",Pluto:"♇",Chiron:"⚷",Lilith:"⚸" };
   const bigThreeSigns = { Sun: chartPlanets.Sun, Moon: chartPlanets.Moon, Rising: chartPlanets.Rising };
   const bigThreeGlyphs = { Sun:"☉", Moon:"☽", Rising:"↑" };
   const highlightedSigns = {}; // sign -> array of Big Three labels landing there
@@ -2953,9 +2959,9 @@ function AreWeWokeBirthChartWheel({ name, chartPlanets = {}, fullPlanets = [] })
     if (!highlightedSigns[sign]) highlightedSigns[sign] = [];
     highlightedSigns[sign].push(label);
   });
-  // A small, curated set of classical planets — not the full ten, and never connected by lines
-  const classicalPlanets = ["Mercury","Venus","Mars","Jupiter","Saturn"];
-  const markerPlanets = classicalPlanets
+  // Sun & Moon already show via the Big Three badge above — everything else the person asked for shows as a small glyph
+  const markerPlanetNames = ["Mercury","Venus","Mars","Saturn","Uranus","Neptune","Chiron","Lilith"];
+  const markerPlanets = markerPlanetNames
     .map(pname => fullPlanets.find(p => p.name === pname))
     .filter(p => p && p.sign && signOrder.includes(p.sign));
 
@@ -3002,7 +3008,7 @@ function AreWeWokeBirthChartWheel({ name, chartPlanets = {}, fullPlanets = [] })
             <circle cx={cx2} cy={cy2} r={outerRing-6} fill="none" stroke="rgba(245,200,66,0.25)" strokeWidth="0.75"/>
             <circle cx={cx2} cy={cy2} r={innerRing} fill="none" stroke="rgba(245,200,66,0.5)" strokeWidth="1.5"/>
             <circle cx={cx2} cy={cy2} r={innerRing-4} fill="none" stroke="rgba(245,200,66,0.15)" strokeWidth="0.5"/>
-            {signOrder.map((sign, i) => {
+            {wheelSignOrder.map((sign, i) => {
               const startAngle = (i * 30 - 90) * Math.PI / 180;
               const endAngle = ((i+1) * 30 - 90) * Math.PI / 180;
               const midAngle = ((i+0.5) * 30 - 90) * Math.PI / 180;
@@ -3037,7 +3043,7 @@ function AreWeWokeBirthChartWheel({ name, chartPlanets = {}, fullPlanets = [] })
             })}
             {/* Small optional gold glyphs for other planets — sitting inside their sign's wedge, never connected */}
             {markerPlanets.map((p, i) => {
-              const signIdx = signOrder.indexOf(p.sign);
+              const signIdx = wheelSignOrder.indexOf(p.sign);
               const sameSignBefore = markerPlanets.slice(0, i).filter(o => o.sign === p.sign).length;
               const midAngle = ((signIdx+0.5) * 30 - 90) * Math.PI / 180;
               const markerR = (innerRing + 16) + sameSignBefore * 11;
@@ -3096,6 +3102,14 @@ function BirthChartResults({ result, onReset, onUpgrade }) {
   const houseLabel = (n) => {
     const labels = {1:"1st",2:"2nd",3:"3rd",4:"4th",5:"5th",6:"6th",7:"7th",8:"8th",9:"9th",10:"10th",11:"11th",12:"12th"};
     return labels[n] ? `${labels[n]} House` : `House ${n}`;
+  };
+
+  // Format a decimal degree as "12° 14'" — matches the reference chart's degree/minute notation
+  const formatDegreeMin = (d) => {
+    if (d == null || isNaN(d)) return "";
+    const deg = Math.floor(d);
+    const min = Math.round((d - deg) * 60);
+    return min === 60 ? `${deg+1}° 0'` : `${deg}° ${min}'`;
   };
 
   // ── PAID SECTION ────────────────────────────────────────────
@@ -3204,9 +3218,10 @@ function BirthChartResults({ result, onReset, onUpgrade }) {
           <div style={{border:"1px solid rgba(255,200,50,0.15)",borderRadius:12,overflow:"hidden"}}>
             {fullPlanets.filter(p => p.name !== "Midheaven").map((p,i,arr) => (
               <div key={p.name} style={{display:"flex",alignItems:"center",gap:8,padding:"8px 12px",borderBottom:i<arr.length-1?"1px solid rgba(255,200,50,0.08)":"none",background:i%2===0?"rgba(255,200,50,0.02)":"transparent"}}>
-                <span style={{fontSize:12,width:16,color:"#f5c842"}}>{emojis[p.name]||"✦"}</span>
-                <span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,color:"#d8c890",flex:1}}>{p.name}</span>
-                <span style={{fontFamily:"Georgia,serif",fontSize:10,color:colors[p.sign]||"#f5c842"}}>{p.sign}{p.degree ? ` ${Math.round(p.degree)}°` : ""}</span>
+                <span style={{fontSize:12,width:16,color:"#f5c842",flexShrink:0}}>{emojis[p.name]||"✦"}</span>
+                <span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,color:"#d8c890",flex:1,minWidth:0}}>{p.name}</span>
+                <span style={{fontFamily:"Georgia,serif",fontSize:10,color:colors[p.sign]||"#f5c842",width:66,flexShrink:0}}>{p.sign}</span>
+                <span style={{fontFamily:"Georgia,serif",fontSize:9,color:"#8a7a62",width:48,textAlign:"right",flexShrink:0}}>{formatDegreeMin(p.degree)}</span>
               </div>
             ))}
           </div>
