@@ -2985,8 +2985,20 @@ function BirthChartResults({ result, onReset, onUpgrade }) {
         </div>
       )}
 
+
+      {/* Natal Chart Wheel */}
+      {houseCusps.length > 0 && fullPlanets.length > 0 && (
+        <NatalChartWheel houseCusps={houseCusps} chartPlanets={chartPlanets} fullPlanets={fullPlanets} report={report} planetInHouse={planetInHouse} getFact={getFact} aspects={aspects} transitPlanets={transitPlanets} transitAspects={transitAspects} transitDate={transitDate}/>
+      )}
+
+
+    </div>
+  );
+
+  return (
+    <div style={{animation:"up 0.5s ease"}}>
       {/* ── Illustrated Birth Chart Cover Card ── */}
-      {houseCusps.length > 0 && fullPlanets.length > 0 && (() => {
+      {(() => {
         const displayName = (name || "Your").replace(/['']s$/i,"").trim();
         const zodiacIllustrations = {
           Aries:    { art: <><ellipse cx="50" cy="44" rx="10" ry="13" fill="none" stroke="#f5c842" strokeWidth="1.5"/><path d="M50 31 Q44 22 38 26 M50 31 Q56 22 62 26" stroke="#f5c842" strokeWidth="1.5" fill="none"/><path d="M43 50 Q50 58 57 50" stroke="#f5c842" strokeWidth="1" fill="none"/></> },
@@ -3006,155 +3018,86 @@ function BirthChartResults({ result, onReset, onUpgrade }) {
         const W = 400, H = 400, cx2 = 200, cy2 = 200;
         const outerRing = 185, innerRing = 130, labelR = 158, iconR = 107;
         return (
-          <div style={{marginBottom:32,position:"relative"}}>
-            {/* Gold glow behind the card */}
+          <div style={{marginBottom:28,position:"relative"}}>
             <div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse at center, rgba(245,200,66,0.08) 0%, transparent 70%)",borderRadius:24,pointerEvents:"none"}}/>
             <div style={{background:"#000",borderRadius:24,overflow:"hidden",border:"1px solid rgba(245,200,66,0.3)",boxShadow:"0 0 60px rgba(245,200,66,0.12), inset 0 0 60px rgba(0,0,0,0.8)"}}>
-              {/* Top decorative strip */}
               <div style={{height:3,background:"linear-gradient(90deg,transparent,rgba(245,200,66,0.3),#f5c842,rgba(245,200,66,0.3),transparent)"}}/>
               <div style={{padding:"28px 20px 20px",textAlign:"center",position:"relative"}}>
-                {/* Corner sun decoration */}
+                {/* Corner sun */}
                 <svg style={{position:"absolute",top:12,left:12,opacity:.5}} width="48" height="48" viewBox="0 0 48 48">
                   <circle cx="24" cy="24" r="8" fill="none" stroke="#f5c842" strokeWidth="1.2"/>
                   <path d="M24 4 L24 12 M24 36 L24 44 M4 24 L12 24 M36 24 L44 24 M9 9 L15 15 M33 33 L39 39 M39 9 L33 15 M15 33 L9 39" stroke="#f5c842" strokeWidth="1" strokeLinecap="round"/>
                   <circle cx="24" cy="24" r="4" fill="#f5c842" opacity=".6"/>
                 </svg>
-                {/* Corner moon decoration */}
+                {/* Corner moon */}
                 <svg style={{position:"absolute",top:12,right:12,opacity:.5}} width="40" height="48" viewBox="0 0 40 48">
                   <path d="M28 6 Q10 12 10 24 Q10 36 28 42 Q16 40 12 30 Q8 18 28 6Z" fill="#f5c842" opacity=".5"/>
                   <circle cx="32" cy="10" r="2" fill="#f5c842" opacity=".6"/>
                   <circle cx="36" cy="20" r="1.5" fill="#f5c842" opacity=".4"/>
-                  <circle cx="34" cy="32" r="1" fill="#f5c842" opacity=".3"/>
                 </svg>
-
-                {/* The illustrated zodiac wheel SVG */}
                 <svg viewBox={`0 0 ${W} ${H}`} width="100%" style={{maxWidth:380,display:"block",margin:"0 auto"}}>
                   <defs>
-                    <radialGradient id="bgGrad" cx="50%" cy="50%" r="50%">
+                    <radialGradient id="bcGrad" cx="50%" cy="50%" r="50%">
                       <stop offset="0%" stopColor="#0a0800"/>
                       <stop offset="100%" stopColor="#000"/>
                     </radialGradient>
-                    <filter id="glow">
+                    <filter id="bcGlow">
                       <feGaussianBlur stdDeviation="2" result="blur"/>
                       <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
                     </filter>
                   </defs>
-                  <circle cx={cx2} cy={cy2} r={195} fill="url(#bgGrad)"/>
-                  {/* Star field */}
+                  <circle cx={cx2} cy={cy2} r={195} fill="url(#bcGrad)"/>
                   {[...Array(40)].map((_,i)=>{
-                    const angle=(i*137.5)*(Math.PI/180);const r=60+Math.random()*120;
+                    const angle=(i*137.5)*(Math.PI/180);const r=60+(i*7%120);
                     const x=cx2+r*Math.cos(angle);const y=cy2+r*Math.sin(angle);
-                    return <circle key={i} cx={x} cy={y} r={Math.random()*1.2+0.3} fill="#f5c842" opacity={Math.random()*0.4+0.1}/>;
+                    return <circle key={i} cx={x} cy={y} r={(i%3)*0.4+0.4} fill="#f5c842" opacity={(i%5)*0.07+0.1}/>;
                   })}
-                  {/* Outer decorative ring */}
-                  <circle cx={cx2} cy={cy2} r={outerRing} fill="none" stroke="rgba(245,200,66,0.6)" strokeWidth="2" filter="url(#glow)"/>
+                  <circle cx={cx2} cy={cy2} r={outerRing} fill="none" stroke="rgba(245,200,66,0.6)" strokeWidth="2" filter="url(#bcGlow)"/>
                   <circle cx={cx2} cy={cy2} r={outerRing-6} fill="none" stroke="rgba(245,200,66,0.2)" strokeWidth="0.5"/>
                   <circle cx={cx2} cy={cy2} r={innerRing} fill="none" stroke="rgba(245,200,66,0.5)" strokeWidth="1.5"/>
                   <circle cx={cx2} cy={cy2} r={innerRing-4} fill="none" stroke="rgba(245,200,66,0.15)" strokeWidth="0.5"/>
-                  {/* 12 zodiac segments with SVG illustrations */}
                   {signOrder.map((sign, i) => {
                     const startAngle = (i * 30 - 90) * Math.PI / 180;
-                    const endAngle = ((i + 1) * 30 - 90) * Math.PI / 180;
-                    const midAngle = ((i + 0.5) * 30 - 90) * Math.PI / 180;
-                    const x1o = cx2 + outerRing * Math.cos(startAngle);
-                    const y1o = cy2 + outerRing * Math.sin(startAngle);
-                    const x2o = cx2 + outerRing * Math.cos(endAngle);
-                    const y2o = cy2 + outerRing * Math.sin(endAngle);
-                    const x1i = cx2 + innerRing * Math.cos(startAngle);
-                    const y1i = cy2 + innerRing * Math.sin(startAngle);
-                    const x2i = cx2 + innerRing * Math.cos(endAngle);
-                    const y2i = cy2 + innerRing * Math.sin(endAngle);
-                    // Divider lines
-                    const lx1 = cx2 + innerRing * Math.cos(startAngle);
-                    const ly1 = cy2 + innerRing * Math.sin(startAngle);
-                    const lx2 = cx2 + outerRing * Math.cos(startAngle);
-                    const ly2 = cy2 + outerRing * Math.sin(startAngle);
-                    // Icon position
-                    const ix = cx2 + iconR * Math.cos(midAngle);
-                    const iy = cy2 + iconR * Math.sin(midAngle);
-                    const illus = zodiacIllustrations[sign];
+                    const endAngle = ((i+1) * 30 - 90) * Math.PI / 180;
+                    const midAngle = ((i+0.5) * 30 - 90) * Math.PI / 180;
+                    const x1o=cx2+outerRing*Math.cos(startAngle), y1o=cy2+outerRing*Math.sin(startAngle);
+                    const x2o=cx2+outerRing*Math.cos(endAngle),   y2o=cy2+outerRing*Math.sin(endAngle);
+                    const x1i=cx2+innerRing*Math.cos(startAngle), y1i=cy2+innerRing*Math.sin(startAngle);
+                    const x2i=cx2+innerRing*Math.cos(endAngle),   y2i=cy2+innerRing*Math.sin(endAngle);
+                    const ix=cx2+iconR*Math.cos(midAngle), iy=cy2+iconR*Math.sin(midAngle);
+                    const lx=cx2+labelR*Math.cos(midAngle), ly=cy2+labelR*Math.sin(midAngle);
                     return (
                       <g key={sign}>
-                        <path d={`M ${x1o} ${y1o} A ${outerRing} ${outerRing} 0 0 1 ${x2o} ${y2o} L ${x2i} ${y2i} A ${innerRing} ${innerRing} 0 0 0 ${x1i} ${y1i} Z`}
-                          fill="rgba(245,200,66,0.04)" stroke="none"/>
-                        <line x1={lx1} y1={ly1} x2={lx2} y2={ly2} stroke="rgba(245,200,66,0.35)" strokeWidth="0.8"/>
-                        {/* Zodiac illustration, rotated to face outward */}
+                        <path d={`M ${x1o} ${y1o} A ${outerRing} ${outerRing} 0 0 1 ${x2o} ${y2o} L ${x2i} ${y2i} A ${innerRing} ${innerRing} 0 0 0 ${x1i} ${y1i} Z`} fill="rgba(245,200,66,0.04)" stroke="none"/>
+                        <line x1={cx2+innerRing*Math.cos(startAngle)} y1={cy2+innerRing*Math.sin(startAngle)} x2={cx2+outerRing*Math.cos(startAngle)} y2={cy2+outerRing*Math.sin(startAngle)} stroke="rgba(245,200,66,0.35)" strokeWidth="0.8"/>
                         <g transform={`translate(${ix},${iy}) rotate(${(i+0.5)*30}) translate(-50,-49)`}>
-                          <svg width="100" height="98" viewBox="0 0 100 98">{illus?.art}</svg>
+                          <svg width="100" height="98" viewBox="0 0 100 98">{zodiacIllustrations[sign]?.art}</svg>
                         </g>
-                        {/* Sign name label on outer ring */}
-                        <text
-                          x={cx2 + labelR * Math.cos(midAngle)}
-                          y={cy2 + labelR * Math.sin(midAngle)}
-                          textAnchor="middle" dominantBaseline="middle"
-                          fontSize="7" fontFamily="'Cinzel',serif" fontWeight="700"
-                          fill="rgba(245,200,66,0.7)" letterSpacing="0.05em"
-                          transform={`rotate(${(i+0.5)*30 + 90}, ${cx2 + labelR * Math.cos(midAngle)}, ${cy2 + labelR * Math.sin(midAngle)})`}
-                        >{sign.toUpperCase()}</text>
+                        <text x={lx} y={ly} textAnchor="middle" dominantBaseline="middle" fontSize="7" fontFamily="'Cinzel',serif" fontWeight="700" fill="rgba(245,200,66,0.7)" letterSpacing="0.05em"
+                          transform={`rotate(${(i+0.5)*30+90}, ${lx}, ${ly})`}>{sign.toUpperCase()}</text>
                       </g>
                     );
                   })}
-                  {/* Inner dark circle */}
                   <circle cx={cx2} cy={cy2} r={innerRing-5} fill="#000"/>
-                  {/* Inner decorative ring */}
                   <circle cx={cx2} cy={cy2} r={84} fill="none" stroke="rgba(245,200,66,0.25)" strokeWidth="1"/>
-                  {/* 4 small stars at cardinal points */}
                   {[0,90,180,270].map(a=>{
-                    const r2=innerRing-5;
-                    const ax=cx2+r2*Math.cos(a*Math.PI/180);
-                    const ay=cy2+r2*Math.sin(a*Math.PI/180);
+                    const ax=cx2+(innerRing-5)*Math.cos(a*Math.PI/180), ay=cy2+(innerRing-5)*Math.sin(a*Math.PI/180);
                     return <polygon key={a} points={`${ax},${ay-5} ${ax+1.5},${ay-1.5} ${ax+5},${ay} ${ax+1.5},${ay+1.5} ${ax},${ay+5} ${ax-1.5},${ay+1.5} ${ax-5},${ay} ${ax-1.5},${ay-1.5}`} fill="#f5c842" opacity="0.7"/>;
                   })}
-                  {/* Moon crescent */}
-                  <path d={`M ${cx2-10} ${cy2-36} Q${cx2-22} ${cy2-28} ${cx2-22} ${cy2-18} Q${cx2-22} ${cy2-8} ${cx2-10} ${cy2} Q${cx2-30} ${cy2-4} ${cx2-30} ${cy2-18} Q${cx2-30} ${cy2-32} ${cx2-10} ${cy2-36}Z`}
-                    fill="#f5c842" opacity="0.5"/>
-                  {/* 4-point star */}
-                  <polygon points={`${cx2},${cy2-28} ${cx2+3},${cy2-3} ${cx2+28},${cy2} ${cx2+3},${cy2+3} ${cx2},${cy2+28} ${cx2-3},${cy2+3} ${cx2-28},${cy2} ${cx2-3},${cy2-3}`}
-                    fill="#f5c842" opacity="0.35" transform={`scale(0.45) translate(${cx2*1.22},${cy2*1.22})`}/>
-                  {/* Center text */}
-                  <text x={cx2} y={cy2-4} textAnchor="middle" dominantBaseline="middle"
-                    fontFamily="'Cinzel',serif" fontWeight="900" fontSize="22" fill="#f5c842"
-                    style={{letterSpacing:"0.02em"}} filter="url(#glow)">
-                    {displayName.toUpperCase()}{displayName.slice(-1).toLowerCase()==="s"?"'":"'S"}
+                  <path d={`M ${cx2-10} ${cy2-36} Q${cx2-22} ${cy2-28} ${cx2-22} ${cy2-18} Q${cx2-22} ${cy2-8} ${cx2-10} ${cy2} Q${cx2-30} ${cy2-4} ${cx2-30} ${cy2-18} Q${cx2-30} ${cy2-32} ${cx2-10} ${cy2-36}Z`} fill="#f5c842" opacity="0.5"/>
+                  <text x={cx2} y={cy2-2} textAnchor="middle" dominantBaseline="middle" fontFamily="'Cinzel',serif" fontWeight="900" fontSize="22" fill="#f5c842" letterSpacing="0.02em" filter="url(#bcGlow)">
+                    {displayName.toUpperCase()}{displayName.slice(-1).toLowerCase()==="s" ? "'" : "'S"}
                   </text>
-                  <text x={cx2} y={cy2+18} textAnchor="middle" dominantBaseline="middle"
-                    fontFamily="'Cinzel',serif" fontWeight="700" fontSize="11" fill="#f5c842" letterSpacing="0.1em">
-                    BIRTH CHART
-                  </text>
-                  <line x1={cx2-36} y1={cy2+30} x2={cx2+36} y2={cy2+30} stroke="rgba(245,200,66,0.4)" strokeWidth="0.7"/>
-                  <text x={cx2} y={cy2+40} textAnchor="middle" dominantBaseline="middle"
-                    fontFamily="'Cinzel',serif" fontSize="6.5" fill="rgba(245,200,66,0.55)" letterSpacing="0.12em">
-                    PRODUCED BY AREWEWOKE.COM
-                  </text>
+                  <text x={cx2} y={cy2+20} textAnchor="middle" dominantBaseline="middle" fontFamily="'Cinzel',serif" fontWeight="700" fontSize="11" fill="#f5c842" letterSpacing="0.1em">BIRTH CHART</text>
+                  <line x1={cx2-36} y1={cy2+32} x2={cx2+36} y2={cy2+32} stroke="rgba(245,200,66,0.4)" strokeWidth="0.7"/>
+                  <text x={cx2} y={cy2+42} textAnchor="middle" dominantBaseline="middle" fontFamily="'Cinzel',serif" fontSize="6.5" fill="rgba(245,200,66,0.55)" letterSpacing="0.12em">PRODUCED BY AREWEWOKE.COM</text>
                 </svg>
-
-                {/* Cloud wisps */}
-                <div style={{position:"absolute",bottom:0,left:0,right:0,height:60,background:"linear-gradient(to top, rgba(0,0,0,0.6), transparent)",pointerEvents:"none",borderRadius:"0 0 24px 24px"}}/>
               </div>
-              {/* Bottom strip */}
               <div style={{height:3,background:"linear-gradient(90deg,transparent,rgba(245,200,66,0.3),#f5c842,rgba(245,200,66,0.3),transparent)"}}/>
             </div>
           </div>
         );
       })()}
-
-      {/* Natal Chart Wheel */}
-      {houseCusps.length > 0 && fullPlanets.length > 0 && (
-        <NatalChartWheel houseCusps={houseCusps} chartPlanets={chartPlanets} fullPlanets={fullPlanets} report={report} planetInHouse={planetInHouse} getFact={getFact} aspects={aspects} transitPlanets={transitPlanets} transitAspects={transitAspects} transitDate={transitDate}/>
-      )}
-
-
-    </div>
-  );
-
-  return (
-    <div style={{animation:"up 0.5s ease"}}>
-      {/* Header */}
-      <div style={{textAlign:"center",marginBottom:20}}>
-        <div style={{fontSize:32,marginBottom:8}}>🌌</div>
-        <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:"clamp(17px,4vw,24px)",color:"#f5c842",marginBottom:4}}>{name}'s Birth Chart</div>
-        <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#a8e060",letterSpacing:".15em"}}>✦ BORN IN {city.toUpperCase()} ✦</div>
-      </div>
 
       {/* Free: Big Three signs only */}
       {!memberVerified && (
