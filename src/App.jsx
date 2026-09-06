@@ -4109,21 +4109,45 @@ function ZodiacStories({ onGetReading }) {
 
   const currentStory = stories.find(s => s.videoId === active);
 
+  const ctaTimerRef = React.useRef(null);
+
   const openVideo = (videoId) => {
     setActive(videoId);
     setShowCTA(false);
     setCtaVisible(false);
-    setTimeout(() => {
-      setShowCTA(true);
-      setTimeout(() => setCtaVisible(true), 100);
-    }, 45000);
+    if (ctaTimerRef.current) clearTimeout(ctaTimerRef.current);
   };
 
   const closeVideo = () => {
     setActive(null);
     setShowCTA(false);
     setCtaVisible(false);
+    if (ctaTimerRef.current) clearTimeout(ctaTimerRef.current);
   };
+
+  // Listen for YouTube postMessage when video ends
+  React.useEffect(() => {
+    const handleMessage = (e) => {
+      try {
+        const data = typeof e.data === "string" ? JSON.parse(e.data) : e.data;
+        // YouTube sends event=1 for ended
+        if (data?.event === "onStateChange" && data?.info === 0) {
+          setShowCTA(true);
+          setTimeout(() => setCtaVisible(true), 100);
+          // Auto-dismiss after 10 seconds
+          ctaTimerRef.current = setTimeout(() => {
+            setShowCTA(false);
+            setCtaVisible(false);
+          }, 10000);
+        }
+      } catch {}
+    };
+    window.addEventListener("message", handleMessage);
+    return () => {
+      window.removeEventListener("message", handleMessage);
+      if (ctaTimerRef.current) clearTimeout(ctaTimerRef.current);
+    };
+  }, []);
 
   const handleGetReading = () => {
     closeVideo();
@@ -4173,7 +4197,7 @@ function ZodiacStories({ onGetReading }) {
           {/* Video */}
           <div style={{width:"100%",maxWidth:400,paddingTop:"177.77%",position:"relative"}}>
             <iframe
-              src={`https://www.youtube.com/embed/${active}?autoplay=1&rel=0`}
+              src={`https://www.youtube.com/embed/${active}?autoplay=1&rel=0&enablejsapi=1`}
               style={{position:"absolute",top:0,left:0,width:"100%",height:"100%",border:"none",borderRadius:12}}
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
@@ -4196,47 +4220,18 @@ function ZodiacStories({ onGetReading }) {
               transition:"opacity 0.8s ease",
               textAlign:"center",
             }}>
+              {/* X close button */}
+              <button onClick={()=>{setShowCTA(false);setCtaVisible(false);}} style={{position:"absolute",top:16,right:16,background:"rgba(255,255,255,0.15)",border:"none",color:"#fff",borderRadius:"50%",width:36,height:36,cursor:"pointer",fontSize:16,display:"flex",alignItems:"center",justifyContent:"center"}}>✕</button>
+
               <div style={{fontSize:40,marginBottom:16}}>{currentStory?.symbol || "✦"}</div>
-              <p style={{
-                fontFamily:"'Cinzel',serif",
-                fontWeight:900,
-                fontSize:22,
-                color:"#f5c842",
-                margin:"0 0 12px",
-                lineHeight:1.4,
-                animation:"up 0.6s ease",
-              }}>Did this feel like you?</p>
-              <p style={{
-                fontFamily:"Georgia,serif",
-                fontSize:15,
-                color:"#e8d8b0",
-                margin:"0 0 28px",
-                lineHeight:1.7,
-                animation:"up 0.8s ease",
-              }}>
+              <p style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:22,color:"#f5c842",margin:"0 0 12px",lineHeight:1.4,animation:"up 0.6s ease"}}>Did this feel like you?</p>
+              <p style={{fontFamily:"Georgia,serif",fontSize:15,color:"#e8d8b0",margin:"0 0 28px",lineHeight:1.7,animation:"up 0.8s ease"}}>
                 See where <span style={{color:"#f5c842",fontWeight:700}}>{currentStory?.sign}</span> shows up in your chart.
                 <br/>Get a Reading Now.
               </p>
-              <button
-                onClick={handleGetReading}
-                style={{
-                  background:"linear-gradient(135deg,#e8a800,#8a6000)",
-                  border:"none",
-                  borderRadius:100,
-                  padding:"16px 36px",
-                  fontFamily:"'Cinzel',serif",
-                  fontWeight:900,
-                  fontSize:14,
-                  letterSpacing:".12em",
-                  color:"#0d0a14",
-                  cursor:"pointer",
-                  boxShadow:"0 0 30px 8px rgba(232,168,0,0.5)",
-                  animation:"gl 2s ease-in-out infinite",
-                  marginBottom:16,
-                }}>
+              <button onClick={handleGetReading} style={{background:"linear-gradient(135deg,#e8a800,#8a6000)",border:"none",borderRadius:100,padding:"16px 36px",fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:14,letterSpacing:".12em",color:"#0d0a14",cursor:"pointer",boxShadow:"0 0 30px 8px rgba(232,168,0,0.5)",animation:"gl 2s ease-in-out infinite"}}>
                 ✦ GET MY READING
               </button>
-              <button onClick={closeVideo} style={{background:"none",border:"none",color:"#5a5048",fontFamily:"'Cinzel',serif",fontSize:10,letterSpacing:".1em",cursor:"pointer"}}>CLOSE</button>
             </div>
           )}
 
