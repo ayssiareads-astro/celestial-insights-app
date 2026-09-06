@@ -2939,6 +2939,9 @@ function BirthChartResults({ result, onReset, onUpgrade }) {
   };
 
   // ── PAID SECTION ────────────────────────────────────────────
+  const aspectSymbolsQ = { trine:"△", sextile:"⚹", conjunction:"☌", opposition:"☍", square:"□" };
+  const aspectColorsQ = { trine:"#a8e060", sextile:"#5ab8d8", conjunction:"#f5c842", opposition:"#e8534a", square:"#e8953a" };
+
   const PaidSection = () => (
     <div style={{animation:"up 0.5s ease"}}>
 
@@ -2947,16 +2950,127 @@ function BirthChartResults({ result, onReset, onUpgrade }) {
         <span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#a8e060",letterSpacing:".12em"}}>✦ FULL READING UNLOCKED ✦</span>
       </div>
 
+      {/* Header */}
+      <div style={{textAlign:"center",marginBottom:20}}>
+        <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#a8e060",letterSpacing:".25em",marginBottom:6}}>✦ YOUR COSMIC BLUEPRINT ✦</div>
+        <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:"clamp(24px,6vw,34px)",color:"#f5c842",textShadow:"0 0 18px rgba(245,200,66,0.4)"}}>BIRTH CHART</div>
+        <div style={{fontFamily:"Georgia,serif",fontSize:11,color:"#8a7a62",marginTop:4}}>A map of your energy, your purpose, your power.</div>
+      </div>
+
+      {/* Natal Chart Wheel */}
+      {houseCusps.length > 0 && fullPlanets.length > 0 && (
+        <NatalChartWheel houseCusps={houseCusps} chartPlanets={chartPlanets} fullPlanets={fullPlanets} report={report} planetInHouse={planetInHouse} getFact={getFact} aspects={aspects} transitPlanets={transitPlanets} transitAspects={transitAspects} transitDate={transitDate}/>
+      )}
+
       {/* Big Three hero row */}
       <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#f5c842",letterSpacing:".18em",marginBottom:12,textAlign:"center"}}>✦ YOUR BIG THREE ✦</div>
-      <div style={{display:"flex",gap:10,marginBottom:28}}>
+      <div style={{display:"flex",gap:10,marginBottom:24}}>
         {["Sun","Moon","Rising"].map(p => chartPlanets[p] ? <BigThreeCard key={p} planet={p} sign={chartPlanets[p]}/> : null)}
       </div>
 
-      {/* House System */}
+      {/* Elements breakdown */}
+      {fullPlanets.length > 0 && (() => {
+        const elementMap = {
+          Aries:"Fire",Leo:"Fire",Sagittarius:"Fire",
+          Taurus:"Earth",Virgo:"Earth",Capricorn:"Earth",
+          Gemini:"Air",Libra:"Air",Aquarius:"Air",
+          Cancer:"Water",Scorpio:"Water",Pisces:"Water"
+        };
+        const elementIcons = { Fire:"🔥", Earth:"⛰️", Air:"💨", Water:"💧" };
+        const elementColors = { Fire:"#e8534a", Earth:"#a8e060", Air:"#f5c842", Water:"#5ab8d8" };
+        const ascSign = houseCusps.find(h => h.house === 1)?.sign;
+        const signsForElements = fullPlanets.filter(p => p.name !== "Midheaven").map(p => p.sign).concat(ascSign ? [ascSign] : []);
+        const totals = { Fire:0, Earth:0, Air:0, Water:0 };
+        signsForElements.forEach(s => { const el = elementMap[s]; if (el) totals[el]++; });
+        const sum = Object.values(totals).reduce((a,b)=>a+b,0) || 1;
+        return (
+          <div style={{marginBottom:28}}>
+            <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#f5c842",letterSpacing:".18em",marginBottom:12,textAlign:"center"}}>✦ YOUR ELEMENTS ✦</div>
+            <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:8}}>
+              {["Fire","Earth","Air","Water"].map(el => {
+                const pct = Math.round((totals[el]/sum)*100);
+                return (
+                  <div key={el} style={{textAlign:"center"}}>
+                    <div style={{fontSize:18,marginBottom:4}}>{elementIcons[el]}</div>
+                    <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#d8c890",marginBottom:2}}>{el}</div>
+                    <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:11,color:elementColors[el],marginBottom:6}}>{pct}%</div>
+                    <div style={{height:4,borderRadius:2,background:"rgba(255,200,50,0.1)",overflow:"hidden"}}>
+                      <div style={{height:"100%",width:`${pct}%`,background:elementColors[el],borderRadius:2}}/>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })()}
+
+      {/* Quick-reference strip: Planetary Placements / House Placements / Key Aspects — collapses to 1 column on phones */}
+      <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(220px,1fr))",gap:16,marginBottom:28}}>
+
+        {/* Planetary Placements */}
+        <div>
+          <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#f5c842",letterSpacing:".14em",marginBottom:10,textAlign:"center"}}>✦ PLANETS ✦</div>
+          <div style={{border:"1px solid rgba(255,200,50,0.15)",borderRadius:12,overflow:"hidden"}}>
+            {fullPlanets.filter(p => p.name !== "Midheaven").map((p,i,arr) => (
+              <div key={p.name} style={{display:"flex",alignItems:"center",gap:8,padding:"8px 12px",borderBottom:i<arr.length-1?"1px solid rgba(255,200,50,0.08)":"none",background:i%2===0?"rgba(255,200,50,0.02)":"transparent"}}>
+                <span style={{fontSize:12,width:16,color:"#f5c842"}}>{emojis[p.name]||"✦"}</span>
+                <span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,color:"#d8c890",flex:1}}>{p.name}</span>
+                <span style={{fontFamily:"Georgia,serif",fontSize:10,color:colors[p.sign]||"#f5c842"}}>{p.sign}{p.degree ? ` ${Math.round(p.degree)}°` : ""}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* House Placements */}
+        {houseCusps.length > 0 && (
+          <div>
+            <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#f5c842",letterSpacing:".14em",marginBottom:10,textAlign:"center"}}>✦ HOUSES ✦</div>
+            <div style={{border:"1px solid rgba(255,200,50,0.15)",borderRadius:12,overflow:"hidden"}}>
+              {houseCusps.map((h,i,arr) => (
+                <div key={h.house} style={{display:"flex",alignItems:"center",gap:8,padding:"8px 12px",borderBottom:i<arr.length-1?"1px solid rgba(255,200,50,0.08)":"none",background:i%2===0?"rgba(255,200,50,0.02)":"transparent"}}>
+                  <span style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:10,width:16,color:"#f5c842"}}>{h.house}</span>
+                  <span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,color:"#d8c890",flex:1}}>{houseLabel(h.house)}</span>
+                  <span style={{fontFamily:"Georgia,serif",fontSize:10,color:colors[h.sign]||"#f5c842"}}>{emojis[h.sign]} {h.sign}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Key Aspects */}
+        {aspects.length > 0 && (() => {
+          const majorAspects = ["trine","sextile","conjunction","opposition","square"];
+          const topAspects = aspects
+            .filter(a => majorAspects.includes((a.type||"").toLowerCase()))
+            .filter(a => !a.strength || a.strength >= 2)
+            .slice(0,6);
+          if (!topAspects.length) return null;
+          return (
+            <div>
+              <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#f5c842",letterSpacing:".14em",marginBottom:10,textAlign:"center"}}>✦ ASPECTS ✦</div>
+              <div style={{border:"1px solid rgba(255,200,50,0.15)",borderRadius:12,overflow:"hidden"}}>
+                {topAspects.map((a,i) => {
+                  const type = (a.type||"").toLowerCase();
+                  const col = aspectColorsQ[type] || "#f5c842";
+                  return (
+                    <div key={i} style={{display:"flex",alignItems:"center",gap:8,padding:"8px 12px",borderBottom:i<topAspects.length-1?"1px solid rgba(255,200,50,0.08)":"none",background:i%2===0?"rgba(255,200,50,0.02)":"transparent"}}>
+                      <span style={{fontSize:12,width:16,color:col}}>{aspectSymbolsQ[type]||"✦"}</span>
+                      <span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,color:"#d8c890",flex:1}}>{a.planet1} {type}</span>
+                      <span style={{fontFamily:"Georgia,serif",fontSize:10,color:col}}>{a.planet2}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })()}
+      </div>
+
+      {/* House System — expandable deep dive */}
       {houseCusps.length > 0 && (
         <div style={{marginBottom:28}}>
-          <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#f5c842",letterSpacing:".18em",marginBottom:6,textAlign:"center"}}>✦ YOUR HOUSE SYSTEM ✦</div>
+          <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#f5c842",letterSpacing:".18em",marginBottom:6,textAlign:"center"}}>✦ EXPLORE YOUR HOUSES ✦</div>
           <div style={{fontFamily:"Georgia,serif",fontSize:11,color:"#4a4440",textAlign:"center",marginBottom:14}}>Tap any house to learn what it governs in your life</div>
           <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:6}}>
             {houseCusps.map((h, i) => {
@@ -2990,12 +3104,31 @@ function BirthChartResults({ result, onReset, onUpgrade }) {
         </div>
       )}
 
-
-      {/* Natal Chart Wheel */}
-      {houseCusps.length > 0 && fullPlanets.length > 0 && (
-        <NatalChartWheel houseCusps={houseCusps} chartPlanets={chartPlanets} fullPlanets={fullPlanets} report={report} planetInHouse={planetInHouse} getFact={getFact} aspects={aspects} transitPlanets={transitPlanets} transitAspects={transitAspects} transitDate={transitDate}/>
+      {/* Cosmic Interpretation summary */}
+      {(chartPlanets.Sun || chartPlanets.Moon || chartPlanets.Rising) && (
+        <div style={{marginBottom:28,background:"rgba(255,200,50,0.04)",border:"1px solid rgba(255,200,50,0.2)",borderRadius:16,padding:"20px 18px"}}>
+          <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#f5c842",letterSpacing:".18em",marginBottom:10,textAlign:"center"}}>✦ YOUR COSMIC INTERPRETATION ✦</div>
+          <p style={{fontFamily:"Georgia,serif",fontSize:13,color:"#d8c890",lineHeight:1.8,margin:0}}>
+            {chartPlanets.Sun && <>With your <strong style={{color:"#f5c842"}}>{chartPlanets.Sun} Sun</strong>, your core identity is shaped by everything that sign represents. </>}
+            {chartPlanets.Moon && <>Your <strong style={{color:"#a8e060"}}>{chartPlanets.Moon} Moon</strong> shows how you process emotion and what makes you feel secure. </>}
+            {chartPlanets.Rising && <>And with <strong style={{color:"#f5c842"}}>{chartPlanets.Rising} Rising</strong>, that's the energy people meet first — the mask you wear as you step into the world.</>}
+          </p>
+        </div>
       )}
 
+      {/* Action buttons */}
+      <div style={{display:"flex",flexWrap:"wrap",gap:8,justifyContent:"center",marginBottom:8}}>
+        <button onClick={async ()=>{
+            const text = `${(name||"My")}'s Birth Chart — ${chartPlanets.Sun||""} Sun, ${chartPlanets.Moon||""} Moon, ${chartPlanets.Rising||""} Rising. Get yours at arewewoke.com`;
+            try {
+              if (navigator.share) await navigator.share({ title:"My Birth Chart", text });
+              else { await navigator.clipboard.writeText(text); alert("Copied to clipboard!"); }
+            } catch(e) {}
+          }}
+          style={{background:"none",border:"1px solid rgba(255,200,50,0.3)",color:"#f5c842",padding:"10px 18px",borderRadius:100,fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,letterSpacing:".08em",cursor:"pointer"}}>↻ SHARE YOUR CHART</button>
+        <button onClick={()=>window.print()}
+          style={{background:"linear-gradient(135deg,#f5c842,#e8a800)",border:"none",color:"#0d0a14",padding:"10px 18px",borderRadius:100,fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,letterSpacing:".08em",cursor:"pointer"}}>⬇ DOWNLOAD YOUR CHART</button>
+      </div>
 
     </div>
   );
