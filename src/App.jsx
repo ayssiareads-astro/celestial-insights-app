@@ -2985,6 +2985,159 @@ function BirthChartResults({ result, onReset, onUpgrade }) {
         </div>
       )}
 
+      {/* ── Illustrated Birth Chart Cover Card ── */}
+      {houseCusps.length > 0 && fullPlanets.length > 0 && (() => {
+        const displayName = (name || "Your").replace(/['']s$/i,"").trim();
+        const zodiacIllustrations = {
+          Aries:    { art: <><ellipse cx="50" cy="44" rx="10" ry="13" fill="none" stroke="#f5c842" strokeWidth="1.5"/><path d="M50 31 Q44 22 38 26 M50 31 Q56 22 62 26" stroke="#f5c842" strokeWidth="1.5" fill="none"/><path d="M43 50 Q50 58 57 50" stroke="#f5c842" strokeWidth="1" fill="none"/></> },
+          Taurus:   { art: <><circle cx="50" cy="46" r="12" fill="none" stroke="#f5c842" strokeWidth="1.5"/><path d="M38 34 Q50 26 62 34" stroke="#f5c842" strokeWidth="1.5" fill="none"/><path d="M42 30 Q38 22 34 24 M58 30 Q62 22 66 24" stroke="#f5c842" strokeWidth="1.2" fill="none"/></> },
+          Gemini:   { art: <><line x1="40" y1="28" x2="40" y2="62" stroke="#f5c842" strokeWidth="1.5"/><line x1="60" y1="28" x2="60" y2="62" stroke="#f5c842" strokeWidth="1.5"/><line x1="40" y1="38" x2="60" y2="38" stroke="#f5c842" strokeWidth="1.2"/><line x1="40" y1="52" x2="60" y2="52" stroke="#f5c842" strokeWidth="1.2"/><path d="M30 28 Q50 24 70 28 M30 62 Q50 66 70 62" stroke="#f5c842" strokeWidth="1.2" fill="none"/></> },
+          Cancer:   { art: <><path d="M36 42 Q36 28 50 28 Q64 28 64 42 Q64 52 56 58 Q50 62 44 58 Q36 52 36 42Z" fill="none" stroke="#f5c842" strokeWidth="1.5"/><circle cx="42" cy="40" r="4" fill="none" stroke="#f5c842" strokeWidth="1.2"/><circle cx="58" cy="40" r="4" fill="none" stroke="#f5c842" strokeWidth="1.2"/></> },
+          Leo:      { art: <><circle cx="50" cy="50" r="11" fill="none" stroke="#f5c842" strokeWidth="1.5"/><path d="M50 39 Q50 30 44 26 Q36 22 34 28 Q32 34 38 36" stroke="#f5c842" strokeWidth="1.3" fill="none"/><path d="M44 58 Q42 64 46 66 Q50 68 54 66 Q58 64 56 58" stroke="#f5c842" strokeWidth="1.2" fill="none"/><path d="M34 42 Q26 40 26 46 M66 42 Q74 40 74 46" stroke="#f5c842" strokeWidth="1" fill="none"/></> },
+          Virgo:    { art: <><path d="M36 32 L36 58 M36 45 Q44 50 50 44 Q56 38 50 32 Q44 26 36 32" stroke="#f5c842" strokeWidth="1.5" fill="none"/><path d="M50 58 L50 32 M50 45 Q58 50 64 44 L64 58" stroke="#f5c842" strokeWidth="1.5" fill="none"/><path d="M60 58 Q64 64 68 60" stroke="#f5c842" strokeWidth="1.3" fill="none"/></> },
+          Libra:    { art: <><line x1="30" y1="55" x2="70" y2="55" stroke="#f5c842" strokeWidth="1.8"/><line x1="50" y1="55" x2="50" y2="34" stroke="#f5c842" strokeWidth="1.4"/><line x1="34" y1="34" x2="66" y2="34" stroke="#f5c842" strokeWidth="1.4"/><path d="M34 44 Q50 36 66 44" stroke="#f5c842" strokeWidth="1.2" fill="none"/></> },
+          Scorpio:  { art: <><path d="M34 34 L34 54 M34 44 Q42 52 50 44 Q58 36 50 30 Q42 24 34 30" stroke="#f5c842" strokeWidth="1.5" fill="none"/><path d="M50 54 L50 30 M50 44 Q58 52 66 44 L66 56 Q68 62 72 60 L76 64" stroke="#f5c842" strokeWidth="1.5" fill="none"/></> },
+          Sagittarius:{ art: <><line x1="30" y1="64" x2="66" y2="28" stroke="#f5c842" strokeWidth="1.8"/><path d="M50 28 L66 28 L66 44" stroke="#f5c842" strokeWidth="1.5" fill="none"/><path d="M26 60 L30 64 L34 60 M30 64 L30 56" stroke="#f5c842" strokeWidth="1.2" fill="none"/></> },
+          Capricorn:{ art: <><path d="M34 40 Q34 28 44 28 Q54 28 54 40 Q54 52 44 58" stroke="#f5c842" strokeWidth="1.5" fill="none"/><path d="M52 46 Q58 38 64 42 Q70 46 68 54 Q66 62 58 64 Q50 66 46 60" stroke="#f5c842" strokeWidth="1.5" fill="none"/><path d="M44 58 Q40 68 48 70 Q56 72 58 64" stroke="#f5c842" strokeWidth="1.2" fill="none"/></> },
+          Aquarius: { art: <><path d="M28 38 Q34 32 40 38 Q46 44 52 38 Q58 32 64 38 Q70 44 76 38" stroke="#f5c842" strokeWidth="1.6" fill="none"/><path d="M28 52 Q34 46 40 52 Q46 58 52 52 Q58 46 64 52 Q70 58 76 52" stroke="#f5c842" strokeWidth="1.6" fill="none"/></> },
+          Pisces:   { art: <><path d="M42 28 Q34 38 34 50 Q34 62 42 70" stroke="#f5c842" strokeWidth="1.5" fill="none"/><path d="M58 28 Q66 38 66 50 Q66 62 58 70" stroke="#f5c842" strokeWidth="1.5" fill="none"/><line x1="34" y1="49" x2="66" y2="49" stroke="#f5c842" strokeWidth="1.2"/></> },
+        };
+        const signOrder = ["Aries","Taurus","Gemini","Cancer","Leo","Virgo","Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"];
+        const W = 400, H = 400, cx2 = 200, cy2 = 200;
+        const outerRing = 185, innerRing = 130, labelR = 158, iconR = 107;
+        return (
+          <div style={{marginBottom:32,position:"relative"}}>
+            {/* Gold glow behind the card */}
+            <div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse at center, rgba(245,200,66,0.08) 0%, transparent 70%)",borderRadius:24,pointerEvents:"none"}}/>
+            <div style={{background:"#000",borderRadius:24,overflow:"hidden",border:"1px solid rgba(245,200,66,0.3)",boxShadow:"0 0 60px rgba(245,200,66,0.12), inset 0 0 60px rgba(0,0,0,0.8)"}}>
+              {/* Top decorative strip */}
+              <div style={{height:3,background:"linear-gradient(90deg,transparent,rgba(245,200,66,0.3),#f5c842,rgba(245,200,66,0.3),transparent)"}}/>
+              <div style={{padding:"28px 20px 20px",textAlign:"center",position:"relative"}}>
+                {/* Corner sun decoration */}
+                <svg style={{position:"absolute",top:12,left:12,opacity:.5}} width="48" height="48" viewBox="0 0 48 48">
+                  <circle cx="24" cy="24" r="8" fill="none" stroke="#f5c842" strokeWidth="1.2"/>
+                  <path d="M24 4 L24 12 M24 36 L24 44 M4 24 L12 24 M36 24 L44 24 M9 9 L15 15 M33 33 L39 39 M39 9 L33 15 M15 33 L9 39" stroke="#f5c842" strokeWidth="1" strokeLinecap="round"/>
+                  <circle cx="24" cy="24" r="4" fill="#f5c842" opacity=".6"/>
+                </svg>
+                {/* Corner moon decoration */}
+                <svg style={{position:"absolute",top:12,right:12,opacity:.5}} width="40" height="48" viewBox="0 0 40 48">
+                  <path d="M28 6 Q10 12 10 24 Q10 36 28 42 Q16 40 12 30 Q8 18 28 6Z" fill="#f5c842" opacity=".5"/>
+                  <circle cx="32" cy="10" r="2" fill="#f5c842" opacity=".6"/>
+                  <circle cx="36" cy="20" r="1.5" fill="#f5c842" opacity=".4"/>
+                  <circle cx="34" cy="32" r="1" fill="#f5c842" opacity=".3"/>
+                </svg>
+
+                {/* The illustrated zodiac wheel SVG */}
+                <svg viewBox={`0 0 ${W} ${H}`} width="100%" style={{maxWidth:380,display:"block",margin:"0 auto"}}>
+                  <defs>
+                    <radialGradient id="bgGrad" cx="50%" cy="50%" r="50%">
+                      <stop offset="0%" stopColor="#0a0800"/>
+                      <stop offset="100%" stopColor="#000"/>
+                    </radialGradient>
+                    <filter id="glow">
+                      <feGaussianBlur stdDeviation="2" result="blur"/>
+                      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                    </filter>
+                  </defs>
+                  <circle cx={cx2} cy={cy2} r={195} fill="url(#bgGrad)"/>
+                  {/* Star field */}
+                  {[...Array(40)].map((_,i)=>{
+                    const angle=(i*137.5)*(Math.PI/180);const r=60+Math.random()*120;
+                    const x=cx2+r*Math.cos(angle);const y=cy2+r*Math.sin(angle);
+                    return <circle key={i} cx={x} cy={y} r={Math.random()*1.2+0.3} fill="#f5c842" opacity={Math.random()*0.4+0.1}/>;
+                  })}
+                  {/* Outer decorative ring */}
+                  <circle cx={cx2} cy={cy2} r={outerRing} fill="none" stroke="rgba(245,200,66,0.6)" strokeWidth="2" filter="url(#glow)"/>
+                  <circle cx={cx2} cy={cy2} r={outerRing-6} fill="none" stroke="rgba(245,200,66,0.2)" strokeWidth="0.5"/>
+                  <circle cx={cx2} cy={cy2} r={innerRing} fill="none" stroke="rgba(245,200,66,0.5)" strokeWidth="1.5"/>
+                  <circle cx={cx2} cy={cy2} r={innerRing-4} fill="none" stroke="rgba(245,200,66,0.15)" strokeWidth="0.5"/>
+                  {/* 12 zodiac segments with SVG illustrations */}
+                  {signOrder.map((sign, i) => {
+                    const startAngle = (i * 30 - 90) * Math.PI / 180;
+                    const endAngle = ((i + 1) * 30 - 90) * Math.PI / 180;
+                    const midAngle = ((i + 0.5) * 30 - 90) * Math.PI / 180;
+                    const x1o = cx2 + outerRing * Math.cos(startAngle);
+                    const y1o = cy2 + outerRing * Math.sin(startAngle);
+                    const x2o = cx2 + outerRing * Math.cos(endAngle);
+                    const y2o = cy2 + outerRing * Math.sin(endAngle);
+                    const x1i = cx2 + innerRing * Math.cos(startAngle);
+                    const y1i = cy2 + innerRing * Math.sin(startAngle);
+                    const x2i = cx2 + innerRing * Math.cos(endAngle);
+                    const y2i = cy2 + innerRing * Math.sin(endAngle);
+                    // Divider lines
+                    const lx1 = cx2 + innerRing * Math.cos(startAngle);
+                    const ly1 = cy2 + innerRing * Math.sin(startAngle);
+                    const lx2 = cx2 + outerRing * Math.cos(startAngle);
+                    const ly2 = cy2 + outerRing * Math.sin(startAngle);
+                    // Icon position
+                    const ix = cx2 + iconR * Math.cos(midAngle);
+                    const iy = cy2 + iconR * Math.sin(midAngle);
+                    const illus = zodiacIllustrations[sign];
+                    return (
+                      <g key={sign}>
+                        <path d={`M ${x1o} ${y1o} A ${outerRing} ${outerRing} 0 0 1 ${x2o} ${y2o} L ${x2i} ${y2i} A ${innerRing} ${innerRing} 0 0 0 ${x1i} ${y1i} Z`}
+                          fill="rgba(245,200,66,0.04)" stroke="none"/>
+                        <line x1={lx1} y1={ly1} x2={lx2} y2={ly2} stroke="rgba(245,200,66,0.35)" strokeWidth="0.8"/>
+                        {/* Zodiac illustration, rotated to face outward */}
+                        <g transform={`translate(${ix},${iy}) rotate(${(i+0.5)*30}) translate(-50,-49)`}>
+                          <svg width="100" height="98" viewBox="0 0 100 98">{illus?.art}</svg>
+                        </g>
+                        {/* Sign name label on outer ring */}
+                        <text
+                          x={cx2 + labelR * Math.cos(midAngle)}
+                          y={cy2 + labelR * Math.sin(midAngle)}
+                          textAnchor="middle" dominantBaseline="middle"
+                          fontSize="7" fontFamily="'Cinzel',serif" fontWeight="700"
+                          fill="rgba(245,200,66,0.7)" letterSpacing="0.05em"
+                          transform={`rotate(${(i+0.5)*30 + 90}, ${cx2 + labelR * Math.cos(midAngle)}, ${cy2 + labelR * Math.sin(midAngle)})`}
+                        >{sign.toUpperCase()}</text>
+                      </g>
+                    );
+                  })}
+                  {/* Inner dark circle */}
+                  <circle cx={cx2} cy={cy2} r={innerRing-5} fill="#000"/>
+                  {/* Inner decorative ring */}
+                  <circle cx={cx2} cy={cy2} r={84} fill="none" stroke="rgba(245,200,66,0.25)" strokeWidth="1"/>
+                  {/* 4 small stars at cardinal points */}
+                  {[0,90,180,270].map(a=>{
+                    const r2=innerRing-5;
+                    const ax=cx2+r2*Math.cos(a*Math.PI/180);
+                    const ay=cy2+r2*Math.sin(a*Math.PI/180);
+                    return <polygon key={a} points={`${ax},${ay-5} ${ax+1.5},${ay-1.5} ${ax+5},${ay} ${ax+1.5},${ay+1.5} ${ax},${ay+5} ${ax-1.5},${ay+1.5} ${ax-5},${ay} ${ax-1.5},${ay-1.5}`} fill="#f5c842" opacity="0.7"/>;
+                  })}
+                  {/* Moon crescent */}
+                  <path d={`M ${cx2-10} ${cy2-36} Q${cx2-22} ${cy2-28} ${cx2-22} ${cy2-18} Q${cx2-22} ${cy2-8} ${cx2-10} ${cy2} Q${cx2-30} ${cy2-4} ${cx2-30} ${cy2-18} Q${cx2-30} ${cy2-32} ${cx2-10} ${cy2-36}Z`}
+                    fill="#f5c842" opacity="0.5"/>
+                  {/* 4-point star */}
+                  <polygon points={`${cx2},${cy2-28} ${cx2+3},${cy2-3} ${cx2+28},${cy2} ${cx2+3},${cy2+3} ${cx2},${cy2+28} ${cx2-3},${cy2+3} ${cx2-28},${cy2} ${cx2-3},${cy2-3}`}
+                    fill="#f5c842" opacity="0.35" transform={`scale(0.45) translate(${cx2*1.22},${cy2*1.22})`}/>
+                  {/* Center text */}
+                  <text x={cx2} y={cy2-4} textAnchor="middle" dominantBaseline="middle"
+                    fontFamily="'Cinzel',serif" fontWeight="900" fontSize="22" fill="#f5c842"
+                    style={{letterSpacing:"0.02em"}} filter="url(#glow)">
+                    {displayName.toUpperCase()}{displayName.slice(-1).toLowerCase()==="s"?"'":"'S"}
+                  </text>
+                  <text x={cx2} y={cy2+18} textAnchor="middle" dominantBaseline="middle"
+                    fontFamily="'Cinzel',serif" fontWeight="700" fontSize="11" fill="#f5c842" letterSpacing="0.1em">
+                    BIRTH CHART
+                  </text>
+                  <line x1={cx2-36} y1={cy2+30} x2={cx2+36} y2={cy2+30} stroke="rgba(245,200,66,0.4)" strokeWidth="0.7"/>
+                  <text x={cx2} y={cy2+40} textAnchor="middle" dominantBaseline="middle"
+                    fontFamily="'Cinzel',serif" fontSize="6.5" fill="rgba(245,200,66,0.55)" letterSpacing="0.12em">
+                    PRODUCED BY AREWEWOKE.COM
+                  </text>
+                </svg>
+
+                {/* Cloud wisps */}
+                <div style={{position:"absolute",bottom:0,left:0,right:0,height:60,background:"linear-gradient(to top, rgba(0,0,0,0.6), transparent)",pointerEvents:"none",borderRadius:"0 0 24px 24px"}}/>
+              </div>
+              {/* Bottom strip */}
+              <div style={{height:3,background:"linear-gradient(90deg,transparent,rgba(245,200,66,0.3),#f5c842,rgba(245,200,66,0.3),transparent)"}}/>
+            </div>
+          </div>
+        );
+      })()}
+
       {/* Natal Chart Wheel */}
       {houseCusps.length > 0 && fullPlanets.length > 0 && (
         <NatalChartWheel houseCusps={houseCusps} chartPlanets={chartPlanets} fullPlanets={fullPlanets} report={report} planetInHouse={planetInHouse} getFact={getFact} aspects={aspects} transitPlanets={transitPlanets} transitAspects={transitAspects} transitDate={transitDate}/>
@@ -3078,6 +3231,17 @@ function BirthChart() {
   // Refresh transits once per day in background
   React.useEffect(() => {
     try {
+      // ── Cache bust: clear any data cached before the API was restored (July 31 2026) ──
+      const OUTAGE_END = "2026-07-31";
+      const cachedAt = localStorage.getItem("aww_birth_chart_cached_at") || "";
+      if (!cachedAt || cachedAt < OUTAGE_END) {
+        localStorage.removeItem("aww_birth_chart_result");
+        localStorage.removeItem("aww_birth_chart_form");
+        localStorage.removeItem("aww_transit_refresh_date");
+        localStorage.removeItem("aww_birth_chart_cached_at");
+        return; // Let the user re-enter their info for a fresh reading
+      }
+
       const cached = localStorage.getItem("aww_birth_chart_result");
       const cachedForm = localStorage.getItem("aww_birth_chart_form");
       const lastRefresh = localStorage.getItem("aww_transit_refresh_date");
@@ -3093,6 +3257,7 @@ function BirthChart() {
                 setResult(fresh);
                 localStorage.setItem("aww_birth_chart_result", JSON.stringify(fresh));
                 localStorage.setItem("aww_transit_refresh_date", today);
+                localStorage.setItem("aww_birth_chart_cached_at", new Date().toISOString().slice(0,10));
               }
             })
             .catch(() => {});
@@ -3125,6 +3290,7 @@ function BirthChart() {
         try {
           localStorage.setItem("aww_birth_chart_result", JSON.stringify(data));
           localStorage.setItem("aww_birth_chart_form", JSON.stringify(form));
+          localStorage.setItem("aww_birth_chart_cached_at", new Date().toISOString().slice(0,10));
           localStorage.setItem("aww_transit_refresh_date", new Date().toDateString());
         } catch(e) {}
         setStage("results");
@@ -4076,6 +4242,9 @@ function ZodiacStories({ onGetReading }) {
   const [active, setActive] = React.useState(null);
   const [showCTA, setShowCTA] = React.useState(false);
   const [ctaVisible, setCtaVisible] = React.useState(false);
+  const [lastWatched, setLastWatched] = React.useState(null);
+  const ctaTimerRef = React.useRef(null);
+  const iframeRef = React.useRef(null);
 
   const stories = [
     {
@@ -4110,33 +4279,26 @@ function ZodiacStories({ onGetReading }) {
     },
   ];
 
-  const currentStory = stories.find(s => s.videoId === active);
-
-  const ctaTimerRef = React.useRef(null);
-  const iframeRef = React.useRef(null);
+  const currentStory = stories.find(s => s.videoId === (active || lastWatched));
 
   const openVideo = (videoId) => {
+    setLastWatched(videoId);
     setActive(videoId);
     setShowCTA(false);
     setCtaVisible(false);
     if (ctaTimerRef.current) clearTimeout(ctaTimerRef.current);
-    const story = stories.find(s => s.videoId === videoId);
-    const delay = story?.ctaAt || 59000;
-    ctaTimerRef.current = setTimeout(() => {
-      setShowCTA(true);
-      setTimeout(() => setCtaVisible(true), 100);
-      ctaTimerRef.current = setTimeout(() => {
-        setShowCTA(false);
-        setCtaVisible(false);
-      }, 10000);
-    }, delay);
   };
 
   const closeVideo = () => {
     setActive(null);
-    setShowCTA(false);
-    setCtaVisible(false);
-    if (ctaTimerRef.current) clearTimeout(ctaTimerRef.current);
+    // Show CTA after closing video
+    setShowCTA(true);
+    setTimeout(() => setCtaVisible(true), 100);
+    // Auto-dismiss after 12 seconds
+    ctaTimerRef.current = setTimeout(() => {
+      setShowCTA(false);
+      setCtaVisible(false);
+    }, 12000);
   };
 
   React.useEffect(() => {
@@ -4182,6 +4344,27 @@ function ZodiacStories({ onGetReading }) {
           <div style={{fontFamily:"'Cinzel',serif",fontSize:11,color:"#5a5048",lineHeight:1.5}}>More signs<br/>coming soon</div>
         </div>
       </div>
+
+      {/* CTA overlay - shows after closing video */}
+      {showCTA && !active && (
+        <div style={{
+          position:"fixed",inset:0,
+          display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",
+          background:"rgba(13,10,20,0.95)",zIndex:9999,padding:32,textAlign:"center",
+          opacity:ctaVisible?1:0,transition:"opacity 0.6s ease",
+        }}>
+          <button onClick={()=>{setShowCTA(false);setCtaVisible(false);}} style={{position:"absolute",top:20,right:20,background:"rgba(255,255,255,0.1)",border:"none",color:"#fff",borderRadius:"50%",width:36,height:36,cursor:"pointer",fontSize:16}}>✕</button>
+          <div style={{fontSize:48,marginBottom:16}}>{currentStory?.symbol || "✦"}</div>
+          <p style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:22,color:"#f5c842",margin:"0 0 12px",lineHeight:1.4}}>Did this feel like you?</p>
+          <p style={{fontFamily:"Georgia,serif",fontSize:15,color:"#e8d8b0",margin:"0 0 32px",lineHeight:1.7}}>
+            See where <span style={{color:"#f5c842",fontWeight:700}}>{currentStory?.sign}</span> shows up in your chart.
+            <br/>Get a Reading Now.
+          </p>
+          <button onClick={handleGetReading} style={{background:"linear-gradient(135deg,#e8a800,#8a6000)",border:"none",borderRadius:100,padding:"16px 40px",fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:14,letterSpacing:".12em",color:"#0d0a14",cursor:"pointer",boxShadow:"0 0 30px 8px rgba(232,168,0,0.5)",animation:"gl 2s ease-in-out infinite"}}>
+            ✦ GET MY READING
+          </button>
+        </div>
+      )}
 
       {/* Full screen video modal */}
       {active && (
