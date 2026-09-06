@@ -3031,7 +3031,23 @@ function BirthChartResults({ result, onReset, onUpgrade }) {
       }
 
       <div style={{textAlign:"center",marginTop:12}}>
-        <button onClick={onReset} style={{background:"none",border:"none",color:"#4a4440",cursor:"pointer",fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,letterSpacing:".12em"}}>← READ A DIFFERENT CHART</button>
+      <div style={{textAlign:"center",marginTop:20,marginBottom:8}}>
+        <button onClick={onReset} style={{
+          background:"linear-gradient(135deg,rgba(245,200,66,0.12),rgba(90,184,216,0.08))",
+          border:"1px solid rgba(245,200,66,0.4)",
+          borderRadius:24,
+          color:"#f5c842",
+          cursor:"pointer",
+          fontFamily:"'Cinzel',serif",
+          fontWeight:700,
+          fontSize:11,
+          letterSpacing:".12em",
+          padding:"10px 22px",
+          display:"inline-flex",
+          alignItems:"center",
+          gap:8,
+        }}>✦ READ A DIFFERENT CHART</button>
+      </div>
       </div>
     </div>
   );
@@ -3039,11 +3055,51 @@ function BirthChartResults({ result, onReset, onUpgrade }) {
 }
 
 function BirthChart() {
-  const [stage, setStage] = useState("form");
-  const [result, setResult] = useState(null);
+  const getInitialStage = () => {
+    try {
+      const cached = localStorage.getItem("aww_birth_chart_result");
+      if (cached) { const p = JSON.parse(cached); if (p?.name) return "results"; }
+    } catch(e) {}
+    return "form";
+  };
+  const getInitialResult = () => {
+    try { const c = localStorage.getItem("aww_birth_chart_result"); return c ? JSON.parse(c) : null; } catch(e) { return null; }
+  };
+  const getInitialForm = () => {
+    try { const c = localStorage.getItem("aww_birth_chart_form"); return c ? JSON.parse(c) : { name:"", date:"", time:"", city:"", country_code:"US" }; } catch(e) { return { name:"", date:"", time:"", city:"", country_code:"US" }; }
+  };
+
+  const [stage, setStage] = useState(getInitialStage);
+  const [result, setResult] = useState(getInitialResult);
   const [pendingName, setPendingName] = useState("");
   const [step, setStep] = useState(0);
-  const [form, setForm] = useState({ name:"", date:"", time:"", city:"", country_code:"US" });
+  const [form, setForm] = useState(getInitialForm);
+
+  // Refresh transits once per day in background
+  React.useEffect(() => {
+    try {
+      const cached = localStorage.getItem("aww_birth_chart_result");
+      const cachedForm = localStorage.getItem("aww_birth_chart_form");
+      const lastRefresh = localStorage.getItem("aww_transit_refresh_date");
+      const today = new Date().toDateString();
+      if (cached && cachedForm && lastRefresh !== today) {
+        const parsed = JSON.parse(cached);
+        const parsedForm = JSON.parse(cachedForm);
+        if (parsed?.name) {
+          const isSubscribed = (() => { try { return localStorage.getItem("aww_subscribed") === "true"; } catch(e) { return false; } })();
+          fetchBirthChart({ ...parsedForm, paid: isSubscribed })
+            .then(fresh => {
+              if (fresh?.name) {
+                setResult(fresh);
+                localStorage.setItem("aww_birth_chart_result", JSON.stringify(fresh));
+                localStorage.setItem("aww_transit_refresh_date", today);
+              }
+            })
+            .catch(() => {});
+        }
+      }
+    } catch(e) {}
+  }, []);
 
   const fieldGroups = [
     [{ key:"name", label:"What is your name?", placeholder:"Your name", type:"text", hint:"Your cosmic identifier ✦" }],
@@ -3066,6 +3122,11 @@ function BirthChart() {
         const isSubscribed = (() => { try { return localStorage.getItem("aww_subscribed") === "true"; } catch(e) { return false; } })();
         const data = await fetchBirthChart({ ...form, paid: isSubscribed });
         setResult(data);
+        try {
+          localStorage.setItem("aww_birth_chart_result", JSON.stringify(data));
+          localStorage.setItem("aww_birth_chart_form", JSON.stringify(form));
+          localStorage.setItem("aww_transit_refresh_date", new Date().toDateString());
+        } catch(e) {}
         setStage("results");
       } catch (err) {
         setStage("form");
@@ -3076,7 +3137,14 @@ function BirthChart() {
     }
   };
 
-  const handleReset = () => { setStage("form"); setResult(null); setStep(0); setForm({ name:"", date:"", time:"", city:"", country_code:"US" }); };
+  const handleReset = () => {
+    try {
+      localStorage.removeItem("aww_birth_chart_result");
+      localStorage.removeItem("aww_birth_chart_form");
+      localStorage.removeItem("aww_transit_refresh_date");
+    } catch(e) {}
+    setStage("form"); setResult(null); setStep(0); setForm({ name:"", date:"", time:"", city:"", country_code:"US" });
+  };
 
   const handleUpgrade = async () => {
     // Re-fetch with paid:true after membership verified
@@ -4004,8 +4072,11 @@ function PlanetExplainer() {
 
 // ─── MAIN APP ───────────────────────────────────────────────────
 // ── Zodiac Stories ────────────────────────────────────────────
-function ZodiacStories() {
+function ZodiacStories({ onGetReading }) {
   const [active, setActive] = React.useState(null);
+  const [showCTA, setShowCTA] = React.useState(false);
+  const [ctaVisible, setCtaVisible] = React.useState(false);
+  const activeStory = active ? stories.find(s => s.videoId === active) : null;
 
   const stories = [
     {
@@ -4037,21 +4108,46 @@ function ZodiacStories() {
     },
   ];
 
+  const openVideo = (videoId) => {
+    setActive(videoId);
+    setShowCTA(false);
+    setCtaVisible(false);
+    // YouTube Shorts are typically 15-60s. We'll show CTA after 45s
+    setTimeout(() => {
+      setShowCTA(true);
+      setTimeout(() => setCtaVisible(true), 100); // fade in
+    }, 45000);
+  };
+
+  const closeVideo = () => {
+    setActive(null);
+    setShowCTA(false);
+    setCtaVisible(false);
+  };
+
+  const handleGetReading = () => {
+    closeVideo();
+    if (onGetReading) onGetReading();
+  };
+
+  const currentStory = stories.find(s => s.videoId === active);
+
   return (
     <div style={{animation:"up .5s ease"}}>
       <div style={{textAlign:"center",marginBottom:20}}>
         <div style={{fontSize:36,marginBottom:8}}>🎬</div>
         <h2 style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:22,color:"#f5c842",margin:"0 0 6px"}}>Zodiac Stories</h2>
-        <p style={{fontFamily:"Georgia,serif",color:"#a8e060",fontSize:13,margin:0}}>Written & cast by Ayssia Mason</p>
+        <p style={{fontFamily:"Georgia,serif",color:"#a8e060",fontSize:13,margin:"0 0 8px"}}>Written & cast by Ayssia Mason</p>
+        <p style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:13,color:"#f5c842",margin:"0 0 4px",lineHeight:1.5}}>"What if every zodiac sign had a life story?"</p>
+        <p style={{fontFamily:"Georgia,serif",color:"#c8a878",fontSize:12,margin:0,lineHeight:1.6,fontStyle:"italic"}}>Fictional stories based on the real journeys of each sign. Watch every experience that shaped each sign into who they were meant to become.</p>
       </div>
 
       {/* Horizontal scroll row */}
       <div style={{display:"flex",gap:12,overflowX:"auto",paddingBottom:12,scrollSnapType:"x mandatory",WebkitOverflowScrolling:"touch",msOverflowStyle:"none",scrollbarWidth:"none"}}>
         {stories.map(s => (
-          <div key={s.sign} onClick={()=>setActive(s.videoId)} style={{flex:"0 0 160px",borderRadius:16,overflow:"hidden",border:`2px solid ${s.color}66`,background:"rgba(0,0,0,0.5)",cursor:"pointer",scrollSnapAlign:"start",transition:"transform 0.2s",position:"relative"}} >
-            {/* Portrait thumbnail */}
+          <div key={s.sign} onClick={()=>openVideo(s.videoId)} style={{flex:"0 0 160px",borderRadius:16,overflow:"hidden",border:`2px solid ${s.color}66`,background:"rgba(0,0,0,0.5)",cursor:"pointer",scrollSnapAlign:"start",position:"relative"}}>
             <div style={{position:"relative",paddingTop:"177%",background:"#111"}}>
-              <img src={s.thumbnail} alt={s.sign} style={{position:"absolute",top:0,left:0,width:"100%",height:"100%",objectFit:"cover"}} onError={e=>{e.target.style.background="#222";e.target.style.display="none";}}/>
+              <img src={s.thumbnail} alt={s.sign} style={{position:"absolute",top:0,left:0,width:"100%",height:"100%",objectFit:"cover"}} onError={e=>{e.target.style.display="none";}}/>
               <div style={{position:"absolute",inset:0,background:"linear-gradient(to bottom,rgba(0,0,0,0.1),rgba(0,0,0,0.7))",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
                 <div style={{width:44,height:44,borderRadius:"50%",background:"rgba(255,255,255,0.85)",display:"flex",alignItems:"center",justifyContent:"center",marginBottom:8}}>
                   <span style={{fontSize:18,marginLeft:3}}>▶</span>
@@ -4065,8 +4161,6 @@ function ZodiacStories() {
             </div>
           </div>
         ))}
-
-        {/* Coming soon card */}
         <div style={{flex:"0 0 160px",borderRadius:16,border:"2px dashed rgba(255,200,50,0.2)",background:"rgba(255,200,50,0.03)",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",minHeight:285,scrollSnapAlign:"start",padding:12,textAlign:"center"}}>
           <div style={{fontSize:28,marginBottom:8}}>✨</div>
           <div style={{fontFamily:"'Cinzel',serif",fontSize:11,color:"#5a5048",lineHeight:1.5}}>More signs<br/>coming soon</div>
@@ -4075,8 +4169,10 @@ function ZodiacStories() {
 
       {/* Full screen video modal */}
       {active && (
-        <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.95)",zIndex:9999,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
-          <button onClick={()=>setActive(null)} style={{position:"absolute",top:20,right:20,background:"rgba(255,255,255,0.15)",border:"none",color:"#fff",borderRadius:"50%",width:40,height:40,cursor:"pointer",fontSize:18,zIndex:10}}>✕</button>
+        <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.97)",zIndex:9999,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
+          <button onClick={closeVideo} style={{position:"absolute",top:20,right:20,background:"rgba(255,255,255,0.15)",border:"none",color:"#fff",borderRadius:"50%",width:40,height:40,cursor:"pointer",fontSize:18,zIndex:10000}}>✕</button>
+
+          {/* Video */}
           <div style={{width:"100%",maxWidth:400,paddingTop:"177.77%",position:"relative"}}>
             <iframe
               src={`https://www.youtube.com/embed/${active}?autoplay=1&rel=0`}
@@ -4085,6 +4181,67 @@ function ZodiacStories() {
               allowFullScreen
             />
           </div>
+
+          {/* End of video CTA overlay */}
+          {showCTA && (
+            <div style={{
+              position:"absolute",
+              inset:0,
+              display:"flex",
+              flexDirection:"column",
+              alignItems:"center",
+              justifyContent:"center",
+              background:"rgba(0,0,0,0.88)",
+              zIndex:10001,
+              padding:24,
+              opacity: ctaVisible ? 1 : 0,
+              transition:"opacity 0.8s ease",
+              textAlign:"center",
+            }}>
+              <div style={{fontSize:40,marginBottom:16}}>{currentStory?.symbol || "✦"}</div>
+              <p style={{
+                fontFamily:"'Cinzel',serif",
+                fontWeight:900,
+                fontSize:22,
+                color:"#f5c842",
+                margin:"0 0 12px",
+                lineHeight:1.4,
+                animation:"up 0.6s ease",
+              }}>Did this feel like you?</p>
+              <p style={{
+                fontFamily:"Georgia,serif",
+                fontSize:15,
+                color:"#e8d8b0",
+                margin:"0 0 28px",
+                lineHeight:1.7,
+                animation:"up 0.8s ease",
+              }}>
+                See where <span style={{color:"#f5c842",fontWeight:700}}>{currentStory?.sign}</span> shows up in your chart.
+                <br/>Get a Reading Now.
+              </p>
+              <button
+                onClick={handleGetReading}
+                style={{
+                  background:"linear-gradient(135deg,#e8a800,#8a6000)",
+                  border:"none",
+                  borderRadius:100,
+                  padding:"16px 36px",
+                  fontFamily:"'Cinzel',serif",
+                  fontWeight:900,
+                  fontSize:14,
+                  letterSpacing:".12em",
+                  color:"#0d0a14",
+                  cursor:"pointer",
+                  boxShadow:"0 0 30px 8px rgba(232,168,0,0.5)",
+                  animation:"gl 2s ease-in-out infinite",
+                  marginBottom:16,
+                }}>
+                ✦ GET MY READING
+              </button>
+              <button onClick={closeVideo} style={{background:"none",border:"none",color:"#5a5048",fontFamily:"'Cinzel',serif",fontSize:10,letterSpacing:".1em",cursor:"pointer"}}>CLOSE</button>
+            </div>
+          )}
+
           <a href={`https://youtube.com/shorts/${active}`} target="_blank" rel="noopener noreferrer" style={{marginTop:16,color:"#f5c842",fontFamily:"'Cinzel',serif",fontSize:11,letterSpacing:".08em",textDecoration:"none",border:"1px solid #f5c84244",borderRadius:20,padding:"6px 16px"}}>OPEN IN YOUTUBE</a>
         </div>
       )}
@@ -4115,9 +4272,9 @@ export default function AstrologyApp() {
 
   const tabs = [
     {label:"🎬 Stories",key:"stories"},
-    {label:"💬 Community",key:"community"},
     {label:"🌠 Horoscope",key:"horoscope"},
     {label:"🔮 Game",key:"guess"},
+    {label:"💬 Community",key:"community"},
     {label:"🌌 Get A Reading",key:"birthchart"},
     {label:"🌟 Celebrity",key:"celebrity"},
     {label:"✦ Fun Facts",key:"facts"},
@@ -4135,7 +4292,31 @@ export default function AstrologyApp() {
       <div style={{position:"relative",zIndex:1,maxWidth:700,margin:"0 auto",padding:"20px 18px 80px"}}>
         <div style={{display:"flex",gap:8,justifyContent:"center",marginBottom:24,flexWrap:"wrap"}}>
           {tabs.map(tab=>(
-            <button key={tab.key} onClick={()=>{setTopTab(tab.key);setMode("home");reset();}} style={{background:topTab===tab.key?"linear-gradient(135deg,#e8a800,#8a6000)":"rgba(255,200,50,0.08)",border:"2px solid "+(topTab===tab.key?"#e8a800":"rgba(255,200,50,0.3)"),color:topTab===tab.key?"#0d0a14":"#f5c842",padding:"8px 12px",borderRadius:"100px",fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:11,letterSpacing:".04em",cursor:"pointer",transition:"all 0.25s",boxShadow:topTab===tab.key?"0 0 16px 4px rgba(232,168,0,0.3)":"none"}}>{tab.label}</button>
+            <button key={tab.key} onClick={()=>{setTopTab(tab.key);setMode("home");reset();}} style={{
+              background: tab.key==="birthchart"
+                ? "linear-gradient(135deg,#e8a800,#8a6000)"
+                : topTab===tab.key
+                  ? "linear-gradient(135deg,#e8a800,#8a6000)"
+                  : "rgba(255,200,50,0.08)",
+              border: tab.key==="birthchart"
+                ? "2px solid #e8a800"
+                : "2px solid "+(topTab===tab.key?"#e8a800":"rgba(255,200,50,0.3)"),
+              color: tab.key==="birthchart" || topTab===tab.key ? "#0d0a14" : "#f5c842",
+              padding:"8px 12px",
+              borderRadius:"100px",
+              fontFamily:"'Cinzel',serif",
+              fontWeight:900,
+              fontSize:11,
+              letterSpacing:".04em",
+              cursor:"pointer",
+              transition:"all 0.25s",
+              boxShadow: tab.key==="birthchart"
+                ? "0 0 20px 6px rgba(232,168,0,0.5)"
+                : topTab===tab.key
+                  ? "0 0 16px 4px rgba(232,168,0,0.3)"
+                  : "none",
+              animation: tab.key==="birthchart" ? "gl 3s ease-in-out infinite" : "none",
+            }}>{tab.label}</button>
           ))}
         </div>
 
@@ -4143,7 +4324,7 @@ export default function AstrologyApp() {
         {topTab==="birthchart" && <BirthChart />}
         {topTab==="celebrity" && <CelebrityConnection />}
         {topTab==="community" && <Community />}
-        {topTab==="stories" && <ZodiacStories />}
+        {topTab==="stories" && <ZodiacStories onGetReading={()=>setTopTab("birthchart")} />}
         <div style={{display:topTab==="guess"?"block":"none"}}><ZodiacQuiz /></div>
 
         {topTab==="install" && (
