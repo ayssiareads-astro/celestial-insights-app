@@ -2923,6 +2923,162 @@ function NatalChartWheel({ name, houseCusps, chartPlanets, fullPlanets, report, 
   );
 }
 
+function AreWeWokeBirthChartWheel({ name, chartPlanets = {}, fullPlanets = [] }) {
+  const displayName = (name || "Your").replace(/['']s$/i,"").trim();
+  const zodiacIllustrations = {
+    Aries:    { art: <><ellipse cx="50" cy="44" rx="10" ry="13" fill="none" stroke="#f5c842" strokeWidth="1.5"/><path d="M50 31 Q44 22 38 26 M50 31 Q56 22 62 26" stroke="#f5c842" strokeWidth="1.5" fill="none"/><path d="M43 50 Q50 58 57 50" stroke="#f5c842" strokeWidth="1" fill="none"/></> },
+    Taurus:   { art: <><circle cx="50" cy="46" r="12" fill="none" stroke="#f5c842" strokeWidth="1.5"/><path d="M38 34 Q50 26 62 34" stroke="#f5c842" strokeWidth="1.5" fill="none"/><path d="M42 30 Q38 22 34 24 M58 30 Q62 22 66 24" stroke="#f5c842" strokeWidth="1.2" fill="none"/></> },
+    Gemini:   { art: <><line x1="40" y1="28" x2="40" y2="62" stroke="#f5c842" strokeWidth="1.5"/><line x1="60" y1="28" x2="60" y2="62" stroke="#f5c842" strokeWidth="1.5"/><line x1="40" y1="38" x2="60" y2="38" stroke="#f5c842" strokeWidth="1.2"/><line x1="40" y1="52" x2="60" y2="52" stroke="#f5c842" strokeWidth="1.2"/><path d="M30 28 Q50 24 70 28 M30 62 Q50 66 70 62" stroke="#f5c842" strokeWidth="1.2" fill="none"/></> },
+    Cancer:   { art: <><path d="M36 42 Q36 28 50 28 Q64 28 64 42 Q64 52 56 58 Q50 62 44 58 Q36 52 36 42Z" fill="none" stroke="#f5c842" strokeWidth="1.5"/><circle cx="42" cy="40" r="4" fill="none" stroke="#f5c842" strokeWidth="1.2"/><circle cx="58" cy="40" r="4" fill="none" stroke="#f5c842" strokeWidth="1.2"/></> },
+    Leo:      { art: <><circle cx="50" cy="50" r="11" fill="none" stroke="#f5c842" strokeWidth="1.5"/><path d="M50 39 Q50 30 44 26 Q36 22 34 28 Q32 34 38 36" stroke="#f5c842" strokeWidth="1.3" fill="none"/><path d="M44 58 Q42 64 46 66 Q50 68 54 66 Q58 64 56 58" stroke="#f5c842" strokeWidth="1.2" fill="none"/><path d="M34 42 Q26 40 26 46 M66 42 Q74 40 74 46" stroke="#f5c842" strokeWidth="1" fill="none"/></> },
+    Virgo:    { art: <><path d="M36 32 L36 58 M36 45 Q44 50 50 44 Q56 38 50 32 Q44 26 36 32" stroke="#f5c842" strokeWidth="1.5" fill="none"/><path d="M50 58 L50 32 M50 45 Q58 50 64 44 L64 58" stroke="#f5c842" strokeWidth="1.5" fill="none"/><path d="M60 58 Q64 64 68 60" stroke="#f5c842" strokeWidth="1.3" fill="none"/></> },
+    Libra:    { art: <><line x1="30" y1="55" x2="70" y2="55" stroke="#f5c842" strokeWidth="1.8"/><line x1="50" y1="55" x2="50" y2="34" stroke="#f5c842" strokeWidth="1.4"/><line x1="34" y1="34" x2="66" y2="34" stroke="#f5c842" strokeWidth="1.4"/><path d="M34 44 Q50 36 66 44" stroke="#f5c842" strokeWidth="1.2" fill="none"/></> },
+    Scorpio:  { art: <><path d="M34 34 L34 54 M34 44 Q42 52 50 44 Q58 36 50 30 Q42 24 34 30" stroke="#f5c842" strokeWidth="1.5" fill="none"/><path d="M50 54 L50 30 M50 44 Q58 52 66 44 L66 56 Q68 62 72 60 L76 64" stroke="#f5c842" strokeWidth="1.5" fill="none"/></> },
+    Sagittarius:{ art: <><line x1="30" y1="64" x2="66" y2="28" stroke="#f5c842" strokeWidth="1.8"/><path d="M50 28 L66 28 L66 44" stroke="#f5c842" strokeWidth="1.5" fill="none"/><path d="M26 60 L30 64 L34 60 M30 64 L30 56" stroke="#f5c842" strokeWidth="1.2" fill="none"/></> },
+    Capricorn:{ art: <><path d="M34 40 Q34 28 44 28 Q54 28 54 40 Q54 52 44 58" stroke="#f5c842" strokeWidth="1.5" fill="none"/><path d="M52 46 Q58 38 64 42 Q70 46 68 54 Q66 62 58 64 Q50 66 46 60" stroke="#f5c842" strokeWidth="1.5" fill="none"/><path d="M44 58 Q40 68 48 70 Q56 72 58 64" stroke="#f5c842" strokeWidth="1.2" fill="none"/></> },
+    Aquarius: { art: <><path d="M28 38 Q34 32 40 38 Q46 44 52 38 Q58 32 64 38 Q70 44 76 38" stroke="#f5c842" strokeWidth="1.6" fill="none"/><path d="M28 52 Q34 46 40 52 Q46 58 52 52 Q58 46 64 52 Q70 58 76 52" stroke="#f5c842" strokeWidth="1.6" fill="none"/></> },
+    Pisces:   { art: <><path d="M42 28 Q34 38 34 50 Q34 62 42 70" stroke="#f5c842" strokeWidth="1.5" fill="none"/><path d="M58 28 Q66 38 66 50 Q66 62 58 70" stroke="#f5c842" strokeWidth="1.5" fill="none"/><line x1="34" y1="49" x2="66" y2="49" stroke="#f5c842" strokeWidth="1.2"/></> },
+  };
+  const signOrder = ["Aries","Taurus","Gemini","Cancer","Leo","Virgo","Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"];
+  const W = 400, H = 400, cx2 = 200, cy2 = 200;
+  const outerRing = 185, innerRing = 130, labelR = 158, iconR = 107;
+
+  // ── Presentation-only data layer: highlight Big Three, small glyphs for other planets. No lines, no house math. ──
+  const planetSymbols = { Sun:"☉",Moon:"☽",Mercury:"☿",Venus:"♀",Mars:"♂",Jupiter:"♃",Saturn:"♄" };
+  const bigThreeSigns = { Sun: chartPlanets.Sun, Moon: chartPlanets.Moon, Rising: chartPlanets.Rising };
+  const bigThreeGlyphs = { Sun:"☉", Moon:"☽", Rising:"↑" };
+  const highlightedSigns = {}; // sign -> array of Big Three labels landing there
+  Object.entries(bigThreeSigns).forEach(([label, sign]) => {
+    if (!sign) return;
+    if (!highlightedSigns[sign]) highlightedSigns[sign] = [];
+    highlightedSigns[sign].push(label);
+  });
+  // A small, curated set of classical planets — not the full ten, and never connected by lines
+  const classicalPlanets = ["Mercury","Venus","Mars","Jupiter","Saturn"];
+  const markerPlanets = classicalPlanets
+    .map(pname => fullPlanets.find(p => p.name === pname))
+    .filter(p => p && p.sign && signOrder.includes(p.sign));
+
+  return (
+    <div style={{marginBottom:28,position:"relative"}}>
+      <div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse at center, rgba(245,200,66,0.08) 0%, transparent 70%)",borderRadius:24,pointerEvents:"none"}}/>
+      <div style={{background:"#000",borderRadius:28,overflow:"hidden",border:"1px solid rgba(245,200,66,0.35)",boxShadow:"0 0 90px rgba(245,200,66,0.18), inset 0 0 80px rgba(0,0,0,0.85)"}}>
+        <div style={{height:4,background:"linear-gradient(90deg,transparent,rgba(245,200,66,0.4),#f5c842,rgba(245,200,66,0.4),transparent)"}}/>
+        <div style={{padding:"36px 22px 28px",textAlign:"center",position:"relative"}}>
+          {/* Corner sun */}
+          <svg style={{position:"absolute",top:14,left:14,opacity:.55}} width="56" height="56" viewBox="0 0 48 48">
+            <circle cx="24" cy="24" r="8" fill="none" stroke="#f5c842" strokeWidth="1.2"/>
+            <path d="M24 4 L24 12 M24 36 L24 44 M4 24 L12 24 M36 24 L44 24 M9 9 L15 15 M33 33 L39 39 M39 9 L33 15 M15 33 L9 39" stroke="#f5c842" strokeWidth="1" strokeLinecap="round"/>
+            <circle cx="24" cy="24" r="4" fill="#f5c842" opacity=".6"/>
+          </svg>
+          {/* Corner moon */}
+          <svg style={{position:"absolute",top:14,right:14,opacity:.55}} width="46" height="56" viewBox="0 0 40 48">
+            <path d="M28 6 Q10 12 10 24 Q10 36 28 42 Q16 40 12 30 Q8 18 28 6Z" fill="#f5c842" opacity=".5"/>
+            <circle cx="32" cy="10" r="2" fill="#f5c842" opacity=".6"/>
+            <circle cx="36" cy="20" r="1.5" fill="#f5c842" opacity=".4"/>
+          </svg>
+          <svg viewBox={`0 0 ${W} ${H}`} width="100%" style={{maxWidth:480,display:"block",margin:"0 auto"}}>
+            <defs>
+              <radialGradient id="bcGrad" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stopColor="#0a0800"/>
+                <stop offset="100%" stopColor="#000"/>
+              </radialGradient>
+              <filter id="bcGlow">
+                <feGaussianBlur stdDeviation="2" result="blur"/>
+                <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+              <filter id="bcGlowStrong">
+                <feGaussianBlur stdDeviation="4" result="blur"/>
+                <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+            </defs>
+            <circle cx={cx2} cy={cy2} r={195} fill="url(#bcGrad)"/>
+            {[...Array(40)].map((_,i)=>{
+              const angle=(i*137.5)*(Math.PI/180);const r=60+(i*7%120);
+              const x=cx2+r*Math.cos(angle);const y=cy2+r*Math.sin(angle);
+              return <circle key={i} cx={x} cy={y} r={(i%3)*0.4+0.4} fill="#f5c842" opacity={(i%5)*0.07+0.1}/>;
+            })}
+            <circle cx={cx2} cy={cy2} r={outerRing} fill="none" stroke="rgba(245,200,66,0.7)" strokeWidth="3" filter="url(#bcGlow)"/>
+            <circle cx={cx2} cy={cy2} r={outerRing-6} fill="none" stroke="rgba(245,200,66,0.25)" strokeWidth="0.75"/>
+            <circle cx={cx2} cy={cy2} r={innerRing} fill="none" stroke="rgba(245,200,66,0.5)" strokeWidth="1.5"/>
+            <circle cx={cx2} cy={cy2} r={innerRing-4} fill="none" stroke="rgba(245,200,66,0.15)" strokeWidth="0.5"/>
+            {signOrder.map((sign, i) => {
+              const startAngle = (i * 30 - 90) * Math.PI / 180;
+              const endAngle = ((i+1) * 30 - 90) * Math.PI / 180;
+              const midAngle = ((i+0.5) * 30 - 90) * Math.PI / 180;
+              const x1o=cx2+outerRing*Math.cos(startAngle), y1o=cy2+outerRing*Math.sin(startAngle);
+              const x2o=cx2+outerRing*Math.cos(endAngle),   y2o=cy2+outerRing*Math.sin(endAngle);
+              const x1i=cx2+innerRing*Math.cos(startAngle), y1i=cy2+innerRing*Math.sin(startAngle);
+              const x2i=cx2+innerRing*Math.cos(endAngle),   y2i=cy2+innerRing*Math.sin(endAngle);
+              const ix=cx2+iconR*Math.cos(midAngle), iy=cy2+iconR*Math.sin(midAngle);
+              const lx=cx2+labelR*Math.cos(midAngle), ly=cy2+labelR*Math.sin(midAngle);
+              const hits = highlightedSigns[sign]; // Big Three landing in this sign, if any
+              const isHighlighted = !!hits;
+              return (
+                <g key={sign}>
+                  <path d={`M ${x1o} ${y1o} A ${outerRing} ${outerRing} 0 0 1 ${x2o} ${y2o} L ${x2i} ${y2i} A ${innerRing} ${innerRing} 0 0 0 ${x1i} ${y1i} Z`}
+                    fill={isHighlighted ? "rgba(168,224,96,0.10)" : "rgba(245,200,66,0.04)"} stroke="none"/>
+                  <line x1={cx2+innerRing*Math.cos(startAngle)} y1={cy2+innerRing*Math.sin(startAngle)} x2={cx2+outerRing*Math.cos(startAngle)} y2={cy2+outerRing*Math.sin(startAngle)} stroke="rgba(245,200,66,0.35)" strokeWidth="0.8"/>
+                  <g transform={`translate(${ix},${iy}) rotate(${(i+0.5)*30}) translate(-50,-49)`} filter={isHighlighted ? "url(#bcGlowStrong)" : undefined}>
+                    <svg width="100" height="98" viewBox="0 0 100 98">{zodiacIllustrations[sign]?.art}</svg>
+                  </g>
+                  <text x={lx} y={ly} textAnchor="middle" dominantBaseline="middle" fontSize="7" fontFamily="'Cinzel',serif" fontWeight="700"
+                    fill={isHighlighted ? "#a8e060" : "rgba(245,200,66,0.7)"} letterSpacing="0.05em"
+                    transform={`rotate(${(i+0.5)*30+90}, ${lx}, ${ly})`}>{sign.toUpperCase()}</text>
+                  {/* Big Three badge — the ☉ ☽ ↑ markers called for in spec, no connecting lines */}
+                  {hits && (
+                    <text x={cx2+(iconR-24)*Math.cos(midAngle)} y={cy2+(iconR-24)*Math.sin(midAngle)}
+                      textAnchor="middle" dominantBaseline="middle" fontSize="9" fill="#a8e060">
+                      {hits.map(h => bigThreeGlyphs[h]).join(" ")}
+                    </text>
+                  )}
+                </g>
+              );
+            })}
+            {/* Small optional gold glyphs for other planets — sitting inside their sign's wedge, never connected */}
+            {markerPlanets.map((p, i) => {
+              const signIdx = signOrder.indexOf(p.sign);
+              const sameSignBefore = markerPlanets.slice(0, i).filter(o => o.sign === p.sign).length;
+              const midAngle = ((signIdx+0.5) * 30 - 90) * Math.PI / 180;
+              const markerR = (innerRing + 16) + sameSignBefore * 11;
+              const mx = cx2 + markerR * Math.cos(midAngle), my = cy2 + markerR * Math.sin(midAngle);
+              return (
+                <g key={p.name}>
+                  <circle cx={mx} cy={my} r={7} fill="rgba(0,0,0,0.85)" stroke="#f5c842" strokeOpacity="0.55" strokeWidth="0.8"/>
+                  <text x={mx} y={my} textAnchor="middle" dominantBaseline="middle" fontSize="7.5" fill="#f5c842" fillOpacity="0.85">{planetSymbols[p.name]}</text>
+                </g>
+              );
+            })}
+            <circle cx={cx2} cy={cy2} r={innerRing-5} fill="#000"/>
+            <circle cx={cx2} cy={cy2} r={84} fill="none" stroke="rgba(245,200,66,0.25)" strokeWidth="1"/>
+            {[0,90,180,270].map(a=>{
+              const ax=cx2+(innerRing-5)*Math.cos(a*Math.PI/180), ay=cy2+(innerRing-5)*Math.sin(a*Math.PI/180);
+              return <polygon key={a} points={`${ax},${ay-5} ${ax+1.5},${ay-1.5} ${ax+5},${ay} ${ax+1.5},${ay+1.5} ${ax},${ay+5} ${ax-1.5},${ay+1.5} ${ax-5},${ay} ${ax-1.5},${ay-1.5}`} fill="#f5c842" opacity="0.7"/>;
+            })}
+            <path d={`M ${cx2-10} ${cy2-36} Q${cx2-22} ${cy2-28} ${cx2-22} ${cy2-18} Q${cx2-22} ${cy2-8} ${cx2-10} ${cy2} Q${cx2-30} ${cy2-4} ${cx2-30} ${cy2-18} Q${cx2-30} ${cy2-32} ${cx2-10} ${cy2-36}Z`} fill="#f5c842" opacity="0.5"/>
+            <text x={cx2} y={cy2-2} textAnchor="middle" dominantBaseline="middle" fontFamily="'Cinzel',serif" fontWeight="900" fontSize="25" fill="#f5c842" letterSpacing="0.02em" filter="url(#bcGlow)">
+              {displayName.toUpperCase()}{displayName.slice(-1).toLowerCase()==="s" ? "'" : "'S"}
+            </text>
+            <text x={cx2} y={cy2+21} textAnchor="middle" dominantBaseline="middle" fontFamily="'Cinzel',serif" fontWeight="700" fontSize="12" fill="#f5c842" letterSpacing="0.12em">BIRTH CHART</text>
+            <line x1={cx2-40} y1={cy2+33} x2={cx2+40} y2={cy2+33} stroke="rgba(245,200,66,0.45)" strokeWidth="0.8"/>
+            <text x={cx2} y={cy2+43} textAnchor="middle" dominantBaseline="middle" fontFamily="'Cinzel',serif" fontSize="7" fill="rgba(245,200,66,0.6)" letterSpacing="0.13em">PRODUCED BY AREWEWOKE.COM</text>
+          </svg>
+          {(chartPlanets.Sun || chartPlanets.Moon || chartPlanets.Rising) && (
+            <div style={{display:"flex",justifyContent:"center",gap:20,marginTop:14,flexWrap:"wrap"}}>
+              {["Sun","Moon","Rising"].map(label => chartPlanets[label] && (
+                <span key={label} style={{fontFamily:"'Cinzel',serif",fontSize:11,color:"#a8e060",letterSpacing:".08em"}}>
+                  {bigThreeGlyphs[label]} {chartPlanets[label]} {label}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+        <div style={{height:4,background:"linear-gradient(90deg,transparent,rgba(245,200,66,0.4),#f5c842,rgba(245,200,66,0.4),transparent)"}}/>
+      </div>
+    </div>
+  );
+}
+
 function BirthChartResults({ result, onReset, onUpgrade }) {
   const { name, city, planets: chartPlanets, chartPlanets: fullPlanets = [], houseCusps = [], aspects = [], report = null, transitPlanets = [], transitAspects = [], transitDate = null } = result;
   const [memberVerified, setMemberVerified] = useState(() => {
@@ -2954,10 +3110,47 @@ function BirthChartResults({ result, onReset, onUpgrade }) {
         <span style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#a8e060",letterSpacing:".12em"}}>✦ FULL READING UNLOCKED ✦</span>
       </div>
 
-      {/* Technical Natal Chart — full geometry: houses, aspects, transits — this IS the hero wheel now */}
-      {houseCusps.length > 0 && fullPlanets.length > 0 && (
-        <NatalChartWheel name={name} houseCusps={houseCusps} chartPlanets={chartPlanets} fullPlanets={fullPlanets} report={report} planetInHouse={planetInHouse} getFact={getFact} aspects={aspects} transitPlanets={transitPlanets} transitAspects={transitAspects} transitDate={transitDate}/>
+      {/* Today's Energy — the API-driven daily synthesis, no chart geometry needed to show this */}
+      {transitAspects.length > 0 && (
+        <TodaysEnergy
+          chartPlanets={chartPlanets}
+          fullPlanets={fullPlanets}
+          transitAspects={transitAspects}
+          transitPlanets={transitPlanets}
+          houseCusps={houseCusps}
+          transitDate={transitDate}
+        />
       )}
+
+      {/* Today's Active Transits — plain list, same data the wheel used to draw as lines */}
+      {transitAspects.length > 0 && (() => {
+        const aspectSymbolsT = { trine:"△", sextile:"⚹", conjunction:"☌", opposition:"☍", square:"□" };
+        const aspectColorsT = { trine:"#a8e060", sextile:"#5ab8d8", conjunction:"#f5c842", opposition:"#e8534a", square:"#e8953a" };
+        return (
+          <div style={{marginTop:14,marginBottom:28,padding:"14px 16px",background:"rgba(90,184,216,0.05)",border:"1px solid rgba(90,184,216,0.2)",borderRadius:12}}>
+            <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#5ab8d8",letterSpacing:".12em",marginBottom:10,textAlign:"center"}}>✦ TODAY'S ACTIVE TRANSITS · {transitDate} ✦</div>
+            <div style={{display:"flex",flexDirection:"column",gap:8}}>
+              {transitAspects.slice(0,6).map((a,i) => {
+                const type = (a.type||"").toLowerCase();
+                const col = aspectColorsT[type] || "#5ab8d8";
+                return (
+                  <div key={i} style={{display:"flex",alignItems:"flex-start",gap:8,paddingBottom:8,borderBottom:i<Math.min(transitAspects.length,6)-1?"1px solid rgba(90,184,216,0.1)":"none"}}>
+                    <span style={{fontSize:12,color:col,minWidth:16}}>{aspectSymbolsT[type]||"✦"}</span>
+                    <div style={{flex:1}}>
+                      <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,color:"#d8c890",marginBottom:2}}>
+                        {a.planet1} {type} {a.planet2}
+                        {a.orb && <span style={{fontFamily:"Georgia,serif",fontSize:9,color:"#4a4440",fontWeight:400,marginLeft:6}}>orb {a.orb}°</span>}
+                        {a.applying === true && <span style={{fontFamily:"'Cinzel',serif",fontSize:7,color:"#a8e060",marginLeft:6,letterSpacing:".06em"}}>APPLYING</span>}
+                        {a.applying === false && <span style={{fontFamily:"'Cinzel',serif",fontSize:7,color:"#f5c842",marginLeft:6,letterSpacing:".06em"}}>SEPARATING</span>}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })()}
 
       {/* Big Three hero row */}
       <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:9,color:"#f5c842",letterSpacing:".18em",marginBottom:12,textAlign:"center"}}>✦ YOUR BIG THREE ✦</div>
@@ -3132,12 +3325,13 @@ function BirthChartResults({ result, onReset, onUpgrade }) {
 
   return (
     <div style={{animation:"up 0.5s ease"}}>
-      {/* Page title — the technical NatalChartWheel below (inside PaidSection) is the hero wheel */}
+      {/* Page title + presentation hero wheel — pure art direction, no chart geometry */}
       <div style={{textAlign:"center",marginBottom:14}}>
         <div style={{fontFamily:"'Cinzel',serif",fontWeight:700,fontSize:10,color:"#a8e060",letterSpacing:".3em",marginBottom:8}}>✦ YOUR COSMIC BLUEPRINT ✦</div>
         <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:"clamp(30px,8vw,44px)",color:"#f5c842",textShadow:"0 0 24px rgba(245,200,66,0.5)"}}>BIRTH CHART</div>
         <div style={{fontFamily:"Georgia,serif",fontSize:12,color:"#8a7a62",marginTop:4}}>A map of your energy, your purpose, your power.</div>
       </div>
+      <AreWeWokeBirthChartWheel name={name} chartPlanets={chartPlanets} fullPlanets={fullPlanets} />
 
 
       {/* Free: Big Three signs only */}
