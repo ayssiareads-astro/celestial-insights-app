@@ -32,10 +32,9 @@ export default async function handler(req, res) {
     if (!response.ok) {
       const err = await response.text();
       console.error("ElevenLabs error:", err);
-      return res.status(response.status).json({ error: "ElevenLabs API error", details: err });
+      return res.status(response.status).json({ error: "ElevenLabs API error" });
     }
 
-    // Stream the audio back
     const audioBuffer = await response.arrayBuffer();
     res.setHeader("Content-Type", "audio/mpeg");
     res.setHeader("Cache-Control", "no-cache");
