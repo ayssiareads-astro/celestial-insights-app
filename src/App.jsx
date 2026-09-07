@@ -4596,6 +4596,26 @@ function ZodiacStories({ onGetReading }) {
       thumbnail: "https://img.youtube.com/vi/iIbHJPd6Kas/hqdefault.jpg",
       ctaAt: 114000, // 1:54
     },
+    {
+      sign: "Virgo",
+      symbol: "♍",
+      color: "#8fbc8f",
+      title: "Attention to Detail",
+      desc: "Story Time",
+      videoId: "VKjIlp37nbU",
+      thumbnail: "https://img.youtube.com/vi/VKjIlp37nbU/hqdefault.jpg",
+      ctaAt: 45000, // placeholder — adjust once you confirm the actual runtime
+    },
+    {
+      sign: "Gemini",
+      symbol: "♊",
+      color: "#f7c948",
+      title: "Be Well Informed",
+      desc: "Story Time",
+      videoId: "Ex2PJ9b_Xag",
+      thumbnail: "https://img.youtube.com/vi/Ex2PJ9b_Xag/hqdefault.jpg",
+      ctaAt: 45000, // placeholder — adjust once you confirm the actual runtime
+    },
   ];
 
   const currentStory = stories.find(s => s.videoId === (active || lastWatched));
