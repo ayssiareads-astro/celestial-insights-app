@@ -766,6 +766,25 @@ function ZodiacQuiz() {
   const [reactionGif, setReactionGif] = useState(null);
   const [gifLoading, setGifLoading] = useState(false);
   const [gifCorrect, setGifCorrect] = useState(null);
+  const [competeCTADismissed, setCompeteCTADismissed] = useState(false);
+  const [showCompeteCTA, setShowCompeteCTA] = useState(false);
+
+  // Let the Level 1 badge show first, then bring up the share prompt on top of it
+  React.useEffect(() => {
+    if (screen === "levelComplete" && level === 1 && !competeCTADismissed) {
+      const t = setTimeout(() => setShowCompeteCTA(true), 2200);
+      return () => clearTimeout(t);
+    }
+  }, [screen, level, competeCTADismissed]);
+
+  const handleShareQuiz = async () => {
+    const text = `I just finished Level ${level} of the AreWeWoke Zodiac Quiz — can you beat my score? Play at arewewoke.com`;
+    try {
+      if (navigator.share) await navigator.share({ title: "AreWeWoke Zodiac Quiz", text });
+      else { await navigator.clipboard.writeText(text); alert("Copied to clipboard!"); }
+    } catch(e) {}
+    setCompeteCTADismissed(true);
+  };
 
   React.useEffect(() => { save("screen", screen); }, [screen]);
   React.useEffect(() => { save("level", level); }, [level]);
@@ -932,6 +951,26 @@ function ZodiacQuiz() {
 
   if (screen === "levelComplete") return (
     <div style={{animation:"up .5s ease",textAlign:"center"}}>
+      {level === 1 && showCompeteCTA && !competeCTADismissed && (
+        <div style={{
+          position:"fixed",inset:0,zIndex:9999,
+          display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",
+          background:"rgba(13,10,20,0.95)",padding:32,textAlign:"center",
+          animation:"up .4s ease",
+        }}>
+          <div style={{fontSize:44,marginBottom:14}}>🏅</div>
+          <p style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:20,color:"#f5c842",margin:"0 0 12px",lineHeight:1.4}}>Level 1 Complete!</p>
+          <p style={{fontFamily:"Georgia,serif",fontSize:15,color:"#e8d8b0",margin:"0 0 28px",lineHeight:1.7,maxWidth:320}}>
+            Compete with a friend — hit that share button and see who knows their signs better.
+          </p>
+          <button onClick={handleShareQuiz} style={{background:"linear-gradient(135deg,#e8a800,#8a6000)",border:"none",borderRadius:100,padding:"16px 40px",fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:14,letterSpacing:".1em",color:"#0d0a14",cursor:"pointer",boxShadow:"0 0 30px 8px rgba(232,168,0,0.5)"}}>
+            ↻ SHARE WITH A FRIEND
+          </button>
+          <button onClick={()=>setCompeteCTADismissed(true)} style={{background:"none",border:"none",color:"#8a7a62",fontFamily:"Georgia,serif",fontSize:13,marginTop:18,cursor:"pointer",textDecoration:"underline"}}>
+            Keep playing solo
+          </button>
+        </div>
+      )}
       <div style={{background:"rgba(168,224,96,0.07)",border:"1px solid rgba(168,224,96,0.3)",borderRadius:20,padding:"32px 24px",marginBottom:16}}>
         <div style={{fontSize:48,marginBottom:12}}>🏅</div>
         <div style={{fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:22,color:"#a8e060",marginBottom:8}}>Level {level} Complete!</div>
