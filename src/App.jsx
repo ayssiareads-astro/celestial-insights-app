@@ -4616,6 +4616,16 @@ function ZodiacStories({ onGetReading }) {
       thumbnail: "https://img.youtube.com/vi/Ex2PJ9b_Xag/hqdefault.jpg",
       ctaAt: 45000, // placeholder — adjust once you confirm the actual runtime
     },
+    {
+      sign: "Taurus",
+      symbol: "♉",
+      color: "#a8c97f",
+      title: "Building with Patience",
+      desc: "Story Time",
+      videoId: "8AnkpYpAMJA",
+      thumbnail: "https://img.youtube.com/vi/8AnkpYpAMJA/hqdefault.jpg",
+      ctaAt: 45000, // placeholder — adjust once you confirm the actual runtime
+    },
   ];
 
   const currentStory = stories.find(s => s.videoId === (active || lastWatched));
@@ -4701,6 +4711,9 @@ function ZodiacStories({ onGetReading }) {
           </p>
           <button onClick={handleGetReading} style={{background:"linear-gradient(135deg,#e8a800,#8a6000)",border:"none",borderRadius:100,padding:"16px 40px",fontFamily:"'Cinzel',serif",fontWeight:900,fontSize:14,letterSpacing:".12em",color:"#0d0a14",cursor:"pointer",boxShadow:"0 0 30px 8px rgba(232,168,0,0.5)",animation:"gl 2s ease-in-out infinite"}}>
             ✦ GET MY READING
+          </button>
+          <button onClick={()=>{setShowCTA(false);setCtaVisible(false);}} style={{background:"none",border:"none",color:"#8a7a62",fontFamily:"Georgia,serif",fontSize:13,marginTop:18,cursor:"pointer",textDecoration:"underline"}}>
+            Maybe later
           </button>
         </div>
       )}
