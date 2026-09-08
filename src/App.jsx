@@ -4671,10 +4671,10 @@ function ZodiacStories({ onGetReading }) {
       sign: "Pisces",
       symbol: "♓",
       color: "#9b8fcc",
-      title: "Turn Dreams Into a Tangible Reality",
+      title: "Make Your Dreams a Tangible Reality",
       desc: "Story Time",
-      videoId: "No6jHEyJ3QI",
-      thumbnail: "https://img.youtube.com/vi/No6jHEyJ3QI/hqdefault.jpg",
+      videoId: "MBmhgy23sYA",
+      thumbnail: "https://img.youtube.com/vi/MBmhgy23sYA/hqdefault.jpg",
       ctaAt: 45000, // placeholder — adjust once you confirm the actual runtime
     },
     {
@@ -4683,8 +4683,8 @@ function ZodiacStories({ onGetReading }) {
       color: "#a03060",
       title: "Transform",
       desc: "Story Time",
-      videoId: "ochJDBM7XeE",
-      thumbnail: "https://img.youtube.com/vi/ochJDBM7XeE/hqdefault.jpg",
+      videoId: "K3KMVvym2o0",
+      thumbnail: "https://img.youtube.com/vi/K3KMVvym2o0/hqdefault.jpg",
       ctaAt: 45000, // placeholder — adjust once you confirm the actual runtime
     },
   ];
