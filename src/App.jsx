@@ -4707,6 +4707,16 @@ function ZodiacStories({ onGetReading }) {
       thumbnail: "https://img.youtube.com/vi/Ri7FFF_yXp8/hqdefault.jpg",
       ctaAt: 45000, // placeholder — adjust once you confirm the actual runtime
     },
+    {
+      sign: "Aquarius",
+      symbol: "♒",
+      color: "#5bc8d8",
+      title: "Be the Change You Want to See",
+      desc: "Story Time",
+      videoId: "FXfWgrxSPfY",
+      thumbnail: "https://img.youtube.com/vi/FXfWgrxSPfY/hqdefault.jpg",
+      ctaAt: 45000, // placeholder — adjust once you confirm the actual runtime
+    },
   ];
 
   const currentStory = stories.find(s => s.videoId === (active || lastWatched));
