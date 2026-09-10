@@ -4687,6 +4687,26 @@ function ZodiacStories({ onGetReading }) {
       thumbnail: "https://img.youtube.com/vi/K3KMVvym2o0/hqdefault.jpg",
       ctaAt: 45000, // placeholder — adjust once you confirm the actual runtime
     },
+    {
+      sign: "Aries",
+      symbol: "♈",
+      color: "#ff6b6b",
+      title: "The Catalyst",
+      desc: "Story Time",
+      videoId: "B0wVhHWHiyk",
+      thumbnail: "https://img.youtube.com/vi/B0wVhHWHiyk/hqdefault.jpg",
+      ctaAt: 45000, // placeholder — adjust once you confirm the actual runtime
+    },
+    {
+      sign: "Libra",
+      symbol: "♎",
+      color: "#d4a5c9",
+      title: "The Diplomat",
+      desc: "Story Time",
+      videoId: "Ri7FFF_yXp8",
+      thumbnail: "https://img.youtube.com/vi/Ri7FFF_yXp8/hqdefault.jpg",
+      ctaAt: 45000, // placeholder — adjust once you confirm the actual runtime
+    },
   ];
 
   const currentStory = stories.find(s => s.videoId === (active || lastWatched));
